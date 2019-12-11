@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.AppConfig
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+package stubs
 
-@main_template(title = "Hello from manage-external-guidance-frontend", bodyClasses = None) {
-    <h1>Hello from manage-external-guidance-frontend !</h1>
-}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.http.Status._
+import support.WireMockMethods
 
-@{
- //$COVERAGE-OFF$
+object AuditStub extends WireMockMethods {
+
+  private val auditUri: String = s"/write/audit.*"
+
+  def audit(): StubMapping = {
+    when(method = POST, uri = auditUri)
+      .thenReturn(status = NO_CONTENT)
+  }
+
 }

@@ -24,15 +24,9 @@
 
 @import uk.gov.hmrc.play.views.html.layouts
 
-
 @serviceInfoContent = {}
 
-@sidebar = {
-    @if(sidebarLinks.isDefined) {
-        @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
-    }
-}
-
+@sidebar = {}
 
 @govuk_wrapper(appConfig = appConfig,
                title = title,
@@ -44,3 +38,7 @@
                serviceInfoContent = serviceInfoContent,
                scriptElem = scriptElem
 )
+
+@{
+    //$COVERAGE-OFF$
+}

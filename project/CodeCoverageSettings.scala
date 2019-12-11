@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.AppConfig
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+import sbt.Setting
+import scoverage.ScoverageKeys
 
-@main_template(title = "Hello from manage-external-guidance-frontend", bodyClasses = None) {
-    <h1>Hello from manage-external-guidance-frontend !</h1>
-}
+object CodeCoverageSettings {
 
-@{
- //$COVERAGE-OFF$
+  private val excludedPackages: Seq[String] = Seq(
+    "<empty>",
+    "Reverse.*",
+    "uk.gov.hmrc.BuildInfo",
+    "app.*",
+    "prod.*",
+    ".*Routes.*",
+    "testOnly.*",
+    "testOnlyDoNotUseInAppConf.*"
+  )
+
+  val settings: Seq[Setting[_]] = Seq(
+    ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
+    ScoverageKeys.coverageMinimum := 95,
+    ScoverageKeys.coverageFailOnMinimum := true,
+    ScoverageKeys.coverageHighlighting := true
+  )
 }
