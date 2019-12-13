@@ -1,7 +1,7 @@
 
 # Manage External Guidance Frontend
 
-Manage External Guidance frontend provides a process for guidance authors, approvers and publishers to make guidance available for the public. 
+This repo models a process allowing external guidance authors, approvers and publishers to make guidance available to the public. 
 
 ### License
 
