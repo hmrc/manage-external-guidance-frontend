@@ -1,7 +1,8 @@
 
 # Manage External Guidance Frontend
 
-This repo models a process allowing external guidance authors, approvers and publishers to make guidance available to the public. 
+This repo models a process allowing external guidance authors, approvers and publishers to make guidance available to the public. The service is provided in the English language.
+
 
 ### License
 
