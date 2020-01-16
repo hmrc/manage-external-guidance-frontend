@@ -2,3 +2,6 @@
 
 GET        /hello-world             controllers.HelloWorldController.helloWorld
 GET        /bye-world               controllers.HelloWorldController.byeWorld
+
+POST       /api/scratch             controllers.apis.ScratchController.scratchProcess
+OPTIONS    /api/scratch             controllers.apis.ScratchController.scratchProcessOptions
