@@ -15,9 +15,10 @@
  *@
 
 @import config.AppConfig
+@this(master: main_layout)
 @()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main_template(title = "Hello from manage-external-guidance-frontend", bodyClasses = None) {
+@master("Hello from maintain-external-guidance-frontend") {
     <h1>Hello from manage-external-guidance-frontend !</h1>
 }
 
