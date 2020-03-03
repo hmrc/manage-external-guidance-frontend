@@ -24,10 +24,8 @@ import views.html.error_template
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 
 @Singleton
-class ErrorHandler @Inject()(val messagesApi: MessagesApi,
-                             view: error_template,
-                             implicit val appConfig: AppConfig) extends FrontendErrorHandler
-{
+class ErrorHandler @Inject() (val messagesApi: MessagesApi, view: error_template, implicit val appConfig: AppConfig) extends FrontendErrorHandler {
+
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
     view(pageTitle, heading, message)
 }
