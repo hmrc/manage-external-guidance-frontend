@@ -25,22 +25,22 @@ import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import scala.concurrent.Future
 
 @Singleton
-class ScratchController @Inject()(appConfig: AppConfig, cc: ControllerComponents)
-  extends BackendController(cc) {
+class ScratchController @Inject() (appConfig: AppConfig, cc: ControllerComponents) extends BackendController(cc) {
 
   implicit val config: AppConfig = appConfig
 
   def scratchProcess(): Action[JsValue] = Action.async(parse.json) { implicit request =>
-    Future.successful(Created(request.body).withHeaders(
-      "Access-Control-Allow-Origin" -> "*"))
+    Future.successful(Created(request.body).withHeaders("Access-Control-Allow-Origin" -> "*"))
   }
 
   val scratchProcessOptions: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok("").withHeaders(
-      "Access-Control-Allow-Origin" -> "*",
-      "Access-Control-Allow-Headers" -> "*",
-      "Access-Control-Allow-Methods" -> "POST, OPTIONS"
-    ))
+    Future.successful(
+      Ok("").withHeaders(
+        "Access-Control-Allow-Origin" -> "*",
+        "Access-Control-Allow-Headers" -> "*",
+        "Access-Control-Allow-Methods" -> "POST, OPTIONS"
+      )
+    )
   }
 
 }
