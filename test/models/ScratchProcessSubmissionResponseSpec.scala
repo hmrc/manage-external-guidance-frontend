@@ -14,47 +14,46 @@
  * limitations under the License.
  */
 
-package models.errors
+package models
 
 import play.api.libs.json._
 
 import base.BaseSpec
 
-class ErrorSpec extends BaseSpec {
+class ScratchProcessSubmissionResponseSpec extends BaseSpec {
 
-  "Serialising an error object into JSON" should {
+  "Serializing a scratch process submission response into JSON" should {
 
-    "Generate the correct JSON" in {
+    "Generate the correct JSON representation for the response" in {
 
       val expected: JsValue = Json.parse(
         """|{
-           | "code": "500",
-           | "message": "Internal server error"
+           | "id":"2020Xy"
            |}""".stripMargin
       )
 
-      val error: Error = Error( "500", "Internal server error" )
+      val response: ScratchProcessSubmissionResponse = ScratchProcessSubmissionResponse( "2020Xy" )
 
-      val actual: JsValue = Json.toJson( error )
+      val actual: JsValue = Json.toJson( response )
 
       actual shouldBe expected
     }
+
   }
 
-  "Deserialising JSON into an instance of the class Error" should {
+  "Deserializing JSON into an instance of the class ScratchProcessSubmissionResponse" should {
 
-    "Create a correct instance of the class Error" in {
+    "Create a correct instance of the class" in {
 
-      val expected: Error = Error( "500", "Internal server error" )
+      val expected: ScratchProcessSubmissionResponse = ScratchProcessSubmissionResponse( "2020Za" )
 
-      val serializedError: JsValue = Json.parse(
+      val serializedResponse: JsValue = Json.parse(
         """|{
-           | "code": "500",
-           | "message": "Internal server error"
+           | "id":"2020Za"
            |}""".stripMargin
       )
 
-      val actual: Error = serializedError.as[Error]
+      val actual: ScratchProcessSubmissionResponse = serializedResponse.as[ScratchProcessSubmissionResponse]
 
       actual shouldBe expected
     }
