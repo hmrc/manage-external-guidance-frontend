@@ -4,7 +4,7 @@ GET        /assets/*file            controllers.Assets.versioned(path="/public",
 GET        /hello-world             controllers.HelloWorldController.helloWorld
 GET        /bye-world               controllers.HelloWorldController.byeWorld
 
-POST       /api/scratch             controllers.apis.ScratchController.scratchProcess
-OPTIONS    /api/scratch             controllers.apis.ScratchController.scratchProcessOptions
+POST       /process/scratch         controllers.apis.ScratchController.scratchProcess
+OPTIONS    /process/scratch         controllers.apis.ScratchController.scratchProcessOptions
 
 ->         /govuk-frontend            govuk.Routes

@@ -14,20 +14,27 @@
  * limitations under the License.
  */
 
-package models.errors
+package services
 
-import play.api.libs.json.{Json, OFormat}
+import javax.inject.{Inject, Singleton}
 
-case class Error(code: String, message: String)
+import scala.concurrent.{ExecutionContext, Future}
 
-object Error {
+import play.api.libs.json.JsValue
 
-  implicit val formats: OFormat[Error] = Json.format[Error]
+import uk.gov.hmrc.http.HeaderCarrier
+
+import connectors.GuidanceConnector
+import models.ScratchProcessSubmissionResponse
+import models.errors.Error
+
+@Singleton
+class GuidanceService @Inject() (guidanceConnector: GuidanceConnector) {
+
+  def scratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Error, ScratchProcessSubmissionResponse]] = {
+
+    guidanceConnector.submitScratchProcess(process)
+
+  }
 
 }
-
-object ExternalGuidanceServiceError extends Error("INTERNAL_SERVER_ERROR", "An error occurred connecting to the External Guidance service")
-
-object InvalidProcessError extends Error("BAD_REQUEST", "The input process is invalid")
-
-object InternalServerError extends Error("INTERNAL_SERVER_ERROR", "An unexpected error has occurred")

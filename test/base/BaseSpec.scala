@@ -16,6 +16,6 @@
 
 package base
 
-import org.scalatest.{Matchers, WordSpec }
+import org.scalatest.{Matchers, WordSpec}
 
 trait BaseSpec extends WordSpec with Matchers

@@ -32,9 +32,9 @@ class ScratchProcessSubmissionResponseSpec extends BaseSpec {
            |}""".stripMargin
       )
 
-      val response: ScratchProcessSubmissionResponse = ScratchProcessSubmissionResponse( "2020Xy" )
+      val response: ScratchProcessSubmissionResponse = ScratchProcessSubmissionResponse("2020Xy")
 
-      val actual: JsValue = Json.toJson( response )
+      val actual: JsValue = Json.toJson(response)
 
       actual shouldBe expected
     }
@@ -45,7 +45,7 @@ class ScratchProcessSubmissionResponseSpec extends BaseSpec {
 
     "Create a correct instance of the class" in {
 
-      val expected: ScratchProcessSubmissionResponse = ScratchProcessSubmissionResponse( "2020Za" )
+      val expected: ScratchProcessSubmissionResponse = ScratchProcessSubmissionResponse("2020Za")
 
       val serializedResponse: JsValue = Json.parse(
         """|{

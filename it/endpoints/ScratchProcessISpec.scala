@@ -27,7 +27,7 @@ class ScratchProcessISpec extends IntegrationSpec {
   "calling the scratch POST endpoint" should {
     "return an OK response" in {
       AuditStub.audit()
-      val request = buildRequest("/guidance/api/scratch")
+      val request = buildRequest("/guidance/process/scratch")
       val response: WSResponse = await(request.post(Json.obj("message" -> "hi")))
       response.status shouldBe Status.CREATED
     }
@@ -36,7 +36,7 @@ class ScratchProcessISpec extends IntegrationSpec {
   "calling the scratch OPTIONS endpoint" should {
     "return an OK response" in {
       AuditStub.audit()
-      val request = buildRequest("/guidance/api/scratch")
+      val request = buildRequest("/guidance/process/scratch")
       val response: WSResponse = await(request.options())
       response.status shouldBe Status.OK
     }

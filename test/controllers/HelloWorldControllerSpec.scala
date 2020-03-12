@@ -40,7 +40,7 @@ class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPe
     private val view = app.injector.instanceOf[hello_world]
 
     val fakeRequest = FakeRequest("GET", "/")
-    val controller = new HelloWorldController(appConfig, stubMessagesControllerComponents(), view )
+    val controller = new HelloWorldController(appConfig, stubMessagesControllerComponents(), view)
 
   }
 
@@ -59,7 +59,7 @@ class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPe
   }
 
   "GET /bye-world" should {
-    "throws an exception" in  new Test {
+    "throws an exception" in new Test {
       assertThrows[Exception] {
         val result = controller.byeWorld(fakeRequest)
         status(result) shouldBe Status.OK

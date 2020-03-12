@@ -16,17 +16,11 @@
 
 package models
 
-import play.api.libs.json.{Json,JsObject,JsPath,Reads,Writes}
+import play.api.libs.json.{Json, OFormat}
 
-case class ScratchProcessSubmissionResponse( id: String )
+case class ScratchProcessSubmissionResponse(id: String)
 
 object ScratchProcessSubmissionResponse {
 
-  implicit val writes: Writes[ScratchProcessSubmissionResponse] = new Writes[ScratchProcessSubmissionResponse] {
-
-    def writes( response: ScratchProcessSubmissionResponse ) : JsObject = Json.obj( "id" -> response.id )
-
-  }
-
-  implicit val reads: Reads[ScratchProcessSubmissionResponse] = ( JsPath \ "id" ).read[String].map( ScratchProcessSubmissionResponse(_) )
+  implicit val formats: OFormat[ScratchProcessSubmissionResponse] = Json.format[ScratchProcessSubmissionResponse]
 }

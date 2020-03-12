@@ -34,4 +34,5 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   val reportAProblemPartialUrl: String = s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifier"
   val reportAProblemNonJSUrl: String = s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
 
+  val baseUrl: String = config.get[String]("urls.baseUrl")
 }

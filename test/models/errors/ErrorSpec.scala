@@ -33,9 +33,9 @@ class ErrorSpec extends BaseSpec {
            |}""".stripMargin
       )
 
-      val error: Error = Error( "500", "Internal server error" )
+      val error: Error = Error("500", "Internal server error")
 
-      val actual: JsValue = Json.toJson( error )
+      val actual: JsValue = Json.toJson(error)
 
       actual shouldBe expected
     }
@@ -45,7 +45,7 @@ class ErrorSpec extends BaseSpec {
 
     "Create a correct instance of the class Error" in {
 
-      val expected: Error = Error( "500", "Internal server error" )
+      val expected: Error = Error("500", "Internal server error")
 
       val serializedError: JsValue = Json.parse(
         """|{

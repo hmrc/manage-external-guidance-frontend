@@ -18,19 +18,25 @@ package controllers.apis
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import models.errors.{ExternalGuidanceServiceError, InvalidProcessError}
+import services.GuidanceService
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 @Singleton
-class ScratchController @Inject() (appConfig: AppConfig, cc: ControllerComponents) extends BackendController(cc) {
+class ScratchController @Inject() (appConfig: AppConfig, guidanceService: GuidanceService, mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
 
-  def scratchProcess(): Action[JsValue] = Action.async(parse.json) { implicit request =>
-    Future.successful(Created(request.body).withHeaders("Access-Control-Allow-Origin" -> "*"))
+  def scratchProcess(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
+    scratchProcess(request.body)
+
   }
 
   val scratchProcessOptions: Action[AnyContent] = Action.async { implicit request =>
@@ -41,6 +47,26 @@ class ScratchController @Inject() (appConfig: AppConfig, cc: ControllerComponent
         "Access-Control-Allow-Methods" -> "POST, OPTIONS"
       )
     )
+  }
+
+  private def scratchProcess(process: JsValue)(implicit hc: HeaderCarrier): Future[Result] = {
+
+    guidanceService.scratchProcess(process).map {
+      case Right(submissionResponse) => {
+
+        val location: String = s"${appConfig.baseUrl}/scratch/${submissionResponse.id}"
+
+        Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)
+      }
+      case Left(error) => {
+        error match {
+          case InvalidProcessError => BadRequest(Json.toJson(error))
+          case ExternalGuidanceServiceError => InternalServerError(Json.toJson(error))
+          case _ => InternalServerError(Json.toJson(error))
+        }
+      }
+    }
+
   }
 
 }
