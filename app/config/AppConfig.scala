@@ -22,6 +22,9 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
 class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
+
+  private def loadServicesConfig(key: String) = servicesConfig.getString(key)
+
   private val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
 
   private val assetsUrl = config.get[String]("assets.url")
@@ -35,4 +38,7 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   val reportAProblemNonJSUrl: String = s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
 
   val baseUrl: String = config.get[String]("urls.baseUrl")
+
+  lazy val externalGuidanceBaseUrl: String = servicesConfig.baseUrl("external-guidance")
+  lazy val externalGuidanceScratchUrl: String = externalGuidanceBaseUrl + loadServicesConfig("urls.externalGuidanceScratchUrl")
 }

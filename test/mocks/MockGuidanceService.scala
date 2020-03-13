@@ -25,8 +25,7 @@ import play.api.libs.json.JsValue
 
 import uk.gov.hmrc.http.HeaderCarrier
 
-import models.ScratchProcessSubmissionResponse
-import models.errors.Error
+import models.{RequestOutcome, ScratchProcessSubmissionResponse}
 import services.GuidanceService
 
 trait MockGuidanceService extends MockFactory {
@@ -35,7 +34,7 @@ trait MockGuidanceService extends MockFactory {
 
   object MockGuidanceService {
 
-    def scratchProcess(process: JsValue): CallHandler[Future[Either[Error, ScratchProcessSubmissionResponse]]] = {
+    def scratchProcess(process: JsValue): CallHandler[Future[RequestOutcome[ScratchProcessSubmissionResponse]]] = {
 
       (mockGuidanceService
         .scratchProcess(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))

@@ -51,20 +51,30 @@ class ScratchController @Inject() (appConfig: AppConfig, guidanceService: Guidan
 
   private def scratchProcess(process: JsValue)(implicit hc: HeaderCarrier): Future[Result] = {
 
-    guidanceService.scratchProcess(process).map {
-      case Right(submissionResponse) => {
+    guidanceService.scratchProcess(process).map { submissionOutcome =>
+      {
 
-        val location: String = s"${appConfig.baseUrl}/scratch/${submissionResponse.id}"
+        submissionOutcome match {
 
-        Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)
-      }
-      case Left(error) => {
-        error match {
-          case InvalidProcessError => BadRequest(Json.toJson(error))
-          case ExternalGuidanceServiceError => InternalServerError(Json.toJson(error))
-          case _ => InternalServerError(Json.toJson(error))
+          case Right(submissionResponse) => {
+
+            val location: String = s"${appConfig.baseUrl}/scratch/${submissionResponse.id}"
+
+            Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)
+          }
+          case Left(error) => {
+            error match {
+              case InvalidProcessError => BadRequest(Json.toJson(error))
+              case ExternalGuidanceServiceError => InternalServerError(Json.toJson(error))
+              case _ => InternalServerError(Json.toJson(error))
+            }
+
+          }
+
         }
+
       }
+
     }
 
   }

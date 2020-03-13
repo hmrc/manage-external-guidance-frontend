@@ -17,55 +17,78 @@
 package connectors
 
 import scala.concurrent.ExecutionContext.Implicits.global
+
+import java.util.UUID.randomUUID
+
 import scala.concurrent.Future
 import play.api.{Configuration, Environment, _}
+import play.api.http.{ContentTypes, HeaderNames}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import config.AppConfig
-import models.ScratchProcessSubmissionResponse
-import models.errors.Error
-import base.BaseSpec
+import models.{RequestOutcome, ScratchProcessSubmissionResponse}
+import models.errors.InternalServerError
 
-import scala.util.{Failure, Success}
+import base.BaseSpec
+import mocks.MockHttpClient
+import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 
 class GuidanceConnectorSpec extends BaseSpec {
 
+  private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
+
+    val env = Environment.simple()
+    val configuration = Configuration.load(env)
+
+    val serviceConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
+    val appConfig = new AppConfig(configuration, serviceConfig)
+
+    val hc: HeaderCarrier = HeaderCarrier()
+
+    val guidanceConnector: GuidanceConnector = new GuidanceConnector(mockHttpClient, appConfig)
+
+    val endpoint: String = appConfig.externalGuidanceScratchUrl
+
+    val dummyProcess: JsValue = Json.parse(
+      """|{
+         | "processId": "12"
+         |}""".stripMargin
+    )
+
+    val headers = Seq(HeaderNames.CONTENT_TYPE -> ContentTypes.JSON)
+
+    val id: String = randomUUID().toString
+  }
+
   "Calling method submitScratchProcess with a dummy process" should {
 
-    "Return an instance of the class ScratchProcessSubmissionResponse" in {
+    "Return an instance of the class ScratchProcessSubmissionResponse for a successful call" in new Test {
 
-      val env = Environment.simple()
-      val configuration = Configuration.load(env)
+      MockedHttpClient
+        .POSTString[RequestOutcome[ScratchProcessSubmissionResponse]](endpoint, dummyProcess.toString(), headers)
+        .returns(Future.successful(Right(ScratchProcessSubmissionResponse(id))))
 
-      val serviceConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
-      val appConfig = new AppConfig(configuration, serviceConfig)
-
-      val hc: HeaderCarrier = HeaderCarrier()
-
-      val dummyProcess: JsValue = Json.parse(
-        """|{
-           | "processId": "12"
-           |}""".stripMargin
+      val response: RequestOutcome[ScratchProcessSubmissionResponse] = await(
+        guidanceConnector
+          .submitScratchProcess(dummyProcess)(implicitly, hc)
       )
 
-      val guidanceConnector: GuidanceConnector = new GuidanceConnector(appConfig)
+      response shouldBe Right(ScratchProcessSubmissionResponse(id))
+    }
 
-      val expectedResponse = guidanceConnector.stubbedResponse
+    "Return an instance of an error class when an error occurs" in new Test {
 
-      val response: Future[Either[Error, ScratchProcessSubmissionResponse]] = guidanceConnector
-        .submitScratchProcess(dummyProcess)(implicitly, hc)
+      MockedHttpClient
+        .POSTString[RequestOutcome[ScratchProcessSubmissionResponse]](endpoint, dummyProcess.toString(), headers)
+        .returns(Future.successful(Left(InternalServerError)))
 
-      response.onComplete {
-        case Success(actualResponse) => {
-          actualResponse match {
-            case Right(scratchProcessSubmissionResponse) => scratchProcessSubmissionResponse shouldBe expectedResponse
-            case Left(error) => fail(s"Unexpected error returned by guidance connector : ${error.toString}")
-          }
-        }
-        case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
-      }
+      val response: RequestOutcome[ScratchProcessSubmissionResponse] = await(
+        guidanceConnector
+          .submitScratchProcess(dummyProcess)(implicitly, hc)
+      )
 
+      response shouldBe Left(InternalServerError)
     }
   }
 

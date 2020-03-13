@@ -14,26 +14,11 @@
  * limitations under the License.
  */
 
-package services
+import models.errors.Error
 
-import javax.inject.{Inject, Singleton}
+package object models {
 
-import scala.concurrent.{ExecutionContext, Future}
-
-import play.api.libs.json.JsValue
-
-import uk.gov.hmrc.http.HeaderCarrier
-
-import connectors.GuidanceConnector
-import models.{RequestOutcome, ScratchProcessSubmissionResponse}
-
-@Singleton
-class GuidanceService @Inject() (guidanceConnector: GuidanceConnector) {
-
-  def scratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ScratchProcessSubmissionResponse]] = {
-
-    guidanceConnector.submitScratchProcess(process)
-
-  }
+  type RequestOutcome[T] = Either[Error, T]
+  type ScratchProcessSubmissionOutcome = Either[Error, ScratchProcessSubmissionResponse]
 
 }
