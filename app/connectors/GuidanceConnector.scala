@@ -32,7 +32,7 @@ class GuidanceConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig)
 
     import connectors.httpParsers.SaveScratchProcessHttpParser.saveScratchProcessHttpReads
 
-    val endpoint: String = appConfig.externalGuidanceScratchUrl
+    val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
 
     httpClient.POST[JsValue, RequestOutcome[ScratchProcessSubmissionResponse]](endpoint, process, Seq.empty)
   }

@@ -18,33 +18,24 @@ package controllers.apis
 
 import java.util.UUID.randomUUID
 
-import scala.concurrent.Future
-
 import base.BaseSpec
-import config.AppConfig
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.Status
-import play.api.libs.json.{Json, JsValue}
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import play.api.{Configuration, Environment, _}
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import mocks.{MockAppConfig, MockGuidanceService}
 import models.ScratchProcessSubmissionResponse
 import models.errors.{Error, ExternalGuidanceServiceError, InternalServerError, InvalidProcessError}
-import mocks.MockGuidanceService
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.http.Status
+import play.api.libs.json.{JsValue, Json}
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import scala.concurrent.Future
 
 class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockGuidanceService {
 
   private val fakeRequest = FakeRequest("OPTIONS", "/")
 
-  private val env = Environment.simple()
-  private val configuration = Configuration.load(env)
-
-  private val serviceConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
-  private val appConfig = new AppConfig(configuration, serviceConfig)
-
-  private val controller = new ScratchController(appConfig, mockGuidanceService, stubMessagesControllerComponents())
+  private val controller = new ScratchController(MockAppConfig, mockGuidanceService, stubMessagesControllerComponents())
 
   private val dummyProcess: JsValue = Json.parse(
     """|{

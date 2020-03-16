@@ -16,47 +16,33 @@
 
 package connectors
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 import java.util.UUID.randomUUID
 
-import scala.concurrent.Future
-import play.api.{Configuration, Environment, _}
-import play.api.http.{ContentTypes, HeaderNames}
-import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
-import config.AppConfig
-import models.{RequestOutcome, ScratchProcessSubmissionResponse}
-import models.errors.InternalServerError
-
 import base.BaseSpec
-import mocks.MockHttpClient
+import mocks.{MockAppConfig, MockHttpClient}
+import models.errors.InternalServerError
+import models.{RequestOutcome, ScratchProcessSubmissionResponse}
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
+import uk.gov.hmrc.http.HeaderCarrier
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class GuidanceConnectorSpec extends BaseSpec {
 
   private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
 
-    val env = Environment.simple()
-    val configuration = Configuration.load(env)
-
-    val serviceConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
-    val appConfig = new AppConfig(configuration, serviceConfig)
-
     val hc: HeaderCarrier = HeaderCarrier()
 
-    val guidanceConnector: GuidanceConnector = new GuidanceConnector(mockHttpClient, appConfig)
-
-    val endpoint: String = appConfig.externalGuidanceScratchUrl
+    val guidanceConnector: GuidanceConnector = new GuidanceConnector(mockHttpClient, MockAppConfig)
+    val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
 
     val dummyProcess: JsValue = Json.parse(
       """|{
          | "processId": "12"
          |}""".stripMargin
     )
-
-    val headers = Seq(HeaderNames.CONTENT_TYPE -> ContentTypes.JSON)
 
     val id: String = randomUUID().toString
   }
