@@ -25,8 +25,8 @@ import play.api.libs.json.{Json, JsValue}
 
 import uk.gov.hmrc.http.HttpResponse
 
-import models.{RequestOutcome, ScratchProcessSubmissionResponse}
-import models.errors.{ExternalGuidanceServiceError, InvalidProcessError, InternalServerError}
+import models.{RequestOutcome, SaveScratchSubmissionResponse}
+import models.errors.{InvalidProcessError, InternalServerError}
 
 import base.BaseSpec
 
@@ -38,65 +38,48 @@ class SaveScratchProcessHttpParserSpec extends BaseSpec with HttpVerbs with Stat
 
     val id: String = randomUUID().toString
 
-    val validResponseAsString: String = "{ \"id\":\"" + id + "\" }"
+    val validResponse: JsValue = Json.obj("id" -> id)
 
-    val validResponse: JsValue = Json.parse(validResponseAsString)
-
-    val invalidJsonAsString: String = "{ \"Error\":\"500\", \"Message\":\"Internal server error\" }"
-
-    val invalidResponse: JsValue = Json.parse(invalidJsonAsString)
+    val invalidResponse: JsValue = Json.obj() // no "id" property
   }
 
-  "Parsing a 201 successful scratch process submission" should {
+  "Parsing a successful response" should {
 
-    "Return a valid scratch process submission response" in new Test {
+    "return a valid scratch process submission response" in new Test {
 
-      val httpResponse: HttpResponse = HttpResponse(CREATED, Some(validResponse))
-
-      val result: RequestOutcome[ScratchProcessSubmissionResponse] =
-        saveScratchProcessHttpReads.read(POST, url, httpResponse)
-
-      result shouldBe Right(ScratchProcessSubmissionResponse(id))
+      private val httpResponse = HttpResponse(CREATED, Some(validResponse))
+      private val result = saveScratchProcessHttpReads.read(POST, url, httpResponse)
+      result shouldBe Right(SaveScratchSubmissionResponse(id))
     }
   }
 
-  "Parsing an erroneous return" should {
+  "Parsing an error response" should {
 
-    "Return an invalid process error for a bad request" in new Test {
+    "return an invalid process error for a bad request" in new Test {
 
       val httpResponse: HttpResponse = HttpResponse(BAD_REQUEST)
 
-      val result: RequestOutcome[ScratchProcessSubmissionResponse] =
+      val result: RequestOutcome[SaveScratchSubmissionResponse] =
         saveScratchProcessHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InvalidProcessError)
     }
 
-    "Return an external guidance service error for an invalid response" in new Test {
+    "return an internal server error for an invalid response" in new Test {
 
       val httpResponse: HttpResponse = HttpResponse(CREATED, Some(invalidResponse))
 
-      val result: RequestOutcome[ScratchProcessSubmissionResponse] =
+      val result: RequestOutcome[SaveScratchSubmissionResponse] =
         saveScratchProcessHttpReads.read(POST, url, httpResponse)
 
-      result shouldBe Left(ExternalGuidanceServiceError)
+      result shouldBe Left(InternalServerError)
     }
 
-    "Return an external guidance service error for an empty response" in new Test {
-
-      val httpResponse: HttpResponse = HttpResponse(CREATED)
-
-      val result: RequestOutcome[ScratchProcessSubmissionResponse] =
-        saveScratchProcessHttpReads.read(POST, url, httpResponse)
-
-      result shouldBe Left(ExternalGuidanceServiceError)
-    }
-
-    "Return an internal server error when an error distinct from invalid process occurs" in new Test {
+    "return an internal server error when an error distinct from invalid process occurs" in new Test {
 
       val httpResponse: HttpResponse = HttpResponse(SERVICE_UNAVAILABLE)
 
-      val result: RequestOutcome[ScratchProcessSubmissionResponse] =
+      val result: RequestOutcome[SaveScratchSubmissionResponse] =
         saveScratchProcessHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InternalServerError)

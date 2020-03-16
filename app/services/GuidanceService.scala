@@ -18,7 +18,7 @@ package services
 
 import connectors.GuidanceConnector
 import javax.inject.{Inject, Singleton}
-import models.{RequestOutcome, ScratchProcessSubmissionResponse}
+import models.{RequestOutcome, SaveScratchSubmissionResponse}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class GuidanceService @Inject() (guidanceConnector: GuidanceConnector) {
 
-  def scratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ScratchProcessSubmissionResponse]] = {
+  def submitScratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[SaveScratchSubmissionResponse]] = {
     guidanceConnector.submitScratchProcess(process)
   }
 

@@ -21,7 +21,7 @@ import java.util.UUID.randomUUID
 import base.BaseSpec
 import mocks.{MockAppConfig, MockHttpClient}
 import models.errors.InternalServerError
-import models.{RequestOutcome, ScratchProcessSubmissionResponse}
+import models.{RequestOutcome, SaveScratchSubmissionResponse}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,7 +33,7 @@ class GuidanceConnectorSpec extends BaseSpec {
 
   private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
 
-    val hc: HeaderCarrier = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val guidanceConnector: GuidanceConnector = new GuidanceConnector(mockHttpClient, MockAppConfig)
     val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
@@ -53,14 +53,12 @@ class GuidanceConnectorSpec extends BaseSpec {
 
       MockedHttpClient
         .post(endpoint, dummyProcess)
-        .returns(Future.successful(Right(ScratchProcessSubmissionResponse(id))))
+        .returns(Future.successful(Right(SaveScratchSubmissionResponse(id))))
 
-      val response: RequestOutcome[ScratchProcessSubmissionResponse] = await(
-        guidanceConnector
-          .submitScratchProcess(dummyProcess)(implicitly, hc)
-      )
+      val response: RequestOutcome[SaveScratchSubmissionResponse] =
+        await(guidanceConnector.submitScratchProcess(dummyProcess))
 
-      response shouldBe Right(ScratchProcessSubmissionResponse(id))
+      response shouldBe Right(SaveScratchSubmissionResponse(id))
     }
 
     "Return an instance of an error class when an error occurs" in new Test {
@@ -69,10 +67,8 @@ class GuidanceConnectorSpec extends BaseSpec {
         .post(endpoint, dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val response: RequestOutcome[ScratchProcessSubmissionResponse] = await(
-        guidanceConnector
-          .submitScratchProcess(dummyProcess)(implicitly, hc)
-      )
+      val response: RequestOutcome[SaveScratchSubmissionResponse] =
+        await(guidanceConnector.submitScratchProcess(dummyProcess))
 
       response shouldBe Left(InternalServerError)
     }

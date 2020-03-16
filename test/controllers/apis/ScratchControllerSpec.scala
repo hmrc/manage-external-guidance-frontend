@@ -20,8 +20,8 @@ import java.util.UUID.randomUUID
 
 import base.BaseSpec
 import mocks.{MockAppConfig, MockGuidanceService}
-import models.ScratchProcessSubmissionResponse
-import models.errors.{Error, ExternalGuidanceServiceError, InternalServerError, InvalidProcessError}
+import models.SaveScratchSubmissionResponse
+import models.errors.{Error, InternalServerError, InvalidProcessError}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
@@ -55,10 +55,10 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
       MockGuidanceService
         .scratchProcess(dummyProcess)
-        .returns(Future.successful(Right(ScratchProcessSubmissionResponse(uuid))))
+        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
 
       val result = {
-        controller.scratchProcess()(fakeRequestWithBody)
+        controller.submitScratchProcess()(fakeRequestWithBody)
       }
 
       status(result) shouldBe Status.CREATED
@@ -69,10 +69,10 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
       MockGuidanceService
         .scratchProcess(dummyProcess)
-        .returns(Future.successful(Right(ScratchProcessSubmissionResponse(uuid))))
+        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
 
       val result = {
-        controller.scratchProcess()(fakeRequestWithBody)
+        controller.submitScratchProcess()(fakeRequestWithBody)
       }
 
       val location: Option[String] = header("location", result)
@@ -88,15 +88,15 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
       MockGuidanceService
         .scratchProcess(dummyProcess)
-        .returns(Future.successful(Right(ScratchProcessSubmissionResponse(uuid))))
+        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
 
-      val result = controller.scratchProcess()(fakeRequestWithBody)
+      val result = controller.submitScratchProcess()(fakeRequestWithBody)
 
       contentType(result) shouldBe Some("application/json")
 
       val jsValue: JsValue = Json.parse(contentAsString(result))
 
-      val actualResponse: ScratchProcessSubmissionResponse = jsValue.as[ScratchProcessSubmissionResponse]
+      val actualResponse: SaveScratchSubmissionResponse = jsValue.as[SaveScratchSubmissionResponse]
 
       actualResponse.id shouldBe uuid
     }
@@ -107,7 +107,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
         .scratchProcess(dummyProcess)
         .returns(Future.successful(Left(InvalidProcessError)))
 
-      val result = controller.scratchProcess()(fakeRequestWithBody)
+      val result = controller.submitScratchProcess()(fakeRequestWithBody)
 
       status(result) shouldBe Status.BAD_REQUEST
 
@@ -119,31 +119,13 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
       actualError.message shouldBe InvalidProcessError.message
     }
 
-    "Handle an error raised by the external guidance microservice" in {
-
-      MockGuidanceService
-        .scratchProcess(dummyProcess)
-        .returns(Future.successful(Left(ExternalGuidanceServiceError)))
-
-      val result = controller.scratchProcess()(fakeRequestWithBody)
-
-      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-
-      val jsValue: JsValue = Json.parse(contentAsString(result))
-
-      val actualError: Error = jsValue.as[Error]
-
-      actualError.code shouldBe ExternalGuidanceServiceError.code
-      actualError.message shouldBe ExternalGuidanceServiceError.message
-    }
-
     "Handle an internal server error" in {
 
       MockGuidanceService
         .scratchProcess(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result = controller.scratchProcess()(fakeRequestWithBody)
+      val result = controller.submitScratchProcess()(fakeRequestWithBody)
 
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
 

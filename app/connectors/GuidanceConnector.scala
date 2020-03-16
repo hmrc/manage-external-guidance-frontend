@@ -23,18 +23,18 @@ import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import config.AppConfig
-import models.{RequestOutcome, ScratchProcessSubmissionResponse}
+import models.{RequestOutcome, SaveScratchSubmissionResponse}
 
 @Singleton
 class GuidanceConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
 
-  def submitScratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ScratchProcessSubmissionResponse]] = {
+  def submitScratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[SaveScratchSubmissionResponse]] = {
 
     import connectors.httpParsers.SaveScratchProcessHttpParser.saveScratchProcessHttpReads
 
     val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
 
-    httpClient.POST[JsValue, RequestOutcome[ScratchProcessSubmissionResponse]](endpoint, process, Seq.empty)
+    httpClient.POST[JsValue, RequestOutcome[SaveScratchSubmissionResponse]](endpoint, process, Seq.empty)
   }
 
 }

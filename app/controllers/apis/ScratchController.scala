@@ -32,8 +32,8 @@ class ScratchController @Inject() (appConfig: AppConfig, guidanceService: Guidan
 
   implicit val config: AppConfig = appConfig
 
-  def scratchProcess(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
-    guidanceService.scratchProcess(request.body).map {
+  def submitScratchProcess(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
+    guidanceService.submitScratchProcess(request.body).map {
       case Right(submissionResponse) =>
         val location: String = s"/guidance/scratch/${submissionResponse.id}"
         Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)

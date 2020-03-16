@@ -16,6 +16,7 @@
 
 package connectors.httpParsers
 
+import play.api.Logger
 import play.api.libs.json._
 import uk.gov.hmrc.http.HttpResponse
 
@@ -25,11 +26,13 @@ trait HttpParser {
 
   implicit class KnownJsonResponse(response: HttpResponse) {
 
+    val logger: Logger = Logger(HttpParser.this.getClass)
+
     def validateJson[T](implicit reads: Reads[T]): Option[T] = {
       Try(response.json) match {
         case Success(json: JsValue) => parseResult(json)
         case _ =>
-          // TODO: Logging required
+          logger.error("Unable to retrieve JSON from response")
           None
       }
     }
@@ -37,7 +40,7 @@ trait HttpParser {
     private def parseResult[T](json: JsValue)(implicit reads: Reads[T]): Option[T] = json.validate[T] match {
       case JsSuccess(value, _) => Some(value)
       case JsError(error) =>
-        // TODO: Logging required
+        logger.error(s"Unable to parse JSON in response: $error")
         None
     }
   }

@@ -22,7 +22,7 @@ import java.util.UUID.randomUUID
 import scala.concurrent.Future
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
-import models.{RequestOutcome, ScratchProcessSubmissionResponse}
+import models.{RequestOutcome, SaveScratchSubmissionResponse}
 import models.errors.InternalServerError
 import base.BaseSpec
 import mocks.MockGuidanceConnector
@@ -52,9 +52,9 @@ class GuidanceServiceSpec extends BaseSpec {
 
       MockGuidanceConnector
         .submitScratchProcess(dummyProcess)
-        .returns(Future.successful(Right(ScratchProcessSubmissionResponse(uuid))))
+        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
 
-      val result: Future[RequestOutcome[ScratchProcessSubmissionResponse]] = guidanceService.scratchProcess(dummyProcess)
+      val result: Future[RequestOutcome[SaveScratchSubmissionResponse]] = guidanceService.submitScratchProcess(dummyProcess)
 
       result.onComplete {
         case Success(response) => {
@@ -74,7 +74,7 @@ class GuidanceServiceSpec extends BaseSpec {
         .submitScratchProcess(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[ScratchProcessSubmissionResponse]] = guidanceService.scratchProcess(dummyProcess)
+      val result: Future[RequestOutcome[SaveScratchSubmissionResponse]] = guidanceService.submitScratchProcess(dummyProcess)
 
       result.onComplete {
         case Success(response) => {

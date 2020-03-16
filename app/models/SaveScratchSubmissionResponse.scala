@@ -18,9 +18,9 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ScratchProcessSubmissionResponse(id: String)
+case class SaveScratchSubmissionResponse(id: String)
 
-object ScratchProcessSubmissionResponse {
+object SaveScratchSubmissionResponse {
 
-  implicit val formats: OFormat[ScratchProcessSubmissionResponse] = Json.format[ScratchProcessSubmissionResponse]
+  implicit val formats: OFormat[SaveScratchSubmissionResponse] = Json.format[SaveScratchSubmissionResponse]
 }

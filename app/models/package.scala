@@ -19,6 +19,5 @@ import models.errors.Error
 package object models {
 
   type RequestOutcome[T] = Either[Error, T]
-  type ScratchProcessSubmissionOutcome = Either[Error, ScratchProcessSubmissionResponse]
 
 }
