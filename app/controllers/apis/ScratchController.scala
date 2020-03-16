@@ -18,16 +18,14 @@ package controllers.apis
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
+import models.errors.InvalidProcessError
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import models.errors.{ExternalGuidanceServiceError, InvalidProcessError}
 import services.GuidanceService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-import scala.concurrent.Future
-
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class ScratchController @Inject() (appConfig: AppConfig, guidanceService: GuidanceService, mcc: MessagesControllerComponents) extends FrontendController(mcc) {
@@ -35,11 +33,16 @@ class ScratchController @Inject() (appConfig: AppConfig, guidanceService: Guidan
   implicit val config: AppConfig = appConfig
 
   def scratchProcess(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
-    scratchProcess(request.body)
-
+    guidanceService.scratchProcess(request.body).map {
+      case Right(submissionResponse) =>
+        val location: String = s"/guidance/scratch/${submissionResponse.id}"
+        Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)
+      case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError))
+      case Left(error) => InternalServerError(Json.toJson(error))
+    }
   }
 
-  val scratchProcessOptions: Action[AnyContent] = Action.async { implicit request =>
+  val scratchProcessOptions: Action[AnyContent] = Action.async { _ =>
     Future.successful(
       Ok("").withHeaders(
         "Access-Control-Allow-Origin" -> "*",
@@ -47,36 +50,6 @@ class ScratchController @Inject() (appConfig: AppConfig, guidanceService: Guidan
         "Access-Control-Allow-Methods" -> "POST, OPTIONS"
       )
     )
-  }
-
-  private def scratchProcess(process: JsValue)(implicit hc: HeaderCarrier): Future[Result] = {
-
-    guidanceService.scratchProcess(process).map { submissionOutcome =>
-      {
-
-        submissionOutcome match {
-
-          case Right(submissionResponse) => {
-
-            val location: String = s"${appConfig.baseUrl}/scratch/${submissionResponse.id}"
-
-            Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)
-          }
-          case Left(error) => {
-            error match {
-              case InvalidProcessError => BadRequest(Json.toJson(error))
-              case ExternalGuidanceServiceError => InternalServerError(Json.toJson(error))
-              case _ => InternalServerError(Json.toJson(error))
-            }
-
-          }
-
-        }
-
-      }
-
-    }
-
   }
 
 }

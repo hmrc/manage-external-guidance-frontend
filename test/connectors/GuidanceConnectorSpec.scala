@@ -66,7 +66,7 @@ class GuidanceConnectorSpec extends BaseSpec {
     "Return an instance of the class ScratchProcessSubmissionResponse for a successful call" in new Test {
 
       MockedHttpClient
-        .POSTString[RequestOutcome[ScratchProcessSubmissionResponse]](endpoint, dummyProcess.toString(), headers)
+        .post(endpoint, dummyProcess)
         .returns(Future.successful(Right(ScratchProcessSubmissionResponse(id))))
 
       val response: RequestOutcome[ScratchProcessSubmissionResponse] = await(
@@ -80,7 +80,7 @@ class GuidanceConnectorSpec extends BaseSpec {
     "Return an instance of an error class when an error occurs" in new Test {
 
       MockedHttpClient
-        .POSTString[RequestOutcome[ScratchProcessSubmissionResponse]](endpoint, dummyProcess.toString(), headers)
+        .post(endpoint, dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
       val response: RequestOutcome[ScratchProcessSubmissionResponse] = await(

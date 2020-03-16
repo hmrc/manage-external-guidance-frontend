@@ -52,7 +52,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
        |}""".stripMargin
   )
 
-  private val fakeRequestWithBody = FakeRequest("POST", "/").withBody(dummyProcess)
+  private val fakeRequestWithBody: FakeRequest[JsValue] = FakeRequest("POST", "/").withBody(dummyProcess)
 
   private val uuid: String = randomUUID().toString
 

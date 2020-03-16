@@ -45,6 +45,8 @@ trait IntegrationSpec
   def overriddenConfig: Map[String, Any] = Map(
     s"$servicesPath.auth.host" -> mockHost,
     s"$servicesPath.auth.port" -> mockPort,
+    s"$servicesPath.external-guidance.host" -> mockHost,
+    s"$servicesPath.external-guidance.port" -> mockPort,
     "auditing.consumer.baseUri.port" -> mockPort
   )
 

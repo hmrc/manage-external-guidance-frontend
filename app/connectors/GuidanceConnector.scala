@@ -16,12 +16,9 @@
 
 package connectors
 
-import java.util.UUID.randomUUID
-
 import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.http.{ContentTypes, HeaderNames}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -31,21 +28,13 @@ import models.{RequestOutcome, ScratchProcessSubmissionResponse}
 @Singleton
 class GuidanceConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
 
-  private[connectors] val stubbedResponse: RequestOutcome[ScratchProcessSubmissionResponse] = Right(ScratchProcessSubmissionResponse(randomUUID.toString))
-
-  private val headers = Seq(HeaderNames.CONTENT_TYPE -> ContentTypes.JSON)
-
   def submitScratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ScratchProcessSubmissionResponse]] = {
 
-    import connectors.httpParsers.GetScratchProcessSubmissionHttpParser.getScratchProcessSubmissionHttpReads
+    import connectors.httpParsers.SaveScratchProcessHttpParser.saveScratchProcessHttpReads
 
     val endpoint: String = appConfig.externalGuidanceScratchUrl
 
-    httpClient.POSTString[RequestOutcome[ScratchProcessSubmissionResponse]](endpoint, process.toString(), headers)(
-      getScratchProcessSubmissionHttpReads,
-      implicitly,
-      implicitly
-    )
+    httpClient.POST[JsValue, RequestOutcome[ScratchProcessSubmissionResponse]](endpoint, process, Seq.empty)
   }
 
 }

@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package services
+package stubs
 
-import connectors.GuidanceConnector
-import javax.inject.{Inject, Singleton}
-import models.{RequestOutcome, ScratchProcessSubmissionResponse}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.JsValue
-import uk.gov.hmrc.http.HeaderCarrier
+import support.WireMockMethods
 
-import scala.concurrent.{ExecutionContext, Future}
+object ExternalGuidanceStub extends WireMockMethods {
 
-@Singleton
-class GuidanceService @Inject() (guidanceConnector: GuidanceConnector) {
+  private val saveScratchUri: String = s"/external-guidance/scratch"
 
-  def scratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ScratchProcessSubmissionResponse]] = {
-    guidanceConnector.submitScratchProcess(process)
+  def saveScratch(status: Int, response: JsValue): StubMapping = {
+    when(method = POST, uri = saveScratchUri)
+      .thenReturn(status, response)
   }
 
 }

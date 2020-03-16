@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import connectors.httpParsers.GetScratchProcessSubmissionHttpParser.getScratchProcessSubmissionHttpReads
+import connectors.httpParsers.SaveScratchProcessHttpParser.saveScratchProcessHttpReads
 
 import java.util.UUID.randomUUID
 
@@ -30,7 +30,7 @@ import models.errors.{ExternalGuidanceServiceError, InvalidProcessError, Interna
 
 import base.BaseSpec
 
-class GetScratchProcessSubmissionHttpParserSpec extends BaseSpec with HttpVerbs with Status {
+class SaveScratchProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
   private trait Test {
 
@@ -54,7 +54,7 @@ class GetScratchProcessSubmissionHttpParserSpec extends BaseSpec with HttpVerbs 
       val httpResponse: HttpResponse = HttpResponse(CREATED, Some(validResponse))
 
       val result: RequestOutcome[ScratchProcessSubmissionResponse] =
-        getScratchProcessSubmissionHttpReads.read(POST, url, httpResponse)
+        saveScratchProcessHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Right(ScratchProcessSubmissionResponse(id))
     }
@@ -67,7 +67,7 @@ class GetScratchProcessSubmissionHttpParserSpec extends BaseSpec with HttpVerbs 
       val httpResponse: HttpResponse = HttpResponse(BAD_REQUEST)
 
       val result: RequestOutcome[ScratchProcessSubmissionResponse] =
-        getScratchProcessSubmissionHttpReads.read(POST, url, httpResponse)
+        saveScratchProcessHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InvalidProcessError)
     }
@@ -77,7 +77,7 @@ class GetScratchProcessSubmissionHttpParserSpec extends BaseSpec with HttpVerbs 
       val httpResponse: HttpResponse = HttpResponse(CREATED, Some(invalidResponse))
 
       val result: RequestOutcome[ScratchProcessSubmissionResponse] =
-        getScratchProcessSubmissionHttpReads.read(POST, url, httpResponse)
+        saveScratchProcessHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(ExternalGuidanceServiceError)
     }
@@ -87,7 +87,7 @@ class GetScratchProcessSubmissionHttpParserSpec extends BaseSpec with HttpVerbs 
       val httpResponse: HttpResponse = HttpResponse(CREATED)
 
       val result: RequestOutcome[ScratchProcessSubmissionResponse] =
-        getScratchProcessSubmissionHttpReads.read(POST, url, httpResponse)
+        saveScratchProcessHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(ExternalGuidanceServiceError)
     }
@@ -97,7 +97,7 @@ class GetScratchProcessSubmissionHttpParserSpec extends BaseSpec with HttpVerbs 
       val httpResponse: HttpResponse = HttpResponse(SERVICE_UNAVAILABLE)
 
       val result: RequestOutcome[ScratchProcessSubmissionResponse] =
-        getScratchProcessSubmissionHttpReads.read(POST, url, httpResponse)
+        saveScratchProcessHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InternalServerError)
     }
