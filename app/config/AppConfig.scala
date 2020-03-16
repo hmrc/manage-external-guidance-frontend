@@ -20,18 +20,21 @@ import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+trait AppConfig {
+  val analyticsToken: String
+  val analyticsHost: String
+  val reportAProblemPartialUrl: String
+  val reportAProblemNonJSUrl: String
+  val externalGuidanceBaseUrl: String
+}
+
 @Singleton
-class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
+class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
   private val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
-
-  private val assetsUrl = config.get[String]("assets.url")
   private val serviceIdentifier = "MyService"
-
-  val assetsPrefix: String = assetsUrl + config.get[String]("assets.version")
   val analyticsToken: String = config.get[String](s"google-analytics.token")
   val analyticsHost: String = config.get[String](s"google-analytics.host")
-
   val reportAProblemPartialUrl: String = s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifier"
   val reportAProblemNonJSUrl: String = s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
-
+  lazy val externalGuidanceBaseUrl: String = servicesConfig.baseUrl("external-guidance")
 }

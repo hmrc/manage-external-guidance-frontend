@@ -16,38 +16,127 @@
 
 package controllers.apis
 
-import config.AppConfig
-import org.scalatest.{Matchers, WordSpec}
+import java.util.UUID.randomUUID
+
+import base.BaseSpec
+import mocks.{MockAppConfig, MockGuidanceService}
+import models.SaveScratchSubmissionResponse
+import models.errors.{Error, InternalServerError, InvalidProcessError}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{Configuration, Environment, _}
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class ScratchControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
+import scala.concurrent.Future
+
+class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockGuidanceService {
+
   private val fakeRequest = FakeRequest("OPTIONS", "/")
-  private val fakeRequestWithBody = FakeRequest("POST", "/").withBody(Json.obj())
 
-  private val env = Environment.simple()
-  private val configuration = Configuration.load(env)
+  private val controller = new ScratchController(MockAppConfig, mockGuidanceService, stubMessagesControllerComponents())
 
-  private val serviceConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
-  private val appConfig = new AppConfig(configuration, serviceConfig)
+  private val dummyProcess: JsValue = Json.parse(
+    """|{
+       | "processId": "10"
+       |}""".stripMargin
+  )
 
-  private val controller = new ScratchController(appConfig, stubControllerComponents())
+  private val fakeRequestWithBody: FakeRequest[JsValue] = FakeRequest("POST", "/").withBody(dummyProcess)
+
+  private val uuid: String = randomUUID().toString
+
+  private val locationUrlPrefix: String = "/guidance/scratch"
 
   "POST /scratch" should {
+
     "return 201" in {
-      val result = controller.scratchProcess()(fakeRequestWithBody)
+
+      MockGuidanceService
+        .scratchProcess(dummyProcess)
+        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
+
+      val result = {
+        controller.submitScratchProcess()(fakeRequestWithBody)
+      }
+
       status(result) shouldBe Status.CREATED
+
+    }
+
+    "return process location in request header" in {
+
+      MockGuidanceService
+        .scratchProcess(dummyProcess)
+        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
+
+      val result = {
+        controller.submitScratchProcess()(fakeRequestWithBody)
+      }
+
+      val location: Option[String] = header("location", result)
+
+      location match {
+        case Some(location) => location shouldBe s"$locationUrlPrefix/$uuid"
+        case None => fail("The location header is not defined")
+      }
+
     }
 
     "return JSON" in {
-      val result = controller.scratchProcess()(fakeRequestWithBody)
+
+      MockGuidanceService
+        .scratchProcess(dummyProcess)
+        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
+
+      val result = controller.submitScratchProcess()(fakeRequestWithBody)
+
       contentType(result) shouldBe Some("application/json")
+
+      val jsValue: JsValue = Json.parse(contentAsString(result))
+
+      val actualResponse: SaveScratchSubmissionResponse = jsValue.as[SaveScratchSubmissionResponse]
+
+      actualResponse.id shouldBe uuid
     }
+
+    "Handle an error raised owing to an invalid process being submitted" in {
+
+      MockGuidanceService
+        .scratchProcess(dummyProcess)
+        .returns(Future.successful(Left(InvalidProcessError)))
+
+      val result = controller.submitScratchProcess()(fakeRequestWithBody)
+
+      status(result) shouldBe Status.BAD_REQUEST
+
+      val jsValue: JsValue = Json.parse(contentAsString(result))
+
+      val actualError: Error = jsValue.as[Error]
+
+      actualError.code shouldBe InvalidProcessError.code
+      actualError.message shouldBe InvalidProcessError.message
+    }
+
+    "Handle an internal server error" in {
+
+      MockGuidanceService
+        .scratchProcess(dummyProcess)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val result = controller.submitScratchProcess()(fakeRequestWithBody)
+
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+
+      val jsValue: JsValue = Json.parse(contentAsString(result))
+
+      val actualError: Error = jsValue.as[Error]
+
+      actualError.code shouldBe InternalServerError.code
+      actualError.message shouldBe InternalServerError.message
+    }
+
   }
 
   "OPTIONS /scratch" should {

@@ -16,31 +16,23 @@
 
 package controllers
 
+import mocks.MockAppConfig
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{Configuration, Environment, _}
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import config.AppConfig
 import views.html.hello_world
 
 class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
 
   private trait Test {
 
-    private val env = Environment.simple()
-    private val configuration = Configuration.load(env)
-
-    private val serviceConfig = new ServicesConfig(configuration, new RunMode(configuration, Mode.Dev))
-    private val appConfig = new AppConfig(configuration, serviceConfig)
-
     private val view = app.injector.instanceOf[hello_world]
 
     val fakeRequest = FakeRequest("GET", "/")
-    val controller = new HelloWorldController(appConfig, stubMessagesControllerComponents(), view )
+    val controller = new HelloWorldController(MockAppConfig, stubMessagesControllerComponents(), view)
 
   }
 
@@ -59,7 +51,7 @@ class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPe
   }
 
   "GET /bye-world" should {
-    "throws an exception" in  new Test {
+    "throws an exception" in new Test {
       assertThrows[Exception] {
         val result = controller.byeWorld(fakeRequest)
         status(result) shouldBe Status.OK

@@ -18,22 +18,31 @@ package controllers.apis
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.JsValue
+import models.errors.InvalidProcessError
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import services.GuidanceService
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ScratchController @Inject() (appConfig: AppConfig, cc: ControllerComponents) extends BackendController(cc) {
+class ScratchController @Inject() (appConfig: AppConfig, guidanceService: GuidanceService, mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
 
-  def scratchProcess(): Action[JsValue] = Action.async(parse.json) { implicit request =>
-    Future.successful(Created(request.body).withHeaders("Access-Control-Allow-Origin" -> "*"))
+  def submitScratchProcess(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
+    guidanceService.submitScratchProcess(request.body).map {
+      case Right(submissionResponse) =>
+        val location: String = s"/guidance/scratch/${submissionResponse.id}"
+        Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)
+      case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError))
+      case Left(error) => InternalServerError(Json.toJson(error))
+    }
   }
 
-  val scratchProcessOptions: Action[AnyContent] = Action.async { implicit request =>
+  val scratchProcessOptions: Action[AnyContent] = Action.async { _ =>
     Future.successful(
       Ok("").withHeaders(
         "Access-Control-Allow-Origin" -> "*",

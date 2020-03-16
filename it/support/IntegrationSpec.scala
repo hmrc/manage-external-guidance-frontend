@@ -24,15 +24,16 @@ import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import play.api.{Application, Environment, Mode}
 
-trait IntegrationSpec extends WordSpecLike
-  with EitherValues
-  with Matchers
-  with FutureAwaits
-  with DefaultAwaitTimeout
-  with WireMockHelper
-  with GuiceOneServerPerSuite
-  with BeforeAndAfterEach
-  with BeforeAndAfterAll {
+trait IntegrationSpec
+    extends WordSpecLike
+    with EitherValues
+    with Matchers
+    with FutureAwaits
+    with DefaultAwaitTimeout
+    with WireMockHelper
+    with GuiceOneServerPerSuite
+    with BeforeAndAfterEach
+    with BeforeAndAfterAll {
 
   val mockHost: String = WireMockHelper.host
   val mockPort: String = WireMockHelper.wireMockPort.toString
@@ -44,6 +45,8 @@ trait IntegrationSpec extends WordSpecLike
   def overriddenConfig: Map[String, Any] = Map(
     s"$servicesPath.auth.host" -> mockHost,
     s"$servicesPath.auth.port" -> mockPort,
+    s"$servicesPath.external-guidance.host" -> mockHost,
+    s"$servicesPath.external-guidance.port" -> mockPort,
     "auditing.consumer.baseUri.port" -> mockPort
   )
 
