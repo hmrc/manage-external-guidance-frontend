@@ -38,6 +38,8 @@ trait IntegrationSpec
   val mockHost: String = WireMockHelper.host
   val mockPort: String = WireMockHelper.wireMockPort.toString
 
+  private val rootContext = "/external-guidance"
+
   lazy val client: WSClient = app.injector.instanceOf[WSClient]
 
   private val servicesPath = "microservice.services"
@@ -65,7 +67,9 @@ trait IntegrationSpec
     super.afterAll()
   }
 
-  def buildRequest(path: String): WSRequest = client.url(s"http://localhost:$port$path").withFollowRedirects(false)
+  def buildRequest(path: String): WSRequest = client
+    .url(s"http://localhost:$port$rootContext$path")
+    .withFollowRedirects(false)
 
   def document(response: WSResponse): JsValue = Json.parse(response.body)
 }

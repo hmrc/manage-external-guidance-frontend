@@ -35,7 +35,7 @@ class SaveScratchISpec extends IntegrationSpec {
       val responsePayload = Json.obj("id" -> UUID.randomUUID().toString)
       ExternalGuidanceStub.saveScratch(Status.CREATED, responsePayload)
 
-      val request = buildRequest("/guidance/process/scratch")
+      val request = buildRequest("/process/scratch")
       val response: WSResponse = await(request.post(Json.obj("message" -> "hi")))
       response.status shouldBe Status.CREATED
     }
@@ -47,7 +47,7 @@ class SaveScratchISpec extends IntegrationSpec {
       val responsePayload: JsValue = Json.toJson(InvalidProcessError)
       ExternalGuidanceStub.saveScratch(Status.BAD_REQUEST, responsePayload)
 
-      val request = buildRequest("/guidance/process/scratch")
+      val request = buildRequest("/process/scratch")
       val response: WSResponse = await(request.post(Json.obj("message" -> "hi")))
       response.status shouldBe Status.BAD_REQUEST
     }
@@ -59,7 +59,7 @@ class SaveScratchISpec extends IntegrationSpec {
       val responsePayload: JsValue = Json.toJson(InternalServerError)
       ExternalGuidanceStub.saveScratch(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
-      val request = buildRequest("/guidance/process/scratch")
+      val request = buildRequest("/process/scratch")
       val response: WSResponse = await(request.post(Json.obj("message" -> "hi")))
       response.status shouldBe Status.INTERNAL_SERVER_ERROR
     }
@@ -68,7 +68,7 @@ class SaveScratchISpec extends IntegrationSpec {
   "calling the scratch OPTIONS endpoint" should {
     "return an OK response" in {
       AuditStub.audit()
-      val request = buildRequest("/guidance/process/scratch")
+      val request = buildRequest("/process/scratch")
       val response: WSResponse = await(request.options())
       response.status shouldBe Status.OK
     }

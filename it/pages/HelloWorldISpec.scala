@@ -26,7 +26,7 @@ class HelloWorldISpec extends IntegrationSpec {
   "calling the hello world route" should {
     "return an OK response" in {
       AuditStub.audit()
-      val request = buildRequest("/guidance/hello-world")
+      val request = buildRequest("/hello-world")
       val response: WSResponse = await(request.get())
       response.status shouldBe Status.OK
     }
@@ -35,7 +35,7 @@ class HelloWorldISpec extends IntegrationSpec {
   "calling the bye world route" should {
     "return an INTERNAL SERVER ERROR response" in {
       AuditStub.audit()
-      val request = buildRequest("/guidance/bye-world")
+      val request = buildRequest("/bye-world")
       val response: WSResponse = await(request.get())
       response.status shouldBe Status.INTERNAL_SERVER_ERROR
     }
