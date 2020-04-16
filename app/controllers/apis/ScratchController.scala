@@ -17,18 +17,22 @@
 package controllers.apis
 
 import config.AppConfig
+import models.audit.AuditEvent
 import javax.inject.{Inject, Singleton}
 import models.errors.InvalidProcessError
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import services.GuidanceService
+import services.{GuidanceService, AuditService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ScratchController @Inject() (appConfig: AppConfig, guidanceService: GuidanceService, mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+class ScratchController @Inject() (appConfig: AppConfig, 
+                                   guidanceService: GuidanceService, 
+                                   auditService: AuditService, 
+                                   mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
 
@@ -36,6 +40,7 @@ class ScratchController @Inject() (appConfig: AppConfig, guidanceService: Guidan
     guidanceService.submitScratchProcess(request.body).map {
       case Right(submissionResponse) =>
         val location: String = s"/guidance/scratch/${submissionResponse.id}"
+        auditService.audit("contentCreated", AuditEvent(s"Scratch process created at $location"))
         Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)
       case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError))
       case Left(error) => InternalServerError(Json.toJson(error))
