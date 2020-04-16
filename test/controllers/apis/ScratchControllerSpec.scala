@@ -19,7 +19,7 @@ package controllers.apis
 import java.util.UUID.randomUUID
 
 import base.BaseSpec
-import mocks.{MockAppConfig, MockGuidanceService}
+import mocks.{MockAppConfig, MockGuidanceService, MockAuditService}
 import models.SaveScratchSubmissionResponse
 import models.errors.{Error, InternalServerError, InvalidProcessError}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -28,14 +28,15 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import models.audit.AuditEvent
 
 import scala.concurrent.Future
 
-class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockGuidanceService {
+class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockGuidanceService with MockAuditService {
 
   private val fakeRequest = FakeRequest("OPTIONS", "/")
 
-  private val controller = new ScratchController(MockAppConfig, mockGuidanceService, stubMessagesControllerComponents())
+  private val controller = new ScratchController(MockAppConfig, mockGuidanceService, mockAuditService, stubMessagesControllerComponents())
 
   private val dummyProcess: JsValue = Json.parse(
     """|{
@@ -53,6 +54,8 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
     "return 201" in {
 
+      MockAuditService.auditSomething[AuditEvent]
+
       MockGuidanceService
         .scratchProcess(dummyProcess)
         .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
@@ -66,6 +69,8 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
     }
 
     "return process location in request header" in {
+
+      MockAuditService.auditSomething[AuditEvent]
 
       MockGuidanceService
         .scratchProcess(dummyProcess)
@@ -85,6 +90,8 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
     }
 
     "return JSON" in {
+
+      MockAuditService.auditSomething[AuditEvent]
 
       MockGuidanceService
         .scratchProcess(dummyProcess)
