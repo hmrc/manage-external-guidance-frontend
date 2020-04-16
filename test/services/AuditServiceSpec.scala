@@ -20,6 +20,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import uk.gov.hmrc.http.HeaderCarrier
 import models.audit.AuditEvent
+import models.SaveScratchSubmissionResponse
 import base.BaseSpec
 import mocks.MockAuditConnector
 
@@ -42,13 +43,13 @@ class AuditServiceSpec extends BaseSpec {
 
     }
 
-    "Accept an audit type string and an String event" in new Test {
+    "Accept an audit type string and an event object T with available Writes[T]" in new Test {
       val auditType = "SomeAuditType"
-      val eventDescription = "An audit event description"
+      val submissionResponse = SaveScratchSubmissionResponse("ID")
 
-      MockAuditConnector.sendExplicitAudit(auditType, eventDescription)
+      MockAuditConnector.sendExplicitAudit(auditType, submissionResponse)
 
-      auditService.audit(auditType, eventDescription)
+      auditService.audit(auditType, submissionResponse)
 
     }
 
