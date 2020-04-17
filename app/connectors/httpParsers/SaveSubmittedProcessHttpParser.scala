@@ -28,7 +28,7 @@ object SaveSubmittedProcessHttpParser extends HttpParser {
 
   implicit val saveSubmittedProcessHttpReads: HttpReads[RequestOutcome[SaveSubmittedProcessResponse]] = {
     case (_, _, response) if response.status == CREATED =>
-        response.validateJson[SaveSubmittedProcessResponse] match {
+      response.validateJson[SaveSubmittedProcessResponse] match {
         case Some(result) => Right(result)
         case None =>
           logger.error("Unable to parse successful response when saving a submitted process.")

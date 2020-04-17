@@ -17,7 +17,7 @@
 package services
 
 import base.BaseSpec
-import mocks.MockSubmittedProcessConnector
+import mocks.MockGuidanceConnector
 import models.errors.InternalServerError
 import models.{RequestOutcome, SaveSubmittedProcessResponse}
 import play.api.libs.json.{JsValue, Json}
@@ -29,11 +29,11 @@ import scala.util.{Failure, Success}
 
 class SubmittedProcessServiceSpec extends BaseSpec {
 
-  private trait Test extends MockSubmittedProcessConnector {
+  private trait Test extends MockGuidanceConnector {
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-    lazy val submittedProcessService: SubmittedProcessService = new SubmittedProcessService(mockConnector)
+    lazy val submittedProcessService: SubmittedProcessService = new SubmittedProcessService(mockGuidanceConnector)
 
     val processId: String = "abc12345"
     val dummyProcess: JsValue = Json.obj("meta" -> Json.obj("id"-> processId))
@@ -43,7 +43,7 @@ class SubmittedProcessServiceSpec extends BaseSpec {
 
     "Return an instance of the class SaveSubmittedProcessResponse after a successful call by the connector" in new Test {
 
-      MockSubmittedProcessConnector
+      MockGuidanceConnector
         .makeAvailableForApproval(dummyProcess)
         .returns(Future.successful(Right(SaveSubmittedProcessResponse(processId))))
 
@@ -62,7 +62,7 @@ class SubmittedProcessServiceSpec extends BaseSpec {
 
     "Return an error after an unsuccessful call by the connector" in new Test {
 
-      MockSubmittedProcessConnector
+      MockGuidanceConnector
         .makeAvailableForApproval(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 

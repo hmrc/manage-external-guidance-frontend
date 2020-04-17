@@ -28,7 +28,7 @@ object SaveScratchProcessHttpParser extends HttpParser {
 
   implicit val saveScratchProcessHttpReads: HttpReads[RequestOutcome[SaveScratchSubmissionResponse]] = {
     case (_, _, response) if response.status == CREATED =>
-        response.validateJson[SaveScratchSubmissionResponse] match {
+      response.validateJson[SaveScratchSubmissionResponse] match {
         case Some(result) => Right(result)
         case None =>
           logger.error("Unable to parse successful response when saving a scratch process.")

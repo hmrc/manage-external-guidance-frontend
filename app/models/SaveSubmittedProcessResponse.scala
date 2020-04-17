@@ -25,4 +25,3 @@ object SaveSubmittedProcessResponse {
 
   implicit val formats: OFormat[SaveSubmittedProcessResponse] = Json.format[SaveSubmittedProcessResponse]
 }
-

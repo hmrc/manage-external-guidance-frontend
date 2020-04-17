@@ -17,16 +17,12 @@
 package mocks
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-
 import play.api.libs.json.JsValue
-
 import uk.gov.hmrc.http.HeaderCarrier
-
 import connectors.GuidanceConnector
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
+import models.{RequestOutcome, SaveScratchSubmissionResponse, SaveSubmittedProcessResponse}
 
 trait MockGuidanceConnector extends MockFactory {
 
@@ -38,6 +34,13 @@ trait MockGuidanceConnector extends MockFactory {
 
       (mockGuidanceConnector
         .submitScratchProcess(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(process, *, *)
+    }
+
+    def makeAvailableForApproval(process: JsValue): CallHandler[Future[RequestOutcome[SaveSubmittedProcessResponse]]] = {
+
+      (mockGuidanceConnector
+        .makeAvailableForApproval(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
         .expects(process, *, *)
     }
 

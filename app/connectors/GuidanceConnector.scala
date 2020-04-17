@@ -23,7 +23,8 @@ import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import config.AppConfig
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
+import models.{RequestOutcome, SaveScratchSubmissionResponse, SaveSubmittedProcessResponse}
+import connectors.httpParsers.SaveSubmittedProcessHttpParser.saveSubmittedProcessHttpReads
 
 @Singleton
 class GuidanceConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
@@ -35,6 +36,13 @@ class GuidanceConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig)
     val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
 
     httpClient.POST[JsValue, RequestOutcome[SaveScratchSubmissionResponse]](endpoint, process, Seq.empty)
+  }
+
+  def makeAvailableForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[SaveSubmittedProcessResponse]] = {
+
+    val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/submitted"
+
+    httpClient.POST[JsValue, RequestOutcome[SaveSubmittedProcessResponse]](endpoint, process, Seq.empty)
   }
 
 }

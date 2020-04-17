@@ -26,6 +26,6 @@ object Error {
 
 }
 
-  object InvalidProcessError extends Error("BAD_REQUEST", "The input process is invalid")
+object InvalidProcessError extends Error("BAD_REQUEST", "The input process is invalid")
 
 object InternalServerError extends Error("INTERNAL_SERVER_ERROR", "An unexpected error has occurred")

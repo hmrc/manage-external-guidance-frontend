@@ -21,7 +21,7 @@ import java.util.UUID.randomUUID
 import base.BaseSpec
 import mocks.{MockAppConfig, MockHttpClient}
 import models.errors.InternalServerError
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
+import models.{RequestOutcome, SaveScratchSubmissionResponse, SaveSubmittedProcessResponse}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -69,6 +69,44 @@ class GuidanceConnectorSpec extends BaseSpec {
 
       val response: RequestOutcome[SaveScratchSubmissionResponse] =
         await(guidanceConnector.submitScratchProcess(dummyProcess))
+
+      response shouldBe Left(InternalServerError)
+    }
+  }
+  private trait SubmitForApprovalTest extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
+
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+
+    val guidanceConnector: GuidanceConnector = new GuidanceConnector(mockHttpClient, MockAppConfig)
+    val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/submitted"
+
+    val id: String = "Oct90005"
+    val dummyProcess: JsValue = Json.obj("processId" -> id)
+
+  }
+
+  "Calling method makeAvailableForApproval with a dummy process" should {
+
+    "Return an instance of the class SaveSubmittedProcessResponse for a successful call" in new SubmitForApprovalTest {
+
+      MockedHttpClient
+        .post(endpoint, dummyProcess)
+        .returns(Future.successful(Right(SaveSubmittedProcessResponse(id))))
+
+      val response: RequestOutcome[SaveSubmittedProcessResponse] =
+        await(guidanceConnector.makeAvailableForApproval(dummyProcess))
+
+      response shouldBe Right(SaveSubmittedProcessResponse(id))
+    }
+
+    "Return an instance of an error class when an error occurs" in new SubmitForApprovalTest {
+
+      MockedHttpClient
+        .post(endpoint, dummyProcess)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val response: RequestOutcome[SaveSubmittedProcessResponse] =
+        await(guidanceConnector.makeAvailableForApproval(dummyProcess))
 
       response shouldBe Left(InternalServerError)
     }
