@@ -32,7 +32,7 @@ class SaveSubmittedProcessHttpParserSpec extends BaseSpec with HttpVerbs with St
 
     val url: String = "/test"
 
-    val id: String = randomUUID().toString
+    val id: String = "oct90006"
 
     val validResponse: JsValue = Json.obj("id" -> id)
 
