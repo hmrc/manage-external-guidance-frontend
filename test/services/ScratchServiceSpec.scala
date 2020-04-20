@@ -59,8 +59,8 @@ class ScratchServiceSpec extends BaseSpec {
       result.onComplete {
         case Success(response) =>
           response match {
-            case Right(scratchProcessSubmissionResponse) => scratchProcessSubmissionResponse.id shouldBe uuid
-            case Left(error) => fail(s"Unexpected error returned by guidance connector : ${error.toString}")
+            case Right(scratchResponse) => scratchResponse.id shouldBe uuid
+            case Left(error) => fail(s"Unexpected error returned by scratch connector : ${error.toString}")
           }
 
         case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
@@ -79,7 +79,7 @@ class ScratchServiceSpec extends BaseSpec {
       result.onComplete {
         case Success(response) =>
           response match {
-            case Right(scratchProcessSubmissionResponse) => fail("Submission response returned when an error was expected")
+            case Right(scratchResponse) => fail("Scratch response returned when an error was expected")
             case Left(error) => error shouldBe InternalServerError
           }
 
