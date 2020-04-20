@@ -19,8 +19,8 @@ package controllers.apis
 import java.util.UUID.randomUUID
 
 import base.BaseSpec
-import mocks.{MockAppConfig, MockGuidanceService}
-import models.SaveScratchSubmissionResponse
+import mocks.{MockAppConfig, MockScratchService}
+import models.ScratchResponse
 import models.errors.{Error, InternalServerError, InvalidProcessError}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
@@ -31,7 +31,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockGuidanceService {
+class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockScratchService {
 
   private val fakeRequest = FakeRequest("OPTIONS", "/")
 
@@ -55,7 +55,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
       MockGuidanceService
         .scratchProcess(dummyProcess)
-        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
+        .returns(Future.successful(Right(ScratchResponse(uuid))))
 
       val result = {
         controller.submitScratchProcess()(fakeRequestWithBody)
@@ -69,7 +69,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
       MockGuidanceService
         .scratchProcess(dummyProcess)
-        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
+        .returns(Future.successful(Right(ScratchResponse(uuid))))
 
       val result = {
         controller.submitScratchProcess()(fakeRequestWithBody)
@@ -88,7 +88,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
       MockGuidanceService
         .scratchProcess(dummyProcess)
-        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
+        .returns(Future.successful(Right(ScratchResponse(uuid))))
 
       val result = controller.submitScratchProcess()(fakeRequestWithBody)
 
@@ -96,7 +96,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
       val jsValue: JsValue = Json.parse(contentAsString(result))
 
-      val actualResponse: SaveScratchSubmissionResponse = jsValue.as[SaveScratchSubmissionResponse]
+      val actualResponse: ScratchResponse = jsValue.as[ScratchResponse]
 
       actualResponse.id shouldBe uuid
     }

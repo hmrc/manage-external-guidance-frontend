@@ -20,7 +20,7 @@ import play.api.libs.json._
 
 import base.BaseSpec
 
-class SaveScratchSubmissionResponseSpec extends BaseSpec {
+class ScratchResponseSpec extends BaseSpec {
 
   "Serializing a scratch process submission response into JSON" should {
 
@@ -32,7 +32,7 @@ class SaveScratchSubmissionResponseSpec extends BaseSpec {
            |}""".stripMargin
       )
 
-      val response: SaveScratchSubmissionResponse = SaveScratchSubmissionResponse("2020Xy")
+      val response: ScratchResponse = ScratchResponse("2020Xy")
 
       val actual: JsValue = Json.toJson(response)
 
@@ -45,7 +45,7 @@ class SaveScratchSubmissionResponseSpec extends BaseSpec {
 
     "Create a correct instance of the class" in {
 
-      val expected: SaveScratchSubmissionResponse = SaveScratchSubmissionResponse("2020Za")
+      val expected: ScratchResponse = ScratchResponse("2020Za")
 
       val serializedResponse: JsValue = Json.parse(
         """|{
@@ -53,7 +53,7 @@ class SaveScratchSubmissionResponseSpec extends BaseSpec {
            |}""".stripMargin
       )
 
-      val actual: SaveScratchSubmissionResponse = serializedResponse.as[SaveScratchSubmissionResponse]
+      val actual: ScratchResponse = serializedResponse.as[ScratchResponse]
 
       actual shouldBe expected
     }

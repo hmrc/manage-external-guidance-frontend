@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package services
+package models
 
-import connectors.GuidanceConnector
-import javax.inject.{Inject, Singleton}
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
-import play.api.libs.json.JsValue
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.json.{Json, OFormat}
 
-import scala.concurrent.{ExecutionContext, Future}
+case class ScratchResponse(id: String)
 
-@Singleton
-class GuidanceService @Inject() (guidanceConnector: GuidanceConnector) {
+object ScratchResponse {
 
-  def submitScratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[SaveScratchSubmissionResponse]] = {
-    guidanceConnector.submitScratchProcess(process)
-  }
-
+  implicit val formats: OFormat[ScratchResponse] = Json.format[ScratchResponse]
 }

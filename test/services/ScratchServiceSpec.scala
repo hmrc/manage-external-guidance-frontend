@@ -22,20 +22,20 @@ import java.util.UUID.randomUUID
 import scala.concurrent.Future
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
+import models.{RequestOutcome, ScratchResponse}
 import models.errors.InternalServerError
 import base.BaseSpec
-import mocks.MockGuidanceConnector
+import mocks.MockScratchConnector
 
 import scala.util.{Failure, Success}
 
-class GuidanceServiceSpec extends BaseSpec {
+class ScratchServiceSpec extends BaseSpec {
 
-  private trait Test extends MockGuidanceConnector {
+  private trait Test extends MockScratchConnector {
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-    lazy val guidanceService: GuidanceService = new GuidanceService(mockGuidanceConnector)
+    lazy val guidanceService: ScratchService = new ScratchService(mockGuidanceConnector)
 
     val dummyProcess: JsValue = Json.parse(
       """|{
@@ -52,9 +52,9 @@ class GuidanceServiceSpec extends BaseSpec {
 
       MockGuidanceConnector
         .submitScratchProcess(dummyProcess)
-        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
+        .returns(Future.successful(Right(ScratchResponse(uuid))))
 
-      val result: Future[RequestOutcome[SaveScratchSubmissionResponse]] = guidanceService.submitScratchProcess(dummyProcess)
+      val result: Future[RequestOutcome[ScratchResponse]] = guidanceService.submitScratchProcess(dummyProcess)
 
       result.onComplete {
         case Success(response) => {
@@ -74,7 +74,7 @@ class GuidanceServiceSpec extends BaseSpec {
         .submitScratchProcess(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[SaveScratchSubmissionResponse]] = guidanceService.submitScratchProcess(dummyProcess)
+      val result: Future[RequestOutcome[ScratchResponse]] = guidanceService.submitScratchProcess(dummyProcess)
 
       result.onComplete {
         case Success(response) => {

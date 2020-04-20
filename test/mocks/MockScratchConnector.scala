@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
-package connectors
-
-import javax.inject.{Inject, Singleton}
+package mocks
 
 import scala.concurrent.{ExecutionContext, Future}
+import org.scalamock.handlers.CallHandler
+import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import config.AppConfig
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
+import connectors.ScratchConnector
+import models.{RequestOutcome, ScratchResponse}
 
-@Singleton
-class GuidanceConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
+trait MockScratchConnector extends MockFactory {
 
-  def submitScratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[SaveScratchSubmissionResponse]] = {
+  val mockGuidanceConnector: ScratchConnector = mock[ScratchConnector]
 
-    import connectors.httpParsers.SaveScratchProcessHttpParser.saveScratchProcessHttpReads
+  object MockGuidanceConnector {
 
-    val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
+    def submitScratchProcess(process: JsValue): CallHandler[Future[RequestOutcome[ScratchResponse]]] = {
 
-    httpClient.POST[JsValue, RequestOutcome[SaveScratchSubmissionResponse]](endpoint, process, Seq.empty)
+      (mockGuidanceConnector
+        .submitScratchProcess(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(process, *, *)
+    }
+
   }
 
 }

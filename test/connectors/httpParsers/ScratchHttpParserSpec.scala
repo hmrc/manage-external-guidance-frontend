@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import connectors.httpParsers.SaveScratchProcessHttpParser.saveScratchProcessHttpReads
+import connectors.httpParsers.ScratchHttpParser.saveScratchProcessHttpReads
 
 import java.util.UUID.randomUUID
 
@@ -25,12 +25,12 @@ import play.api.libs.json.{Json, JsValue}
 
 import uk.gov.hmrc.http.HttpResponse
 
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
+import models.{RequestOutcome, ScratchResponse}
 import models.errors.{InvalidProcessError, InternalServerError}
 
 import base.BaseSpec
 
-class SaveScratchProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status {
+class ScratchHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
   private trait Test {
 
@@ -49,7 +49,7 @@ class SaveScratchProcessHttpParserSpec extends BaseSpec with HttpVerbs with Stat
 
       private val httpResponse = HttpResponse(CREATED, Some(validResponse))
       private val result = saveScratchProcessHttpReads.read(POST, url, httpResponse)
-      result shouldBe Right(SaveScratchSubmissionResponse(id))
+      result shouldBe Right(ScratchResponse(id))
     }
   }
 
@@ -59,7 +59,7 @@ class SaveScratchProcessHttpParserSpec extends BaseSpec with HttpVerbs with Stat
 
       val httpResponse: HttpResponse = HttpResponse(BAD_REQUEST)
 
-      val result: RequestOutcome[SaveScratchSubmissionResponse] =
+      val result: RequestOutcome[ScratchResponse] =
         saveScratchProcessHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InvalidProcessError)
@@ -69,7 +69,7 @@ class SaveScratchProcessHttpParserSpec extends BaseSpec with HttpVerbs with Stat
 
       val httpResponse: HttpResponse = HttpResponse(CREATED, Some(invalidResponse))
 
-      val result: RequestOutcome[SaveScratchSubmissionResponse] =
+      val result: RequestOutcome[ScratchResponse] =
         saveScratchProcessHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InternalServerError)
@@ -79,7 +79,7 @@ class SaveScratchProcessHttpParserSpec extends BaseSpec with HttpVerbs with Stat
 
       val httpResponse: HttpResponse = HttpResponse(SERVICE_UNAVAILABLE)
 
-      val result: RequestOutcome[SaveScratchSubmissionResponse] =
+      val result: RequestOutcome[ScratchResponse] =
         saveScratchProcessHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InternalServerError)

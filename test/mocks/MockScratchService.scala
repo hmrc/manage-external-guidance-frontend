@@ -25,16 +25,16 @@ import play.api.libs.json.JsValue
 
 import uk.gov.hmrc.http.HeaderCarrier
 
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
-import services.GuidanceService
+import models.{RequestOutcome, ScratchResponse}
+import services.ScratchService
 
-trait MockGuidanceService extends MockFactory {
+trait MockScratchService extends MockFactory {
 
-  val mockGuidanceService: GuidanceService = mock[GuidanceService]
+  val mockGuidanceService: ScratchService = mock[ScratchService]
 
   object MockGuidanceService {
 
-    def scratchProcess(process: JsValue): CallHandler[Future[RequestOutcome[SaveScratchSubmissionResponse]]] = {
+    def scratchProcess(process: JsValue): CallHandler[Future[RequestOutcome[ScratchResponse]]] = {
 
       (mockGuidanceService
         .submitScratchProcess(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
