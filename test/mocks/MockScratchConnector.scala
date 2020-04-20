@@ -26,13 +26,13 @@ import models.{RequestOutcome, ScratchResponse}
 
 trait MockScratchConnector extends MockFactory {
 
-  val mockGuidanceConnector: ScratchConnector = mock[ScratchConnector]
+  val mockScratchConnector: ScratchConnector = mock[ScratchConnector]
 
-  object MockGuidanceConnector {
+  object MockScratchConnector {
 
     def submitScratchProcess(process: JsValue): CallHandler[Future[RequestOutcome[ScratchResponse]]] = {
 
-      (mockGuidanceConnector
+      (mockScratchConnector
         .submitScratchProcess(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
         .expects(process, *, *)
     }

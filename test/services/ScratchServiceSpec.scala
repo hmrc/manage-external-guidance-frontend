@@ -35,7 +35,7 @@ class ScratchServiceSpec extends BaseSpec {
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-    lazy val guidanceService: ScratchService = new ScratchService(mockGuidanceConnector)
+    lazy val scratchService: ScratchService = new ScratchService(mockScratchConnector)
 
     val dummyProcess: JsValue = Json.parse(
       """|{
@@ -46,23 +46,23 @@ class ScratchServiceSpec extends BaseSpec {
     val uuid: String = randomUUID().toString
   }
 
-  "The guidance service" should {
+  "The scratch service" should {
 
-    "Return an instance of the class ScratchProcessSubmissionResponse after a successful call by the connector" in new Test {
+    "Return an instance of the class ScratchResponse after a successful call by the connector" in new Test {
 
-      MockGuidanceConnector
+      MockScratchConnector
         .submitScratchProcess(dummyProcess)
         .returns(Future.successful(Right(ScratchResponse(uuid))))
 
-      val result: Future[RequestOutcome[ScratchResponse]] = guidanceService.submitScratchProcess(dummyProcess)
+      val result: Future[RequestOutcome[ScratchResponse]] = scratchService.submitScratchProcess(dummyProcess)
 
       result.onComplete {
-        case Success(response) => {
+        case Success(response) =>
           response match {
             case Right(scratchProcessSubmissionResponse) => scratchProcessSubmissionResponse.id shouldBe uuid
             case Left(error) => fail(s"Unexpected error returned by guidance connector : ${error.toString}")
           }
-        }
+
         case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
       }
 
@@ -70,19 +70,19 @@ class ScratchServiceSpec extends BaseSpec {
 
     "Return an error after an unsuccessful call by the connector" in new Test {
 
-      MockGuidanceConnector
+      MockScratchConnector
         .submitScratchProcess(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[ScratchResponse]] = guidanceService.submitScratchProcess(dummyProcess)
+      val result: Future[RequestOutcome[ScratchResponse]] = scratchService.submitScratchProcess(dummyProcess)
 
       result.onComplete {
-        case Success(response) => {
+        case Success(response) =>
           response match {
             case Right(scratchProcessSubmissionResponse) => fail("Submission response returned when an error was expected")
             case Left(error) => error shouldBe InternalServerError
           }
-        }
+
         case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
       }
     }
