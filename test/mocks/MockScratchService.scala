@@ -30,13 +30,13 @@ import services.ScratchService
 
 trait MockScratchService extends MockFactory {
 
-  val mockGuidanceService: ScratchService = mock[ScratchService]
+  val mockScratchService: ScratchService = mock[ScratchService]
 
-  object MockGuidanceService {
+  object MockScratchService {
 
     def scratchProcess(process: JsValue): CallHandler[Future[RequestOutcome[ScratchResponse]]] = {
 
-      (mockGuidanceService
+      (mockScratchService
         .submitScratchProcess(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
         .expects(process, *, *)
     }

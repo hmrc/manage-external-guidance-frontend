@@ -35,7 +35,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
   private val fakeRequest = FakeRequest("OPTIONS", "/")
 
-  private val controller = new ScratchController(MockAppConfig, mockGuidanceService, stubMessagesControllerComponents())
+  private val controller = new ScratchController(MockAppConfig, mockScratchService, stubMessagesControllerComponents())
 
   private val dummyProcess: JsValue = Json.parse(
     """|{
@@ -53,7 +53,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return 201" in {
 
-      MockGuidanceService
+      MockScratchService
         .scratchProcess(dummyProcess)
         .returns(Future.successful(Right(ScratchResponse(uuid))))
 
@@ -67,7 +67,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return process location in request header" in {
 
-      MockGuidanceService
+      MockScratchService
         .scratchProcess(dummyProcess)
         .returns(Future.successful(Right(ScratchResponse(uuid))))
 
@@ -86,7 +86,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return JSON" in {
 
-      MockGuidanceService
+      MockScratchService
         .scratchProcess(dummyProcess)
         .returns(Future.successful(Right(ScratchResponse(uuid))))
 
@@ -103,7 +103,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "Handle an error raised owing to an invalid process being submitted" in {
 
-      MockGuidanceService
+      MockScratchService
         .scratchProcess(dummyProcess)
         .returns(Future.successful(Left(InvalidProcessError)))
 
@@ -121,7 +121,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "Handle an internal server error" in {
 
-      MockGuidanceService
+      MockScratchService
         .scratchProcess(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
