@@ -33,27 +33,27 @@ class ApprovalServiceSpec extends BaseSpec {
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-    lazy val submittedProcessService: ApprovalService = new ApprovalService(mockApprovalConnector)
+    lazy val service: ApprovalService = new ApprovalService(mockApprovalConnector)
 
     val processId: String = "abc12345"
     val dummyProcess: JsValue = Json.obj("meta" -> Json.obj("id"-> processId))
   }
 
-  "The submittedProcess service" should {
+  "The approvalProcess service" should {
 
-    "Return an instance of the class SaveSubmittedProcessResponse after a successful call by the connector" in new Test {
+    "Return an instance of the class ApprovalResponse after a successful call by the connector" in new Test {
 
       MockApprovalConnector
         .submitForApproval(dummyProcess)
         .returns(Future.successful(Right(ApprovalResponse(processId))))
 
-      val result: Future[RequestOutcome[ApprovalResponse]] = submittedProcessService.saveForApproval(dummyProcess)
+      val result: Future[RequestOutcome[ApprovalResponse]] = service.saveForApproval(dummyProcess)
 
       result.onComplete {
         case Success(response) =>
           response match {
             case Right(response) => response.id shouldBe processId
-            case Left(error) => fail(s"Unexpected error returned by submittedProcess connector : ${error.toString}")
+            case Left(error) => fail(s"Unexpected error returned by approvalProcess connector : ${error.toString}")
           }
         case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
       }
@@ -66,12 +66,12 @@ class ApprovalServiceSpec extends BaseSpec {
         .submitForApproval(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[ApprovalResponse]] = submittedProcessService.saveForApproval(dummyProcess)
+      val result: Future[RequestOutcome[ApprovalResponse]] = service.saveForApproval(dummyProcess)
 
       result.onComplete {
         case Success(response) =>
           response match {
-            case Right(_) => fail("Submission response returned when an error was expected")
+            case Right(_) => fail("Approval response returned when an error was expected")
             case Left(error) => error shouldBe InternalServerError
           }
         case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
