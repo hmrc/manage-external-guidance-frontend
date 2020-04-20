@@ -35,7 +35,7 @@ class ScratchConnectorSpec extends BaseSpec {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val guidanceConnector: ScratchConnector = new ScratchConnector(mockHttpClient, MockAppConfig)
+    val scratchConnector: ScratchConnector = new ScratchConnector(mockHttpClient, MockAppConfig)
     val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
 
     val dummyProcess: JsValue = Json.parse(
@@ -49,14 +49,14 @@ class ScratchConnectorSpec extends BaseSpec {
 
   "Calling method submitScratchProcess with a dummy process" should {
 
-    "Return an instance of the class ScratchProcessSubmissionResponse for a successful call" in new Test {
+    "Return an instance of the class ScratchResponse for a successful call" in new Test {
 
       MockedHttpClient
         .post(endpoint, dummyProcess)
         .returns(Future.successful(Right(ScratchResponse(id))))
 
       val response: RequestOutcome[ScratchResponse] =
-        await(guidanceConnector.submitScratchProcess(dummyProcess))
+        await(scratchConnector.submitScratchProcess(dummyProcess))
 
       response shouldBe Right(ScratchResponse(id))
     }
@@ -68,7 +68,7 @@ class ScratchConnectorSpec extends BaseSpec {
         .returns(Future.successful(Left(InternalServerError)))
 
       val response: RequestOutcome[ScratchResponse] =
-        await(guidanceConnector.submitScratchProcess(dummyProcess))
+        await(scratchConnector.submitScratchProcess(dummyProcess))
 
       response shouldBe Left(InternalServerError)
     }

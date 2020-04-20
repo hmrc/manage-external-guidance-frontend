@@ -39,7 +39,7 @@ class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
   "Parsing a successful response" should {
 
-    "return a valid submitted process submission response" in new Test {
+    "return a valid approval process submission response" in new Test {
 
       private val httpResponse = HttpResponse(CREATED, Some(validResponse))
       private val result = saveApprovalHttpReads.read(POST, url, httpResponse)

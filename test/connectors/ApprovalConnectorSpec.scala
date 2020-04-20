@@ -34,16 +34,16 @@ class ApprovalConnectorSpec extends BaseSpec {
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val connector: ApprovalConnector = new ApprovalConnector(mockHttpClient, MockAppConfig)
-    val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/submitted"
+    val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/approval"
 
     val id: String = "Oct90005"
     val dummyProcess: JsValue = Json.obj("processId" -> id)
 
   }
 
-  "Calling method makeAvailableForApproval with a dummy process" should {
+  "Calling method submitForApproval with a dummy process" should {
 
-    "Return an instance of the class SaveSubmittedProcessResponse for a successful call" in new SubmitForApprovalTest {
+    "Return an instance of the class ApprovalResponse for a successful call" in new SubmitForApprovalTest {
 
       MockedHttpClient
         .post(endpoint, dummyProcess)

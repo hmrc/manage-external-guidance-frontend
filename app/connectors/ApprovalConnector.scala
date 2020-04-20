@@ -32,7 +32,7 @@ class ApprovalConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig)
 
     import connectors.httpParsers.ApprovalHttpParser.saveApprovalHttpReads
 
-    val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/submitted"
+    val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/approval"
 
     httpClient.POST[JsValue, RequestOutcome[ApprovalResponse]](endpoint, process, Seq.empty)
   }

@@ -24,7 +24,7 @@ class ApprovalResponseSpec extends BaseSpec {
   val id: String = "test1234"
   val json: JsValue = Json.obj("id" -> id)
 
-  "Serializing a submitted process response into JSON" should {
+  "Serializing an approval process response into JSON" should {
 
     "Generate the correct JSON representation for the response" in {
 
@@ -37,7 +37,7 @@ class ApprovalResponseSpec extends BaseSpec {
 
   }
 
-  "Deserializing JSON into an instance of the class SaveSubmittedProcessResponse" should {
+  "Deserializing JSON into an instance of the class ApprovalResponse" should {
 
     "Create a correct instance of the class" in {
 
