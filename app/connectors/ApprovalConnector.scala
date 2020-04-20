@@ -16,25 +16,25 @@
 
 package connectors
 
+import config.AppConfig
 import javax.inject.{Inject, Singleton}
-
-import scala.concurrent.{ExecutionContext, Future}
+import models.{RequestOutcome, ApprovalResponse}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import config.AppConfig
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class GuidanceConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
+class ApprovalConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
 
-  def submitScratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[SaveScratchSubmissionResponse]] = {
+  def submitForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
 
-    import connectors.httpParsers.SaveScratchProcessHttpParser.saveScratchProcessHttpReads
+    import connectors.httpParsers.ApprovalHttpParser.saveApprovalHttpReads
 
-    val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
+    val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/submitted"
 
-    httpClient.POST[JsValue, RequestOutcome[SaveScratchSubmissionResponse]](endpoint, process, Seq.empty)
+    httpClient.POST[JsValue, RequestOutcome[ApprovalResponse]](endpoint, process, Seq.empty)
   }
 
 }

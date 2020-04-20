@@ -19,7 +19,7 @@ package models
 import base.BaseSpec
 import play.api.libs.json._
 
-class SaveSubmittedProcessResponseSpec extends BaseSpec {
+class ApprovalResponseSpec extends BaseSpec {
 
   val id: String = "test1234"
   val json: JsValue = Json.obj("id" -> id)
@@ -28,7 +28,7 @@ class SaveSubmittedProcessResponseSpec extends BaseSpec {
 
     "Generate the correct JSON representation for the response" in {
 
-      val response: SaveSubmittedProcessResponse = SaveSubmittedProcessResponse(id)
+      val response: ApprovalResponse = ApprovalResponse(id)
 
       val actual: JsValue = Json.toJson(response)
 
@@ -41,9 +41,9 @@ class SaveSubmittedProcessResponseSpec extends BaseSpec {
 
     "Create a correct instance of the class" in {
 
-      val expected: SaveSubmittedProcessResponse = SaveSubmittedProcessResponse(id)
+      val expected: ApprovalResponse = ApprovalResponse(id)
 
-      val actual: SaveSubmittedProcessResponse = json.as[SaveSubmittedProcessResponse]
+      val actual: ApprovalResponse = json.as[ApprovalResponse]
 
       actual shouldBe expected
     }

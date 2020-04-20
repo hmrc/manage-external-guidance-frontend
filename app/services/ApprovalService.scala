@@ -16,19 +16,19 @@
 
 package services
 
-import connectors.GuidanceConnector
+import connectors.ApprovalConnector
 import javax.inject.{Inject, Singleton}
-import models.{RequestOutcome, SaveSubmittedProcessResponse}
+import models.{ApprovalResponse, RequestOutcome}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmittedProcessService @Inject() (connector: GuidanceConnector) {
+class ApprovalService @Inject()(connector: ApprovalConnector) {
 
-  def saveForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[SaveSubmittedProcessResponse]] = {
-    connector.makeAvailableForApproval(process)
+  def saveForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
+    connector.submitForApproval(process)
   }
 
 }

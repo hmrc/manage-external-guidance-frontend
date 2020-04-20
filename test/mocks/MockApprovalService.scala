@@ -16,22 +16,22 @@
 
 package mocks
 
-import models.{RequestOutcome, SaveSubmittedProcessResponse}
+import models.{RequestOutcome, ApprovalResponse}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
-import services.SubmittedProcessService
+import services.ApprovalService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockSubmittedProcessService extends MockFactory {
+trait MockApprovalService extends MockFactory {
 
-  val mockService: SubmittedProcessService = mock[SubmittedProcessService]
+  val mockService: ApprovalService = mock[ApprovalService]
 
-  object MockSubmittedProcessService {
+  object MockApprovalService {
 
-    def saveForApproval(process: JsValue): CallHandler[Future[RequestOutcome[SaveSubmittedProcessResponse]]] = {
+    def saveForApproval(process: JsValue): CallHandler[Future[RequestOutcome[ApprovalResponse]]] = {
 
       (mockService
         .saveForApproval(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))

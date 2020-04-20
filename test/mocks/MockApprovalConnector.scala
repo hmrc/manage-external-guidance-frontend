@@ -16,24 +16,25 @@
 
 package mocks
 
-import scala.concurrent.{ExecutionContext, Future}
+import connectors.ApprovalConnector
+import models.{ApprovalResponse, RequestOutcome}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
-import connectors.GuidanceConnector
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
 
-trait MockGuidanceConnector extends MockFactory {
+import scala.concurrent.{ExecutionContext, Future}
 
-  val mockGuidanceConnector: GuidanceConnector = mock[GuidanceConnector]
+trait MockApprovalConnector extends MockFactory {
 
-  object MockGuidanceConnector {
+  val mockApprovalConnector: ApprovalConnector = mock[ApprovalConnector]
 
-    def submitScratchProcess(process: JsValue): CallHandler[Future[RequestOutcome[SaveScratchSubmissionResponse]]] = {
+  object MockApprovalConnector {
 
-      (mockGuidanceConnector
-        .submitScratchProcess(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
+    def submitForApproval(process: JsValue): CallHandler[Future[RequestOutcome[ApprovalResponse]]] = {
+
+      (mockApprovalConnector
+        .submitForApproval(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
         .expects(process, *, *)
     }
 

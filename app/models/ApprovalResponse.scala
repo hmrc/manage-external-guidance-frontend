@@ -19,9 +19,9 @@ package models
 import play.api.libs.json.{Json, OFormat}
 
 // TODO confirm what is returned as id is just the ocelot process id
-case class SaveSubmittedProcessResponse(id: String)
+case class ApprovalResponse(id: String)
 
-object SaveSubmittedProcessResponse {
+object ApprovalResponse {
 
-  implicit val formats: OFormat[SaveSubmittedProcessResponse] = Json.format[SaveSubmittedProcessResponse]
+  implicit val formats: OFormat[ApprovalResponse] = Json.format[ApprovalResponse]
 }

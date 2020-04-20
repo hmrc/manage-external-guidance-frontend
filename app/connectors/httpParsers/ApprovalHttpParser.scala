@@ -17,18 +17,18 @@
 package connectors.httpParsers
 
 import models.errors.{InternalServerError, InvalidProcessError}
-import models.{RequestOutcome, SaveSubmittedProcessResponse}
+import models.{RequestOutcome, ApprovalResponse}
 import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads
 
-object SaveSubmittedProcessHttpParser extends HttpParser {
+object ApprovalHttpParser extends HttpParser {
 
-  val logger: Logger = Logger(SaveSubmittedProcessHttpParser.getClass)
+  val logger: Logger = Logger(ApprovalHttpParser.getClass)
 
-  implicit val saveSubmittedProcessHttpReads: HttpReads[RequestOutcome[SaveSubmittedProcessResponse]] = {
+  implicit val saveApprovalHttpReads: HttpReads[RequestOutcome[ApprovalResponse]] = {
     case (_, _, response) if response.status == CREATED =>
-      response.validateJson[SaveSubmittedProcessResponse] match {
+      response.validateJson[ApprovalResponse] match {
         case Some(result) => Right(result)
         case None =>
           logger.error("Unable to parse successful response when saving a submitted process.")

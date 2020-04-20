@@ -16,17 +16,15 @@
 
 package connectors.httpParsers
 
-import java.util.UUID.randomUUID
-
 import base.BaseSpec
-import connectors.httpParsers.SaveSubmittedProcessHttpParser.saveSubmittedProcessHttpReads
+import connectors.httpParsers.ApprovalHttpParser.saveApprovalHttpReads
 import models.errors.{InternalServerError, InvalidProcessError}
-import models.{RequestOutcome, SaveSubmittedProcessResponse}
+import models.{RequestOutcome, ApprovalResponse}
 import play.api.http.{HttpVerbs, Status}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpResponse
 
-class SaveSubmittedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status {
+class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
   private trait Test {
 
@@ -44,8 +42,8 @@ class SaveSubmittedProcessHttpParserSpec extends BaseSpec with HttpVerbs with St
     "return a valid submitted process submission response" in new Test {
 
       private val httpResponse = HttpResponse(CREATED, Some(validResponse))
-      private val result = saveSubmittedProcessHttpReads.read(POST, url, httpResponse)
-      result shouldBe Right(SaveSubmittedProcessResponse(id))
+      private val result = saveApprovalHttpReads.read(POST, url, httpResponse)
+      result shouldBe Right(ApprovalResponse(id))
     }
   }
 
@@ -55,8 +53,8 @@ class SaveSubmittedProcessHttpParserSpec extends BaseSpec with HttpVerbs with St
 
       val httpResponse: HttpResponse = HttpResponse(BAD_REQUEST)
 
-      val result: RequestOutcome[SaveSubmittedProcessResponse] =
-        saveSubmittedProcessHttpReads.read(POST, url, httpResponse)
+      val result: RequestOutcome[ApprovalResponse] =
+        saveApprovalHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InvalidProcessError)
     }
@@ -65,8 +63,8 @@ class SaveSubmittedProcessHttpParserSpec extends BaseSpec with HttpVerbs with St
 
       val httpResponse: HttpResponse = HttpResponse(CREATED, Some(invalidResponse))
 
-      val result: RequestOutcome[SaveSubmittedProcessResponse] =
-        saveSubmittedProcessHttpReads.read(POST, url, httpResponse)
+      val result: RequestOutcome[ApprovalResponse] =
+        saveApprovalHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InternalServerError)
     }
@@ -75,8 +73,8 @@ class SaveSubmittedProcessHttpParserSpec extends BaseSpec with HttpVerbs with St
 
       val httpResponse: HttpResponse = HttpResponse(SERVICE_UNAVAILABLE)
 
-      val result: RequestOutcome[SaveSubmittedProcessResponse] =
-        saveSubmittedProcessHttpReads.read(POST, url, httpResponse)
+      val result: RequestOutcome[ApprovalResponse] =
+        saveApprovalHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InternalServerError)
     }

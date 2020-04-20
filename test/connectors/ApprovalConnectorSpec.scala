@@ -16,12 +16,10 @@
 
 package connectors
 
-import java.util.UUID.randomUUID
-
 import base.BaseSpec
 import mocks.{MockAppConfig, MockHttpClient}
 import models.errors.InternalServerError
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
+import models.{RequestOutcome, ApprovalResponse}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,48 +27,45 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class GuidanceConnectorSpec extends BaseSpec {
+class ApprovalConnectorSpec extends BaseSpec {
 
-  private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
+  private trait SubmitForApprovalTest extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val guidanceConnector: GuidanceConnector = new GuidanceConnector(mockHttpClient, MockAppConfig)
-    val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
+    val connector: ApprovalConnector = new ApprovalConnector(mockHttpClient, MockAppConfig)
+    val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/submitted"
 
-    val dummyProcess: JsValue = Json.parse(
-      """|{
-         | "processId": "12"
-         |}""".stripMargin
-    )
+    val id: String = "Oct90005"
+    val dummyProcess: JsValue = Json.obj("processId" -> id)
 
-    val id: String = randomUUID().toString
   }
 
-  "Calling method submitScratchProcess with a dummy process" should {
+  "Calling method makeAvailableForApproval with a dummy process" should {
 
-    "Return an instance of the class ScratchProcessSubmissionResponse for a successful call" in new Test {
+    "Return an instance of the class SaveSubmittedProcessResponse for a successful call" in new SubmitForApprovalTest {
 
       MockedHttpClient
         .post(endpoint, dummyProcess)
-        .returns(Future.successful(Right(SaveScratchSubmissionResponse(id))))
+        .returns(Future.successful(Right(ApprovalResponse(id))))
 
-      val response: RequestOutcome[SaveScratchSubmissionResponse] =
-        await(guidanceConnector.submitScratchProcess(dummyProcess))
+      val response: RequestOutcome[ApprovalResponse] =
+        await(connector.submitForApproval(dummyProcess))
 
-      response shouldBe Right(SaveScratchSubmissionResponse(id))
+      response shouldBe Right(ApprovalResponse(id))
     }
 
-    "Return an instance of an error class when an error occurs" in new Test {
+    "Return an instance of an error class when an error occurs" in new SubmitForApprovalTest {
 
       MockedHttpClient
         .post(endpoint, dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val response: RequestOutcome[SaveScratchSubmissionResponse] =
-        await(guidanceConnector.submitScratchProcess(dummyProcess))
+      val response: RequestOutcome[ApprovalResponse] =
+        await(connector.submitForApproval(dummyProcess))
 
       response shouldBe Left(InternalServerError)
     }
   }
+
 }

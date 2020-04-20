@@ -17,9 +17,9 @@
 package services
 
 import base.BaseSpec
-import mocks.MockGuidanceConnector
+import mocks.MockApprovalConnector
 import models.errors.InternalServerError
-import models.{RequestOutcome, SaveSubmittedProcessResponse}
+import models.{ApprovalResponse, RequestOutcome}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -27,13 +27,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-class SubmittedProcessServiceSpec extends BaseSpec {
+class ApprovalServiceSpec extends BaseSpec {
 
-  private trait Test extends MockGuidanceConnector {
+  private trait Test extends MockApprovalConnector {
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-    lazy val submittedProcessService: SubmittedProcessService = new SubmittedProcessService(mockGuidanceConnector)
+    lazy val submittedProcessService: ApprovalService = new ApprovalService(mockApprovalConnector)
 
     val processId: String = "abc12345"
     val dummyProcess: JsValue = Json.obj("meta" -> Json.obj("id"-> processId))
@@ -43,11 +43,11 @@ class SubmittedProcessServiceSpec extends BaseSpec {
 
     "Return an instance of the class SaveSubmittedProcessResponse after a successful call by the connector" in new Test {
 
-      MockGuidanceConnector
-        .makeAvailableForApproval(dummyProcess)
-        .returns(Future.successful(Right(SaveSubmittedProcessResponse(processId))))
+      MockApprovalConnector
+        .submitForApproval(dummyProcess)
+        .returns(Future.successful(Right(ApprovalResponse(processId))))
 
-      val result: Future[RequestOutcome[SaveSubmittedProcessResponse]] = submittedProcessService.saveForApproval(dummyProcess)
+      val result: Future[RequestOutcome[ApprovalResponse]] = submittedProcessService.saveForApproval(dummyProcess)
 
       result.onComplete {
         case Success(response) =>
@@ -62,11 +62,11 @@ class SubmittedProcessServiceSpec extends BaseSpec {
 
     "Return an error after an unsuccessful call by the connector" in new Test {
 
-      MockGuidanceConnector
-        .makeAvailableForApproval(dummyProcess)
+      MockApprovalConnector
+        .submitForApproval(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[SaveSubmittedProcessResponse]] = submittedProcessService.saveForApproval(dummyProcess)
+      val result: Future[RequestOutcome[ApprovalResponse]] = submittedProcessService.saveForApproval(dummyProcess)
 
       result.onComplete {
         case Success(response) =>
