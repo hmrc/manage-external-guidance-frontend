@@ -21,7 +21,7 @@ import java.util.UUID.randomUUID
 import base.BaseSpec
 import mocks.{MockAppConfig, MockHttpClient}
 import models.errors.InternalServerError
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
+import models.{RequestOutcome, ScratchResponse}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,13 +29,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class GuidanceConnectorSpec extends BaseSpec {
+class ScratchConnectorSpec extends BaseSpec {
 
   private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val guidanceConnector: GuidanceConnector = new GuidanceConnector(mockHttpClient, MockAppConfig)
+    val scratchConnector: ScratchConnector = new ScratchConnector(mockHttpClient, MockAppConfig)
     val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
 
     val dummyProcess: JsValue = Json.parse(
@@ -49,16 +49,16 @@ class GuidanceConnectorSpec extends BaseSpec {
 
   "Calling method submitScratchProcess with a dummy process" should {
 
-    "Return an instance of the class ScratchProcessSubmissionResponse for a successful call" in new Test {
+    "Return an instance of the class ScratchResponse for a successful call" in new Test {
 
       MockedHttpClient
         .post(endpoint, dummyProcess)
-        .returns(Future.successful(Right(SaveScratchSubmissionResponse(id))))
+        .returns(Future.successful(Right(ScratchResponse(id))))
 
-      val response: RequestOutcome[SaveScratchSubmissionResponse] =
-        await(guidanceConnector.submitScratchProcess(dummyProcess))
+      val response: RequestOutcome[ScratchResponse] =
+        await(scratchConnector.submitScratchProcess(dummyProcess))
 
-      response shouldBe Right(SaveScratchSubmissionResponse(id))
+      response shouldBe Right(ScratchResponse(id))
     }
 
     "Return an instance of an error class when an error occurs" in new Test {
@@ -67,11 +67,10 @@ class GuidanceConnectorSpec extends BaseSpec {
         .post(endpoint, dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val response: RequestOutcome[SaveScratchSubmissionResponse] =
-        await(guidanceConnector.submitScratchProcess(dummyProcess))
+      val response: RequestOutcome[ScratchResponse] =
+        await(scratchConnector.submitScratchProcess(dummyProcess))
 
       response shouldBe Left(InternalServerError)
     }
   }
-
 }

@@ -17,21 +17,19 @@
 package connectors.httpParsers
 
 import models.errors.{InternalServerError, InvalidProcessError}
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
+import models.{RequestOutcome, ApprovalResponse}
 import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads
 
-object SaveScratchProcessHttpParser extends HttpParser {
+object ApprovalHttpParser extends HttpParser {
 
-  val logger: Logger = Logger(SaveScratchProcessHttpParser.getClass)
-
-  implicit val saveScratchProcessHttpReads: HttpReads[RequestOutcome[SaveScratchSubmissionResponse]] = {
+  implicit val saveApprovalHttpReads: HttpReads[RequestOutcome[ApprovalResponse]] = {
     case (_, _, response) if response.status == CREATED =>
-        response.validateJson[SaveScratchSubmissionResponse] match {
+      response.validateJson[ApprovalResponse] match {
         case Some(result) => Right(result)
         case None =>
-          logger.error("Unable to parse successful response when saving a scratch process.")
+          Logger.error("Unable to parse successful response when saving an approval process.")
           Left(InternalServerError)
       }
     case (_, _, response) if response.status == BAD_REQUEST => Left(InvalidProcessError)

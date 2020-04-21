@@ -16,44 +16,34 @@
 
 package models
 
+import base.BaseSpec
 import play.api.libs.json._
 
-import base.BaseSpec
+class ApprovalResponseSpec extends BaseSpec {
 
-class SaveScratchSubmissionResponseSpec extends BaseSpec {
+  val id: String = "test1234"
+  val json: JsValue = Json.obj("id" -> id)
 
-  "Serializing a scratch process submission response into JSON" should {
+  "Serializing an approval process response into JSON" should {
 
     "Generate the correct JSON representation for the response" in {
 
-      val expected: JsValue = Json.parse(
-        """|{
-           | "id":"2020Xy"
-           |}""".stripMargin
-      )
-
-      val response: SaveScratchSubmissionResponse = SaveScratchSubmissionResponse("2020Xy")
+      val response: ApprovalResponse = ApprovalResponse(id)
 
       val actual: JsValue = Json.toJson(response)
 
-      actual shouldBe expected
+      actual shouldBe json
     }
 
   }
 
-  "Deserializing JSON into an instance of the class ScratchProcessSubmissionResponse" should {
+  "Deserializing JSON into an instance of the class ApprovalResponse" should {
 
     "Create a correct instance of the class" in {
 
-      val expected: SaveScratchSubmissionResponse = SaveScratchSubmissionResponse("2020Za")
+      val expected: ApprovalResponse = ApprovalResponse(id)
 
-      val serializedResponse: JsValue = Json.parse(
-        """|{
-           | "id":"2020Za"
-           |}""".stripMargin
-      )
-
-      val actual: SaveScratchSubmissionResponse = serializedResponse.as[SaveScratchSubmissionResponse]
+      val actual: ApprovalResponse = json.as[ApprovalResponse]
 
       actual shouldBe expected
     }

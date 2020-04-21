@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package models
+package services
 
-import play.api.libs.json.{Json, OFormat}
+import connectors.ApprovalConnector
+import javax.inject.{Inject, Singleton}
+import models.{ApprovalResponse, RequestOutcome}
+import play.api.libs.json.JsValue
+import uk.gov.hmrc.http.HeaderCarrier
 
-case class SaveScratchSubmissionResponse(id: String)
+import scala.concurrent.{ExecutionContext, Future}
 
-object SaveScratchSubmissionResponse {
+@Singleton
+class ApprovalService @Inject()(connector: ApprovalConnector) {
 
-  implicit val formats: OFormat[SaveScratchSubmissionResponse] = Json.format[SaveScratchSubmissionResponse]
+  def saveForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
+    connector.submitForApproval(process)
+  }
+
 }

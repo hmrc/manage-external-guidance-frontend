@@ -19,8 +19,8 @@ package controllers.apis
 import java.util.UUID.randomUUID
 
 import base.BaseSpec
-import mocks.{MockAppConfig, MockGuidanceService, MockAuditService}
-import models.SaveScratchSubmissionResponse
+import mocks.{MockAppConfig, MockScratchService, MockAuditService}
+import models.ScratchResponse
 import models.errors.{Error, InternalServerError, InvalidProcessError}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
@@ -32,11 +32,11 @@ import models.audit.AuditEvent
 
 import scala.concurrent.Future
 
-class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockGuidanceService with MockAuditService {
+class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockScratchService with MockAuditService {
 
   private val fakeRequest = FakeRequest("OPTIONS", "/")
 
-  private val controller = new ScratchController(MockAppConfig, mockGuidanceService, mockAuditService, stubMessagesControllerComponents())
+  private val controller = new ScratchController(MockAppConfig, mockScratchService, mockAuditService, stubMessagesControllerComponents())
 
   private val dummyProcess: JsValue = Json.parse(
     """|{
@@ -56,9 +56,9 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
       MockAuditService.auditSomething[AuditEvent]
 
-      MockGuidanceService
+      MockScratchService
         .scratchProcess(dummyProcess)
-        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
+        .returns(Future.successful(Right(ScratchResponse(uuid))))
 
       val result = {
         controller.submitScratchProcess()(fakeRequestWithBody)
@@ -72,9 +72,9 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
       MockAuditService.auditSomething[AuditEvent]
 
-      MockGuidanceService
+      MockScratchService
         .scratchProcess(dummyProcess)
-        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
+        .returns(Future.successful(Right(ScratchResponse(uuid))))
 
       val result = {
         controller.submitScratchProcess()(fakeRequestWithBody)
@@ -93,9 +93,9 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
       MockAuditService.auditSomething[AuditEvent]
 
-      MockGuidanceService
+      MockScratchService
         .scratchProcess(dummyProcess)
-        .returns(Future.successful(Right(SaveScratchSubmissionResponse(uuid))))
+        .returns(Future.successful(Right(ScratchResponse(uuid))))
 
       val result = controller.submitScratchProcess()(fakeRequestWithBody)
 
@@ -103,14 +103,14 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
       val jsValue: JsValue = Json.parse(contentAsString(result))
 
-      val actualResponse: SaveScratchSubmissionResponse = jsValue.as[SaveScratchSubmissionResponse]
+      val actualResponse: ScratchResponse = jsValue.as[ScratchResponse]
 
       actualResponse.id shouldBe uuid
     }
 
     "Handle an error raised owing to an invalid process being submitted" in {
 
-      MockGuidanceService
+      MockScratchService
         .scratchProcess(dummyProcess)
         .returns(Future.successful(Left(InvalidProcessError)))
 
@@ -128,7 +128,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockG
 
     "Handle an internal server error" in {
 
-      MockGuidanceService
+      MockScratchService
         .scratchProcess(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 

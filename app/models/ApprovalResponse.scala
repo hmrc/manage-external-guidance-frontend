@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package models.errors
+package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Error(code: String, message: String)
+// TODO confirm what is returned as id is just the ocelot process id
+case class ApprovalResponse(id: String)
 
-object Error {
+object ApprovalResponse {
 
-  implicit val formats: OFormat[Error] = Json.format[Error]
-
+  implicit val formats: OFormat[ApprovalResponse] = Json.format[ApprovalResponse]
 }
-
-object InvalidProcessError extends Error("BAD_REQUEST", "The input process is invalid")
-
-object InternalServerError extends Error("INTERNAL_SERVER_ERROR", "An unexpected error has occurred")
