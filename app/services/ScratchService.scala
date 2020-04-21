@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ScratchService @Inject()(scratchConnector: ScratchConnector) {
+class ScratchService @Inject() (scratchConnector: ScratchConnector) {
 
   def submitScratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ScratchResponse]] = {
     scratchConnector.submitScratchProcess(process)

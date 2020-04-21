@@ -36,7 +36,7 @@ class ApprovalServiceSpec extends BaseSpec {
     lazy val service: ApprovalService = new ApprovalService(mockApprovalConnector)
 
     val processId: String = "abc12345"
-    val dummyProcess: JsValue = Json.obj("meta" -> Json.obj("id"-> processId))
+    val dummyProcess: JsValue = Json.obj("meta" -> Json.obj("id" -> processId))
   }
 
   "The approvalProcess service" should {
