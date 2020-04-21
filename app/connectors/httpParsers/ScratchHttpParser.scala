@@ -24,14 +24,12 @@ import uk.gov.hmrc.http.HttpReads
 
 object ScratchHttpParser extends HttpParser {
 
-  val logger: Logger = Logger(ScratchHttpParser.getClass)
-
   implicit val saveScratchProcessHttpReads: HttpReads[RequestOutcome[ScratchResponse]] = {
     case (_, _, response) if response.status == CREATED =>
       response.validateJson[ScratchResponse] match {
         case Some(result) => Right(result)
         case None =>
-          logger.error("Unable to parse successful response when saving a scratch process.")
+          Logger.error("Unable to parse successful response when saving a scratch process.")
           Left(InternalServerError)
       }
     case (_, _, response) if response.status == BAD_REQUEST => Left(InvalidProcessError)

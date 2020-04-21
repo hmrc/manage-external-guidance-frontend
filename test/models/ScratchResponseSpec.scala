@@ -22,7 +22,7 @@ import base.BaseSpec
 
 class ScratchResponseSpec extends BaseSpec {
 
-  "Serializing a scratch process submission response into JSON" should {
+  "Serializing a scratch response into JSON" should {
 
     "Generate the correct JSON representation for the response" in {
 
@@ -41,7 +41,7 @@ class ScratchResponseSpec extends BaseSpec {
 
   }
 
-  "Deserializing JSON into an instance of the class ScratchProcessSubmissionResponse" should {
+  "Deserializing JSON into an instance of the class ScratchResponse" should {
 
     "Create a correct instance of the class" in {
 

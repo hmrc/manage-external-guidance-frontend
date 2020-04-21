@@ -45,7 +45,7 @@ class ScratchHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
   "Parsing a successful response" should {
 
-    "return a valid scratch process submission response" in new Test {
+    "return a valid scratch response" in new Test {
 
       private val httpResponse = HttpResponse(CREATED, Some(validResponse))
       private val result = saveScratchProcessHttpReads.read(POST, url, httpResponse)
