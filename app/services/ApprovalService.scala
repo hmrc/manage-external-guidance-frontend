@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ApprovalService @Inject()(connector: ApprovalConnector) {
 
-  def saveForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
+  def submitForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
     connector.submitForApproval(process)
   }
 

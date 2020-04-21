@@ -47,7 +47,7 @@ class ApprovalServiceSpec extends BaseSpec {
         .submitForApproval(dummyProcess)
         .returns(Future.successful(Right(ApprovalResponse(processId))))
 
-      val result: Future[RequestOutcome[ApprovalResponse]] = service.saveForApproval(dummyProcess)
+      val result: Future[RequestOutcome[ApprovalResponse]] = service.submitForApproval(dummyProcess)
 
       result.onComplete {
         case Success(response) =>
@@ -66,7 +66,7 @@ class ApprovalServiceSpec extends BaseSpec {
         .submitForApproval(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[ApprovalResponse]] = service.saveForApproval(dummyProcess)
+      val result: Future[RequestOutcome[ApprovalResponse]] = service.submitForApproval(dummyProcess)
 
       result.onComplete {
         case Success(response) =>
