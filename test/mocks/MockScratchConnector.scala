@@ -17,26 +17,22 @@
 package mocks
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-
 import play.api.libs.json.JsValue
-
 import uk.gov.hmrc.http.HeaderCarrier
+import connectors.ScratchConnector
+import models.{RequestOutcome, ScratchResponse}
 
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
-import services.GuidanceService
+trait MockScratchConnector extends MockFactory {
 
-trait MockGuidanceService extends MockFactory {
+  val mockScratchConnector: ScratchConnector = mock[ScratchConnector]
 
-  val mockGuidanceService: GuidanceService = mock[GuidanceService]
+  object MockScratchConnector {
 
-  object MockGuidanceService {
+    def submitScratchProcess(process: JsValue): CallHandler[Future[RequestOutcome[ScratchResponse]]] = {
 
-    def scratchProcess(process: JsValue): CallHandler[Future[RequestOutcome[SaveScratchSubmissionResponse]]] = {
-
-      (mockGuidanceService
+      (mockScratchConnector
         .submitScratchProcess(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
         .expects(process, *, *)
     }

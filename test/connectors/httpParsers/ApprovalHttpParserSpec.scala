@@ -16,27 +16,21 @@
 
 package connectors.httpParsers
 
-import connectors.httpParsers.SaveScratchProcessHttpParser.saveScratchProcessHttpReads
-
-import java.util.UUID.randomUUID
-
+import base.BaseSpec
+import connectors.httpParsers.ApprovalHttpParser.saveApprovalHttpReads
+import models.errors.{InternalServerError, InvalidProcessError}
+import models.{RequestOutcome, ApprovalResponse}
 import play.api.http.{HttpVerbs, Status}
-import play.api.libs.json.{Json, JsValue}
-
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpResponse
 
-import models.{RequestOutcome, SaveScratchSubmissionResponse}
-import models.errors.{InvalidProcessError, InternalServerError}
-
-import base.BaseSpec
-
-class SaveScratchProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status {
+class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
   private trait Test {
 
     val url: String = "/test"
 
-    val id: String = randomUUID().toString
+    val id: String = "oct90006"
 
     val validResponse: JsValue = Json.obj("id" -> id)
 
@@ -45,11 +39,11 @@ class SaveScratchProcessHttpParserSpec extends BaseSpec with HttpVerbs with Stat
 
   "Parsing a successful response" should {
 
-    "return a valid scratch process submission response" in new Test {
+    "return a valid approval response" in new Test {
 
       private val httpResponse = HttpResponse(CREATED, Some(validResponse))
-      private val result = saveScratchProcessHttpReads.read(POST, url, httpResponse)
-      result shouldBe Right(SaveScratchSubmissionResponse(id))
+      private val result = saveApprovalHttpReads.read(POST, url, httpResponse)
+      result shouldBe Right(ApprovalResponse(id))
     }
   }
 
@@ -59,8 +53,8 @@ class SaveScratchProcessHttpParserSpec extends BaseSpec with HttpVerbs with Stat
 
       val httpResponse: HttpResponse = HttpResponse(BAD_REQUEST)
 
-      val result: RequestOutcome[SaveScratchSubmissionResponse] =
-        saveScratchProcessHttpReads.read(POST, url, httpResponse)
+      val result: RequestOutcome[ApprovalResponse] =
+        saveApprovalHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InvalidProcessError)
     }
@@ -69,8 +63,8 @@ class SaveScratchProcessHttpParserSpec extends BaseSpec with HttpVerbs with Stat
 
       val httpResponse: HttpResponse = HttpResponse(CREATED, Some(invalidResponse))
 
-      val result: RequestOutcome[SaveScratchSubmissionResponse] =
-        saveScratchProcessHttpReads.read(POST, url, httpResponse)
+      val result: RequestOutcome[ApprovalResponse] =
+        saveApprovalHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InternalServerError)
     }
@@ -79,8 +73,8 @@ class SaveScratchProcessHttpParserSpec extends BaseSpec with HttpVerbs with Stat
 
       val httpResponse: HttpResponse = HttpResponse(SERVICE_UNAVAILABLE)
 
-      val result: RequestOutcome[SaveScratchSubmissionResponse] =
-        saveScratchProcessHttpReads.read(POST, url, httpResponse)
+      val result: RequestOutcome[ApprovalResponse] =
+        saveApprovalHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InternalServerError)
     }

@@ -21,19 +21,19 @@ import javax.inject.{Inject, Singleton}
 import models.errors.InvalidProcessError
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import services.GuidanceService
+import services.ScratchService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ScratchController @Inject() (appConfig: AppConfig, guidanceService: GuidanceService, mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+class ScratchController @Inject() (appConfig: AppConfig, scratchService: ScratchService, mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
 
   def submitScratchProcess(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
-    guidanceService.submitScratchProcess(request.body).map {
+    scratchService.submitScratchProcess(request.body).map {
       case Right(submissionResponse) =>
         val location: String = s"/guidance/scratch/${submissionResponse.id}"
         Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)
