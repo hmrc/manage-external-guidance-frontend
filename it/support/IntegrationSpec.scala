@@ -67,9 +67,10 @@ trait IntegrationSpec
     super.afterAll()
   }
 
-  def buildRequest(path: String): WSRequest = client
-    .url(s"http://localhost:$port$rootContext$path")
-    .withFollowRedirects(false)
+  def buildRequest(path: String): WSRequest =
+    client
+      .url(s"http://localhost:$port$rootContext$path")
+      .withFollowRedirects(false)
 
   def document(response: WSResponse): JsValue = Json.parse(response.body)
 }

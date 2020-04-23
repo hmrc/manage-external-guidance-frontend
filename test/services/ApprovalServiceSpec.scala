@@ -36,7 +36,7 @@ class ApprovalServiceSpec extends BaseSpec {
     lazy val service: ApprovalService = new ApprovalService(mockApprovalConnector)
 
     val processId: String = "abc12345"
-    val dummyProcess: JsValue = Json.obj("meta" -> Json.obj("id"-> processId))
+    val dummyProcess: JsValue = Json.obj("meta" -> Json.obj("id" -> processId))
   }
 
   "The approvalProcess service" should {
@@ -47,7 +47,7 @@ class ApprovalServiceSpec extends BaseSpec {
         .submitForApproval(dummyProcess)
         .returns(Future.successful(Right(ApprovalResponse(processId))))
 
-      val result: Future[RequestOutcome[ApprovalResponse]] = service.saveForApproval(dummyProcess)
+      val result: Future[RequestOutcome[ApprovalResponse]] = service.submitForApproval(dummyProcess)
 
       result.onComplete {
         case Success(response) =>
@@ -66,7 +66,7 @@ class ApprovalServiceSpec extends BaseSpec {
         .submitForApproval(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[ApprovalResponse]] = service.saveForApproval(dummyProcess)
+      val result: Future[RequestOutcome[ApprovalResponse]] = service.submitForApproval(dummyProcess)
 
       result.onComplete {
         case Success(response) =>
