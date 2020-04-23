@@ -17,39 +17,82 @@
 package services
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
+import java.util.UUID
 import uk.gov.hmrc.http.HeaderCarrier
-import models.audit.AuditEvent
-import models.ScratchResponse
+import org.joda.time.DateTime
 import base.BaseSpec
-import mocks.MockAuditConnector
+import play.api.libs.json._
+import mocks.{MockAppConfig, MockAuditConnector}
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import models.audit.ApprovedForPublishingEvent
+import models.audit._
 
 class AuditServiceSpec extends BaseSpec {
 
   private trait Test extends MockAuditConnector {
     implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
-    lazy val auditService: AuditService = new AuditService(mockAuditConnector)
+    lazy val auditService: AuditService = new AuditService(MockAppConfig, mockAuditConnector)
+    val PID = "SomeonePID"
+    val processID = "ext90002"
+    val processTitle = "A process title"
+    val submissionTime = new DateTime(2020,4,23,13,0,0)
+    val submissionDate = submissionTime.toLocalDate
+
+    val eventUUID = UUID.randomUUID().toString
+    val tagsData: Map[String, String] = Map("clientIP" -> "-", 
+                   "path" -> "-", 
+                   "X-Session-ID" -> "-", 
+                   "Akamai-Reputation" -> "-", 
+                   "X-Request-ID" -> "-", 
+                   "deviceID" -> "-", 
+                   "clientPort" -> "-",
+                   "transactionName" -> "approvedForPublishing")
+    val approvalEvent = ApprovedForPublishingEvent(PID, processID, submissionDate, processTitle)
+    val factCheckEvent = FactCheckSubmissionEvent(PID, processID, submissionDate, processTitle)
+    val readyForPubEvent = ReadyForPublishingEvent(PID, processID, submissionDate, processTitle)
   }
 
   "The Audit service" should {
 
-    "Accept an audit type string and an AuditEvent object" in new Test {
-      val auditType = "SomeAuditType"
-      val eventDescription = "An audit event description"
+    "Accept an ApprovedForPublishingEvent object" in new Test {
+      val details = Json.toJson(approvalEvent)  
+      val extendedEvent = ExtendedDataEvent("manage-external-guidance-frontend", 
+                                            "approvedForPublishing",
+                                            eventUUID,
+                                            tagsData,
+                                            details,
+                                            submissionTime)
+      MockAuditConnector.sendExtendedEvent(extendedEvent)
 
-      MockAuditConnector.sendExplicitAudit(auditType, AuditEvent(eventDescription))
-
-      auditService.audit(auditType, AuditEvent(eventDescription))
+      auditService.audit(approvalEvent)
 
     }
 
-    "Accept an audit type string and an event object T with available Writes[T]" in new Test {
-      val auditType = "SomeAuditType"
-      val submissionResponse = SaveScratchSubmissionResponse("ID")
+    "Accept an FactCheckSubmissionEvent object" in new Test {
+      val details = Json.toJson(factCheckEvent)  
+      val extendedEvent = ExtendedDataEvent("manage-external-guidance-frontend", 
+                                            "approvedForPublishing",
+                                            eventUUID,
+                                            tagsData,
+                                            details,
+                                            submissionTime)
+      MockAuditConnector.sendExtendedEvent(extendedEvent)
 
-      MockAuditConnector.sendExplicitAudit(auditType, submissionResponse)
+      auditService.audit(factCheckEvent)
 
-      auditService.audit(auditType, submissionResponse)
+    }
+
+    "Accept an ReadyForPublishingEvent object" in new Test {
+      val details = Json.toJson(approvalEvent)  
+      val extendedEvent = ExtendedDataEvent("manage-external-guidance-frontend", 
+                                            "approvedForPublishing",
+                                            eventUUID,
+                                            tagsData,
+                                            details,
+                                            submissionTime)
+      MockAuditConnector.sendExtendedEvent(extendedEvent)
+
+      auditService.audit(approvalEvent)
 
     }
 

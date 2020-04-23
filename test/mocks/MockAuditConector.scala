@@ -16,16 +16,14 @@
 
 package mocks
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Future, ExecutionContext}
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 
-import play.api.libs.json.Writes
-
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-
+import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
 trait MockAuditConnector extends MockFactory {
 
@@ -33,10 +31,11 @@ trait MockAuditConnector extends MockFactory {
 
   object MockAuditConnector {
 
-    def sendExplicitAudit[T](auditType: String, detail: T): CallHandler[Unit] = {
+    def sendExtendedEvent(event: ExtendedDataEvent): CallHandler[Future[AuditResult]] = {
       (mockAuditConnector
-        .sendExplicitAudit[T](_: String, _: T)(_: HeaderCarrier, _: ExecutionContext, _: Writes[T]))
-        .expects(auditType, detail, *, *, *)
+        .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(*, *, *)
+        .returns(Future.successful(AuditResult.Success))
     }
 
   }

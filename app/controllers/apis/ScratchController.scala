@@ -23,7 +23,8 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import services.{ScratchService, AuditService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-
+import org.joda.time.LocalDate
+import models.audit.DummyScratchSubmissionEvent
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -39,6 +40,8 @@ class ScratchController @Inject() (appConfig: AppConfig,
     scratchService.submitScratchProcess(request.body).map {
       case Right(submissionResponse) =>
         val location: String = s"/guidance/scratch/${submissionResponse.id}"
+        // TODO Dummy event log, as currently auditable code incomplete
+        auditService.audit(DummyScratchSubmissionEvent("SomeonePID", "Scratch", LocalDate.now, "Scratch Title"))
         Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)
       case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError))
       case Left(error) => InternalServerError(Json.toJson(error))

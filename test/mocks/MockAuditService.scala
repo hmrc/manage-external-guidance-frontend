@@ -21,9 +21,9 @@ import scala.concurrent.ExecutionContext
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 
-import play.api.libs.json.Writes
 import uk.gov.hmrc.http.HeaderCarrier
 import services.AuditService
+import models.audit.AuditEvent
 
 trait MockAuditService extends MockFactory {
 
@@ -31,20 +31,19 @@ trait MockAuditService extends MockFactory {
 
   object MockAuditService {
 
-    def audit[T](auditType: String, event: T): CallHandler[Unit] = {
+    def audit(event: AuditEvent, path: Option[String]): CallHandler[Unit] = {
 
       (mockAuditService
-        .audit(_: String, _:T)(_: HeaderCarrier, _: ExecutionContext, _: Writes[T]))
-        .expects(auditType, event, *, *, *)
+        .audit(_: AuditEvent, _:Option[String])(_: HeaderCarrier, _: ExecutionContext))
+        .expects(event, path, *, *)
     }
 
-    def auditSomething[T](): CallHandler[Unit] = {
+    def auditSomething(): CallHandler[Unit] = {
 
       (mockAuditService
-        .audit(_: String, _:T)(_: HeaderCarrier, _: ExecutionContext, _: Writes[T]))
-        .expects(*, *, *, *, *)
+        .audit(_: AuditEvent, _:Option[String])(_: HeaderCarrier, _: ExecutionContext))
+        .expects(*, *, *, *)
     }
-
   }
 
 }

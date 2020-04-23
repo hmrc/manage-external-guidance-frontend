@@ -28,7 +28,6 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import models.audit.AuditEvent
 
 import scala.concurrent.Future
 
@@ -54,7 +53,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return 201" in {
 
-      MockAuditService.auditSomething[AuditEvent]
+      MockAuditService.auditSomething
 
       MockScratchService
         .scratchProcess(dummyProcess)
@@ -70,7 +69,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return process location in request header" in {
 
-      MockAuditService.auditSomething[AuditEvent]
+      MockAuditService.auditSomething
 
       MockScratchService
         .scratchProcess(dummyProcess)
@@ -91,7 +90,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return JSON" in {
 
-      MockAuditService.auditSomething[AuditEvent]
+      MockAuditService.auditSomething
 
       MockScratchService
         .scratchProcess(dummyProcess)
