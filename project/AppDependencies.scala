@@ -8,7 +8,7 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "govuk-template"           % "5.54.0-play-26",
     "uk.gov.hmrc"             %% "play-ui"                  % "8.8.0-play-26",
     "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.7.0",
-    "uk.gov.hmrc"             %% "play-frontend-govuk"      % "0.37.0-play-26",
+    "uk.gov.hmrc"             %% "play-frontend-govuk"      % "0.41.0-play-26",
     "org.webjars.npm"         %  "govuk-frontend"           % "3.5.0",
     "com.typesafe.play"       %% "play-json-joda"           % "2.6.13",
   )

@@ -54,7 +54,7 @@ class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnect
   def audit(event: AuditEvent, path: Option[String] = None)(implicit hc: HeaderCarrier, context: ExecutionContext): Unit =
     auditConnector.sendExtendedEvent(toExtendedDataEvent(event, path)).map{
       case Success => logger.info(s"Splunk Audit successful")
-      case Failure(err, _) => logger.warn(s"Splunkn Audit failed with error $err")
+      case Failure(err, _) => logger.warn(s"Splunk Audit failed with error $err")
       case Disabled => logger.info("Auditing Disabled")
     }
 }
