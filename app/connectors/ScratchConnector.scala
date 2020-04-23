@@ -26,7 +26,7 @@ import config.AppConfig
 import models.{RequestOutcome, ScratchResponse}
 
 @Singleton
-class ScratchConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
+class ScratchConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
 
   def submitScratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ScratchResponse]] = {
 

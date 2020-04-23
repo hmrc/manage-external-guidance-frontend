@@ -27,14 +27,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait MockApprovalService extends MockFactory {
 
-  val mockService: ApprovalService = mock[ApprovalService]
+  val mockApprovalService: ApprovalService = mock[ApprovalService]
 
   object MockApprovalService {
 
-    def saveForApproval(process: JsValue): CallHandler[Future[RequestOutcome[ApprovalResponse]]] = {
+    def submitForApproval(process: JsValue): CallHandler[Future[RequestOutcome[ApprovalResponse]]] = {
 
-      (mockService
-        .saveForApproval(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
+      (mockApprovalService
+        .submitForApproval(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
         .expects(process, *, *)
     }
 
