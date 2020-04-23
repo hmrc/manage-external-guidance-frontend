@@ -17,15 +17,45 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Writes
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import config.AppConfig
+import play.api.libs.json.JodaWrites
+import play.api.libs.json._
+import org.joda.time.DateTime
+import play.api.Logger
+import play.api.http.HeaderNames
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.AuditExtensions
+import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Disabled, Failure, Success}
+import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import scala.concurrent.ExecutionContext
+import models.audit.AuditEvent
 
 @Singleton
-class AuditService @Inject() (auditConnector: AuditConnector) {
+class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnector) {
+  private val referrer: HeaderCarrier => String = _.headers.find(_._1 == HeaderNames.REFERER).map(_._2).getOrElse("-")
+  private val logger = Logger(getClass)
 
-  def audit[T](auditType: String, event: T)(implicit hc: HeaderCarrier, context: ExecutionContext, writes: Writes[T]): Unit = 
-    auditConnector.sendExplicitAudit(auditType, event)
+  // implicit val dateTimeJsReader: Reads[DateTime] = JodaReads.jodaDateReads("yyyyMMddHHmmss")
+  implicit val dateTimeWriter: Writes[DateTime] = JodaWrites.jodaDateWrites("dd/MM/yyyy HH:mm:ss")
+  implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
 
+  private def toExtendedDataEvent(event: AuditEvent, path: Option[String])(implicit hc: HeaderCarrier): ExtendedDataEvent = {
+    val details: JsValue =
+      Json.toJson(AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()).as[JsObject].deepMerge(event.detail.as[JsObject])
+
+    ExtendedDataEvent(
+      auditSource = appConfig.appName,
+      auditType = event.auditType,
+      tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(event.transactionName, path.fold(referrer(hc))(x => x)),
+      detail = details
+    )
+  }
+
+  def audit(event: AuditEvent, path: Option[String] = None)(implicit hc: HeaderCarrier, context: ExecutionContext): Unit =
+    auditConnector.sendExtendedEvent(toExtendedDataEvent(event, path)).map{
+      case Success => logger.info(s"Splunk Audit successful")
+      case Failure(err, _) => logger.warn(s"Splunkn Audit failed with error $err")
+      case Disabled => logger.info("Auditing Disabled")
+    }
 }

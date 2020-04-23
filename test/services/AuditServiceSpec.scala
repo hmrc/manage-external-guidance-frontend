@@ -20,7 +20,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import uk.gov.hmrc.http.HeaderCarrier
 import models.audit.AuditEvent
-import models.SaveScratchSubmissionResponse
+import models.ScratchResponse
 import base.BaseSpec
 import mocks.MockAuditConnector
 

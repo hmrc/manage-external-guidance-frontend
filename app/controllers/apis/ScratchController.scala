@@ -17,7 +17,6 @@
 package controllers.apis
 
 import config.AppConfig
-import models.audit.AuditEvent
 import javax.inject.{Inject, Singleton}
 import models.errors.InvalidProcessError
 import play.api.libs.json.{JsValue, Json}
@@ -40,7 +39,6 @@ class ScratchController @Inject() (appConfig: AppConfig,
     scratchService.submitScratchProcess(request.body).map {
       case Right(submissionResponse) =>
         val location: String = s"/guidance/scratch/${submissionResponse.id}"
-        auditService.audit("contentCreated", AuditEvent(s"Scratch process created at $location"))
         Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)
       case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError))
       case Left(error) => InternalServerError(Json.toJson(error))

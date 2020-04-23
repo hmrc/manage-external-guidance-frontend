@@ -21,6 +21,7 @@ import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
+  val appName: String = "manage-external-guidance-frontend"
   val analyticsToken: String
   val analyticsHost: String
   val reportAProblemPartialUrl: String

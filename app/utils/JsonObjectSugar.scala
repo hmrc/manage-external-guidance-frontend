@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package models.audit
+package utils
 
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsNull, JsObject, Json}
 
-trait AuditEvent {
-  val transactionName: String
-  val detail: JsValue
-  val auditType: String
+trait JsonObjectSugar {
+
+  def jsonObjNoNulls(fields: (String, Json.JsValueWrapper)*): JsObject =
+    JsObject(Json.obj(fields:_*).fields.filterNot(_._2 == JsNull))
+
 }
