@@ -28,10 +28,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ScratchController @Inject() (appConfig: AppConfig, 
-                                   scratchService: ScratchService, 
-                                   auditService: AuditService, 
-                                   mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+class ScratchController @Inject() (appConfig: AppConfig, scratchService: ScratchService, auditService: AuditService, mcc: MessagesControllerComponents)
+    extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
 

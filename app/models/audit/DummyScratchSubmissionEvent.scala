@@ -25,15 +25,16 @@ case class DummyScratchSubmissionEvent(PID: String, processID: String, processTi
   val submittedDate: LocalDate = LocalDate.now
   override val transactionName: String = "dummyScratchEvent"
   override val detail: JsValue = Json.toJson(this)
-  override val auditType: String = "dummyScratchEvent"    
+  override val auditType: String = "dummyScratchEvent"
 }
 
 object DummyScratchSubmissionEvent extends JsonObjectSugar {
-  
+
   val dateFormatter = DateTimeFormat.forPattern("YYYY-MM-dd")
+
   implicit val writes: Writes[DummyScratchSubmissionEvent] = Writes { event =>
     jsonObjNoNulls(
-      "PID" ->event.PID,
+      "PID" -> event.PID,
       "processID" -> event.processID,
       "submittedDate" -> event.submittedDate.toString(dateFormatter),
       "processTitle" -> event.processTitle

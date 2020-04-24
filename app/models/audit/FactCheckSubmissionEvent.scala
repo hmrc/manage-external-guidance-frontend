@@ -25,7 +25,7 @@ case class FactCheckSubmissionEvent(PID: String, processID: String, processTitle
   val submittedDate: LocalDate = LocalDate.now
   override val transactionName: String = "submittedForFactCheck"
   override val detail: JsValue = Json.toJson(this)
-  override val auditType: String = "submittedForFactCheck"    
+  override val auditType: String = "submittedForFactCheck"
 }
 
 object FactCheckSubmissionEvent extends JsonObjectSugar {
@@ -33,7 +33,7 @@ object FactCheckSubmissionEvent extends JsonObjectSugar {
 
   implicit val writes: Writes[FactCheckSubmissionEvent] = Writes { event =>
     jsonObjNoNulls(
-      "PID" ->event.PID,
+      "PID" -> event.PID,
       "processID" -> event.processID,
       "submittedDate" -> event.submittedDate.toString(dateFormatter),
       "processTitle" -> event.processTitle

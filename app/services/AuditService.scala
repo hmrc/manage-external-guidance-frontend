@@ -33,26 +33,29 @@ import models.audit.AuditEvent
 
 @Singleton
 class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnector) {
-  private val referrer: HeaderCarrier => String = _.headers.find(_._1 == HeaderNames.REFERER).map(_._2).getOrElse("-")
   private val logger = Logger(getClass)
+  private val referrer: HeaderCarrier => String = _.headers.find(_._1 == HeaderNames.REFERER).map(_._2).getOrElse("-")
 
   implicit val dateTimeWriter: Writes[DateTime] = JodaWrites.jodaDateWrites("dd/MM/yyyy HH:mm:ss")
   implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
 
-  private def toExtendedDataEvent(event: AuditEvent, path: Option[String])(implicit hc: HeaderCarrier): ExtendedDataEvent = {
-    val details: JsValue =
-      Json.toJson(AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()).as[JsObject].deepMerge(event.detail.as[JsObject])
-
+  private def toExtendedDataEvent(event: AuditEvent, path: Option[String])(implicit hc: HeaderCarrier): ExtendedDataEvent =
     ExtendedDataEvent(
       auditSource = appConfig.appName,
       auditType = event.auditType,
       tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(event.transactionName, path.fold(referrer(hc))(x => x)),
-      detail = details
+      detail = Json
+        .toJson(
+          AuditExtensions
+            .auditHeaderCarrier(hc)
+            .toAuditDetails()
+        )
+        .as[JsObject]
+        .deepMerge(event.detail.as[JsObject])
     )
-  }
 
   def audit(event: AuditEvent, path: Option[String] = None)(implicit hc: HeaderCarrier, context: ExecutionContext): Unit =
-    auditConnector.sendExtendedEvent(toExtendedDataEvent(event, path)).map{
+    auditConnector.sendExtendedEvent(toExtendedDataEvent(event, path)).map {
       case Success => logger.info(s"Splunk Audit successful")
       case Failure(err, _) => logger.warn(s"Splunk Audit failed with error $err")
       case Disabled => logger.info("Auditing Disabled")
