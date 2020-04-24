@@ -36,7 +36,6 @@ class AuditServiceSpec extends BaseSpec {
     val processID = "ext90002"
     val processTitle = "A process title"
     val submissionTime = new DateTime(2020,4,23,13,0,0)
-    val submissionDate = submissionTime.toLocalDate
 
     val eventUUID = UUID.randomUUID().toString
     val tagsData: Map[String, String] = Map("clientIP" -> "-", 
@@ -47,9 +46,9 @@ class AuditServiceSpec extends BaseSpec {
                    "deviceID" -> "-", 
                    "clientPort" -> "-",
                    "transactionName" -> "approvedForPublishing")
-    val approvalEvent = ApprovedForPublishingEvent(PID, processID, submissionDate, processTitle)
-    val factCheckEvent = FactCheckSubmissionEvent(PID, processID, submissionDate, processTitle)
-    val readyForPubEvent = ReadyForPublishingEvent(PID, processID, submissionDate, processTitle)
+    val approvalEvent = ApprovedForPublishingEvent(PID, processID, processTitle)
+    val factCheckEvent = FactCheckSubmissionEvent(PID, processID, processTitle)
+    val readyForPubEvent = ReadyForPublishingEvent(PID, processID, processTitle)
   }
 
   "The Audit service" should {

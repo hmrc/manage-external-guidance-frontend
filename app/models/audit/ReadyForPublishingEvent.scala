@@ -21,7 +21,8 @@ import org.joda.time.LocalDate
 import play.api.libs.json.{JsValue, Json, Writes}
 import utils.JsonObjectSugar
 
-case class ReadyForPublishingEvent(PID: String, processID: String, submittedDate: LocalDate, processTitle: String) extends AuditEvent {
+case class ReadyForPublishingEvent(PID: String, processID: String, processTitle: String) extends AuditEvent {
+  val submittedDate: LocalDate = LocalDate.now
   override val transactionName: String = "readyForPublishing"
   override val detail: JsValue = Json.toJson(this)
   override val auditType: String = "readyForPublishing"    
