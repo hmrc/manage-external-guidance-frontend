@@ -44,20 +44,13 @@ class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnect
       auditSource = appConfig.appName,
       auditType = event.auditType,
       tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(event.transactionName, path.fold(referrer(hc))(x => x)),
-      detail = Json
-        .toJson(
-          AuditExtensions
-            .auditHeaderCarrier(hc)
-            .toAuditDetails()
-        )
-        .as[JsObject]
-        .deepMerge(event.detail.as[JsObject])
+      detail = Json.toJson(AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()).as[JsObject].deepMerge(event.detail.as[JsObject])
     )
 
   def audit(event: AuditEvent, path: Option[String] = None)(implicit hc: HeaderCarrier, context: ExecutionContext): Unit =
     auditConnector.sendExtendedEvent(toExtendedDataEvent(event, path)).map {
-      case Success => logger.info(s"Splunk Audit successful")
-      case Failure(err, _) => logger.warn(s"Splunk Audit failed with error $err")
+      case Success => logger.info(s"Audit successful")
+      case Failure(err, _) => logger.warn(s"Audit failed with error $err")
       case Disabled => logger.info("Auditing Disabled")
     }
 }
