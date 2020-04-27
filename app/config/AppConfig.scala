@@ -17,7 +17,7 @@
 package config
 
 import javax.inject.{Inject, Singleton}
-import play.api.Configuration
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
@@ -27,10 +27,17 @@ trait AppConfig {
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
   val externalGuidanceBaseUrl: String
+  val loginUrl: String
+  val continueUrl: String
+  val designerRole: String
+  val approverRole: String
+  val publisherRole: String
+  val config: Configuration
+  val env: Environment
 }
 
 @Singleton
-class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
+class AppConfigImpl @Inject() (val config: Configuration, servicesConfig: ServicesConfig, val env: Environment) extends AppConfig {
   private val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
   private val serviceIdentifier = "MyService"
   val analyticsToken: String = config.get[String](s"google-analytics.token")
@@ -39,4 +46,9 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   val reportAProblemNonJSUrl: String = s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
   lazy val externalGuidanceBaseUrl: String = servicesConfig.baseUrl("external-guidance")
   val appName = config.get[String]("appName")
+  lazy val loginUrl: String = servicesConfig.getString("strideAuth.login.url")
+  lazy val continueUrl: String = servicesConfig.getString(("strideAuth.login.continueUrl"))
+  lazy val designerRole: String = servicesConfig.getString("strideAuth.roles.designer")
+  lazy val approverRole: String = servicesConfig.getString("strideAuth.roles.approver")
+  lazy val publisherRole: String = servicesConfig.getString("strideAuth.roles.publisher")
 }

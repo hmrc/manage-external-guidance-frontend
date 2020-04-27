@@ -1,5 +1,9 @@
 service.name = External Guidance
 
+error.unauthorized401.pageTitle = Unauthorized page title
+error.unauthorized401.heading = Unauthorized heading
+error.unauthorized401.message = Unauthorized message
+
 # Compliance statement
 # ----------------------------------------------------------
 accessibility.title=Accessibility statement for External Guidance - to Be Defined

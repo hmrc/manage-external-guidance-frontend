@@ -20,26 +20,21 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.i18n._
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import config.AppConfig
-import controllers.actions.IdentifierAction
-import views.html.hello_world
 
-import scala.concurrent.Future
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+
+import config.ErrorHandler
 
 @Singleton
-class HelloWorldController @Inject() (appConfig: AppConfig, identify: IdentifierAction, mcc: MessagesControllerComponents, view: hello_world)
-    extends FrontendController(mcc)
-    with I18nSupport {
+class UnauthorizedController @Inject() (errorHandler: ErrorHandler, mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
 
-  implicit val config: AppConfig = appConfig
-
-  val helloWorld: Action[AnyContent] = identify.async { implicit request =>
-    Future.successful(Ok(view()))
+  val onPageLoad: Action[AnyContent] = Action { implicit request =>
+    Ok(
+      errorHandler.standardErrorTemplate(
+        "error.unauthorized401.pageTitle",
+        "error.unauthorized401.heading",
+        "error.unauthorized401.message"
+      )
+    )
   }
-
-  val byeWorld: Action[AnyContent] = Action.async { implicit request =>
-    throw new Exception("Something went wrong")
-  }
-
 }
