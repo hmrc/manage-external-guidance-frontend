@@ -37,7 +37,7 @@ class ScratchController @Inject() (appConfig: AppConfig, scratchService: Scratch
     scratchService.submitScratchProcess(request.body).map {
       case Right(submissionResponse) =>
         val location: String = s"/guidance/scratch/${submissionResponse.id}"
-        auditService.audit(ApprovedForPublishingEvent("SomeonePID", "Scratch", "Scratch Title"), Some(location))
+        auditService.audit(ApprovedForPublishingEvent("SomeonePID", "Scratch", "Scratch Title"))
         Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)
       case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError))
       case Left(error) => InternalServerError(Json.toJson(error))

@@ -31,7 +31,6 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
-import models.audit.ReadyForPublishingEvent
 
 class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockScratchService with MockAuditService {
 
@@ -55,7 +54,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return 201" in {
 
-      val event = ApprovedForPublishingEvent("SomeonePID", "processID", "Process Title")
+      val event = ApprovedForPublishingEvent("SomeonePID", "Scratch", "Scratch Title")
 
       MockAuditService.audit(event)
 
@@ -73,7 +72,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return process location in request header" in {
 
-      val event = FactCheckSubmissionEvent("SomeonePID", "processID", "Process Title")
+      val event = ApprovedForPublishingEvent("SomeonePID", "Scratch", "Scratch Title")
 
       MockAuditService.audit(event)
 
@@ -97,7 +96,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return JSON" in {
 
-      val event = ReadyForPublishingEvent("SomeonePID", "processID", "Process Title")
+      val event = ApprovedForPublishingEvent("SomeonePID", "Scratch", "Scratch Title")
 
       MockAuditService.audit(event)
 
