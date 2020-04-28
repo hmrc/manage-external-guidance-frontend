@@ -21,6 +21,7 @@ import java.util.UUID.randomUUID
 import base.BaseSpec
 import mocks.{MockAppConfig, MockScratchService, MockAuditService}
 import models.ScratchResponse
+import models.audit._
 import models.errors.{Error, InternalServerError, InvalidProcessError}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
@@ -30,6 +31,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
+import models.audit.ReadyForPublishingEvent
 
 class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockScratchService with MockAuditService {
 
@@ -53,7 +55,9 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return 201" in {
 
-      MockAuditService.auditSomething
+      val event = ApprovedForPublishingEvent("SomeonePID", "processID", "Process Title")
+
+      MockAuditService.audit(event)
 
       MockScratchService
         .scratchProcess(dummyProcess)
@@ -69,7 +73,10 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return process location in request header" in {
 
-      MockAuditService.auditSomething
+      val event = FactCheckSubmissionEvent("SomeonePID", "processID", "Process Title")
+
+      MockAuditService.audit(event)
+
 
       MockScratchService
         .scratchProcess(dummyProcess)
@@ -90,7 +97,9 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return JSON" in {
 
-      MockAuditService.auditSomething
+      val event = ReadyForPublishingEvent("SomeonePID", "processID", "Process Title")
+
+      MockAuditService.audit(event)
 
       MockScratchService
         .scratchProcess(dummyProcess)

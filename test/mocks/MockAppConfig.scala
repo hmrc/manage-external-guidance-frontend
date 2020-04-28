@@ -24,4 +24,5 @@ object MockAppConfig extends AppConfig {
   override val reportAProblemPartialUrl: String = "someUrl"
   override val reportAProblemNonJSUrl: String = "someJsUrl"
   override val externalGuidanceBaseUrl: String = "http://external-guidance-base-url"
+  override val appName: String = "manage-external-guidance-frontend"
 }

@@ -31,19 +31,13 @@ trait MockAuditService extends MockFactory {
 
   object MockAuditService {
 
-    def audit(event: AuditEvent, path: Option[String]): CallHandler[Unit] = {
+    def audit(event: AuditEvent, path: Option[String] = None): CallHandler[Unit] = {
 
       (mockAuditService
         .audit(_: AuditEvent, _:Option[String])(_: HeaderCarrier, _: ExecutionContext))
         .expects(event, path, *, *)
     }
 
-    def auditSomething(): CallHandler[Unit] = {
-
-      (mockAuditService
-        .audit(_: AuditEvent, _:Option[String])(_: HeaderCarrier, _: ExecutionContext))
-        .expects(*, *, *, *)
-    }
   }
 
 }
