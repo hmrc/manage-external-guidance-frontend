@@ -38,14 +38,15 @@ class AuditServiceSpec extends BaseSpec {
     val submissionTime = new DateTime(2020,4,23,13,0,0)
 
     val eventUUID = UUID.randomUUID().toString
-    def tagsData(name: String): Map[String, String] = Map("clientIP" -> "-", 
-                   "path" -> "-", 
-                   "X-Session-ID" -> "-", 
-                   "Akamai-Reputation" -> "-", 
-                   "X-Request-ID" -> "-", 
-                   "deviceID" -> "-", 
-                   "clientPort" -> "-",
-                   "transactionName" -> name)
+    def tagsData(name: String, path: Option[String] = None): Map[String, String] = 
+                Map("clientIP" -> "-", 
+                    "path" -> s"${path.getOrElse("-")}", 
+                    "X-Session-ID" -> "-", 
+                    "Akamai-Reputation" -> "-", 
+                    "X-Request-ID" -> "-", 
+                    "deviceID" -> "-", 
+                    "clientPort" -> "-",
+                    "transactionName" -> name)
     val approvalEvent = ApprovedForPublishingEvent(PID, processID, processTitle)
     val factCheckEvent = FactCheckSubmissionEvent(PID, processID, processTitle)
     val readyForPubEvent = ReadyForPublishingEvent(PID, processID, processTitle)
@@ -54,44 +55,47 @@ class AuditServiceSpec extends BaseSpec {
   "The Audit service" should {
 
     "Accept an ApprovedForPublishingEvent object" in new Test {
-      val details = Json.toJson(approvalEvent)  
+      val details = Json.toJson(approvalEvent)
+      val path = Some("/guidance/scratch")
       val extendedEvent = ExtendedDataEvent("manage-external-guidance-frontend", 
                                             "approvedForPublishing",
                                             eventUUID,
-                                            tagsData("approvedForPublishing"),
+                                            tagsData("approvedForPublishing", path),
                                             details,
                                             submissionTime)
       MockAuditConnector.sendExtendedEvent(extendedEvent)
 
-      auditService.audit(approvalEvent)
+      auditService.audit(approvalEvent, path)
 
     }
 
     "Accept an FactCheckSubmissionEvent object" in new Test {
-      val details = Json.toJson(factCheckEvent)  
+      val details = Json.toJson(factCheckEvent)
+      val path = Some("/guidance/approve")
       val extendedEvent = ExtendedDataEvent("manage-external-guidance-frontend", 
                                             "submittedForFactCheck",
                                             eventUUID,
-                                            tagsData("submittedForFactCheck"),
+                                            tagsData("submittedForFactCheck", path),
                                             details,
                                             submissionTime)
       MockAuditConnector.sendExtendedEvent(extendedEvent)
 
-      auditService.audit(factCheckEvent)
+      auditService.audit(factCheckEvent, path)
 
     }
 
     "Accept an ReadyForPublishingEvent object" in new Test {
-      val details = Json.toJson(readyForPubEvent)  
+      val details = Json.toJson(readyForPubEvent)
+      val path = Some("/guidance/publish")
       val extendedEvent = ExtendedDataEvent("manage-external-guidance-frontend", 
                                             "readyForPublishing",
                                             eventUUID,
-                                            tagsData("readyForPublishing"),
+                                            tagsData("readyForPublishing", path),
                                             details,
                                             submissionTime)
       MockAuditConnector.sendExtendedEvent(extendedEvent)
 
-      auditService.audit(readyForPubEvent)
+      auditService.audit(readyForPubEvent, path)
 
     }
 
