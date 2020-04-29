@@ -17,7 +17,7 @@
 package pages
 
 import play.api.http.Status
-import play.api.libs.ws.{WSRequest, WSResponse}
+import play.api.libs.ws.WSResponse
 import stubs.AuditStub
 import support.IntegrationSpec
 

@@ -21,6 +21,7 @@ import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
+  val appName: String
   val analyticsToken: String
   val analyticsHost: String
   val reportAProblemPartialUrl: String
@@ -37,4 +38,5 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   val reportAProblemPartialUrl: String = s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifier"
   val reportAProblemNonJSUrl: String = s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
   lazy val externalGuidanceBaseUrl: String = servicesConfig.baseUrl("external-guidance")
+  val appName = config.get[String]("appName")
 }

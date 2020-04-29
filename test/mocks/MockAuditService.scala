@@ -16,13 +16,28 @@
 
 package mocks
 
-import config.AppConfig
+import scala.concurrent.ExecutionContext
 
-object MockAppConfig extends AppConfig {
-  override val analyticsToken: String = "token"
-  override val analyticsHost: String = "host"
-  override val reportAProblemPartialUrl: String = "someUrl"
-  override val reportAProblemNonJSUrl: String = "someJsUrl"
-  override val externalGuidanceBaseUrl: String = "http://external-guidance-base-url"
-  override val appName: String = "manage-external-guidance-frontend"
+import org.scalamock.handlers.CallHandler
+import org.scalamock.scalatest.MockFactory
+
+import uk.gov.hmrc.http.HeaderCarrier
+import services.AuditService
+import models.audit.AuditEvent
+
+trait MockAuditService extends MockFactory {
+
+  val mockAuditService: AuditService = mock[AuditService]
+
+  object MockAuditService {
+
+    def audit(event: AuditEvent, path: Option[String] = None): CallHandler[Unit] = {
+
+      (mockAuditService
+        .audit(_: AuditEvent, _:Option[String])(_: HeaderCarrier, _: ExecutionContext))
+        .expects(event, path, *, *)
+    }
+
+  }
+
 }

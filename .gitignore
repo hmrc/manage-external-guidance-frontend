@@ -11,6 +11,8 @@ dist
 eclipse
 *.eml
 .history
+.metals
+.bloop
 .idea
 /.idea_modules
 *.iml
@@ -24,6 +26,7 @@ precompiled
 /.project
 project/project
 project/target
+project/metals.sbt
 /RUNNING_PID
 server.pid
 /.settings

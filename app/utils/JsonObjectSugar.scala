@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package mocks
+package utils
 
-import config.AppConfig
+import play.api.libs.json.{JsNull, JsObject, Json}
 
-object MockAppConfig extends AppConfig {
-  override val analyticsToken: String = "token"
-  override val analyticsHost: String = "host"
-  override val reportAProblemPartialUrl: String = "someUrl"
-  override val reportAProblemNonJSUrl: String = "someJsUrl"
-  override val externalGuidanceBaseUrl: String = "http://external-guidance-base-url"
-  override val appName: String = "manage-external-guidance-frontend"
+trait JsonObjectSugar {
+
+  def jsonObjNoNulls(fields: (String, Json.JsValueWrapper)*): JsObject =
+    JsObject(Json.obj(fields: _*).fields.filterNot(_._2 == JsNull))
+
 }

@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package mocks
+package models.audit
 
-import config.AppConfig
+import play.api.libs.json.JsValue
 
-object MockAppConfig extends AppConfig {
-  override val analyticsToken: String = "token"
-  override val analyticsHost: String = "host"
-  override val reportAProblemPartialUrl: String = "someUrl"
-  override val reportAProblemNonJSUrl: String = "someJsUrl"
-  override val externalGuidanceBaseUrl: String = "http://external-guidance-base-url"
-  override val appName: String = "manage-external-guidance-frontend"
+trait AuditEvent {
+  val transactionName: String
+  val detail: JsValue
+  val auditType: String
 }
