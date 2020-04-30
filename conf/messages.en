@@ -1,8 +1,8 @@
 service.name = External Guidance
 
-error.unauthorized401.pageTitle = Unauthorized page title
-error.unauthorized401.heading = Unauthorized heading
-error.unauthorized401.message = Unauthorized message
+error.unauthorized401.pageTitle = You can’t access this service with this account
+error.unauthorized401.heading = You can’t access this service with this account
+error.unauthorized401.message =
 
 # Compliance statement
 # ----------------------------------------------------------
