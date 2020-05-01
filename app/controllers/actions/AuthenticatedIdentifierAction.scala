@@ -57,7 +57,7 @@ class AuthenticatedIdentifierAction @Inject() (
 
     // Allow access for all roles
     authorised(
-      Enrolment(appConfig.designerRole) or Enrolment(appConfig.approverRole) or Enrolment(appConfig.publisherRole) and AuthProviders(PrivilegedApplication)
+      (Enrolment(appConfig.designerRole) or Enrolment(appConfig.approverRole) or Enrolment(appConfig.publisherRole)) and AuthProviders(PrivilegedApplication)
     ).retrieve(credentials) {
       case Some(Credentials(providerId, _)) => {
         block(IdentifierRequest(request, providerId))
