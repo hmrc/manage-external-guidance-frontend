@@ -38,16 +38,14 @@ trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with
 class AuthenticatedIdentifierAction @Inject() (
     override val authConnector: AuthConnector,
     appConfig: AppConfig,
-    val parser: BodyParsers.Default
+    val parser: BodyParsers.Default,
+    val config: Configuration,
+    val env: Environment
 )(
     implicit val executionContext: ExecutionContext
 ) extends IdentifierAction
     with AuthorisedFunctions
     with AuthRedirects {
-
-  // Define class members required by ancestor traits
-  val config: Configuration = appConfig.config
-  val env: Environment = appConfig.env
 
   val logger: Logger = Logger(getClass)
 

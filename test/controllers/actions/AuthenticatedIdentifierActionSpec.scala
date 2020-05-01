@@ -19,24 +19,20 @@ package controllers.actions
 import javax.inject.Inject
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import play.api.http.Status
 import play.api.mvc._
-
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisationException, Enrolment}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
-
 import uk.gov.hmrc.http.HeaderCarrier
-
 import controllers.routes
 import base.AuthBaseSpec
 import mocks.{MockAppConfig, MockAuthConnector}
+import play.api.{Configuration, Environment}
 
 class AuthenticatedIdentifierActionSpec extends AuthBaseSpec with MockAuthConnector {
 
@@ -64,6 +60,8 @@ class AuthenticatedIdentifierActionSpec extends AuthBaseSpec with MockAuthConnec
     implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
     val bodyParser = app.injector.instanceOf[BodyParsers.Default]
+    val config = app.injector.instanceOf[Configuration]
+    val env = app.injector.instanceOf[Environment]
   }
 
   "AuthenticatedIdentifierAction" should {
@@ -80,7 +78,7 @@ class AuthenticatedIdentifierActionSpec extends AuthBaseSpec with MockAuthConnec
         )
         .returns(Future.successful(Some(Credentials("id", "type"))))
 
-      val authAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(mockAuthConnector, MockAppConfig, bodyParser)
+      val authAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(mockAuthConnector, MockAppConfig, bodyParser, config, env)
 
       val target: Harness = new Harness(authAction)
 
@@ -101,7 +99,7 @@ class AuthenticatedIdentifierActionSpec extends AuthBaseSpec with MockAuthConnec
         )
         .returns(Future.successful(None))
 
-      val authAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(mockAuthConnector, MockAppConfig, bodyParser)
+      val authAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(mockAuthConnector, MockAppConfig, bodyParser, config, env)
 
       val target: Harness = new Harness(authAction)
 
@@ -116,7 +114,7 @@ class AuthenticatedIdentifierActionSpec extends AuthBaseSpec with MockAuthConnec
   "Redirect user to Stride login of no session record exists" in new AuthTestData {
 
     val authAction: AuthenticatedIdentifierAction =
-      new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(AuthorisationException.fromString("SessionRecordNotFound")), MockAppConfig, bodyParser)
+      new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(AuthorisationException.fromString("SessionRecordNotFound")), MockAppConfig, bodyParser, config, env)
 
     val target: Harness = new Harness(authAction)
 
@@ -133,7 +131,7 @@ class AuthenticatedIdentifierActionSpec extends AuthBaseSpec with MockAuthConnec
   "Redirect user to unauthorised page if authentication fails" in new AuthTestData {
 
     val authAction: AuthenticatedIdentifierAction =
-      new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(AuthorisationException.fromString("Insufficient Enrolments")), MockAppConfig, bodyParser)
+      new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(AuthorisationException.fromString("Insufficient Enrolments")), MockAppConfig, bodyParser, config, env)
 
     val target: Harness = new Harness(authAction)
 

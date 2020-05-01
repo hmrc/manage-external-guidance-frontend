@@ -18,8 +18,6 @@ package mocks
 
 import config.AppConfig
 
-import play.api.{Configuration, Environment}
-
 object MockAppConfig extends AppConfig {
   override val analyticsToken: String = "token"
   override val analyticsHost: String = "host"
@@ -32,8 +30,4 @@ object MockAppConfig extends AppConfig {
   lazy val designerRole: String = "Designer"
   lazy val approverRole: String = "Approver"
   lazy val publisherRole: String = "Publisher"
-
-  lazy val env: Environment = Environment.simple()
-  lazy val config: Configuration = Configuration.load(env)
-
 }

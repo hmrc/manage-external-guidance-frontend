@@ -17,7 +17,7 @@
 package config
 
 import javax.inject.{Inject, Singleton}
-import play.api.{Configuration, Environment}
+import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
@@ -32,12 +32,10 @@ trait AppConfig {
   val designerRole: String
   val approverRole: String
   val publisherRole: String
-  val config: Configuration
-  val env: Environment
 }
 
 @Singleton
-class AppConfigImpl @Inject() (val config: Configuration, servicesConfig: ServicesConfig, val env: Environment) extends AppConfig {
+class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
   private val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
   private val serviceIdentifier = "MyService"
   val analyticsToken: String = config.get[String](s"google-analytics.token")
