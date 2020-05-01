@@ -38,7 +38,7 @@ class HelloWorldController @Inject() (appConfig: AppConfig, identify: Identifier
     Future.successful(Ok(view()))
   }
 
-  val byeWorld: Action[AnyContent] = Action.async { implicit request =>
+  val byeWorld: Action[AnyContent] = Action.async { _ =>
     throw new Exception("Something went wrong")
   }
 

@@ -17,7 +17,7 @@
 package pages
 
 import play.api.http.Status
-import play.api.libs.ws.{WSRequest, WSResponse}
+import play.api.libs.ws.WSResponse
 import stubs.{AuditStub, AuthStub}
 import support.IntegrationSpec
 
@@ -32,17 +32,12 @@ class HelloWorldISpec extends IntegrationSpec {
       response.status shouldBe Status.OK
     }
 
-    "return a redirect response for an unauthorized user" in {
+    "return an UNAUTHORISED response for an authorized user" in {
       AuditStub.audit()
       AuthStub.unauthorised()
       val request = buildRequest("/hello-world")
       val response: WSResponse = await(request.get())
-      response.status shouldBe Status.SEE_OTHER
-
-      response.header("location") match {
-        case Some(redirectUrl) => redirectUrl shouldBe "/external-guidance/unauthorized"
-        case None => fail("Redirect location not defined after failed authentication")
-      }
+      response.status shouldBe Status.UNAUTHORIZED
     }
   }
 

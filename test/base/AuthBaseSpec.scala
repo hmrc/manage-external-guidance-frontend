@@ -16,10 +16,10 @@
 
 package base
 
-import play.api.inject.Injector
-import play.api.mvc.MessagesControllerComponents
-
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.inject.Injector
+import play.api.mvc.{BodyParsers, MessagesControllerComponents}
+import play.api.{Configuration, Environment}
 
 trait AuthBaseSpec extends BaseSpec with GuiceOneAppPerSuite {
 
@@ -28,4 +28,7 @@ trait AuthBaseSpec extends BaseSpec with GuiceOneAppPerSuite {
   lazy val injector: Injector = app.injector
 
   lazy val messagesControllerComponents: MessagesControllerComponents = injector.instanceOf[MessagesControllerComponents]
+  lazy val bodyParser = app.injector.instanceOf[BodyParsers.Default]
+  lazy val config = app.injector.instanceOf[Configuration]
+  lazy val env = app.injector.instanceOf[Environment]
 }

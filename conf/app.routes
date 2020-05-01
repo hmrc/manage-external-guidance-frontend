@@ -6,8 +6,6 @@ GET        /bye-world               controllers.HelloWorldController.byeWorld
 
 GET        /accessibility           controllers.AccessibilityStatementController.getPage
 
-GET        /unauthorized            controllers.UnauthorizedController.onPageLoad
-
 POST       /process/scratch         controllers.apis.ScratchController.submitScratchProcess
 OPTIONS    /process/scratch         controllers.apis.ScratchController.scratchProcessOptions
 

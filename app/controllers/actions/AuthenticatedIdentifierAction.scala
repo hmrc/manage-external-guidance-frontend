@@ -16,9 +16,8 @@
 
 package controllers.actions
 
+import config.{AppConfig, ErrorHandler}
 import javax.inject.Inject
-import config.AppConfig
-import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -40,7 +39,8 @@ class AuthenticatedIdentifierAction @Inject() (
     appConfig: AppConfig,
     val parser: BodyParsers.Default,
     val config: Configuration,
-    val env: Environment
+    val env: Environment,
+    errorHandler: ErrorHandler
 )(
     implicit val executionContext: ExecutionContext
 ) extends IdentifierAction
@@ -53,25 +53,29 @@ class AuthenticatedIdentifierAction @Inject() (
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
+    val unauthorizedResult = Unauthorized(
+      errorHandler.standardErrorTemplate(
+        "error.unauthorized401.pageTitle",
+        "error.unauthorized401.heading",
+        "error.unauthorized401.message"
+      )(request)
+    )
+
     // Allow access for all roles
     authorised(
       (Enrolment(appConfig.designerRole) or Enrolment(appConfig.approverRole) or Enrolment(appConfig.publisherRole)) and AuthProviders(PrivilegedApplication)
     ).retrieve(credentials) {
-      case Some(Credentials(providerId, _)) => {
+      case Some(Credentials(providerId, _)) =>
         block(IdentifierRequest(request, providerId))
-      }
-      case None => {
+      case None =>
         logger.warn("Identifier action could not retrieve provider identifier in method invokeBlock")
-        Future.successful(Redirect(routes.UnauthorizedController.onPageLoad()))
-      }
+        Future.successful(unauthorizedResult)
     } recover {
-      case _: NoActiveSession => {
+      case _: NoActiveSession =>
         Redirect(appConfig.loginUrl, Map("successURL" -> Seq(appConfig.continueUrl)))
-      }
-      case authEx: AuthorisationException => {
+      case authEx: AuthorisationException =>
         logger.warn(s"Method invokeBlock of identifier action received an authorization exception with the message ${authEx.getMessage}")
-        Redirect(routes.UnauthorizedController.onPageLoad())
-      }
+        unauthorizedResult
     }
   }
 }

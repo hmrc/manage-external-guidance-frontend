@@ -43,9 +43,9 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   val reportAProblemPartialUrl: String = s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifier"
   val reportAProblemNonJSUrl: String = s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
   lazy val externalGuidanceBaseUrl: String = servicesConfig.baseUrl("external-guidance")
-  val appName = config.get[String]("appName")
+  val appName: String = config.get[String]("appName")
   lazy val loginUrl: String = servicesConfig.getString("strideAuth.login.url")
-  lazy val continueUrl: String = servicesConfig.getString(("strideAuth.login.continueUrl"))
+  lazy val continueUrl: String = servicesConfig.getString("strideAuth.login.continueUrl")
   lazy val designerRole: String = servicesConfig.getString("strideAuth.roles.designer")
   lazy val approverRole: String = servicesConfig.getString("strideAuth.roles.approver")
   lazy val publisherRole: String = servicesConfig.getString("strideAuth.roles.publisher")

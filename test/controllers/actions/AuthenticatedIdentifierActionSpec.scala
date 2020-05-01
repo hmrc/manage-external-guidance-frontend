@@ -16,23 +16,19 @@
 
 package controllers.actions
 
-import javax.inject.Inject
-
-import scala.concurrent.{ExecutionContext, Future}
+import base.AuthBaseSpec
+import config.ErrorHandler
+import mocks.{MockAppConfig, MockAuthConnector}
 import play.api.http.Status
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders, AuthorisationException, Enrolment}
-import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval}
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
+import play.twirl.api.Html
+import uk.gov.hmrc.auth.core.AuthorisationException
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.HeaderCarrier
-import controllers.routes
-import base.AuthBaseSpec
-import mocks.{MockAppConfig, MockAuthConnector}
-import play.api.{Configuration, Environment}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class AuthenticatedIdentifierActionSpec extends AuthBaseSpec with MockAuthConnector {
 
@@ -44,100 +40,69 @@ class AuthenticatedIdentifierActionSpec extends AuthBaseSpec with MockAuthConnec
     }
   }
 
-  // Define fake authentication connector to simulate authentication failures
-  class FakeFailingAuthConnector @Inject() (exceptionToBeReturned: Throwable) extends AuthConnector {
-
-    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
-      Future.failed(exceptionToBeReturned)
-  }
-
   trait AuthTestData {
 
     val path: String = "/path"
-    val fakeRequest = FakeRequest("GET", path)
+    val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", path)
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
-    val bodyParser = app.injector.instanceOf[BodyParsers.Default]
-    val config = app.injector.instanceOf[Configuration]
-    val env = app.injector.instanceOf[Environment]
+    lazy val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
+    (mockErrorHandler
+      .standardErrorTemplate(_: String, _: String, _: String)(_: Request[_]))
+      .stubs(*, *, *, *)
+      .returns(Html(""))
+
+    lazy val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, MockAppConfig, bodyParser, config, env, mockErrorHandler)
+
+    lazy val target = new Harness(authAction)
   }
 
   "AuthenticatedIdentifierAction" should {
 
-    "Enable authorized users to access the functionality of a controller" in new AuthTestData {
+    "grant access if authorisation is successful" in new AuthTestData {
 
-      MockAuthConnector
-        .authorize(
-          (Enrolment(MockAppConfig.designerRole) or
-            Enrolment(MockAppConfig.approverRole) or
-            Enrolment(MockAppConfig.publisherRole) and
-            AuthProviders(PrivilegedApplication)),
-          credentials
-        )
-        .returns(Future.successful(Some(Credentials("id", "type"))))
+      MockAuthConnector.authorize().returns(Future.successful(Some(Credentials("id", "type"))))
 
-      val authAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(mockAuthConnector, MockAppConfig, bodyParser, config, env)
-
-      val target: Harness = new Harness(authAction)
-
-      val result = target.onPageLoad()(fakeRequest)
+      val result: Future[Result] = target.onPageLoad()(fakeRequest)
 
       status(result) shouldBe Status.OK
     }
 
-    "Redirect user to unauthorized page if authentication connector fails to return provider details" in new AuthTestData {
+    "deny access to user if no credentials returned" in new AuthTestData {
 
-      MockAuthConnector
-        .authorize(
-          (Enrolment(MockAppConfig.designerRole) or
-            Enrolment(MockAppConfig.approverRole) or
-            Enrolment(MockAppConfig.publisherRole) and
-            AuthProviders(PrivilegedApplication)),
-          credentials
-        )
-        .returns(Future.successful(None))
+      MockAuthConnector.authorize().returns(Future.successful(None))
 
-      val authAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(mockAuthConnector, MockAppConfig, bodyParser, config, env)
+      val result: Future[Result] = target.onPageLoad()(fakeRequest)
 
-      val target: Harness = new Harness(authAction)
+      status(result) shouldBe UNAUTHORIZED
+    }
 
-      val result = target.onPageLoad()(fakeRequest)
+
+    "redirect user to Stride login if no session record exists" in new AuthTestData {
+
+      val error: Throwable = AuthorisationException.fromString("SessionRecordNotFound")
+      MockAuthConnector.authorize().returns(Future.failed(error))
+
+      val result: Future[Result] = target.onPageLoad()(fakeRequest)
 
       status(result) shouldBe SEE_OTHER
 
-      redirectLocation(result) shouldBe Some(routes.UnauthorizedController.onPageLoad().url)
+      redirectLocation(result) match {
+        case Some(url) => url should include("/stride/sign-in")
+        case _ => fail("Stride login redirect location is incorrect")
+      }
+    }
+
+    "deny access to user if authorisation fails" in new AuthTestData {
+
+      val error: Throwable = AuthorisationException.fromString("InsufficientEnrolments")
+      MockAuthConnector.authorize().returns(Future.failed(error))
+
+      val result: Future[Result] = target.onPageLoad()(fakeRequest)
+
+      status(result) shouldBe UNAUTHORIZED
     }
   }
-
-  "Redirect user to Stride login of no session record exists" in new AuthTestData {
-
-    val authAction: AuthenticatedIdentifierAction =
-      new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(AuthorisationException.fromString("SessionRecordNotFound")), MockAppConfig, bodyParser, config, env)
-
-    val target: Harness = new Harness(authAction)
-
-    val result = target.onPageLoad()(fakeRequest)
-
-    status(result) shouldBe SEE_OTHER
-
-    redirectLocation(result) match {
-      case Some(url) => url should include("/stride/sign-in")
-      case _ => fail("Stride login redirect location is incorrect")
-    }
-  }
-
-  "Redirect user to unauthorised page if authentication fails" in new AuthTestData {
-
-    val authAction: AuthenticatedIdentifierAction =
-      new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(AuthorisationException.fromString("Insufficient Enrolments")), MockAppConfig, bodyParser, config, env)
-
-    val target: Harness = new Harness(authAction)
-
-    val result = target.onPageLoad()(fakeRequest)
-
-    status(result) shouldBe SEE_OTHER
-  }
-
 }
