@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import base.AuthBaseSpec
+import base.ControllerBaseSpec
 import config.ErrorHandler
 import mocks.{MockAppConfig, MockAuthConnector}
 import play.api.http.Status
@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthenticatedIdentifierActionSpec extends AuthBaseSpec with MockAuthConnector {
+class AuthenticatedIdentifierActionSpec extends ControllerBaseSpec with MockAuthConnector {
 
   // Define simple harness class to represent controller
   class Harness(authenticatedIdentifierAction: IdentifierAction) {
@@ -78,7 +78,6 @@ class AuthenticatedIdentifierActionSpec extends AuthBaseSpec with MockAuthConnec
 
       status(result) shouldBe UNAUTHORIZED
     }
-
 
     "redirect user to Stride login if no session record exists" in new AuthTestData {
 

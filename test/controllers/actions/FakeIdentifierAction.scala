@@ -16,13 +16,13 @@
 
 package controllers.actions
 
-import base.AuthBaseSpec
+import base.ControllerBaseSpec
 import models.requests.IdentifierRequest
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeIdentifierAction extends AuthBaseSpec with IdentifierAction {
+object FakeIdentifierAction extends ControllerBaseSpec with IdentifierAction {
 
   override implicit protected def executionContext: ExecutionContext = ExecutionContext.global
 
