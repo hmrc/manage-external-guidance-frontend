@@ -20,7 +20,7 @@ import config.ErrorHandler
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.AdminService
+import services.ApprovalService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import play.api.Logger
 import views.html.process_list
@@ -30,7 +30,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class AdminController @Inject() (
     errorHandler: ErrorHandler,
     view: process_list,
-    service: AdminService,
+    approvalService: ApprovalService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -38,10 +38,10 @@ class AdminController @Inject() (
   val logger = Logger(getClass)
 
   def processList: Action[AnyContent] = Action.async { implicit request =>
-    service.processesForApproval.map { 
+    approvalService.processesForApproval.map { 
       case Right(processList) => Ok(view(processList))
       case Left(err) => 
-        logger.warn(s"Unable to retrieve list of managed process, err = $err")
+        logger.warn(s"Unable to retrieve list of managed processes, err = $err")
         BadRequest(errorHandler.notFoundTemplate)
     }
     

@@ -18,15 +18,27 @@ package connectors
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import models.{RequestOutcome, ApprovalResponse}
+import models.{RequestOutcome, ApprovalResponse, ManagedProcess}
+import models.ApprovalStatusEnum._
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApprovalConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
+
+  //noinspection ScalaStyle
+  val stubProcessList = List(
+    ManagedProcess("ext90002", "Telling hmrc about extra income", LocalDate.of(2020,2,20), SubmittedFor2iReview),
+    ManagedProcess("ext90003", "EU exit guidance", LocalDate.of(2020,2,7), SubmittedForFactCheck),
+    ManagedProcess("ext90004", "Find a lost user ID and password", LocalDate.of(2019,12,13), SubmittedFor2iReview),
+    ManagedProcess("ext90005", "Apply for a marriage licence", LocalDate.of(2019,12,12), SubmittedFor2iReview)
+  )
+
+  def processesForApproval(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ManagedProcess]]] =
+    Future.successful(Right(stubProcessList))  
 
   def submitForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
 
