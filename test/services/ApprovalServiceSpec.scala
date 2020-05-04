@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+import models.ManagedProcess
 
 class ApprovalServiceSpec extends BaseSpec {
 
@@ -77,5 +78,43 @@ class ApprovalServiceSpec extends BaseSpec {
         case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
       }
     }
+
+
+    "Return a list of ManageProcesses after an successful call by the connector" in new Test {
+
+      MockApprovalConnector
+        .processesForApproval
+        .returns(Future.successful(Right(List())))
+
+      val result: Future[RequestOutcome[List[ManagedProcess]]] = service.processesForApproval
+
+      result.onComplete {
+        case Success(response) =>
+          response match {
+            case Right(_) => succeed
+            case Left(err) => fail(s"Unexpected error returned by processesForApproval connector : ${err.toString}")
+          }
+        case Failure(exception) => fail(s"Call failed and returned unexpected error : ${exception.getMessage}")
+      }
+    }
+
+    "Return an error after an unsuccessful call to the connector by processesForApproval" in new Test {
+
+      MockApprovalConnector
+        .processesForApproval
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val result: Future[RequestOutcome[List[ManagedProcess]]] = service.processesForApproval
+
+      result.onComplete {
+        case Success(response) =>
+          response match {
+            case Right(_) => fail("Response returned when an error was expected")
+            case Left(error) => error shouldBe InternalServerError
+          }
+        case Failure(exception) => fail(s"Call failed and returned unexpected error : ${exception.getMessage}")
+      }
+    }
+
   }
 }

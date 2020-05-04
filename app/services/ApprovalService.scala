@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ApprovalService @Inject() (connector: ApprovalConnector) {
   val logger = Logger(getClass)
 
-  def processesForApproval(implicit hc: HeaderCarrier, context: ExecutionContext): Future[RequestOutcome[List[ManagedProcess]]] =  
+  def processesForApproval(implicit context: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ManagedProcess]]] =  
     connector.processesForApproval
 
   def submitForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
