@@ -27,6 +27,7 @@ import models.ApprovalStatusEnum._
 import java.time._
 
 
+//noinspection ScalaStyle
 @Singleton
 class AdminConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
 

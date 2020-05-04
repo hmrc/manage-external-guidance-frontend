@@ -18,6 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 import config.AppConfig
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{Future, ExecutionContext}
 import connectors.AdminConnector
@@ -25,7 +26,13 @@ import models.{ManagedProcess, RequestOutcome}
 
 @Singleton
 class AdminService @Inject() (appConfig : AppConfig, adminConnector: AdminConnector) {
+  val logger = Logger(getClass)
 
   def processesForApproval(implicit hc: HeaderCarrier, context: ExecutionContext): Future[RequestOutcome[List[ManagedProcess]]] =  
-    adminConnector.processesForApproval
+    adminConnector.processesForApproval.map{
+      case r: Right(processList) => r
+      case Left(err) =>
+        logger.warn(s"Failed to retrieve process list, err $err")
+        Left(err)
+    }
 }

@@ -40,7 +40,9 @@ class AdminController @Inject() (
   def processList: Action[AnyContent] = Action.async { implicit request =>
     service.processesForApproval.map { 
       case Right(processList) => Ok(view(processList))
-      case Left(err) => NotFound(errorHandler.notFoundTemplate)
+      case Left(err) => 
+        logger.warn(s"Unable to retrieve list of managed process, err = $err")
+        BadRequest(errorHandler.notFoundTemplate)
     }
     
   }

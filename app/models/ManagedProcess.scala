@@ -18,6 +18,4 @@ package models
 
 import java.time.LocalDate
 
-case class ManagedProcess(id: String, title: String, lastUpdated: LocalDate, status: ProcessStatusEnum) {
-  override def toString: String = s"$id, $title, $lastUpdated, $status"
-}
+case class ManagedProcess(id: String, title: String, lastUpdated: LocalDate, status: ProcessStatusEnum)
