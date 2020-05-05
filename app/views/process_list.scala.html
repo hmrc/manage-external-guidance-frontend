@@ -15,7 +15,7 @@
  *@
 
 @import config.AppConfig
-@import models.ManagedProcess
+@import models.ApprovalProcessSummary
 
 @this(layout: main_layout)
 
@@ -23,11 +23,11 @@
  * TODO - PLACEHOLDER VIEW
  *
  *@
-@(managedProcesses: List[ManagedProcess])(implicit request: Request[_], messages: Messages)
+@(summaries: List[ApprovalProcessSummary])(implicit request: Request[_], messages: Messages)
 
 @layout("Process Admin") {
     <h1>Interactive guidance</h1>
-    @for(p <- managedProcesses) {
+    @for(p <- summaries) {
       <p>@p.toString</p>
     }
 }

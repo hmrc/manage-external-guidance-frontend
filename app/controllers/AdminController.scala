@@ -37,14 +37,14 @@ class AdminController @Inject() (
 
   val logger = Logger(getClass)
 
-  def processList: Action[AnyContent] = Action.async { implicit request =>
-    approvalService.processesForApproval.map { 
+  def approvalSummaries: Action[AnyContent] = Action.async { implicit request =>
+    approvalService.approvalSummaries.map {
       case Right(processList) => Ok(view(processList))
-      case Left(err) => 
-        logger.warn(s"Unable to retrieve list of managed processes, err = $err")
+      case Left(err) =>
+        logger.warn(s"Unable to retrieve list of approva process summaries, err = $err")
         BadRequest(errorHandler.notFoundTemplate)
     }
-    
+
   }
- 
+
 }

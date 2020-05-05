@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
-import models.ManagedProcess
+import models.ApprovalProcessSummary
 
 class ApprovalServiceSpec extends BaseSpec {
 
@@ -83,28 +83,28 @@ class ApprovalServiceSpec extends BaseSpec {
     "Return a list of ManageProcesses after an successful call by the connector" in new Test {
 
       MockApprovalConnector
-        .processesForApproval
+        .approvalSummaries
         .returns(Future.successful(Right(List())))
 
-      val result: Future[RequestOutcome[List[ManagedProcess]]] = service.processesForApproval
+      val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries
 
       result.onComplete {
         case Success(response) =>
           response match {
             case Right(_) => succeed
-            case Left(err) => fail(s"Unexpected error returned by processesForApproval connector : ${err.toString}")
+            case Left(err) => fail(s"Unexpected error returned by approvalSummaries connector : ${err.toString}")
           }
         case Failure(exception) => fail(s"Call failed and returned unexpected error : ${exception.getMessage}")
       }
     }
 
-    "Return an error after an unsuccessful call to the connector by processesForApproval" in new Test {
+    "Return an error after an unsuccessful call to the connector by approvalSummaries" in new Test {
 
       MockApprovalConnector
-        .processesForApproval
+        .approvalSummaries
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[List[ManagedProcess]]] = service.processesForApproval
+      val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries
 
       result.onComplete {
         case Success(response) =>
