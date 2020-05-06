@@ -14,15 +14,36 @@
  * limitations under the License.
  *@
 
-@this(govukLayout: GovukLayout)
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
+
+@import config.AppConfig
+
+@this(layout: GovukLayout,
+        phaseBanner : GovukPhaseBanner,
+        govUkHeader: GovukHeader,
+        appConfig: AppConfig)
 
 @(pageTitle: String)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
-@beforeContentBlock = {}
+@beforeContentBlock = {
+    @phaseBanner(PhaseBanner(
+        tag = Some(Tag(
+            content = Text("alpha")
+        )),
+        content = HtmlContent("""This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.""")
+    ))
+}
 
 @head = {
     <!--[if lte IE 8]><link href='@controllers.routes.Assets.versioned("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
     <!--[if gt IE 8]><!--><link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" /><!--<![endif]-->
+}
+
+@headerBlock = {
+    @govUkHeader(Header(
+        serviceName = Some(messages("service.name"))
+    ))
 }
 
 @scripts = {
@@ -30,15 +51,14 @@
     <script>window.GOVUKFrontend.initAll();</script>
 }
 
-@govukLayout(
+@layout(
     pageTitle = Some(pageTitle),
     headBlock = Some(head),
+    headerBlock = Some(headerBlock),
     beforeContentBlock = Some(beforeContentBlock),
-    footerItems = Seq(FooterItem(
-        href = Some("https://govuk-prototype-kit.herokuapp.com/"),
-        text = Some("GOV.UK Prototype Kit v9.1.0"))),
+    footerItems = Seq.empty,
     bodyEndBlock = Some(scripts))(contentBlock)
 
 @{
-//$COVERAGE-OFF$
+    //$COVERAGE-OFF$
 }

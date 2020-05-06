@@ -1,1 +1,11 @@
 service.name = External Guidance
+
+approvals.tableTitle = Interactive Guidance
+approvals.processTitle = Title
+approvals.dateProcessUpdatedTitle = Date last updated
+approvals.processStatusTitle = Status
+
+approvalsStatus.SubmittedFor2iReview = Submitted for 2i review
+approvalsStatus.SubmittedForFactCheck = Submitted for fact check
+approvalsStatus.WithDesignerForUpdate = With designer for update
+approvalsStatus.ApprovedForPublishing = Approved to be publishing
