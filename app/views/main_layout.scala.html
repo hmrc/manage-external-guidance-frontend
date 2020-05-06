@@ -14,7 +14,11 @@
  * limitations under the License.
  *@
 
-@this(govukLayout: GovukLayout)
+@import views.components.FooterLinks
+
+@this(govukLayout: GovukLayout,
+      footerLinks: FooterLinks
+)
 
 @(pageTitle: String)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
@@ -34,9 +38,7 @@
     pageTitle = Some(pageTitle),
     headBlock = Some(head),
     beforeContentBlock = Some(beforeContentBlock),
-    footerItems = Seq(FooterItem(
-        href = Some("https://govuk-prototype-kit.herokuapp.com/"),
-        text = Some("GOV.UK Prototype Kit v9.1.0"))),
+    footerItems = footerLinks.items,
     bodyEndBlock = Some(scripts))(contentBlock)
 
 @{
