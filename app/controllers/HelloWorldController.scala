@@ -18,23 +18,27 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import play.api.i18n._
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import config.AppConfig
+import controllers.actions.IdentifierAction
 import views.html.hello_world
 
 import scala.concurrent.Future
 
 @Singleton
-class HelloWorldController @Inject() (appConfig: AppConfig, mcc: MessagesControllerComponents, view: hello_world) extends FrontendController(mcc) {
+class HelloWorldController @Inject() (appConfig: AppConfig, identify: IdentifierAction, mcc: MessagesControllerComponents, view: hello_world)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   implicit val config: AppConfig = appConfig
 
-  val helloWorld: Action[AnyContent] = Action.async { implicit request =>
+  val helloWorld: Action[AnyContent] = identify.async { implicit request =>
     Future.successful(Ok(view()))
   }
 
-  val byeWorld: Action[AnyContent] = Action.async { implicit request =>
+  val byeWorld: Action[AnyContent] = Action.async { _ =>
     throw new Exception("Something went wrong")
   }
 

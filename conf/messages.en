@@ -1,5 +1,9 @@
 service.name = External Guidance
 
+error.unauthorized401.pageTitle = You can’t access this service with this account
+error.unauthorized401.heading = You can’t access this service with this account
+error.unauthorized401.message =
+
 # Compliance statement
 # ----------------------------------------------------------
 accessibility.title=Accessibility statement for External Guidance - to Be Defined

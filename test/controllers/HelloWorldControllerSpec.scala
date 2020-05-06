@@ -23,6 +23,7 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import controllers.actions.FakeIdentifierAction
 import views.html.hello_world
 
 class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
@@ -32,8 +33,7 @@ class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPe
     private val view = app.injector.instanceOf[hello_world]
 
     val fakeRequest = FakeRequest("GET", "/")
-    val controller = new HelloWorldController(MockAppConfig, stubMessagesControllerComponents(), view)
-
+    val controller = new HelloWorldController(MockAppConfig, FakeIdentifierAction, stubMessagesControllerComponents(), view)
   }
 
   "GET /hello-world" should {

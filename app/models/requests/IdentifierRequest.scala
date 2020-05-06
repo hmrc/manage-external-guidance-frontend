@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 
-package config
+package models.requests
 
-import com.google.inject.AbstractModule
+import play.api.mvc.{Request, WrappedRequest}
 
-import controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
-
-class Module extends AbstractModule {
-
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[AppConfigImpl])
-    bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction])
-  }
-}
+case class IdentifierRequest[A](request: Request[A], credId: String) extends WrappedRequest[A](request)
