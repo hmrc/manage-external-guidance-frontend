@@ -76,7 +76,6 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
       MockAuditService.audit(event)
 
-
       MockScratchService
         .scratchProcess(dummyProcess)
         .returns(Future.successful(Right(ScratchResponse(uuid))))

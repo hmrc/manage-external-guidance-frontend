@@ -32,17 +32,17 @@ trait MockAuditConnector extends MockFactory {
   object MockAuditConnector {
 
     def sendExtendedEvent(event: ExtendedDataEvent): CallHandler[Future[AuditResult]] = {
-    (mockAuditConnector
-      .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(
-        where{(e: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
-          e.auditSource == event.auditSource &&
-          e.auditType == event.auditType &&
-          e.tags == event.tags &&
-          e.detail == event.detail
-        }
-      )
-      .returns(Future.successful(AuditResult.Success))
+      (mockAuditConnector
+        .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(
+          where { (e: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
+            e.auditSource == event.auditSource &&
+            e.auditType == event.auditType &&
+            e.tags == event.tags &&
+            e.detail == event.detail
+          }
+        )
+        .returns(Future.successful(AuditResult.Success))
     }
 
   }

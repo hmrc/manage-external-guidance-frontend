@@ -13,29 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package pages
 
-package mocks
+import play.api.http.Status
+import play.api.libs.ws.{WSRequest, WSResponse}
+import stubs.AuditStub
+import support.IntegrationSpec
 
-import scala.concurrent.ExecutionContext
+class AccessibilityStatementControllerISpec extends IntegrationSpec {
 
-import org.scalamock.handlers.CallHandler
-import org.scalamock.scalatest.MockFactory
+  "calling the accessibility route" should {
 
-import uk.gov.hmrc.http.HeaderCarrier
-import services.AuditService
-import models.audit.AuditEvent
+    "return an OK response" in {
 
-trait MockAuditService extends MockFactory {
+      AuditStub.audit()
 
-  val mockAuditService: AuditService = mock[AuditService]
+      val request: WSRequest = buildRequest("/accessibility")
 
-  object MockAuditService {
+      val response: WSResponse = await(request.get())
 
-    def audit(event: AuditEvent, path: Option[String] = None): CallHandler[Unit] = {
+      response.status shouldBe Status.OK
 
-      (mockAuditService
-        .audit(_: AuditEvent, _: Option[String])(_: HeaderCarrier, _: ExecutionContext))
-        .expects(event, path, *, *)
     }
 
   }
