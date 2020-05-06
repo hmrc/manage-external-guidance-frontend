@@ -22,7 +22,7 @@ import javax.inject.Inject
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.footer.FooterItem
 
-class FooterLinks @Inject()(implicit appConfig: AppConfig) {
+class FooterLinks @Inject() (implicit appConfig: AppConfig) {
 
   def accessibilityLink()(implicit messages: Messages): FooterItem = FooterItem(
     Some(messages("footer.links.accessibility.text")),

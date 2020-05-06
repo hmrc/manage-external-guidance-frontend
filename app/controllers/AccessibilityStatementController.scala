@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import scala.concurrent.Future
 
 @Singleton
-class AccessibilityStatementController @Inject()(appConfig: AppConfig, mcc: MessagesControllerComponents, view: views.html.accessibility_statement)
+class AccessibilityStatementController @Inject() (appConfig: AppConfig, mcc: MessagesControllerComponents, view: views.html.accessibility_statement)
     extends FrontendController(mcc)
     with I18nSupport {
 
