@@ -22,7 +22,7 @@ import models.ApprovalStatus._
 
 class ApprovalStatusSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
-  "CompanyApplyingIsRightsHolder" must {
+  "ApprovalStatus" must {
 
     "deserialise valid values" in {
 
