@@ -23,7 +23,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import views.html.process_list
+import views.html.approval_summary_list
 import mocks.MockApprovalService
 import scala.concurrent.Future
 
@@ -31,7 +31,7 @@ class AdminControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuit
 
   private trait Test {
 
-    private val view = app.injector.instanceOf[process_list]
+    private val view = app.injector.instanceOf[approval_summary_list]
     lazy val errorHandler = app.injector.instanceOf[config.ErrorHandler]
     implicit val hc: HeaderCarrier = HeaderCarrier()
     val fakeRequest = FakeRequest("GET", "/")

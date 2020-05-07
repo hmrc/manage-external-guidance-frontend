@@ -27,7 +27,7 @@
 
 @layout(messages("service.name")) {
 
-<h1>@messages("approvals.tableTitle")</h1>
+<h1 class="govuk-heading-xl">@messages("approvals.tableTitle")</h1>
 
 @govukTable(Table(
     for(summary <- summaries) yield {
@@ -59,7 +59,6 @@
     ))
   ))
 }
-
 @{
  //$COVERAGE-OFF$
 }
