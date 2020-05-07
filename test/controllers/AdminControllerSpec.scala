@@ -16,46 +16,46 @@
 
 package controllers
 
-import mocks.MockAppConfig
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import controllers.actions.FakeIdentifierAction
-import views.html.hello_world
+import views.html.process_list
+import mocks.MockApprovalService
+import scala.concurrent.Future
 
-class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
+class AdminControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockApprovalService {
 
   private trait Test {
 
-    private val view = app.injector.instanceOf[hello_world]
-
+    private val view = app.injector.instanceOf[process_list]
+    lazy val errorHandler = app.injector.instanceOf[config.ErrorHandler]
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val fakeRequest = FakeRequest("GET", "/")
-    val controller = new HelloWorldController(MockAppConfig, FakeIdentifierAction, stubMessagesControllerComponents(), view)
+    val controller = new AdminController(errorHandler, view, mockApprovalService, stubMessagesControllerComponents())
+
   }
 
-  "GET /hello-world" should {
+  "GET /process/approval" should {
 
     "return 200" in new Test {
-      val result = controller.helloWorld(fakeRequest)
+
+      MockApprovalService.approvalSummaries.returns(Future.successful(Right(List())))
+
+      val result = controller.approvalSummaries(fakeRequest)
       status(result) shouldBe Status.OK
     }
 
     "return HTML" in new Test {
-      val result = controller.helloWorld(fakeRequest)
+
+      MockApprovalService.approvalSummaries.returns(Future.successful(Right(List())))
+
+      val result = controller.approvalSummaries(fakeRequest)
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-    }
-  }
-
-  "GET /bye-world" should {
-    "throws an exception" in new Test {
-      assertThrows[Exception] {
-        val result = controller.byeWorld(fakeRequest)
-        status(result) shouldBe Status.OK
-      }
     }
   }
 

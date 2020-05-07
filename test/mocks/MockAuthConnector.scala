@@ -16,28 +16,26 @@
 
 package mocks
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+
+import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.http.HeaderCarrier
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 
-import uk.gov.hmrc.http.HeaderCarrier
-import services.AuditService
-import models.audit.AuditEvent
+trait MockAuthConnector extends MockFactory {
 
-trait MockAuditService extends MockFactory {
+  val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
-  val mockAuditService: AuditService = mock[AuditService]
+  object MockAuthConnector {
 
-  object MockAuditService {
-
-    def audit(event: AuditEvent, path: Option[String] = None): CallHandler[Unit] = {
-
-      (mockAuditService
-        .audit(_: AuditEvent, _: Option[String])(_: HeaderCarrier, _: ExecutionContext))
-        .expects(event, path, *, *)
+    def authorize[A](): CallHandler[Future[A]] = {
+      (mockAuthConnector
+        .authorise[A](_: Predicate, _: Retrieval[A])(_: HeaderCarrier, _: ExecutionContext))
+        .expects(*, *, *, *)
     }
-
   }
-
 }

@@ -16,30 +16,23 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
-
-import play.api.i18n._
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import config.AppConfig
-import controllers.actions.IdentifierAction
-import views.html.hello_world
+import javax.inject.{Inject, Singleton}
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
 @Singleton
-class HelloWorldController @Inject() (appConfig: AppConfig, identify: IdentifierAction, mcc: MessagesControllerComponents, view: hello_world)
+class AccessibilityStatementController @Inject() (appConfig: AppConfig, mcc: MessagesControllerComponents, view: views.html.accessibility_statement)
     extends FrontendController(mcc)
     with I18nSupport {
 
   implicit val config: AppConfig = appConfig
 
-  val helloWorld: Action[AnyContent] = identify.async { implicit request =>
+  val getPage: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(view()))
-  }
-
-  val byeWorld: Action[AnyContent] = Action.async { _ =>
-    throw new Exception("Something went wrong")
   }
 
 }

@@ -1,13 +1,17 @@
 # microservice specific routes
-GET        /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
+GET        /assets/*file              controllers.Assets.versioned(path="/public", file: Asset)
 
-GET        /hello-world             controllers.HelloWorldController.helloWorld
-GET        /bye-world               controllers.HelloWorldController.byeWorld
+GET        /process/approval          controllers.AdminController.approvalSummaries
 
-POST       /process/scratch         controllers.apis.ScratchController.submitScratchProcess
-OPTIONS    /process/scratch         controllers.apis.ScratchController.scratchProcessOptions
+GET        /accessibility           controllers.AccessibilityStatementController.getPage
 
-POST       /process/approval       controllers.apis.ApprovalController.submitForApproval
-OPTIONS    /process/approval       controllers.apis.ApprovalController.options
+GET        /hello-world               controllers.HelloWorldController.helloWorld
+GET        /bye-world                 controllers.HelloWorldController.byeWorld
 
-->         /govuk-frontend            govuk.Routes
+POST       /process/scratch           controllers.apis.ScratchController.submitScratchProcess
+OPTIONS    /process/scratch           controllers.apis.ScratchController.scratchProcessOptions
+
+POST       /process/approval          controllers.apis.ApprovalController.submitForApproval
+OPTIONS    /process/approval          controllers.apis.ApprovalController.options
+
+->         /govuk-frontend          govuk.Routes

@@ -13,17 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package pages
 
-package config
+import play.api.http.Status
+import play.api.libs.ws.{WSRequest, WSResponse}
+import stubs.AuditStub
+import support.IntegrationSpec
 
-import com.google.inject.AbstractModule
+class AccessibilityStatementControllerISpec extends IntegrationSpec {
 
-import controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
+  "calling the accessibility route" should {
 
-class Module extends AbstractModule {
+    "return an OK response" in {
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[AppConfigImpl])
-    bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction])
+      AuditStub.audit()
+
+      val request: WSRequest = buildRequest("/accessibility")
+
+      val response: WSResponse = await(request.get())
+
+      response.status shouldBe Status.OK
+
+    }
+
   }
+
 }

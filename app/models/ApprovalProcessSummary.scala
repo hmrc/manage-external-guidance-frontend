@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import com.google.inject.AbstractModule
+import play.api.libs.json.{Json, OFormat}
+import java.time.LocalDate
 
-import controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
+case class ApprovalProcessSummary(id: String, title: String, lastUpdated: LocalDate, status: ApprovalStatus)
 
-class Module extends AbstractModule {
-
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[AppConfigImpl])
-    bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction])
-  }
+object ApprovalProcessSummary {
+  implicit val formats: OFormat[ApprovalProcessSummary] = Json.format[ApprovalProcessSummary]
 }

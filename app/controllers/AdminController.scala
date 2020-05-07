@@ -16,30 +16,35 @@
 
 package controllers
 
+import config.ErrorHandler
 import javax.inject.{Inject, Singleton}
-
-import play.api.i18n._
+import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.ApprovalService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import config.AppConfig
-import controllers.actions.IdentifierAction
-import views.html.hello_world
-
-import scala.concurrent.Future
+import play.api.Logger
+import views.html.process_list
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class HelloWorldController @Inject() (appConfig: AppConfig, identify: IdentifierAction, mcc: MessagesControllerComponents, view: hello_world)
-    extends FrontendController(mcc)
+class AdminController @Inject() (
+    errorHandler: ErrorHandler,
+    view: process_list,
+    approvalService: ApprovalService,
+    mcc: MessagesControllerComponents
+) extends FrontendController(mcc)
     with I18nSupport {
 
-  implicit val config: AppConfig = appConfig
+  val logger = Logger(getClass)
 
-  val helloWorld: Action[AnyContent] = identify.async { implicit request =>
-    Future.successful(Ok(view()))
-  }
+  def approvalSummaries: Action[AnyContent] = Action.async { implicit request =>
+    approvalService.approvalSummaries.map {
+      case Right(processList) => Ok(view(processList))
+      case Left(err) =>
+        logger.warn(s"Unable to retrieve list of approva process summaries, err = $err")
+        BadRequest(errorHandler.notFoundTemplate)
+    }
 
-  val byeWorld: Action[AnyContent] = Action.async { _ =>
-    throw new Exception("Something went wrong")
   }
 
 }
