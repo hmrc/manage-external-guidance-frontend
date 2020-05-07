@@ -23,13 +23,13 @@ import play.api.mvc._
 import services.ApprovalService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import play.api.Logger
-import views.html.process_list
+import views.html.approval_summary_list
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class AdminController @Inject() (
     errorHandler: ErrorHandler,
-    view: process_list,
+    view: approval_summary_list,
     approvalService: ApprovalService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
@@ -41,7 +41,7 @@ class AdminController @Inject() (
     approvalService.approvalSummaries.map {
       case Right(processList) => Ok(view(processList))
       case Left(err) =>
-        logger.warn(s"Unable to retrieve list of approva process summaries, err = $err")
+        logger.warn(s"Unable to retrieve list of approval process summaries, err = $err")
         BadRequest(errorHandler.notFoundTemplate)
     }
 

@@ -1,5 +1,15 @@
 service.name = External Guidance
 
+approvals.tableTitle = Interactive Guidance
+approvals.processTitle = Title
+approvals.dateProcessUpdatedTitle = Date last updated
+approvals.processStatusTitle = Status
+
+approvalsStatus.SubmittedFor2iReview = Submitted for 2i review
+approvalsStatus.SubmittedForFactCheck = Submitted for fact check
+approvalsStatus.WithDesignerForUpdate = With designer for update
+approvalsStatus.ApprovedForPublishing = Approved to be publishing
+
 error.unauthorized401.pageTitle = You can’t access this service with this account
 error.unauthorized401.heading = You can’t access this service with this account
 error.unauthorized401.message =
@@ -69,3 +79,4 @@ compliant.nine.p2.1=The service was built using parts that were tested by the
 compliant.nine.p2.2=Digital Accessibility Centre
 compliant.nine.p2.3=The full service will be tested by HMRC within a week of the launch date. Tests will include disabled users.
 compliant.nine.p3=This page was prepared on 17 April 2020. It was last updated on 20 April 2020.
+

@@ -50,7 +50,7 @@ class ErrorTemplateViewSpec extends ViewSpecBase {
 
     "Display the correct message for an unauthorised user" in new Test {
 
-      assertParagraphTextEqualsMessage(doc, 1, "error.unauthorized401.message")
+      assertParagraphTextEqualsMessage(doc, 2, "error.unauthorized401.message")
     }
 
   }
