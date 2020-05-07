@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package config
+package views.components
 
-import com.google.inject.AbstractModule
+import config.AppConfig
+import controllers.routes
+import javax.inject.Inject
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.footer.FooterItem
 
-import controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
+class FooterLinks @Inject() (implicit appConfig: AppConfig) {
 
-class Module extends AbstractModule {
+  def accessibilityLink()(implicit messages: Messages): FooterItem = FooterItem(
+    Some(messages("footer.links.accessibility.text")),
+    Some(routes.AccessibilityStatementController.getPage().url)
+  )
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[AppConfigImpl])
-    bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction])
-  }
+  def items(implicit messages: Messages): Seq[FooterItem] = Seq(
+    accessibilityLink
+  )
 }
