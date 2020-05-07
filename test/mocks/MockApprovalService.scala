@@ -22,7 +22,7 @@ import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
 import services.ApprovalService
 import uk.gov.hmrc.http.HeaderCarrier
-
+import models.ApprovalProcessSummary
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockApprovalService extends MockFactory {
@@ -30,6 +30,11 @@ trait MockApprovalService extends MockFactory {
   val mockApprovalService: ApprovalService = mock[ApprovalService]
 
   object MockApprovalService {
+
+    def approvalSummaries: CallHandler[Future[RequestOutcome[List[ApprovalProcessSummary]]]] =  
+      (mockApprovalService
+        .approvalSummaries(_: ExecutionContext, _: HeaderCarrier))
+        .expects(*, *)
 
     def submitForApproval(process: JsValue): CallHandler[Future[RequestOutcome[ApprovalResponse]]] = {
 

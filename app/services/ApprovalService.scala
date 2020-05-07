@@ -18,14 +18,19 @@ package services
 
 import connectors.ApprovalConnector
 import javax.inject.{Inject, Singleton}
-import models.{ApprovalResponse, RequestOutcome}
+import models.{ApprovalResponse, RequestOutcome, ApprovalProcessSummary}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
+import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApprovalService @Inject() (connector: ApprovalConnector) {
+  val logger = Logger(getClass)
+
+  def approvalSummaries(implicit context: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ApprovalProcessSummary]]] =
+    connector.approvalSummaries
 
   def submitForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
     connector.submitForApproval(process)
