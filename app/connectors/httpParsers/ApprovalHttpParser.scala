@@ -17,7 +17,7 @@
 package connectors.httpParsers
 
 import models.errors.{InternalServerError, InvalidProcessError}
-import models.{RequestOutcome, ApprovalResponse}
+import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome}
 import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads
@@ -34,6 +34,21 @@ object ApprovalHttpParser extends HttpParser {
       }
     case (_, _, response) if response.status == BAD_REQUEST => Left(InvalidProcessError)
     case _ => Left(InternalServerError)
+  }
+
+  implicit val getApprovalSummaryListHttpReads: HttpReads[RequestOutcome[List[ApprovalProcessSummary]]] = {
+    case (_, _, response) if response.status == OK =>
+      response.validateJson[List[ApprovalProcessSummary]] match {
+        case Some(result) => Right(result)
+        case None =>
+          Logger.error("Unable to parse successful response when retrieving summary list")
+          Left(InternalServerError)
+      }
+    case (_, _, response) if response.status == BAD_REQUEST =>
+      Left(InvalidProcessError)
+    case unknown =>
+      Logger.info(s"unexpected $unknown response received when retrieving summary list")
+      Left(InternalServerError)
   }
 
 }
