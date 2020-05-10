@@ -79,11 +79,9 @@ class ApprovalServiceSpec extends BaseSpec {
       }
     }
 
-
     "Return a list of ManageProcesses after an successful call by the connector" in new Test {
 
-      MockApprovalConnector
-        .approvalSummaries
+      MockApprovalConnector.approvalSummaries
         .returns(Future.successful(Right(List())))
 
       val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries
@@ -100,8 +98,7 @@ class ApprovalServiceSpec extends BaseSpec {
 
     "Return an error after an unsuccessful call to the connector by approvalSummaries" in new Test {
 
-      MockApprovalConnector
-        .approvalSummaries
+      MockApprovalConnector.approvalSummaries
         .returns(Future.successful(Left(InternalServerError)))
 
       val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries
