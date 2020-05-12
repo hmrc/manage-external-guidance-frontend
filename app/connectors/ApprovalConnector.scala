@@ -31,7 +31,7 @@ class ApprovalConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig)
 
     import connectors.httpParsers.ApprovalHttpParser.getApprovalSummaryListHttpReads
 
-    val summaryEndPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/approval/list"
+    val summaryEndPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/approval"
 
     httpClient.GET[RequestOutcome[List[ApprovalProcessSummary]]](summaryEndPoint, Seq.empty, Seq.empty)
   }
