@@ -1,7 +1,7 @@
 service.name = External Guidance
 footer.links.accessibility.text=Accessibility
 
-approvals.tableTitle = Interactive Guidance
+approvals.tableTitle = Interactive guidance
 approvals.processTitle = Title
 approvals.dateProcessUpdatedTitle = Date last updated
 approvals.processStatusTitle = Status
