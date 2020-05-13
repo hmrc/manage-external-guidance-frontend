@@ -18,27 +18,23 @@ package connectors
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import models.{RequestOutcome, ApprovalResponse, ApprovalProcessSummary}
-import models.ApprovalStatus._
+import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApprovalConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
 
-  //noinspection ScalaStyle
-  val stubProcessList = List(
-    ApprovalProcessSummary("ext90002", "Telling hmrc about extra income", LocalDate.of(2020, 2, 20), SubmittedFor2iReview),
-    ApprovalProcessSummary("ext90003", "EU exit guidance", LocalDate.of(2020, 2, 7), SubmittedForFactCheck),
-    ApprovalProcessSummary("ext90004", "Find a lost user ID and password", LocalDate.of(2019, 12, 13), SubmittedFor2iReview),
-    ApprovalProcessSummary("ext90005", "Apply for a marriage licence", LocalDate.of(2019, 12, 12), SubmittedFor2iReview)
-  )
+  def approvalSummaries(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ApprovalProcessSummary]]] = {
 
-  def approvalSummaries(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ApprovalProcessSummary]]] =
-    Future.successful(Right(stubProcessList))
+    import connectors.httpParsers.ApprovalHttpParser.getApprovalSummaryListHttpReads
+
+    val summaryEndPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/approval"
+
+    httpClient.GET[RequestOutcome[List[ApprovalProcessSummary]]](summaryEndPoint, Seq.empty, Seq.empty)
+  }
 
   def submitForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
 

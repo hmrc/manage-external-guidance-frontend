@@ -42,12 +42,12 @@ class ApprovalStatusSpec extends WordSpec with MustMatchers with OptionValues wi
       JsObject(Seq(("val", JsNull))).validate[ApprovalStatus] mustEqual JsError("error.invalid")
     }
 
-     "serialise" in {
+    "serialise" in {
 
-       for{
+      for {
         v <- ApprovalStatus.values
-       } yield Json.toJson(v) mustEqual JsString(v.toString)
+      } yield Json.toJson(v) mustEqual JsString(v.toString)
 
-     }
+    }
   }
 }
