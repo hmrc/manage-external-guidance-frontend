@@ -24,6 +24,7 @@ import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -61,10 +62,16 @@ class AuthenticatedIdentifierAction @Inject() (
       )(request)
     )
 
+    val allUsersPredicate: Predicate = AuthProviders(PrivilegedApplication) and
+      (
+        Enrolment(appConfig.designerRole) or
+          Enrolment(appConfig.twoEyeReviewerRole) or
+          Enrolment(appConfig.factCheckerRole) or
+          Enrolment(appConfig.publisherRole)
+      )
+
     // Allow access for all roles
-    authorised(
-      (Enrolment(appConfig.designerRole) or Enrolment(appConfig.approverRole) or Enrolment(appConfig.publisherRole)) and AuthProviders(PrivilegedApplication)
-    ).retrieve(credentials) {
+    authorised(allUsersPredicate).retrieve(credentials) {
       case Some(Credentials(providerId, _)) =>
         block(IdentifierRequest(request, providerId))
       case None =>
