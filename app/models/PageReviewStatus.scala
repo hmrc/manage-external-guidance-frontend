@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package models.errors
+package models
 
-import play.api.libs.json.{Json, OFormat}
+trait PageReviewStatus
 
-case class Error(code: String, message: String)
+object PageReviewStatus extends Enumerable.Implicits {
 
-object Error {
+  case object NotStarted extends WithName("NotStarted") with PageReviewStatus
+  case object Complete extends WithName("Complete") with PageReviewStatus
 
-  implicit val formats: OFormat[Error] = Json.format[Error]
+  val values: Seq[PageReviewStatus] = Seq(NotStarted, Complete)
 
+  implicit val enumerable: Enumerable[PageReviewStatus] = Enumerable(values.map(v => v.toString -> v): _*)
 }
-
-object InvalidProcessError extends Error("BAD_REQUEST", "The input process is invalid")
-
-object InternalServerError extends Error("INTERNAL_SERVER_ERROR", "An unexpected error has occurred")
-
-object NotFoundError extends Error("NOT_FOUND_ERROR", "The resource requested could not be found.")
-
-object StaleDataError extends Error("STALE_DATA_ERROR", "The resource requested has been changed elsewhere.")
-

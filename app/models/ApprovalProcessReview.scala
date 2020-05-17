@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package models.errors
+package models
+
+import java.time.LocalDate
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Error(code: String, message: String)
+case class ApprovalProcessReview(id: String, title: String, lastUpdated: LocalDate, pages: List[PageReview])
 
-object Error {
-
-  implicit val formats: OFormat[Error] = Json.format[Error]
-
+object ApprovalProcessReview {
+  implicit val formats: OFormat[ApprovalProcessReview] = Json.format[ApprovalProcessReview]
 }
-
-object InvalidProcessError extends Error("BAD_REQUEST", "The input process is invalid")
-
-object InternalServerError extends Error("INTERNAL_SERVER_ERROR", "An unexpected error has occurred")
-
-object NotFoundError extends Error("NOT_FOUND_ERROR", "The resource requested could not be found.")
-
-object StaleDataError extends Error("STALE_DATA_ERROR", "The resource requested has been changed elsewhere.")
-
