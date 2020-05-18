@@ -32,7 +32,9 @@ object ReviewHttpParser extends HttpParser {
       if response.status == OK =>
         response.json.validate[ApprovalProcessReview] match {
           case JsSuccess(data, _) => Right(data)
-          case JsError(_) => Left(MalformedResponseError)
+          case JsError(_) =>
+            logger.error(s"Unable to parse review data response from external-guidance.")
+            Left(MalformedResponseError)
         }
     case (_, _, response)
       if response.status == NOT_FOUND =>
@@ -43,7 +45,9 @@ object ReviewHttpParser extends HttpParser {
             } else {
               Left(StaleDataError)
             }
-          case JsError(_) => Left(MalformedResponseError)
+          case JsError(_) =>
+            logger.error(s"Unable to parse NOT_FOUND response from external-guidance.")
+            Left(MalformedResponseError)
         }
     case _ =>
       logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")

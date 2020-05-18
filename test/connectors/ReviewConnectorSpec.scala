@@ -32,8 +32,6 @@ class ReviewConnectorSpec extends BaseSpec {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val id: String = "Oct90005"
-
     val connector: ReviewConnector = new ReviewConnector(mockHttpClient, MockAppConfig)
     val endpoint: String = s"${MockAppConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review"
 

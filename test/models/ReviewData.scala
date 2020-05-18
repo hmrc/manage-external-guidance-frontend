@@ -22,8 +22,10 @@ import models.PageReviewStatus.NotStarted
 
 trait ReviewData {
 
+  val id: String = "Oct20001"
+
   val reviewInfo: ApprovalProcessReview = ApprovalProcessReview(
-    "Oct20001",
+    id,
     "Telling HMRC about extra income",
     LocalDate.of(2020, 5, 10),
     List(PageReview("id1", "how-did-you-earn-extra-income", NotStarted),
