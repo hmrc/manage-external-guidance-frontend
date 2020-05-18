@@ -1,9 +1,10 @@
 # microservice specific routes
-GET        /assets/*file              controllers.Assets.versioned(path="/public", file: Asset)
+GET        /assets/*file                      controllers.Assets.versioned(path="/public", file: Asset)
 
-GET        /process/approval          controllers.AdminController.approvalSummaries
+GET        /process/approval                  controllers.AdminController.approvalSummaries
+GET        /process/approval/:id/2i-review    controllers.AdminController.approval2iReviewInfo(id)
 
-GET        /accessibility           controllers.AccessibilityStatementController.getPage
+GET        /accessibility                     controllers.AccessibilityStatementController.getPage
 
 GET        /hello-world               controllers.HelloWorldController.helloWorld
 GET        /bye-world                 controllers.HelloWorldController.byeWorld
