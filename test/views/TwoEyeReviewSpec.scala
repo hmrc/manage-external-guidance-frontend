@@ -24,10 +24,9 @@ import org.jsoup._
 import views.html._
 import org.jsoup.nodes._
 import scala.collection.JavaConverters._
+import config.AppConfig
 
 class TwoEyeReviewSpec extends ViewSpecBase {
-
-  def asDocument(html: Html): Document = Jsoup.parse(html.toString)
 
   def elementAttrs(el: Element): Map[String, String] = el.attributes.asScala.toList.map(attr => (attr.getKey, attr.getValue)).toMap
 
