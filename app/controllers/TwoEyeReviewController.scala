@@ -45,7 +45,7 @@ class TwoEyeReviewController @Inject() (
         "oct9005",
         "Telling HMRC about extra income",
         LocalDate.of(2020, 5, 10),
-        List(PageReview("id1", "how-did-you-earn-extra-income", Reviewed),
+        List(PageReview("id1", "how-did-you-earn-extra-income", Complete),
           PageReview("id2", "sold-goods-or-services/did-you-only-sell-personal-possessions", NotStarted),
           PageReview("id3", "sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", NotStarted),
           PageReview("id4", "sold-goods-or-services/have-you-made-1000-or-more", NotStarted),

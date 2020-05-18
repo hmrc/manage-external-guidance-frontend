@@ -12,7 +12,7 @@ approvalsStatus.WithDesignerForUpdate = With designer for update
 approvalsStatus.ApprovedForPublishing = Approved to be publishing
 
 pageReviewStatus.NotStarted = Not started
-pageReviewStatus.Reviewed = Reviewed
+pageReviewStatus.Complete = Reviewed
 
 2iReview.heading = 2i content review
 2iReview.reviewPagesHeading = Review all pages
