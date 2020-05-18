@@ -41,9 +41,7 @@
         <ul class="app-task-list__items">        
           @for(page <- review.pages) {
             <li class="app-task-list__item">
-                <a href="#" class="app-task-list__task-name" aria-describedby="@page.title">
-                  @page.title
-                </a>
+              <a href="#" class="app-task-list__task-name" aria-describedby="@page.title">@page.title</a>
               <strong class="govuk-tag app-task-list__task-completed" id="@page.title">@messages(s"pageReviewStatus.${page.status.toString}")</strong>
             </li>
           }
@@ -59,9 +57,7 @@
 
         <ul class="app-task-list__items">
           <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a href="#">@messages("2iReview.sendConfirmation")</a>
-            </span>
+            <span class="app-task-list__task-name"><a href="#">@messages("2iReview.sendConfirmation")</a></span>
           </li>
         </ul>
 

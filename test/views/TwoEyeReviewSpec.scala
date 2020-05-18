@@ -20,11 +20,14 @@ import play.api.inject.Injector
 import play.api.i18n.{Messages, MessagesApi, Lang}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
+import java.time._
 import org.jsoup._
 import views.html._
 import org.jsoup.nodes._
 import scala.collection.JavaConverters._
 import config.AppConfig
+import models._
+import PageReviewStatus._
 
 class TwoEyeReviewSpec extends ViewSpecBase {
 
@@ -37,8 +40,36 @@ class TwoEyeReviewSpec extends ViewSpecBase {
     implicit val fakeRequest = FakeRequest("GET", "/")
     implicit def messages: Messages = messagesApi.preferred(Seq(Lang("en")))
     implicit def appconfig: AppConfig = injector.instanceOf[AppConfig]
-    def helloWorld: hello_world = injector.instanceOf[hello_world]
+    def twoEyeReview: twoeye_content_review = injector.instanceOf[twoeye_content_review]
+    val approvalProcessReview = ApprovalProcessReview(
+        "oct9005",
+        "Telling HMRC about extra income",
+        LocalDate.of(2020, 5, 10),
+        List(PageReview("id1", "how-did-you-earn-extra-income", Complete),
+          PageReview("id2", "sold-goods-or-services/did-you-only-sell-personal-possessions", NotStarted),
+          PageReview("id3", "sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", NotStarted),
+          PageReview("id4", "sold-goods-or-services/have-you-made-1000-or-more", NotStarted),
+          PageReview("id5", "sold-goods-or-services/you-do-not-need-to-tell-hmrc", NotStarted),
+          PageReview("id6", "rent-a-property/do-you-receive-any-income", NotStarted),
+          PageReview("id7", "rent-a-property/have-you-rented-out-a-room", NotStarted)))    
 
   }
+
+  "2i Review page" should {
+    "Render a page containing all listing all of files for review" in new Test {
+
+      val doc = asDocument(twoEyeReview(approvalProcessReview))
+
+      //val pageLinks = doc.getElementsByTag("a").asScala.filter(elementAttrs(_)("class") == "app-task-list__task-name").map(_.text)
+      val pages = doc.getElementsByTag("a").asScala
+                     .filter(elementAttrs(_).get("class") == Some("app-task-list__task-name"))
+                     .map(_.text)
+                     .toList
+      approvalProcessReview.pages.forall(p => pages.contains(p.title)) shouldBe true
+
+    }
+  }
+
+
 }
 
