@@ -28,6 +28,7 @@ object MockAppConfig extends AppConfig {
   lazy val loginUrl: String = "http://localhost:9041/stride/sign-in"
   lazy val continueUrl: String = "http://localhost:9740/external-guidance/hello-world"
   lazy val designerRole: String = "Designer"
-  lazy val approverRole: String = "Approver"
+  lazy val twoEyeReviewerRole: String = "2iReviewer"
+  lazy val factCheckerRole: String = "FactChecker"
   lazy val publisherRole: String = "Publisher"
 }

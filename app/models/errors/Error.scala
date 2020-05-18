@@ -29,3 +29,10 @@ object Error {
 object InvalidProcessError extends Error("BAD_REQUEST", "The input process is invalid")
 
 object InternalServerError extends Error("INTERNAL_SERVER_ERROR", "An unexpected error has occurred")
+
+object NotFoundError extends Error("NOT_FOUND_ERROR", "The resource requested could not be found.")
+
+object StaleDataError extends Error("STALE_DATA_ERROR", "The resource requested has been changed elsewhere.")
+
+object MalformedResponseError extends Error("BAD_REQUEST", "The response received could not be parsed")
+

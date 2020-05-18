@@ -21,9 +21,9 @@ sealed trait PageReviewStatus
 object PageReviewStatus extends Enumerable.Implicits {
 
   case object NotStarted extends WithName("NotStarted") with PageReviewStatus
-  case object Reviewed extends WithName("Reviewed") with PageReviewStatus
+  case object Complete extends WithName("Complete") with PageReviewStatus
 
-  val values: Seq[PageReviewStatus] = Seq(NotStarted, Reviewed)
+  val values: Seq[PageReviewStatus] = Seq(NotStarted, Complete)
 
   implicit val enumerable: Enumerable[PageReviewStatus] = Enumerable(values.map(v => v.toString -> v): _*)
 }
