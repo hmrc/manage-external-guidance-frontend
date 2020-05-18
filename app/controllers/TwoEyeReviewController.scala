@@ -32,7 +32,7 @@ import scala.concurrent.Future
 @Singleton
 class TwoEyeReviewController @Inject() (
     errorHandler: ErrorHandler,
-    view : twoeye_content_review,
+    view: twoeye_content_review,
     approvalService: ApprovalService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
@@ -42,16 +42,19 @@ class TwoEyeReviewController @Inject() (
 
   def approval(id: String): Action[AnyContent] = Action.async { implicit request =>
     val approvalProcessReview = ApprovalProcessReview(
-        "oct9005",
-        "Telling HMRC about extra income",
-        LocalDate.of(2020, 5, 10),
-        List(PageReview("id1", "how-did-you-earn-extra-income", Complete),
-          PageReview("id2", "sold-goods-or-services/did-you-only-sell-personal-possessions", NotStarted),
-          PageReview("id3", "sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", NotStarted),
-          PageReview("id4", "sold-goods-or-services/have-you-made-1000-or-more", NotStarted),
-          PageReview("id5", "sold-goods-or-services/you-do-not-need-to-tell-hmrc", NotStarted),
-          PageReview("id6", "rent-a-property/do-you-receive-any-income", NotStarted),
-          PageReview("id7", "rent-a-property/have-you-rented-out-a-room", NotStarted)))
+      "oct9005",
+      "Telling HMRC about extra income",
+      LocalDate.of(2020, 5, 10),
+      List(
+        PageReview("id1", "how-did-you-earn-extra-income", Complete),
+        PageReview("id2", "sold-goods-or-services/did-you-only-sell-personal-possessions", NotStarted),
+        PageReview("id3", "sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", NotStarted),
+        PageReview("id4", "sold-goods-or-services/have-you-made-1000-or-more", NotStarted),
+        PageReview("id5", "sold-goods-or-services/you-do-not-need-to-tell-hmrc", NotStarted),
+        PageReview("id6", "rent-a-property/do-you-receive-any-income", NotStarted),
+        PageReview("id7", "rent-a-property/have-you-rented-out-a-room", NotStarted)
+      )
+    )
 
     Future.successful(Ok(view(approvalProcessReview)))
   }

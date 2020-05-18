@@ -16,7 +16,7 @@
 
 package models
 
-sealed trait PageReviewStatus 
+sealed trait PageReviewStatus
 
 object PageReviewStatus extends Enumerable.Implicits {
 
