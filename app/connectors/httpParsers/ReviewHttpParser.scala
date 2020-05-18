@@ -16,8 +16,8 @@
 
 package connectors.httpParsers
 
-import models.ApprovalProcessReview
-import models.errors.{Error, NotFoundError}
+import models.errors.{Error, InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
+import models.{ApprovalProcessReview, RequestOutcome}
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsSuccess}
@@ -27,44 +27,27 @@ object ReviewHttpParser extends HttpParser {
 
   val logger: Logger = Logger(getClass)
 
-  type GetReviewDetailsResponse = Either[GetReviewDetailsFailure, GetReviewDetailsSuccess]
-
-  implicit val getReviewDetailsHttpReads: HttpReads[GetReviewDetailsResponse] = {
+  implicit val getReviewDetailsHttpReads: HttpReads[RequestOutcome[ApprovalProcessReview]] = {
     case (_, _, response)
       if response.status == OK =>
         response.json.validate[ApprovalProcessReview] match {
-          case JsSuccess(data, _) => Right(ReviewDetailsSuccess(data))
-          case JsError(_) => Left(ReviewDetailsMalformed)
+          case JsSuccess(data, _) => Right(data)
+          case JsError(_) => Left(MalformedResponseError)
         }
     case (_, _, response)
       if response.status == NOT_FOUND =>
         response.json.validate[Error] match {
           case JsSuccess(error, _) =>
             if(error.code == NotFoundError.code) {
-              Left(ReviewDetailsNotFound)
+              Left(NotFoundError)
             } else {
-              Left(ReviewDetailsStale)
+              Left(StaleDataError)
             }
-          case JsError(_) => Left(ReviewDetailsMalformed)
+          case JsError(_) => Left(MalformedResponseError)
         }
     case _ =>
       logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
-      Left(ReviewDetailsFailure(INTERNAL_SERVER_ERROR))
+      Left(InternalServerError)
   }
-
-  sealed trait GetReviewDetailsSuccess
-
-  case class ReviewDetailsSuccess(reviewInfo: ApprovalProcessReview) extends GetReviewDetailsSuccess
-
-  sealed trait GetReviewDetailsFailure
-
-  case object ReviewDetailsNotFound extends GetReviewDetailsFailure
-
-  case object ReviewDetailsStale extends GetReviewDetailsFailure
-
-  case object ReviewDetailsMalformed extends GetReviewDetailsFailure
-
-  case class ReviewDetailsFailure(status: Int) extends GetReviewDetailsFailure
-
 
 }

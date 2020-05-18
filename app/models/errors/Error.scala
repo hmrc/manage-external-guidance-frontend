@@ -34,3 +34,5 @@ object NotFoundError extends Error("NOT_FOUND_ERROR", "The resource requested co
 
 object StaleDataError extends Error("STALE_DATA_ERROR", "The resource requested has been changed elsewhere.")
 
+object MalformedResponseError extends Error("BAD_REQUEST", "The response received could not be parsed")
+

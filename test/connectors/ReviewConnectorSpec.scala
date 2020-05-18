@@ -17,10 +17,9 @@
 package connectors
 
 import base.BaseSpec
-import connectors.httpParsers.ReviewHttpParser._
 import mocks.{MockAppConfig, MockHttpClient}
-import models.ReviewData
-import org.scalatest.concurrent.ScalaFutures
+import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
+import models.{ApprovalProcessReview, RequestOutcome, ReviewData}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -48,58 +47,60 @@ class ReviewConnectorSpec extends BaseSpec {
         .get(endpoint)
         .returns(Future.successful(Right(reviewInfo)))
 
-      val response: GetReviewDetailsResponse =
+      val response: RequestOutcome[ApprovalProcessReview] =
         await(connector.approval2iReview(id))
 
       response shouldBe Right(reviewInfo)
 
     }
 
-    "Return an instance of ReviewDetailsMalformed when an error occurs" in new ReviewInfoTest {
+    "Return an instance of MalformedResponseError when an error occurs" in new ReviewInfoTest {
 
       MockedHttpClient
         .get(endpoint)
-        .returns(Future.successful(Left(ReviewDetailsMalformed)))
+        .returns(Future.successful(Left(MalformedResponseError)))
 
-      val response: GetReviewDetailsResponse =
+      val response: RequestOutcome[ApprovalProcessReview] =
         await(connector.approval2iReview(id))
 
-      response shouldBe Left(ReviewDetailsMalformed)
+      response shouldBe Left(MalformedResponseError)
     }
 
-    "Return an instance of ReviewDetailsNotFound class when an error occurs" in new ReviewInfoTest {
+    "Return an instance of NotFoundError class when an error occurs" in new ReviewInfoTest {
 
       MockedHttpClient
         .get(endpoint)
-        .returns(Future.successful(Left(ReviewDetailsNotFound)))
+        .returns(Future.successful(Left(NotFoundError)))
 
-      val response: GetReviewDetailsResponse =
+      val response: RequestOutcome[ApprovalProcessReview] =
         await(connector.approval2iReview(id))
 
-      response shouldBe Left(ReviewDetailsNotFound)
+      response shouldBe Left(NotFoundError)
     }
-//
-//    "Return an instance of ReviewDetailsStale class when an error occurs" in new ReviewInfoTest {
-//
-//      MockedHttpClient
-//        .get(endpoint)(ReviewDetailsStale)
-//
-//      val response: GetReviewDetailsResponse =
-//        await(connector.approval2iReview(id))
-//
-//      response shouldBe Left(ReviewDetailsStale)
-//    }
-//
-//    "Return an instance of ReviewDetailsFailure class when an error occurs" in new ReviewInfoTest {
-//
-//      MockedHttpClient
-//        .get(endpoint)(ReviewDetailsFailure(503))
-//
-//      val response: GetReviewDetailsResponse =
-//        await(connector.approval2iReview(id))
-//
-//      response shouldBe Left(ReviewDetailsFailure(503))
-//    }
+
+    "Return an instance of StaleDataError class when an error occurs" in new ReviewInfoTest {
+
+      MockedHttpClient
+        .get(endpoint)
+        .returns(Future.successful(Left(StaleDataError)))
+
+      val response: RequestOutcome[ApprovalProcessReview] =
+        await(connector.approval2iReview(id))
+
+      response shouldBe Left(StaleDataError)
+    }
+
+    "Return an instance of InternalServererror class when an error occurs" in new ReviewInfoTest {
+
+      MockedHttpClient
+        .get(endpoint)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val response: RequestOutcome[ApprovalProcessReview] =
+        await(connector.approval2iReview(id))
+
+      response shouldBe Left(InternalServerError)
+    }
 
   }
 
