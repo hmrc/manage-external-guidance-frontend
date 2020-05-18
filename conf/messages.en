@@ -16,7 +16,7 @@ pageReviewStatus.Reviewed = Reviewed
 
 2iReview.heading = 2i content review
 2iReview.reviewPagesHeading = Review all pages
-2iReview.pagesReviewedConfirmationHeading = Confirm you've 2i-reviews all pages.
+2iReview.pagesReviewedConfirmationHeading = Confirm you''ve 2i-reviews all pages.
 2iReview.sendConfirmation = Send confirmation
 
 error.unauthorized401.pageTitle = You can’t access this service with this account
