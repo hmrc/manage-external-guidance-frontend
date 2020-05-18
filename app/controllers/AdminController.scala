@@ -23,7 +23,7 @@ import play.api.mvc._
 import services.ApprovalService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import play.api.Logger
-import views.html.{process_review, approval_summary_list}
+import views.html.{twoeye_content_review, approval_summary_list}
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDate
 import models.{ApprovalProcessReview, PageReview, PageReviewStatus}
@@ -34,7 +34,7 @@ import scala.concurrent.Future
 class AdminController @Inject() (
     errorHandler: ErrorHandler,
     view: approval_summary_list,
-    previewView : process_review,
+    twoEyeContentView : twoeye_content_review,
     approvalService: ApprovalService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
@@ -53,7 +53,7 @@ class AdminController @Inject() (
   }
 
   def approval2iReviewInfo(id: String): Action[AnyContent] = Action.async { implicit request =>
-    val processReview = ApprovalProcessReview(
+    val approvalProcessReview = ApprovalProcessReview(
         "oct9005",
         "Telling HMRC about extra income",
         LocalDate.of(2020, 5, 10),
@@ -65,7 +65,7 @@ class AdminController @Inject() (
           PageReview("id6", "rent-a-property/do-you-receive-any-income", NotStarted),
           PageReview("id7", "rent-a-property/have-you-rented-out-a-room", NotStarted)))
 
-    Future.successful(Ok(previewView(processReview)))
+    Future.successful(Ok(twoEyeContentView(approvalProcessReview)))
   }
 
 }
