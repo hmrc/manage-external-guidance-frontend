@@ -15,6 +15,10 @@ error.unauthorized401.pageTitle = You can’t access this service with this acco
 error.unauthorized401.heading = You can’t access this service with this account
 error.unauthorized401.message =
 
+error.staleData.pageTitle = TBC
+error.staleData.heading = TBC
+error.staleData.message = TBC
+
 # Compliance statement
 # ----------------------------------------------------------
 accessibility.title=Accessibility statement for External Guidance - to Be Defined
