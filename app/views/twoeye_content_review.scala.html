@@ -19,51 +19,55 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(layout: main_layout, govukTable : GovukTable)
+@this(layout: main_layout, govukTable : GovukTable, govukBackLink : GovukBackLink)
 
 @(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
 
 @layout(messages("service.name")) {
 
-    <header class="page-heading">
-      <span class="govuk-caption-xl">@messages("2iReview.heading")</span>
-      <h1 class="govuk-heading-xl">@review.title</h1>
-    </header>
+  @govukBackLink(BackLink(href = routes.AdminController.approvalSummaries.toString, 
+                          content = Text(messages("backlink.label"))))
 
-    
-    <ol class="app-task-list">
-      <li>
+  <header class="page-heading">
+    <span class="govuk-caption-xl">@messages("2iReview.heading")</span>
+    <h1 class="govuk-heading-xl">@review.title</h1>
+  </header>
 
-        <h2 class="app-task-list__section">
-          <span class="app-task-list__section-number">1. </span>@messages("2iReview.reviewPagesHeading")
-        </h2>
+  <ol class="app-task-list">
+    <li>
 
-        <ul class="app-task-list__items">        
-          @for((page, index) <- review.pages.zipWithIndex) {
-            <li class="app-task-list__item">
-              <a href="#" class="app-task-list__task-name" aria-describedby="page-@index">@page.title</a>
-              <strong class="govuk-tag app-task-list__task-completed" id="page-@index">@messages(s"pageReviewStatus.${page.status.toString}")</strong>
-            </li>
-          }
-        </ul>
+      <h2 class="app-task-list__section">
+        <span class="app-task-list__section-number">1. </span>@messages("2iReview.reviewPagesHeading")
+      </h2>
 
-      </li>
-
-      <li>
-
-        <h2 class="app-task-list__section">
-          <span class="app-task-list__section-number">2. </span>@messages("2iReview.pagesReviewedConfirmationHeading")
-        </h2>
-
-        <ul class="app-task-list__items">
+      <ul class="app-task-list__items">        
+        @for((page, index) <- review.pages.zipWithIndex) {
           <li class="app-task-list__item">
-            <span class="app-task-list__task-name"><a href="#">@messages("2iReview.sendConfirmation")</a></span>
+            <span class="app-task-list__task-name">
+              <a href="#" aria-describedby="page-@index">@page.title</a>
+            </span>
+            <strong class="govuk-tag app-task-list__task-completed" id="page-@index">@messages(s"pageReviewStatus.${page.status.toString}")</strong>
           </li>
-        </ul>
+        }
+      </ul>
 
-      </li>
+    </li>
 
-    </ol>
+    <li>
+
+      <h2 class="app-task-list__section">
+        <span class="app-task-list__section-number">2. </span>@messages("2iReview.pagesReviewedConfirmationHeading")
+      </h2>
+
+      <ul class="app-task-list__items">
+        <li class="app-task-list__item">
+          <span class="app-task-list__task-name"><a href="#">@messages("2iReview.sendConfirmation")</a></span>
+        </li>
+      </ul>
+
+    </li>
+
+  </ol>
 
 }
 @{

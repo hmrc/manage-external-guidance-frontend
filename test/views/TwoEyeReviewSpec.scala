@@ -16,16 +16,10 @@
 
 package views
 
-import play.api.inject.Injector
-import play.api.i18n.{Messages, MessagesApi, Lang}
-import play.api.test.FakeRequest
-import play.twirl.api.Html
 import java.time._
-import org.jsoup._
 import views.html._
 import org.jsoup.nodes._
 import scala.collection.JavaConverters._
-import config.AppConfig
 import models._
 import PageReviewStatus._
 
@@ -34,12 +28,6 @@ class TwoEyeReviewSpec extends ViewSpecBase {
   def elementAttrs(el: Element): Map[String, String] = el.attributes.asScala.toList.map(attr => (attr.getKey, attr.getValue)).toMap
 
   trait Test {
-    private def injector: Injector = app.injector
-    def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
-
-    implicit val fakeRequest = FakeRequest("GET", "/")
-    implicit def messages: Messages = messagesApi.preferred(Seq(Lang("en")))
-    implicit def appconfig: AppConfig = injector.instanceOf[AppConfig]
     def twoEyeReview: twoeye_content_review = injector.instanceOf[twoeye_content_review]
     val approvalProcessReview = ApprovalProcessReview(
         "oct9005",
@@ -51,7 +39,7 @@ class TwoEyeReviewSpec extends ViewSpecBase {
           PageReview("id4", "sold-goods-or-services/have-you-made-1000-or-more", NotStarted),
           PageReview("id5", "sold-goods-or-services/you-do-not-need-to-tell-hmrc", NotStarted),
           PageReview("id6", "rent-a-property/do-you-receive-any-income", NotStarted),
-          PageReview("id7", "rent-a-property/have-you-rented-out-a-room", NotStarted)))    
+          PageReview("id7", "rent-a-property/have-you-rented-out-a-room", NotStarted)))
 
   }
 
@@ -81,6 +69,22 @@ class TwoEyeReviewSpec extends ViewSpecBase {
       }
     }
 
+    "Include a back link" in new Test {
+      val doc = asDocument(twoEyeReview(approvalProcessReview))
+      Option(doc.getElementsByTag("main").first).fold(fail("Missing main tag")){ main =>
+        Option(main.getElementsByTag("a").first).fold(fail("No links in main")){ link =>
+          link.text shouldBe messages("backlink.label")
+          val attrs = elementAttrs(link)
+          attrs.get("class").fold(fail("Missing class attribute on back link")){ clss =>
+            clss shouldBe "govuk-back-link"
+          }
+          attrs.get("href").fold(fail("Missing href attribute on back link")){ href =>
+            href shouldBe "/external-guidance/process/approval"
+          }
+        }
+      }
+    }
+
     "Render a page containing all listing all of files and their status" in new Test {
 
       val doc = asDocument(twoEyeReview(approvalProcessReview))
@@ -100,7 +104,6 @@ class TwoEyeReviewSpec extends ViewSpecBase {
       }
     }
   }
-
 
 }
 

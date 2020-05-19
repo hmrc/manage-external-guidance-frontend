@@ -1,5 +1,6 @@
 service.name = External Guidance
 footer.links.accessibility.text=Accessibility
+backlink.label = Back
 
 approvals.tableTitle = Interactive guidance
 approvals.processTitle = Title
