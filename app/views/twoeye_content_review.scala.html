@@ -39,10 +39,10 @@
         </h2>
 
         <ul class="app-task-list__items">        
-          @for(page <- review.pages) {
+          @for((page, index) <- review.pages.zipWithIndex) {
             <li class="app-task-list__item">
-              <a href="#" class="app-task-list__task-name" aria-describedby="@page.title">@page.title</a>
-              <strong class="govuk-tag app-task-list__task-completed" id="@page.title">@messages(s"pageReviewStatus.${page.status.toString}")</strong>
+              <a href="#" class="app-task-list__task-name" aria-describedby="page-@index">@page.title</a>
+              <strong class="govuk-tag app-task-list__task-completed" id="page-@index">@messages(s"pageReviewStatus.${page.status.toString}")</strong>
             </li>
           }
         </ul>

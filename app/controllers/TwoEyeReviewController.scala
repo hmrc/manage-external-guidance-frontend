@@ -40,6 +40,7 @@ class TwoEyeReviewController @Inject() (
 
   val logger = Logger(getClass)
 
+  // $COVERAGE-OFF$
   def approval(id: String): Action[AnyContent] = Action.async { implicit request =>
     val approvalProcessReview = ApprovalProcessReview(
       "oct9005",
@@ -58,5 +59,5 @@ class TwoEyeReviewController @Inject() (
 
     Future.successful(Ok(view(approvalProcessReview)))
   }
-
+  // $COVERAGE-ON$
 }

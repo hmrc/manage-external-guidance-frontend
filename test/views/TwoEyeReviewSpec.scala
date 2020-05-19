@@ -56,17 +56,48 @@ class TwoEyeReviewSpec extends ViewSpecBase {
   }
 
   "2i Review page" should {
-    "Render a page containing all listing all of files for review" in new Test {
+    "Render a page should display process title as the heading" in new Test {
 
       val doc = asDocument(twoEyeReview(approvalProcessReview))
+      doc.getElementsByTag("h1").asScala.filter(elementAttrs(_).get("class") == Some("govuk-heading-xl")).toList match {
+        case Nil => fail("Missing H1 heading of the correct class")
+        case x :: xs if x.text == approvalProcessReview.title => succeed
+        case _ => fail("Heading does not match the title of the process under approval")
+      }
+    }
 
-      //val pageLinks = doc.getElementsByTag("a").asScala.filter(elementAttrs(_)("class") == "app-task-list__task-name").map(_.text)
-      val pages = doc.getElementsByTag("a").asScala
-                     .filter(elementAttrs(_).get("class") == Some("app-task-list__task-name"))
-                     .map(_.text)
-                     .toList
-      approvalProcessReview.pages.forall(p => pages.contains(p.title)) shouldBe true
+    "Render a page containing two sections, one of pages and another with a send confirmation" in new Test {
 
+      val doc = asDocument(twoEyeReview(approvalProcessReview))
+      Option(doc.getElementsByTag("ol").first).fold(fail("Missing ordered list elem (ol)")){ ol =>
+        val h2s = ol.getElementsByTag("h2").asScala.toList
+        h2s.size shouldBe 2
+        h2s(0).text shouldBe s"1. ${messages("2iReview.reviewPagesHeading")}"
+        h2s(1).text shouldBe s"2. ${messages("2iReview.pagesReviewedConfirmationHeading")}"
+
+        val uls = ol.getElementsByTag("ul").asScala.toList
+        uls.size shouldBe 2
+        uls(1).text shouldBe messages("2iReview.sendConfirmation")
+      }
+    }
+
+    "Render a page containing all listing all of files and their status" in new Test {
+
+      val doc = asDocument(twoEyeReview(approvalProcessReview))
+      Option(doc.getElementsByTag("ul").first).fold(fail("Missing ul element")){ ul =>
+        val listItems = ul.getElementsByTag("li").asScala
+                          .filter(elementAttrs(_).get("class") == Some("app-task-list__item")).toList
+
+        listItems.foreach{ li =>
+          val a = li.getElementsByTag("a").first
+          elementAttrs(a).get("aria-describedby").fold(fail("Missing aria-describedby on file link")){ statusId =>
+            val url = a.text
+            approvalProcessReview.pages.find(_.title == url).fold(fail(s"Missing page with url $url")){ page =>
+              messages(s"pageReviewStatus.${page.status.toString}") shouldBe li.getElementById(statusId).text
+            }
+          }
+        }
+      }
     }
   }
 
