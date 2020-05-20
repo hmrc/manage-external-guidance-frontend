@@ -16,13 +16,9 @@
 
 package views
 
-import play.api.inject.Injector
-import play.api.i18n.{Messages, MessagesApi, Lang}
-import play.api.test.FakeRequest
 import play.twirl.api.Html
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import org.jsoup._
 import views.html._
 import org.jsoup.nodes._
 import scala.collection.JavaConverters._
@@ -35,12 +31,6 @@ class ApprovalsListSpec extends ViewSpecBase {
   def elementAttrs(el: Element): Map[String, String] = el.attributes.asScala.toList.map(attr => (attr.getKey, attr.getValue)).toMap
 
   trait Test {
-    private def injector: Injector = app.injector
-    def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
-
-    implicit val fakeRequest = FakeRequest("GET", "/")
-    implicit def messages: Messages = messagesApi.preferred(Seq(Lang("en")))
-    implicit def appconfig: AppConfig = injector.instanceOf[AppConfig]
     def approvalsListView: approval_summary_list = injector.instanceOf[approval_summary_list]
     val summaries = Seq(
       ApprovalProcessSummary("oct9005", "EU exit guidance", LocalDate.of(2020, 5, 4), WithDesignerForUpdate),
@@ -48,12 +38,12 @@ class ApprovalsListSpec extends ViewSpecBase {
       ApprovalProcessSummary("oct9007", "Telling HMRC about extra income", LocalDate.of(2020, 4, 1), WithDesignerForUpdate),
       ApprovalProcessSummary("oct9008", "Find a lost user ID and password", LocalDate.of(2020, 4, 2), SubmittedForFactCheck)
     )
+    val doc = asDocument(approvalsListView(summaries))
   }
 
   "Approval Summary List page" should {
     "Render with correct heading" in new Test {
 
-      val doc = asDocument(approvalsListView(summaries))
       doc.getElementsByTag("h1").asScala.filter(elementAttrs(_).get("class") == Some("govuk-heading-xl")).toList match {
         case Nil => fail("Missing H1 heading of the correct class")
         case x :: xs if x.text == messages("approvals.tableTitle") => succeed
@@ -63,7 +53,6 @@ class ApprovalsListSpec extends ViewSpecBase {
 
     "Contain a table with correct headings" in new Test {
 
-      val doc = asDocument(approvalsListView(summaries))
       Option(doc.getElementsByTag("table").first).fold(fail("Missing table elem")){ table =>
         val ths = table.getElementsByTag("th").asScala.toList
         ths.size shouldBe 3
@@ -80,7 +69,6 @@ class ApprovalsListSpec extends ViewSpecBase {
 
     "include a table entry for each approval summary in order" in new Test {
 
-      val doc = asDocument(approvalsListView(summaries))
       Option(doc.getElementsByTag("tbody").first).fold(fail("Missing table body")){ tbody =>
         val rows = tbody.getElementsByTag("tr").asScala.toList
 
