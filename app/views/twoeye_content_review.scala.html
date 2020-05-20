@@ -46,7 +46,7 @@
             <span class="app-task-list__task-name">
               <a href="#" aria-describedby="page-@index">@page.title</a>
             </span>
-            <strong class="govuk-tag app-task-list__task-completed" id="page-@index">@messages(s"pageReviewStatus.${page.status.toString}")</strong>
+            <span class="hmrc-status-tag" id="page-@index">@messages(s"pageReviewStatus.${page.status.toString}")</span>
           </li>
         }
       </ul>
@@ -62,6 +62,7 @@
       <ul class="app-task-list__items">
         <li class="app-task-list__item">
           <span class="app-task-list__task-name"><a href="#">@messages("2iReview.sendConfirmation")</a></span>
+          <span class="hmrc-status-tag" id="send-confimation">@messages("2iReview.sendConfirmationStatus")</span>
         </li>
       </ul>
 
