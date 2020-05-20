@@ -1,5 +1,6 @@
 service.name = External Guidance
 footer.links.accessibility.text=Accessibility
+backlink.label = Back
 
 approvals.tableTitle = Interactive guidance
 approvals.processTitle = Title
@@ -10,6 +11,14 @@ approvalsStatus.SubmittedFor2iReview = Submitted for 2i review
 approvalsStatus.SubmittedForFactCheck = Submitted for fact check
 approvalsStatus.WithDesignerForUpdate = With designer for update
 approvalsStatus.ApprovedForPublishing = Approved to be publishing
+
+pageReviewStatus.NotStarted = Not started
+pageReviewStatus.Complete = Reviewed
+
+2iReview.heading = 2i content review
+2iReview.reviewPagesHeading = Review all pages
+2iReview.pagesReviewedConfirmationHeading = Confirm you''ve 2i-reviewed all pages.
+2iReview.sendConfirmation = Send confirmation
 
 error.unauthorized401.pageTitle = You can’t access this service with this account
 error.unauthorized401.heading = You can’t access this service with this account

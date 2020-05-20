@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReviewConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
+class ReviewConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
 
   def approval2iReview(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalProcessReview]] = {
 
