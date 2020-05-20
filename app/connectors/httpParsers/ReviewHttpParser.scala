@@ -28,27 +28,25 @@ object ReviewHttpParser extends HttpParser {
   val logger: Logger = Logger(getClass)
 
   implicit val getReviewDetailsHttpReads: HttpReads[RequestOutcome[ApprovalProcessReview]] = {
-    case (_, _, response)
-      if response.status == OK =>
-        response.json.validate[ApprovalProcessReview] match {
-          case JsSuccess(data, _) => Right(data)
-          case JsError(_) =>
-            logger.error(s"Unable to parse review data response from external-guidance.")
-            Left(MalformedResponseError)
-        }
-    case (_, _, response)
-      if response.status == NOT_FOUND =>
-        response.json.validate[Error] match {
-          case JsSuccess(error, _) =>
-            if(error.code == NotFoundError.code) {
-              Left(NotFoundError)
-            } else {
-              Left(StaleDataError)
-            }
-          case JsError(_) =>
-            logger.error(s"Unable to parse NOT_FOUND response from external-guidance.")
-            Left(MalformedResponseError)
-        }
+    case (_, _, response) if response.status == OK =>
+      response.json.validate[ApprovalProcessReview] match {
+        case JsSuccess(data, _) => Right(data)
+        case JsError(_) =>
+          logger.error(s"Unable to parse review data response from external-guidance.")
+          Left(MalformedResponseError)
+      }
+    case (_, _, response) if response.status == NOT_FOUND =>
+      response.json.validate[Error] match {
+        case JsSuccess(error, _) =>
+          if (error.code == NotFoundError.code) {
+            Left(NotFoundError)
+          } else {
+            Left(StaleDataError)
+          }
+        case JsError(_) =>
+          logger.error(s"Unable to parse NOT_FOUND response from external-guidance.")
+          Left(MalformedResponseError)
+      }
     case _ =>
       logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
       Left(InternalServerError)
