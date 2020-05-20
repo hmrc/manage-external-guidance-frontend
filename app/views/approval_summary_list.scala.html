@@ -33,7 +33,7 @@
     for(summary <- summaries) yield {
       Seq(
         TableRow(
-          content = HtmlContent(s"<a href=#>${summary.title}</a>")
+          content = HtmlContent(s"""<a href="${routes.TwoEyeReviewController.approval.toString}/${summary.id}">${summary.title}</a>""")
         ), 
         TableRow(
           content = Text(summary.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))
