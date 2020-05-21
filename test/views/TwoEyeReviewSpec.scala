@@ -65,7 +65,10 @@ class TwoEyeReviewSpec extends ViewSpecBase {
 
         val uls = ol.getElementsByTag("ul").asScala.toList
         uls.size shouldBe 2
-        uls(1).text shouldBe messages("2iReview.sendConfirmation")
+        Option(uls(1).getElementsByTag("a").first).fold(fail("Missing Send confirmation link")){ a =>
+          a.text shouldBe messages("2iReview.sendConfirmation")
+        }
+        uls(1).getElementById("send-confirmation").text shouldBe messages("2iReview.sendConfirmationStatus")
       }
     }
 
