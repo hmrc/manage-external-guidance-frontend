@@ -25,7 +25,8 @@ import scala.concurrent.Future
 import base.ControllerBaseSpec
 import mocks.MockReviewService
 import models.ReviewData
-import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
+import models.errors.{InternalServerError, MalformedResponseError, NotFoundError}
+import views.html.twoeye_content_review
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -39,7 +40,9 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
 
     val errorHandler = injector.instanceOf[ErrorHandler]
 
-    val reviewController = new TwoEyeReviewController(errorHandler, mockReviewService, messagesControllerComponents)
+    val view = injector.instanceOf[twoeye_content_review]
+
+    val reviewController = new TwoEyeReviewController(errorHandler, view, mockReviewService, messagesControllerComponents)
 
     val fakeRequest = FakeRequest("GET", "/")
   }
@@ -61,8 +64,7 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
 
       val result: Future[Result] = reviewController.approval(id)(fakeRequest)
 
-      // TODO: Update type when view implemented
-      contentType(result) shouldBe Some(MimeTypes.TEXT)
+      contentType(result) shouldBe Some(MimeTypes.HTML)
     }
 
     "Return the Http status Not found when the process review does not exist" in new Test {
@@ -77,24 +79,6 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
     "Return an Html error page when the process review does not exist" in new Test {
 
       MockReviewService.approval2iReview(id).returns(Future.successful(Left(NotFoundError)))
-
-      val result: Future[Result] = reviewController.approval(id)(fakeRequest)
-
-      contentType(result) shouldBe Some(MimeTypes.HTML)
-    }
-
-    "Return the Http status Conflict when the process review data is stale" in new Test {
-
-      MockReviewService.approval2iReview(id).returns(Future.successful(Left(StaleDataError)))
-
-      val result: Future[Result] = reviewController.approval(id)(fakeRequest)
-
-      status(result) shouldBe Status.CONFLICT
-    }
-
-    "Return an Html error page when the process review data is stale" in new Test {
-
-      MockReviewService.approval2iReview(id).returns(Future.successful(Left(StaleDataError)))
 
       val result: Future[Result] = reviewController.approval(id)(fakeRequest)
 

@@ -27,7 +27,7 @@ import play.api.Logger
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import config.ErrorHandler
-import models.errors.{MalformedResponseError, NotFoundError, StaleDataError}
+import models.errors.{MalformedResponseError, NotFoundError}
 import services.ReviewService
 import views.html.twoeye_content_review
 
@@ -49,15 +49,12 @@ class TwoEyeReviewController @Inject() (
         logger.error(s"Unable to retrieve approval 2i process review for process $id")
         NotFound(errorHandler.notFoundTemplate)
       }
-      case Left(StaleDataError) => {
-        logger.warn(s"The approval 2i process review for process $id has been updated by another user")
-        Conflict(errorHandler.standardErrorTemplate("error.staleData.pageTitle", "error.staleData.heading", "error.staleData.message"))
-      }
       case Left(MalformedResponseError) => {
         logger.error(s"A malformed response was returned for the approval 2i process review for process $id")
         InternalServerError(errorHandler.internalServerErrorTemplate)
       }
       case Left(err) =>
+        // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval 2i review process for process $id returned error $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
