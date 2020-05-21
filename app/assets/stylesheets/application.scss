@@ -1,10 +1,14 @@
 $govuk-assets-path: "/guidance/assets/lib/govuk-frontend/govuk/assets/";
+$hmrc-assets-path: "/guidance/assets/lib/hmrc-frontend/hmrc/assets/";
+
+$govuk-global-styles: true;
 
 @import "lib/govuk-frontend/govuk/all";
+@import "lib/hmrc-frontend/hmrc/all";
 
 .app-reference-number {
   display: block;
   font-weight: bold;
 }
 
-@import "_task-list";
+@import "_task-list-mod";
