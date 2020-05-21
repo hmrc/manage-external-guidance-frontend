@@ -32,7 +32,7 @@ class HelloWorldISpec extends IntegrationSpec {
       response.status shouldBe Status.OK
     }
 
-    "return an UNAUTHORISED response for an authorized user" in {
+    "return an UNAUTHORISED response for an unauthorized user" in {
       AuditStub.audit()
       AuthStub.unauthorised()
       val request = buildRequest("/hello-world")
