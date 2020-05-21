@@ -15,7 +15,7 @@
  */
 package pages
 
-import models.errors.{InternalServerError, NotFoundError}
+import models.errors.{BadRequestError, InternalServerError, NotFoundError, StaleDataError}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
@@ -109,6 +109,38 @@ class TwoEyeReviewerControllerISpec extends IntegrationSpec {
       val responsePayload: JsValue = Json.toJson(InternalServerError)
 
       ExternalGuidanceStub.approval2iReview(Status.INTERNAL_SERVER_ERROR, responsePayload)
+
+      val request = buildRequest("/2i-review/oct90005")
+
+      val response: WSResponse = await(request.get())
+
+      response.status shouldBe Status.INTERNAL_SERVER_ERROR
+    }
+
+    "return an internal server error response when the external guidance service returns a stale data error" in {
+
+      AuditStub.audit()
+      AuthStub.authorise()
+
+      val responsePayload: JsValue = Json.toJson(StaleDataError)
+
+      ExternalGuidanceStub.approval2iReview(Status.NOT_FOUND, responsePayload)
+
+      val request = buildRequest("/2i-review/oct90005")
+
+      val response: WSResponse = await(request.get())
+
+      response.status shouldBe Status.INTERNAL_SERVER_ERROR
+    }
+
+    "return an internal server error response when the external guidance service returns a bad request error" in {
+
+      AuditStub.audit()
+      AuthStub.authorise()
+
+      val responsePayload: JsValue = Json.toJson(BadRequestError)
+
+      ExternalGuidanceStub.approval2iReview(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest("/2i-review/oct90005")
 
