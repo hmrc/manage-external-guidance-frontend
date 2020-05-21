@@ -27,6 +27,7 @@ import play.api.Logger
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import config.ErrorHandler
+import controllers.actions.TwoEyeReviewerIdentifierAction
 import models.errors.{MalformedResponseError, NotFoundError}
 import services.ReviewService
 import views.html.twoeye_content_review
@@ -34,6 +35,7 @@ import views.html.twoeye_content_review
 @Singleton
 class TwoEyeReviewController @Inject() (
     errorHandler: ErrorHandler,
+    twoEyeReviewerIdentifierAction: TwoEyeReviewerIdentifierAction,
     view: twoeye_content_review,
     reviewService: ReviewService,
     mcc: MessagesControllerComponents
@@ -42,7 +44,7 @@ class TwoEyeReviewController @Inject() (
 
   val logger = Logger(getClass)
 
-  def approval(id: String): Action[AnyContent] = Action.async { implicit request =>
+  def approval(id: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
     reviewService.approval2iReview(id).map {
       case Right(approvalProcessReview) => Ok(view(approvalProcessReview))
       case Left(NotFoundError) => {

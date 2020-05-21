@@ -17,6 +17,7 @@
 package controllers
 
 import config.ErrorHandler
+import controllers.actions.FakeTwoEyeReviewerIdentifierAction
 import play.api.http.MimeTypes
 import play.api.http.Status
 import play.api.mvc._
@@ -42,7 +43,7 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
 
     val view = injector.instanceOf[twoeye_content_review]
 
-    val reviewController = new TwoEyeReviewController(errorHandler, view, mockReviewService, messagesControllerComponents)
+    val reviewController = new TwoEyeReviewController(errorHandler, FakeTwoEyeReviewerIdentifierAction, view, mockReviewService, messagesControllerComponents)
 
     val fakeRequest = FakeRequest("GET", "/")
   }
