@@ -32,7 +32,7 @@
 @govukTable(Table(
     for(summary <- summaries) yield {
       Seq(
-        TableRow(content = HtmlContent(s"<a href=#>${summary.title}</a>")), 
+        TableRow(content = HtmlContent(s"""<a href="${routes.TwoEyeReviewController.approval(summary.id).toString}">${summary.title}</a>""")), 
         TableRow(content = Text(summary.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))), 
         TableRow(content = Text(messages(s"approvalsStatus.${summary.status.toString}")))
       ), 
