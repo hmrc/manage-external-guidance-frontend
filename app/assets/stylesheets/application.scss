@@ -11,11 +11,4 @@ $govuk-global-styles: true;
   font-weight: bold;
 }
 
-// Task name within task list; constrain width to 75%
-.app-task-list__task-name {
-  display: block;
-  @include govuk-media-query($from: 450px) {
-    float: left;
-    width: 75%;
-  }
-}
+@import "_task-list-mod";
