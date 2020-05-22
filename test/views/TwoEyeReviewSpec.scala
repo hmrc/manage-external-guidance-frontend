@@ -29,17 +29,21 @@ class TwoEyeReviewSpec extends ViewSpecBase {
 
   trait Test {
     def twoEyeReview: twoeye_content_review = injector.instanceOf[twoeye_content_review]
+
     val approvalProcessReview = ApprovalProcessReview(
-        "oct9005",
-        "Telling HMRC about extra income",
-        LocalDate.of(2020, 5, 10),
-        List(PageReview("id1", "how-did-you-earn-extra-income", Complete),
-          PageReview("id2", "sold-goods-or-services/did-you-only-sell-personal-possessions", NotStarted),
-          PageReview("id3", "sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", NotStarted),
-          PageReview("id4", "sold-goods-or-services/have-you-made-1000-or-more", NotStarted),
-          PageReview("id5", "sold-goods-or-services/you-do-not-need-to-tell-hmrc", NotStarted),
-          PageReview("id6", "rent-a-property/do-you-receive-any-income", NotStarted),
-          PageReview("id7", "rent-a-property/have-you-rented-out-a-room", NotStarted)))
+      "oct9005",
+      "Telling HMRC about extra income",
+      LocalDate.of(2020, 5, 10),
+      List(
+        PageReview("id1", "how-did-you-earn-extra-income", Complete),
+        PageReview("id2", "sold-goods-or-services/did-you-only-sell-personal-possessions", NotStarted),
+        PageReview("id3", "sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", NotStarted),
+        PageReview("id4", "sold-goods-or-services/have-you-made-1000-or-more", NotStarted),
+        PageReview("id5", "sold-goods-or-services/you-do-not-need-to-tell-hmrc", NotStarted),
+        PageReview("id6", "rent-a-property/do-you-receive-any-income", NotStarted),
+        PageReview("id7", "rent-a-property/have-you-rented-out-a-room", NotStarted)
+      )
+    )
 
   }
 
@@ -57,7 +61,7 @@ class TwoEyeReviewSpec extends ViewSpecBase {
     "Render a page containing two sections, one of pages and another with a send confirmation" in new Test {
 
       val doc = asDocument(twoEyeReview(approvalProcessReview))
-      Option(doc.getElementsByTag("ol").first).fold(fail("Missing ordered list elem (ol)")){ ol =>
+      Option(doc.getElementsByTag("ol").first).fold(fail("Missing ordered list elem (ol)")) { ol =>
         val h2s = ol.getElementsByTag("h2").asScala.toList
         h2s.size shouldBe 2
         h2s(0).text shouldBe s"1. ${messages("2iReview.reviewPagesHeading")}"
@@ -65,7 +69,7 @@ class TwoEyeReviewSpec extends ViewSpecBase {
 
         val uls = ol.getElementsByTag("ul").asScala.toList
         uls.size shouldBe 2
-        Option(uls(1).getElementsByTag("a").first).fold(fail("Missing Send confirmation link")){ a =>
+        Option(uls(1).getElementsByTag("a").first).fold(fail("Missing Send confirmation link")) { a =>
           a.text shouldBe messages("2iReview.sendConfirmation")
         }
         uls(1).getElementById("send-confirmation").text shouldBe messages("2iReview.sendConfirmationStatus")
@@ -74,14 +78,14 @@ class TwoEyeReviewSpec extends ViewSpecBase {
 
     "Include a back link" in new Test {
       val doc = asDocument(twoEyeReview(approvalProcessReview))
-      Option(doc.getElementsByTag("main").first).fold(fail("Missing main tag")){ main =>
-        Option(main.getElementsByTag("a").first).fold(fail("No links in main")){ link =>
+      Option(doc.getElementsByTag("main").first).fold(fail("Missing main tag")) { main =>
+        Option(main.getElementsByTag("a").first).fold(fail("No links in main")) { link =>
           link.text shouldBe messages("backlink.label")
           val attrs = elementAttrs(link)
-          attrs.get("class").fold(fail("Missing class attribute on back link")){ clss =>
+          attrs.get("class").fold(fail("Missing class attribute on back link")) { clss =>
             clss shouldBe "govuk-back-link"
           }
-          attrs.get("href").fold(fail("Missing href attribute on back link")){ href =>
+          attrs.get("href").fold(fail("Missing href attribute on back link")) { href =>
             href shouldBe "/external-guidance/process/approval"
           }
         }
@@ -91,15 +95,18 @@ class TwoEyeReviewSpec extends ViewSpecBase {
     "Render a page containing all listing all of files and their status" in new Test {
 
       val doc = asDocument(twoEyeReview(approvalProcessReview))
-      Option(doc.getElementsByTag("ul").first).fold(fail("Missing ul element")){ ul =>
-        val listItems = ul.getElementsByTag("li").asScala
-                          .filter(elementAttrs(_).get("class") == Some("app-task-list__item")).toList
+      Option(doc.getElementsByTag("ul").first).fold(fail("Missing ul element")) { ul =>
+        val listItems = ul
+          .getElementsByTag("li")
+          .asScala
+          .filter(elementAttrs(_).get("class") == Some("app-task-list__item"))
+          .toList
 
-        listItems.foreach{ li =>
+        listItems.foreach { li =>
           val a = li.getElementsByTag("a").first
-          elementAttrs(a).get("aria-describedby").fold(fail("Missing aria-describedby on file link")){ statusId =>
+          elementAttrs(a).get("aria-describedby").fold(fail("Missing aria-describedby on file link")) { statusId =>
             val url = a.text
-            approvalProcessReview.pages.find(_.title == url).fold(fail(s"Missing page with url $url")){ page =>
+            approvalProcessReview.pages.find(_.title == url).fold(fail(s"Missing page with url $url")) { page =>
               messages(s"pageReviewStatus.${page.status.toString}") shouldBe li.getElementById(statusId).text
             }
           }
@@ -109,4 +116,3 @@ class TwoEyeReviewSpec extends ViewSpecBase {
   }
 
 }
-
