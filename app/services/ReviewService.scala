@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package config
+package services
 
-import com.google.inject.AbstractModule
+import javax.inject.{Inject, Singleton}
 
-import controllers.actions._
+import connectors.ReviewConnector
+import models.{ApprovalProcessReview, RequestOutcome}
 
-class Module extends AbstractModule {
+import uk.gov.hmrc.http.HeaderCarrier
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[AppConfigImpl])
-    bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction])
-    bind(classOf[TwoEyeReviewerIdentifierAction]).to(classOf[TwoEyeReviewerAuthenticatedIdentifierAction])
+import scala.concurrent.{ExecutionContext, Future}
+
+@Singleton
+class ReviewService @Inject() (reviewConnector: ReviewConnector) {
+
+  def approval2iReview(id: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalProcessReview]] = {
+
+    reviewConnector.approval2iReview(id)
+
   }
+
 }

@@ -25,6 +25,7 @@ object ExternalGuidanceStub extends WireMockMethods {
   private val saveScratchUri: String = s"/external-guidance/scratch"
   private val saveApprovalUri: String = s"/external-guidance/approval"
   private val approvalSummaryUri: String = s"/external-guidance/approval"
+  private val approval2iReviewUri: String = "/external-guidance/approval/oct90005/2i-review"
 
   def saveScratch(status: Int, response: JsValue): StubMapping = {
     when(method = POST, uri = saveScratchUri)
@@ -38,6 +39,11 @@ object ExternalGuidanceStub extends WireMockMethods {
 
   def approvalSummary(status: Int, response: JsValue): StubMapping = {
     when(method = GET, uri = approvalSummaryUri)
+      .thenReturn(status, response)
+  }
+
+  def approval2iReview(status: Int, response: JsValue): StubMapping = {
+    when(method = GET, uri = approval2iReviewUri)
       .thenReturn(status, response)
   }
 

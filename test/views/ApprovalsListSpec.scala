@@ -32,6 +32,7 @@ class ApprovalsListSpec extends ViewSpecBase {
 
   trait Test {
     def approvalsListView: approval_summary_list = injector.instanceOf[approval_summary_list]
+
     val summaries = Seq(
       ApprovalProcessSummary("oct9005", "EU exit guidance", LocalDate.of(2020, 5, 4), WithDesignerForUpdate),
       ApprovalProcessSummary("oct9006", "Customer wants to make a cup of tea", LocalDate.of(2020, 5, 4), SubmittedFor2iReview),
@@ -53,34 +54,34 @@ class ApprovalsListSpec extends ViewSpecBase {
 
     "Contain a table with correct headings" in new Test {
 
-      Option(doc.getElementsByTag("table").first).fold(fail("Missing table elem")){ table =>
+      Option(doc.getElementsByTag("table").first).fold(fail("Missing table elem")) { table =>
         val ths = table.getElementsByTag("th").asScala.toList
         ths.size shouldBe 3
         ths(0).text shouldBe messages("approvals.processTitle")
-        elementAttrs((ths(0))).get("class").fold(fail("Missing class on table col header"))(_ should include ("govuk-table__header"))
-        
+        elementAttrs((ths(0))).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
+
         ths(1).text shouldBe messages("approvals.dateProcessUpdatedTitle")
-        elementAttrs((ths(1))).get("class").fold(fail("Missing class on table col header"))(_ should include ("govuk-table__header"))
+        elementAttrs((ths(1))).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
 
         ths(2).text shouldBe messages("approvals.processStatusTitle")
-        elementAttrs((ths(2))).get("class").fold(fail("Missing class on table col header"))(_ should include ("govuk-table__header"))
+        elementAttrs((ths(2))).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
       }
     }
 
     "include a table entry for each approval summary in order" in new Test {
 
-      Option(doc.getElementsByTag("tbody").first).fold(fail("Missing table body")){ tbody =>
+      Option(doc.getElementsByTag("tbody").first).fold(fail("Missing table body")) { tbody =>
         val rows = tbody.getElementsByTag("tr").asScala.toList
 
         rows.size shouldBe summaries.size
 
-        rows.zip(summaries).foreach{
-          case (r,s) =>
+        rows.zip(summaries).foreach {
+          case (r, s) =>
             val cellData = r.getElementsByTag("td").asScala.toList
             cellData.size shouldBe 3
             cellData(0).text shouldBe s.title
-            Option(cellData(0).getElementsByTag("a").first).fold(fail("Missing link from page url cell")){ a =>
-              elementAttrs(a).get("href").fold(fail("Missing href attribute within anchor")){ href =>
+            Option(cellData(0).getElementsByTag("a").first).fold(fail("Missing link from page url cell")) { a =>
+              elementAttrs(a).get("href").fold(fail("Missing href attribute within anchor")) { href =>
                 href shouldBe s"/external-guidance/2i-review/${s.id}"
               }
             }
@@ -91,6 +92,4 @@ class ApprovalsListSpec extends ViewSpecBase {
     }
   }
 
-
 }
-

@@ -16,48 +16,55 @@
 
 package controllers
 
-import config.ErrorHandler
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.I18nSupport
+
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import play.api.mvc._
-import services.ApprovalService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.i18n.I18nSupport
 import play.api.Logger
+
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+
+import config.ErrorHandler
+import controllers.actions.TwoEyeReviewerIdentifierAction
+import models.errors.{MalformedResponseError, NotFoundError, StaleDataError}
+import services.ReviewService
 import views.html.twoeye_content_review
-import java.time.LocalDate
-import models.{ApprovalProcessReview, PageReview, PageReviewStatus}
-import PageReviewStatus._
-import scala.concurrent.Future
 
 @Singleton
 class TwoEyeReviewController @Inject() (
     errorHandler: ErrorHandler,
+    twoEyeReviewerIdentifierAction: TwoEyeReviewerIdentifierAction,
     view: twoeye_content_review,
-    approvalService: ApprovalService,
+    reviewService: ReviewService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
     with I18nSupport {
 
   val logger = Logger(getClass)
 
-  // $COVERAGE-OFF$
-  def approval(id: String): Action[AnyContent] = Action.async { implicit request =>
-    val approvalProcessReview = ApprovalProcessReview(
-      "oct9005",
-      "Telling HMRC about extra income",
-      LocalDate.of(2020, 5, 10),
-      List(
-        PageReview("id1", "how-did-you-earn-extra-income", Complete),
-        PageReview("id2", "sold-goods-or-services/did-you-only-sell-personal-possessions", NotStarted),
-        PageReview("id3", "sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", NotStarted),
-        PageReview("id4", "sold-goods-or-services/have-you-made-1000-or-more", NotStarted),
-        PageReview("id5", "sold-goods-or-services/you-do-not-need-to-tell-hmrc", NotStarted),
-        PageReview("id6", "rent-a-property/do-you-receive-any-income", NotStarted),
-        PageReview("id7", "rent-a-property/have-you-rented-out-a-room", NotStarted)
-      )
-    )
+  def approval(id: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
+    reviewService.approval2iReview(id).map {
+      case Right(approvalProcessReview) => Ok(view(approvalProcessReview))
+      case Left(NotFoundError) => {
+        logger.error(s"Unable to retrieve approval 2i review for process $id")
+        NotFound(errorHandler.notFoundTemplate)
+      }
+      case Left(StaleDataError) => {
+        logger.warn(s"The requested approval 2i review for process $id can no longer be found")
+        NotFound(errorHandler.notFoundTemplate)
+      }
+      case Left(MalformedResponseError) => {
+        logger.error(s"A malformed response was returned for the approval 2i process review for process $id")
+        InternalServerError(errorHandler.internalServerErrorTemplate)
+      }
+      case Left(err) =>
+        // Handle stale data, internal server and any unexpected errors
+        logger.error(s"Request for approval 2i review process for process $id returned error $err")
+        InternalServerError(errorHandler.internalServerErrorTemplate)
+    }
 
-    Future.successful(Ok(view(approvalProcessReview)))
   }
-  // $COVERAGE-ON$
+
 }
