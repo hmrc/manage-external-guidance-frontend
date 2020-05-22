@@ -12,13 +12,14 @@ approvalsStatus.SubmittedForFactCheck = Submitted for fact check
 approvalsStatus.WithDesignerForUpdate = With designer for update
 approvalsStatus.ApprovedForPublishing = Approved to be publishing
 
-pageReviewStatus.NotStarted = Not started
+pageReviewStatus.NotStarted = Not reviewed
 pageReviewStatus.Complete = Reviewed
 
 2iReview.heading = 2i content review
 2iReview.reviewPagesHeading = Review all pages
 2iReview.pagesReviewedConfirmationHeading = Confirm you''ve 2i-reviewed all pages.
 2iReview.sendConfirmation = Send confirmation
+2iReview.sendConfirmationStatus = Not reviewed
 
 error.unauthorized401.pageTitle = You can’t access this service with this account
 error.unauthorized401.heading = You can’t access this service with this account
