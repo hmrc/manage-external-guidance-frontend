@@ -26,7 +26,7 @@ import scala.concurrent.Future
 import base.ControllerBaseSpec
 import mocks.MockReviewService
 import models.ReviewData
-import models.errors.{InternalServerError, MalformedResponseError, NotFoundError}
+import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
 import views.html.twoeye_content_review
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -37,7 +37,7 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
 
   private trait Test extends ReviewData {
 
-    implicit val hc = new HeaderCarrier()
+    implicit val hc = HeaderCarrier()
 
     val errorHandler = injector.instanceOf[ErrorHandler]
 
@@ -98,6 +98,24 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
     "Return an Html error page when the process review data returned to the application is malformed" in new Test {
 
       MockReviewService.approval2iReview(id).returns(Future.successful(Left(MalformedResponseError)))
+
+      val result: Future[Result] = reviewController.approval(id)(fakeRequest)
+
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+    }
+
+    "Return the Http status not found when the process review data requested is out of date in some way" in new Test {
+
+      MockReviewService.approval2iReview(id).returns(Future.successful(Left(StaleDataError)))
+
+      val result: Future[Result] = reviewController.approval(id)(fakeRequest)
+
+      status(result) shouldBe Status.NOT_FOUND
+    }
+
+    "Return an Html error page when the process review data requested is out of date in some way" in new Test {
+
+      MockReviewService.approval2iReview(id).returns(Future.successful(Left(StaleDataError)))
 
       val result: Future[Result] = reviewController.approval(id)(fakeRequest)
 

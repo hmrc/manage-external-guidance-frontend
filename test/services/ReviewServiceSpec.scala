@@ -33,7 +33,7 @@ class ReviewServiceSpec extends BaseSpec {
 
   private trait Test extends MockReviewConnector with ReviewData {
 
-    implicit val hc = new HeaderCarrier()
+    implicit val hc = HeaderCarrier()
 
     lazy val reviewService = new ReviewService(mockReviewConnector)
   }

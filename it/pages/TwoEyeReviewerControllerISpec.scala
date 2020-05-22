@@ -69,7 +69,7 @@ class TwoEyeReviewerControllerISpec extends IntegrationSpec {
       |}""".stripMargin
   )
 
-  "Calling the approval 2i review endpoint" should {
+  "Calling the approval 2i review endpoint with a valid process identifier" should {
 
     "return an Ok response" in {
 
@@ -117,7 +117,7 @@ class TwoEyeReviewerControllerISpec extends IntegrationSpec {
       response.status shouldBe Status.INTERNAL_SERVER_ERROR
     }
 
-    "return an internal server error response when the external guidance service returns a stale data error" in {
+    "return a not found error response when the external guidance service returns a stale data error" in {
 
       AuditStub.audit()
       AuthStub.authorise()
@@ -130,7 +130,7 @@ class TwoEyeReviewerControllerISpec extends IntegrationSpec {
 
       val response: WSResponse = await(request.get())
 
-      response.status shouldBe Status.INTERNAL_SERVER_ERROR
+      response.status shouldBe Status.NOT_FOUND
     }
 
     "return an internal server error response when the external guidance service returns a bad request error" in {

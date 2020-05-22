@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import config.ErrorHandler
 import controllers.actions.TwoEyeReviewerIdentifierAction
-import models.errors.{MalformedResponseError, NotFoundError}
+import models.errors.{MalformedResponseError, NotFoundError, StaleDataError}
 import services.ReviewService
 import views.html.twoeye_content_review
 
@@ -48,7 +48,11 @@ class TwoEyeReviewController @Inject() (
     reviewService.approval2iReview(id).map {
       case Right(approvalProcessReview) => Ok(view(approvalProcessReview))
       case Left(NotFoundError) => {
-        logger.error(s"Unable to retrieve approval 2i process review for process $id")
+        logger.error(s"Unable to retrieve approval 2i review for process $id")
+        NotFound(errorHandler.notFoundTemplate)
+      }
+      case Left(StaleDataError) => {
+        logger.warn(s"The requested approval 2i review for process $id can no longer be found")
         NotFound(errorHandler.notFoundTemplate)
       }
       case Left(MalformedResponseError) => {
