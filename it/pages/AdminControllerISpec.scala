@@ -19,7 +19,7 @@ import models.errors.InvalidProcessError
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
-import stubs.{AuditStub, ExternalGuidanceStub}
+import stubs.{AuditStub, AuthStub, ExternalGuidanceStub}
 import support.IntegrationSpec
 
 class AdminControllerISpec extends IntegrationSpec {
@@ -31,6 +31,8 @@ class AdminControllerISpec extends IntegrationSpec {
     "return an OK response" in {
 
       AuditStub.audit()
+      AuthStub.authorise()
+
       val responsePayload: JsValue = Json
         .parse(
           """
@@ -55,6 +57,7 @@ class AdminControllerISpec extends IntegrationSpec {
     "return a BAD_REQUEST response when the external guidance microservice rejects an invalid process" in {
 
       AuditStub.audit()
+      AuthStub.authorise()
 
       val responsePayload: JsValue = Json.toJson(InvalidProcessError)
       ExternalGuidanceStub.approvalSummary(Status.OK, responsePayload)
@@ -62,6 +65,14 @@ class AdminControllerISpec extends IntegrationSpec {
       val request = buildRequest(endPoint)
       val response: WSResponse = await(request.get())
       response.status shouldBe Status.BAD_REQUEST
+    }
+
+    "return an UNAUTHORISED response for an unauthorized user" in {
+      AuditStub.audit()
+      AuthStub.unauthorised()
+      val request = buildRequest(endPoint)
+      val response: WSResponse = await(request.get())
+      response.status shouldBe Status.UNAUTHORIZED
     }
 
   }
