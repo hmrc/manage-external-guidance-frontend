@@ -44,13 +44,12 @@ class TwoEyeReviewSpec extends ViewSpecBase {
         PageReview("id7", "rent-a-property/have-you-rented-out-a-room", NotStarted)
       )
     )
-
+    val doc = asDocument(twoEyeReview(approvalProcessReview))
   }
 
   "2i Review page" should {
     "Render a page should display process title as the heading" in new Test {
-
-      val doc = asDocument(twoEyeReview(approvalProcessReview))
+      
       doc.getElementsByTag("h1").asScala.filter(elementAttrs(_).get("class") == Some("govuk-heading-xl")).toList match {
         case Nil => fail("Missing H1 heading of the correct class")
         case x :: xs if x.text == approvalProcessReview.title => succeed
@@ -60,7 +59,6 @@ class TwoEyeReviewSpec extends ViewSpecBase {
 
     "Render a page containing two sections, one of pages and another with a send confirmation" in new Test {
 
-      val doc = asDocument(twoEyeReview(approvalProcessReview))
       Option(doc.getElementsByTag("ol").first).fold(fail("Missing ordered list elem (ol)")) { ol =>
         val h2s = ol.getElementsByTag("h2").asScala.toList
         h2s.size shouldBe 2
@@ -77,7 +75,7 @@ class TwoEyeReviewSpec extends ViewSpecBase {
     }
 
     "Include a back link" in new Test {
-      val doc = asDocument(twoEyeReview(approvalProcessReview))
+
       Option(doc.getElementsByTag("main").first).fold(fail("Missing main tag")) { main =>
         Option(main.getElementsByTag("a").first).fold(fail("No links in main")) { link =>
           link.text shouldBe messages("backlink.label")
@@ -92,9 +90,14 @@ class TwoEyeReviewSpec extends ViewSpecBase {
       }
     }
 
+    "Set the page title" in new Test {
+      Option(doc.getElementsByTag("title").first).fold(fail("Missing title element")){ title =>
+        title.text shouldBe approvalProcessReview.title
+      }
+    }
+
     "Render a page containing all listing all of files and their status" in new Test {
 
-      val doc = asDocument(twoEyeReview(approvalProcessReview))
       Option(doc.getElementsByTag("ul").first).fold(fail("Missing ul element")) { ul =>
         val listItems = ul
           .getElementsByTag("li")
