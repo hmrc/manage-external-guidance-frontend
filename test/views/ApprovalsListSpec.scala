@@ -68,6 +68,12 @@ class ApprovalsListSpec extends ViewSpecBase {
       }
     }
 
+    "Set the page title" in new Test {
+      Option(doc.getElementsByTag("title").first).fold(fail("Missing title element")){ title =>
+        title.text shouldBe messages("approvals.tableTitle")
+      }
+    }
+
     "include a table entry for each approval summary in order" in new Test {
 
       Option(doc.getElementsByTag("tbody").first).fold(fail("Missing table body")) { tbody =>
