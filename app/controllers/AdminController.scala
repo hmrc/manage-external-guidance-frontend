@@ -23,11 +23,13 @@ import play.api.mvc._
 import services.ApprovalService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import play.api.Logger
+import controllers.actions.IdentifierAction
 import views.html.approval_summary_list
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class AdminController @Inject() (
+    identify: IdentifierAction,
     errorHandler: ErrorHandler,
     view: approval_summary_list,
     approvalService: ApprovalService,
@@ -37,7 +39,7 @@ class AdminController @Inject() (
 
   val logger = Logger(getClass)
 
-  def approvalSummaries: Action[AnyContent] = Action.async { implicit request =>
+  def approvalSummaries: Action[AnyContent] = identify.async { implicit request =>
     approvalService.approvalSummaries.map {
       case Right(processList) => Ok(view(processList))
       case Left(err) =>
