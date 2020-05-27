@@ -17,9 +17,9 @@
 package connectors
 
 import config.AppConfig
-import connectors.httpParsers.ReviewHttpParser.getReviewDetailsHttpReads
+import connectors.httpParsers.ReviewHttpParser._
 import javax.inject.{Inject, Singleton}
-import models.{ApprovalProcessReview, RequestOutcome}
+import models.{ApprovalProcessReview, ApprovalProcessStatusChange, RequestOutcome}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -33,5 +33,15 @@ class ReviewConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
     val reviewEndPoint: String = s"${appConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review"
 
     httpClient.GET[RequestOutcome[ApprovalProcessReview]](reviewEndPoint)
+  }
+
+  def approval2iReviewComplete(
+      id: String,
+      info: ApprovalProcessStatusChange
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Boolean]] = {
+
+    val reviewEndPoint: String = s"${appConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review"
+
+    httpClient.POST[ApprovalProcessStatusChange, RequestOutcome[Boolean]](reviewEndPoint, info)
   }
 }

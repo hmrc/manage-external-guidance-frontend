@@ -16,15 +16,15 @@
 
 package views
 
-import play.twirl.api.Html
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import views.html._
-import org.jsoup.nodes._
-import scala.collection.JavaConverters._
-import config.AppConfig
+
+import models.ApprovalStatus._
 import models._
-import ApprovalStatus._
+import org.jsoup.nodes._
+import views.html._
+
+import scala.collection.JavaConverters._
 
 class ApprovalsListSpec extends ViewSpecBase {
 
@@ -58,18 +58,18 @@ class ApprovalsListSpec extends ViewSpecBase {
         val ths = table.getElementsByTag("th").asScala.toList
         ths.size shouldBe 3
         ths(0).text shouldBe messages("approvals.processTitle")
-        elementAttrs((ths(0))).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
+        elementAttrs(ths(0)).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
 
         ths(1).text shouldBe messages("approvals.dateProcessUpdatedTitle")
-        elementAttrs((ths(1))).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
+        elementAttrs(ths(1)).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
 
         ths(2).text shouldBe messages("approvals.processStatusTitle")
-        elementAttrs((ths(2))).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
+        elementAttrs(ths(2)).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
       }
     }
 
     "Set the page title" in new Test {
-      Option(doc.getElementsByTag("title").first).fold(fail("Missing title element")){ title =>
+      Option(doc.getElementsByTag("title").first).fold(fail("Missing title element")) { title =>
         title.text shouldBe messages("approvals.tableTitle")
       }
     }
