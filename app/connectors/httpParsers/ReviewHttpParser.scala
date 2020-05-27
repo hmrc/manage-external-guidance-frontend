@@ -42,8 +42,8 @@ object ReviewHttpParser extends HttpParser {
       Left(InternalServerError)
   }
 
-  implicit val postReviewCompleteHttpReads: HttpReads[RequestOutcome[Boolean]] = {
-    case (_, _, response) if response.status == NO_CONTENT => Right(true)
+  implicit val postReviewCompleteHttpReads: HttpReads[RequestOutcome[Unit]] = {
+    case (_, _, response) if response.status == NO_CONTENT => Right(())
     case (_, _, response) if response.status == NOT_FOUND =>
       checkNotFoundResponse(response)
     case _ =>

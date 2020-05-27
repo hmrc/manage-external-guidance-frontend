@@ -76,14 +76,14 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
     private val url = "/"
     val httpResponse = HttpResponse(status, optJson, Map())
 
-    def readResponse: RequestOutcome[Boolean] =
+    def readResponse: RequestOutcome[Unit] =
       postReviewCompleteHttpReads.read(httpMethod, url, httpResponse)
   }
 
   "The ReviewHttpParser.postReviewCompleteHttpReads" when {
     "the response is NO_CONTENT" should {
       "Return true" in new PostReviewCompleteSetup(NO_CONTENT) {
-        readResponse shouldBe Right(true)
+        readResponse shouldBe Right(())
       }
     }
     "the response is NOT_FOUND with a code of NOT_FOUND_ERROR" should {

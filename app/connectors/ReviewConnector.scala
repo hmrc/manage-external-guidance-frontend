@@ -38,10 +38,10 @@ class ReviewConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
   def approval2iReviewComplete(
       id: String,
       info: ApprovalProcessStatusChange
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Boolean]] = {
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] = {
 
     val reviewEndPoint: String = s"${appConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review"
 
-    httpClient.POST[ApprovalProcessStatusChange, RequestOutcome[Boolean]](reviewEndPoint, info)
+    httpClient.POST[ApprovalProcessStatusChange, RequestOutcome[Unit]](reviewEndPoint, info)
   }
 }
