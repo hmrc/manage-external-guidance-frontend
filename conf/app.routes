@@ -4,6 +4,9 @@ GET        /assets/*file                      controllers.Assets.versioned(path=
 GET        /process/approval                  controllers.AdminController.approvalSummaries
 GET        /2i-review/:id                     controllers.TwoEyeReviewController.approval(id)
 
+GET        /2i-result/:id                     controllers.TwoEyeReviewResultController.onPageLoad(id)
+POST       /2i-result/:id                     controllers.TwoEyeReviewResultController.onSubmit(id)
+
 GET        /accessibility                     controllers.AccessibilityStatementController.getPage
 
 GET        /hello-world                       controllers.HelloWorldController.helloWorld
