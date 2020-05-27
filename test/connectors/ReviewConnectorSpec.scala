@@ -18,8 +18,8 @@ package connectors
 
 import base.BaseSpec
 import mocks.{MockAppConfig, MockHttpClient}
+import models._
 import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
-import models.{ApprovalProcessReview, ApprovalProcessStatusChange, RequestOutcome, ReviewData}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -35,7 +35,7 @@ class ReviewConnectorSpec extends BaseSpec {
     val connector: ReviewConnector = new ReviewConnector(mockHttpClient, MockAppConfig)
     val endpoint: String = s"${MockAppConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review"
 
-    val reviewStatusChange = ApprovalProcessStatusChange("user", "email", "newStatus")
+    val reviewStatusChange = ApprovalProcessStatusChange("user", "email", ApprovalStatus.ApprovedForPublishing)
   }
 
   "Calling method approval2iReview with a valid id" should {

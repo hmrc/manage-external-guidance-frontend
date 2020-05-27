@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ApprovalProcessStatusChange(userId: String, userName: String, status: String)
+case class ApprovalProcessStatusChange(userId: String, userName: String, status: ApprovalStatus)
 
 object ApprovalProcessStatusChange {
   implicit val formats: OFormat[ApprovalProcessStatusChange] = Json.format[ApprovalProcessStatusChange]
