@@ -17,11 +17,13 @@
 package views
 
 import java.time._
-import views.html._
-import org.jsoup.nodes._
-import scala.collection.JavaConverters._
+
+import models.PageReviewStatus._
 import models._
-import PageReviewStatus._
+import org.jsoup.nodes._
+import views.html._
+
+import scala.collection.JavaConverters._
 
 class TwoEyeReviewSpec extends ViewSpecBase {
 
@@ -49,7 +51,7 @@ class TwoEyeReviewSpec extends ViewSpecBase {
 
   "2i Review page" should {
     "Render a page should display process title as the heading" in new Test {
-      
+
       doc.getElementsByTag("h1").asScala.filter(elementAttrs(_).get("class") == Some("govuk-heading-xl")).toList match {
         case Nil => fail("Missing H1 heading of the correct class")
         case x :: xs if x.text == approvalProcessReview.title => succeed
@@ -91,7 +93,7 @@ class TwoEyeReviewSpec extends ViewSpecBase {
     }
 
     "Set the page title" in new Test {
-      Option(doc.getElementsByTag("title").first).fold(fail("Missing title element")){ title =>
+      Option(doc.getElementsByTag("title").first).fold(fail("Missing title element")) { title =>
         title.text shouldBe approvalProcessReview.title
       }
     }

@@ -21,7 +21,7 @@ import models.{ApprovalProcessReview, RequestOutcome}
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsSuccess}
-import uk.gov.hmrc.http.HttpReads
+import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object ReviewHttpParser extends HttpParser {
 
@@ -36,20 +36,32 @@ object ReviewHttpParser extends HttpParser {
           Left(MalformedResponseError)
       }
     case (_, _, response) if response.status == NOT_FOUND =>
-      response.json.validate[Error] match {
-        case JsSuccess(error, _) =>
-          if (error.code == NotFoundError.code) {
-            Left(NotFoundError)
-          } else {
-            Left(StaleDataError)
-          }
-        case JsError(_) =>
-          logger.error(s"Unable to parse NOT_FOUND response from external-guidance.")
-          Left(MalformedResponseError)
-      }
+      checkNotFoundResponse(response)
     case _ =>
       logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
       Left(InternalServerError)
   }
 
+  implicit val postReviewCompleteHttpReads: HttpReads[RequestOutcome[Unit]] = {
+    case (_, _, response) if response.status == NO_CONTENT => Right(())
+    case (_, _, response) if response.status == NOT_FOUND =>
+      checkNotFoundResponse(response)
+    case _ =>
+      logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
+      Left(InternalServerError)
+  }
+
+  private def checkNotFoundResponse(response: HttpResponse) = {
+    response.json.validate[Error] match {
+      case JsSuccess(error, _) =>
+        if (error.code == NotFoundError.code) {
+          Left(NotFoundError)
+        } else {
+          Left(StaleDataError)
+        }
+      case JsError(_) =>
+        logger.error(s"Unable to parse NOT_FOUND response from external-guidance.")
+        Left(MalformedResponseError)
+    }
+  }
 }
