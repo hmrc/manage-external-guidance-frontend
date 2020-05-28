@@ -16,19 +16,14 @@
 
 package views
 
-import play.twirl.api.Html
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import views.html._
-import org.jsoup.nodes._
 import scala.collection.JavaConverters._
-import config.AppConfig
 import models._
 import ApprovalStatus._
 
 class ApprovalsListSpec extends ViewSpecBase {
-
-  def elementAttrs(el: Element): Map[String, String] = el.attributes.asScala.toList.map(attr => (attr.getKey, attr.getValue)).toMap
 
   trait Test {
     def approvalsListView: approval_summary_list = injector.instanceOf[approval_summary_list]

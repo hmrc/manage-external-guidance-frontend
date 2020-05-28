@@ -27,12 +27,10 @@ sealed trait TwoEyeReviewResultType
 object TwoEyeReviewResultType extends Enumerable.Implicits {
 
   case object Send2iReviewResponsesToDesigner extends WithName("send2iReviewResponsesToDesigner") with TwoEyeReviewResultType
-  case object SendGuidanceToFactChecker extends WithName("sendGuidanceToFactChecker") with TwoEyeReviewResultType
   case object ApproveGuidanceForPublishing extends WithName("approveGuidanceForPublishing") with TwoEyeReviewResultType
 
   val values: Seq[TwoEyeReviewResultType] = Seq(
     Send2iReviewResponsesToDesigner,
-    SendGuidanceToFactChecker,
     ApproveGuidanceForPublishing
   )
 

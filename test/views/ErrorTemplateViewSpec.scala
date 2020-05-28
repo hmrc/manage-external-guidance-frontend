@@ -45,7 +45,7 @@ class ErrorTemplateViewSpec extends ViewSpecBase {
 
     "Display the correct page heading for an unauthorised user" in new Test {
 
-      assertPageTitleEqualsMessage(doc, "error.unauthorized401.heading")
+      assertPageHeadingEqualsMessage(doc, "error.unauthorized401.heading")
     }
 
     "Display the correct message for an unauthorised user" in new Test {
