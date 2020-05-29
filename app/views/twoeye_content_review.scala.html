@@ -23,7 +23,7 @@
 
 @(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
 
-@layout(messages("service.name")) {
+@layout(review.title) {
 
   @govukBackLink(BackLink(href = routes.AdminController.approvalSummaries.toString, 
                           content = Text(messages("backlink.label"))))

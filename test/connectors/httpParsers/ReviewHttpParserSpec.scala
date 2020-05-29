@@ -27,7 +27,7 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
 
   import connectors.httpParsers.ReviewHttpParser._
 
-  class Setup(status: Int, optJson: Option[JsValue] = None) {
+  class GetReviewDetailsSetup(status: Int, optJson: Option[JsValue] = None) {
     private val httpMethod = "GET"
     private val url = "/"
     val httpResponse = HttpResponse(status, optJson, Map())
@@ -36,36 +36,73 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
       getReviewDetailsHttpReads.read(httpMethod, url, httpResponse)
   }
 
-  "The ReviewHttpParser" when {
+  "The ReviewHttpParser.getReviewDetailsHttpReads" when {
     "the response is OK" when {
       "the json successfully deserializes to the model" should {
-        "Return ReviewDetailsSuccess" in new Setup(OK, Some(Json.toJson(reviewInfo))) {
+        "Return ApprovalProcessReview" in new GetReviewDetailsSetup(OK, Some(Json.toJson(reviewInfo))) {
           readResponse shouldBe Right(reviewInfo)
         }
       }
       "the json is malformed" should {
-        "return ReviewDetailsMalformed" in new Setup(OK, Some(Json.obj())) {
+        "return MalformedResponseError" in new GetReviewDetailsSetup(OK, Some(Json.obj())) {
           readResponse shouldBe Left(MalformedResponseError)
         }
       }
     }
     "the response is NOT_FOUND with a code of NOT_FOUND_ERROR" should {
-      "return ReviewDetailsNotFound" in new Setup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR", "message" -> ""))) {
+      "return NotFoundError" in new GetReviewDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR", "message" -> ""))) {
         readResponse shouldBe Left(NotFoundError)
       }
     }
     "the response is NOT_FOUND with a code of STALE_DATA_ERROR" should {
-      "return ReviewDetailsStale" in new Setup(NOT_FOUND, Some(Json.obj("code" -> "STALE_DATA_ERROR", "message" -> ""))) {
+      "return StaleDataError" in new GetReviewDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "STALE_DATA_ERROR", "message" -> ""))) {
         readResponse shouldBe Left(StaleDataError)
       }
     }
     "the response is NOT_FOUND and has malformed error json" should {
-      "return ReviewDetailsMalformed" in new Setup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
+      "return MalformedResponseError" in new GetReviewDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
         readResponse shouldBe Left(MalformedResponseError)
       }
     }
     "the response is anything else" should {
-      "return ReviewDetailsFailure" in new Setup(INTERNAL_SERVER_ERROR) {
+      "return InternalServerError" in new GetReviewDetailsSetup(INTERNAL_SERVER_ERROR) {
+        readResponse shouldBe Left(InternalServerError)
+      }
+    }
+  }
+
+  class PostReviewCompleteSetup(status: Int, optJson: Option[JsValue] = None) {
+    private val httpMethod = "GET"
+    private val url = "/"
+    val httpResponse = HttpResponse(status, optJson, Map())
+
+    def readResponse: RequestOutcome[Unit] =
+      postReviewCompleteHttpReads.read(httpMethod, url, httpResponse)
+  }
+
+  "The ReviewHttpParser.postReviewCompleteHttpReads" when {
+    "the response is NO_CONTENT" should {
+      "Return true" in new PostReviewCompleteSetup(NO_CONTENT) {
+        readResponse shouldBe Right(())
+      }
+    }
+    "the response is NOT_FOUND with a code of NOT_FOUND_ERROR" should {
+      "return NotFoundError" in new PostReviewCompleteSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR", "message" -> ""))) {
+        readResponse shouldBe Left(NotFoundError)
+      }
+    }
+    "the response is NOT_FOUND with a code of STALE_DATA_ERROR" should {
+      "return StaleDataError" in new PostReviewCompleteSetup(NOT_FOUND, Some(Json.obj("code" -> "STALE_DATA_ERROR", "message" -> ""))) {
+        readResponse shouldBe Left(StaleDataError)
+      }
+    }
+    "the response is NOT_FOUND and has malformed error json" should {
+      "return MalformedResponseError" in new PostReviewCompleteSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
+        readResponse shouldBe Left(MalformedResponseError)
+      }
+    }
+    "the response is anything else" should {
+      "return InternalServerError" in new PostReviewCompleteSetup(INTERNAL_SERVER_ERROR) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
