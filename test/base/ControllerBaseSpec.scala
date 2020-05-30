@@ -24,6 +24,8 @@ import play.api.{Configuration, Environment}
 trait ControllerBaseSpec extends BaseSpec with GuiceOneAppPerSuite {
 
   val credential: String = "7010010"
+  val name: String = "George Hudson"
+  val email: String = "ghudson@emailworld.com"
 
   lazy val injector: Injector = app.injector
 

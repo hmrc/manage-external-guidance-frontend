@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AuthorisationException
-import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -70,7 +70,9 @@ class TwoEyeReviewerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec
 
     "grant access if authorisation is successful" in new AuthTestData {
 
-      MockAuthConnector.authorize().returns(Future.successful(Some(Credentials("id", "type"))))
+      val authResult = new ~(new ~(Some(Credentials("id", "type")), Some(Name(Some("name"), None))), Some("email"))
+
+      MockAuthConnector.authorize().returns(Future.successful(authResult))
 
       val result: Future[Result] = target.onPageLoad()(fakeRequest)
 
@@ -79,7 +81,53 @@ class TwoEyeReviewerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec
 
     "deny access to user if no credentials returned" in new AuthTestData {
 
-      MockAuthConnector.authorize().returns(Future.successful(None))
+      val authResult = new ~(new ~(None, Some(Name(Some("name"), None))), Some("email"))
+
+      MockAuthConnector.authorize().returns(Future.successful(authResult))
+
+      val result: Future[Result] = target.onPageLoad()(fakeRequest)
+
+      status(result) shouldBe UNAUTHORIZED
+    }
+
+    "deny access to user if no name instance returned" in new AuthTestData {
+
+      val authResult = new ~(new ~(Some(Credentials("id", "type")), None), Some("email"))
+
+      MockAuthConnector.authorize().returns(Future.successful(authResult))
+
+      val result: Future[Result] = target.onPageLoad()(fakeRequest)
+
+      status(result) shouldBe UNAUTHORIZED
+    }
+
+    "deny access to user if no name detail returned" in new AuthTestData {
+
+      val authResult = new ~(new ~(Some(Credentials("id", "type")), Some(Name(None, None))), Some("email"))
+
+      MockAuthConnector.authorize().returns(Future.successful(authResult))
+
+      val result: Future[Result] = target.onPageLoad()(fakeRequest)
+
+      status(result) shouldBe UNAUTHORIZED
+    }
+
+    "deny access to user if no email address returned" in new AuthTestData {
+
+      val authResult = new ~(new ~(Some(Credentials("id", "type")), Some(Name(Some("name"), None))), None)
+
+      MockAuthConnector.authorize().returns(Future.successful(authResult))
+
+      val result: Future[Result] = target.onPageLoad()(fakeRequest)
+
+      status(result) shouldBe UNAUTHORIZED
+    }
+
+    "deny access to user if no defined details returned" in new AuthTestData {
+
+      val authResult = new ~(new ~(None, None), None)
+
+      MockAuthConnector.authorize().returns(Future.successful(authResult))
 
       val result: Future[Result] = target.onPageLoad()(fakeRequest)
 

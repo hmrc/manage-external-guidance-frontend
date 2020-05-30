@@ -54,6 +54,17 @@ class AdminControllerISpec extends IntegrationSpec {
       response.status shouldBe Status.OK
 
     }
+
+    "return an unauthorized response when the auth stub returns incomplete user details" in {
+
+      AuditStub.audit()
+      AuthStub.incompleteAuthorisation()
+
+      val request = buildRequest(endPoint)
+      val response: WSResponse = await(request.get())
+      response.status shouldBe Status.UNAUTHORIZED
+    }
+
     "return a BAD_REQUEST response when the external guidance microservice rejects an invalid process" in {
 
       AuditStub.audit()
