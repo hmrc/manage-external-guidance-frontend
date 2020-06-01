@@ -17,6 +17,7 @@
 package views
 
 import java.time._
+import java.util.UUID
 
 import models.PageReviewStatus._
 import models._
@@ -30,7 +31,10 @@ class TwoEyeReviewSpec extends ViewSpecBase {
     def twoEyeReview: twoeye_content_review = injector.instanceOf[twoeye_content_review]
 
     val approvalProcessReview = ApprovalProcessReview(
+      UUID.randomUUID().toString,
       "oct9005",
+      1,
+      "2i-review",
       "Telling HMRC about extra income",
       LocalDate.of(2020, 5, 10),
       List(

@@ -15,6 +15,8 @@
  */
 package pages
 
+import java.util.UUID
+
 import models.errors.{BadRequestError, InternalServerError, NotFoundError, StaleDataError}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
@@ -25,8 +27,11 @@ import support.IntegrationSpec
 class TwoEyeReviewerControllerISpec extends IntegrationSpec {
 
   private val successPayload: JsValue = Json.parse(
-    """{
-      |  "id":"oct90005",
+    s"""{
+      |  "id":"${UUID.randomUUID().toString}",
+      |  "ocelotId": "oct90005",
+      |  "version":1,
+      |  "reviewType":"2i-review",
       |  "title":"Telling HMRC about extra income",
       |  "lastUpdated":"2020-05-10",
       |  "pages":[
