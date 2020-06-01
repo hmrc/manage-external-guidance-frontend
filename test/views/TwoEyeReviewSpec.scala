@@ -20,14 +20,11 @@ import java.time._
 
 import models.PageReviewStatus._
 import models._
-import org.jsoup.nodes._
 import views.html._
 
 import scala.collection.JavaConverters._
 
 class TwoEyeReviewSpec extends ViewSpecBase {
-
-  def elementAttrs(el: Element): Map[String, String] = el.attributes.asScala.toList.map(attr => (attr.getKey, attr.getValue)).toMap
 
   trait Test {
     def twoEyeReview: twoeye_content_review = injector.instanceOf[twoeye_content_review]
