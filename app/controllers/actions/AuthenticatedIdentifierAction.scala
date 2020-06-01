@@ -56,8 +56,8 @@ class AuthenticatedIdentifierAction @Inject() (
 
     val unauthorizedResult = Unauthorized(
       errorHandler.standardErrorTemplate(
-        "error.unauthorized401.pageTitle",
-        "error.unauthorized401.heading",
+        "error.unauthorized401.pageTitle.service",
+        "error.unauthorized401.heading.service",
         "error.unauthorized401.message"
       )(request)
     )

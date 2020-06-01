@@ -55,8 +55,8 @@ class TwoEyeReviewerAuthenticatedIdentifierAction @Inject() (
 
     val unauthorizedResult = Unauthorized(
       errorHandler.standardErrorTemplate(
-        "error.unauthorized401.pageTitle",
-        "error.unauthorized401.heading",
+        "error.unauthorized401.pageTitle.page",
+        "error.unauthorized401.heading.page",
         "error.unauthorized401.message"
       )(request)
     )
