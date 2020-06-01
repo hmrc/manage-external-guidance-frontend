@@ -1,6 +1,7 @@
 service.name = External Guidance
 footer.links.accessibility.text=Accessibility
 backlink.label = Back
+error.summary.title = There is a problem
 
 approvals.tableTitle = Interactive guidance
 approvals.processTitle = Title
@@ -20,6 +21,15 @@ pageReviewStatus.Complete = Reviewed
 2iReview.pagesReviewedConfirmationHeading = Confirm you''ve 2i-reviewed all pages.
 2iReview.sendConfirmation = Send confirmation
 2iReview.sendConfirmationStatus = Not reviewed
+
+2iReviewResult.title = What would you like to do?
+2iReviewResult.heading = What would you like to do?
+2iReviewResult.completeReview = Complete 2i review
+
+2iReviewResultType.send2iReviewResponsesToDesigner = Send 2i review responses to the designer
+2iReviewResultType.sendGuidanceToFactChecker = Send guidance to SME for fact check
+2iReviewResultType.approveGuidanceForPublishing = Approve guidance for publishing
+2iReviewResultType.error.required = You must select one of the options shown
 
 error.unauthorized401.pageTitle = You can’t access this service with this account
 error.unauthorized401.heading = You can’t access this service with this account

@@ -1,0 +1,57 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.routes._
+@import models.forms.TwoEyeReviewResultType
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.helpers._
+
+@this(layout: main_layout,
+  govukBackLink: GovukBackLink,
+  formWithCSRF: FormWithCSRF,
+  errorSummary: components.errorSummary,
+  inputRadio: components.inputRadio,
+  govukButton: GovukButton
+)
+
+@(processId: String, form: Form[_])(implicit request: Request[_], messages: Messages)
+
+@layout(messages("2iReviewResult.title")){
+
+  @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).toString,
+                          content = Text(messages("backlink.label"))))
+
+  @formWithCSRF(action = routes.TwoEyeReviewResultController.onSubmit(processId)) {
+
+    @errorSummary(form.errors)
+
+    @inputRadio(
+      form = form,
+      legend = "2iReviewResult.heading",
+      items = TwoEyeReviewResultType.options(form),
+      inline = false,
+      legendAsHeading = true,
+      classes = "govuk-visually-hidden"
+    )
+
+    @govukButton( Button( content = Text( messages( "2iReviewResult.completeReview" ) ) ) )
+  }
+
+}
+@{
+//$COVERAGE-OFF$
+}

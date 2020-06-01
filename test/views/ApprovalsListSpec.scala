@@ -21,14 +21,11 @@ import java.time.format.DateTimeFormatter
 
 import models.ApprovalStatus._
 import models._
-import org.jsoup.nodes._
 import views.html._
 
 import scala.collection.JavaConverters._
 
 class ApprovalsListSpec extends ViewSpecBase {
-
-  def elementAttrs(el: Element): Map[String, String] = el.attributes.asScala.toList.map(attr => (attr.getKey, attr.getValue)).toMap
 
   trait Test {
     def approvalsListView: approval_summary_list = injector.instanceOf[approval_summary_list]

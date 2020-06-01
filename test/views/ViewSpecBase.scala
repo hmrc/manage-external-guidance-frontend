@@ -17,20 +17,16 @@
 package views
 
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-
+import org.jsoup.nodes.{Document, Element}
+import scala.collection.JavaConverters._
 import play.api.inject.Injector
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.AnyContentAsEmpty
 import play.twirl.api.Html
-
 import config.AppConfig
-
 import base.BaseSpec
-
 import org.scalatest.Assertion
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-
 import play.api.test.FakeRequest
 
 trait ViewSpecBase extends BaseSpec with GuiceOneAppPerSuite {
@@ -60,7 +56,12 @@ trait ViewSpecBase extends BaseSpec with GuiceOneAppPerSuite {
     assert(elements.first().html().replace("\n", "") == expectedValue)
   }
 
-  def assertPageTitleEqualsMessage(doc: Document, expectedMessageKey: String, args: Any*): Assertion = {
+  def assertTextEqualsMessage(docText: String, expectedMessageKey: String, args: Any*): Assertion = {
+
+    docText.replaceAll("\u00a0", " ") shouldBe messages(expectedMessageKey, args: _*).replaceAll("&nbsp;", " ")
+  }
+
+  def assertPageHeadingEqualsMessage(doc: Document, expectedMessageKey: String, args: Any*): Assertion = {
     val headers = doc.getElementsByTag("h1")
     headers.size shouldBe 1
     headers.first.text.replaceAll("\u00a0", " ") shouldBe messages(expectedMessageKey, args: _*).replaceAll("&nbsp;", " ")
@@ -76,4 +77,6 @@ trait ViewSpecBase extends BaseSpec with GuiceOneAppPerSuite {
 
     paragraphs.get(paragraphIndex - 1).text().replaceAll("\u00a0", " ") shouldBe messages(expectedMessageKey, args: _*).replaceAll("&nbsp;", " ")
   }
+
+  def elementAttrs(el: Element): Map[String, String] = el.attributes.asScala.toList.map(attr => (attr.getKey, attr.getValue)).toMap
 }
