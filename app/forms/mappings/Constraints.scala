@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package forms
+package forms.mappings
 
-import javax.inject.Inject
-
-import play.api.data.Form
-
-import forms.mappings.{Constraints, Mappings}
 import models.ApprovalStatus
 
-class TwoEyeReviewResultFormProvider @Inject() extends Mappings with Constraints {
+import play.api.data.validation.{Constraint, Invalid, Valid}
 
-  def apply(): Form[ApprovalStatus] =
-    Form(
-      "value" -> enumerable[ApprovalStatus]("2iReviewResult.error.required")
-        .verifying(contains[ApprovalStatus](Seq(ApprovalStatus.WithDesignerForUpdate, ApprovalStatus.ApprovedForPublishing), "2iReviewResult.error.invalid"))
-    )
+trait Constraints {
+
+  protected def contains[A](allowedStatuses: Seq[ApprovalStatus], errorKey: String): Constraint[ApprovalStatus] = {
+
+    Constraint { input =>
+      if (allowedStatuses.contains(input)) {
+        Valid
+      } else {
+        Invalid(errorKey)
+      }
+    }
+  }
+
 }
