@@ -16,6 +16,7 @@
 package pages
 
 import java.time.LocalDate
+import java.util.UUID
 
 import models.{ApprovalProcessReview, ApprovalStatus, PageReview, PageReviewStatus}
 import play.api.http.Status
@@ -28,6 +29,7 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
 
   val processReviewInfo: ApprovalProcessReview =
     ApprovalProcessReview(
+      UUID.randomUUID().toString,
       "oct90005",
       "Telling HMRC about extra income",
       LocalDate.of(2020, 5, 10),
