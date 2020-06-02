@@ -16,28 +16,30 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
-
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.Logger
-import play.api.mvc._
-
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-
+import config.ErrorHandler
 import controllers.actions.TwoEyeReviewerIdentifierAction
 import forms.TwoEyeReviewResultFormProvider
+import javax.inject.{Inject, Singleton}
 import models.ApprovalStatus
-
+import models.errors.{NotFoundError, StaleDataError}
+import play.api.Logger
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc._
+import services.ReviewService
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.twoeye_review_result
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
 class TwoEyeReviewResultController @Inject() (
+    errorHandler: ErrorHandler,
     twoEyeReviewerIdentifierAction: TwoEyeReviewerIdentifierAction,
     formProvider: TwoEyeReviewResultFormProvider,
     view: twoeye_review_result,
+    reviewService: ReviewService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -58,9 +60,20 @@ class TwoEyeReviewResultController @Inject() (
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[_]) => { Future.successful(BadRequest(view(processId, formWithErrors))) },
-        value => {
-          // Do something with value
-          Future.successful(Redirect(routes.AdminController.approvalSummaries()))
+        status => {
+          reviewService.approval2iReviewComplete(processId, status).map {
+            case Right(_) => Redirect(routes.AdminController.approvalSummaries())
+            case Left(NotFoundError) =>
+              logger.error(s"Unable to retrieve approval 2i review for process $processId")
+              NotFound(errorHandler.notFoundTemplate)
+            case Left(StaleDataError) =>
+              logger.warn(s"The requested approval 2i review for process $processId can no longer be found")
+              NotFound(errorHandler.notFoundTemplate)
+            case Left(err) =>
+              // Handle stale data, internal server and any unexpected errors
+              logger.error(s"Request for approval 2i review process for process $processId returned error $err")
+              InternalServerError(errorHandler.internalServerErrorTemplate)
+          }
         }
       )
   }

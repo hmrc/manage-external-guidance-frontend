@@ -47,4 +47,8 @@ object ExternalGuidanceStub extends WireMockMethods {
       .thenReturn(status, response)
   }
 
+  def approval2iReviewComplete(status: Int, response: JsValue): StubMapping = {
+    when(method = POST, uri = approval2iReviewUri)
+      .thenReturn(status, response)
+  }
 }

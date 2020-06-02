@@ -16,15 +16,13 @@
 
 package mocks
 
-import models.{ApprovalProcessReview, RequestOutcome}
+import models.{ApprovalProcessReview, ApprovalStatus, RequestOutcome}
+import org.scalamock.handlers.CallHandler
+import org.scalamock.scalatest.MockFactory
 import services.ReviewService
-
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
-
-import org.scalamock.handlers.CallHandler
-import org.scalamock.scalatest.MockFactory
 
 trait MockReviewService extends MockFactory {
 
@@ -36,6 +34,11 @@ trait MockReviewService extends MockFactory {
       (mockReviewService
         .approval2iReview(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, *, *)
+
+    def approval2iReviewComplete(id: String, status: ApprovalStatus): CallHandler[Future[RequestOutcome[Unit]]] =
+      (mockReviewService
+        .approval2iReviewComplete(_: String, _: ApprovalStatus)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, status, *, *)
   }
 
 }
