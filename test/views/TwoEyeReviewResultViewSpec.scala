@@ -17,7 +17,7 @@
 package views
 
 import forms.TwoEyeReviewResultFormProvider
-import models.forms.TwoEyeReviewResultType
+import models.ApprovalStatus
 import views.html.twoeye_review_result
 
 import play.api.data.{Form, FormError}
@@ -33,11 +33,11 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
     val formProvider = new TwoEyeReviewResultFormProvider()
 
-    val form: Form[TwoEyeReviewResultType] = formProvider()
+    val form: Form[ApprovalStatus] = formProvider()
 
     val view = injector.instanceOf[twoeye_review_result]
 
-    def createView: (String, Form[TwoEyeReviewResultType]) => HtmlFormat.Appendable =
+    def createView: (String, Form[ApprovalStatus]) => HtmlFormat.Appendable =
       (processId, form) => view(processId, form)
 
     val fieldName = "value"
@@ -46,6 +46,9 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
     val requiredKeyFormError = FormError(fieldName, requiredKeyError)
 
     val emptyFormData = Map[String, String]()
+
+    val invalidValueError = "error.invalid"
+    val invalidValueFormError = FormError(fieldName, invalidValueError)
   }
 
   "Following a GET request 2i review" should {
@@ -98,7 +101,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
       }
 
       elementAttrs(radios.head).get("value").fold(fail("Missing value on first radio button ")) { value =>
-        value shouldBe TwoEyeReviewResultType.Send2iReviewResponsesToDesigner.toString
+        value shouldBe ApprovalStatus.WithDesignerForUpdate.toString
       }
 
       elementAttrs(radios.last).get("class").fold(fail("Missing class attribute on second radio button")) { clss =>
@@ -106,9 +109,21 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
       }
 
       elementAttrs(radios.last).get("value").fold(fail("Missing value on second radio button ")) { value =>
-        value shouldBe TwoEyeReviewResultType.ApproveGuidanceForPublishing.toString
+        value shouldBe ApprovalStatus.ApprovedForPublishing.toString
       }
 
+      val labels = doc.getElementsByTag("label").asScala.toList
+
+      val radioLabels = labels.filter(label =>
+        elementAttrs(label).get("class").fold(false) { clss =>
+          clss.contains("govuk-radios__label")
+        }
+      )
+
+      radioLabels.size shouldBe 2
+
+      radioLabels.head.text shouldBe messages(s"2iReviewResult.${ApprovalStatus.WithDesignerForUpdate.toString}")
+      radioLabels.last.text shouldBe messages(s"2iReviewResult.${ApprovalStatus.ApprovedForPublishing.toString}")
     }
 
     "display the complete 2i review button" in new Test {
@@ -127,11 +142,11 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
     }
   }
 
-  "Following a failed submission 2i review result" should {
+  "Following a failed submission 2i review result owing to empty data submission" should {
 
     "display an error summary" in new Test {
 
-      val boundForm: Form[TwoEyeReviewResultType] = form.bind(emptyFormData)
+      val boundForm: Form[ApprovalStatus] = form.bind(emptyFormData)
 
       val doc = asDocument(createView(processId, boundForm))
 
@@ -153,21 +168,65 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       errorSummaryList.isEmpty shouldBe false
 
-      assertTextEqualsMessage(errorSummaryList.text, "2iReviewResultType.error.required")
+      assertTextEqualsMessage(errorSummaryList.text, "2iReviewResult.error.required")
     }
 
     "display an error message" in new Test {
 
-      val boundForm: Form[TwoEyeReviewResultType] = form.bind(emptyFormData)
+      val boundForm: Form[ApprovalStatus] = form.bind(emptyFormData)
 
       val doc = asDocument(createView(processId, boundForm))
 
       val errorMessageSpan = doc.getElementById("value-error")
 
-      val errorMsg = messages("2iReviewResultType.error.required")
+      val errorMsg = messages("2iReviewResult.error.required")
 
       errorMessageSpan.text.replaceAll("\u00a0", " ") shouldBe s"Error: $errorMsg".replaceAll("&nbsp;", " ")
     }
+  }
+
+  "Following a failed submission 2i review result owing to invalid data submission" should {
+
+    "display an error summary" in new Test {
+
+      val boundForm: Form[ApprovalStatus] = form.bind(Map(fieldName -> ApprovalStatus.SubmittedFor2iReview.toString))
+
+      val doc = asDocument(createView(processId, boundForm))
+
+      val divs = doc.getElementsByTag("div").asScala.toList
+
+      val errorSummary = divs.filter(div =>
+        elementAttrs(div).get("class").fold(false) { clss =>
+          clss == "govuk-error-summary"
+        }
+      )
+
+      errorSummary.size shouldBe 1
+
+      val errorSummaryTitle = doc.getElementById("error-summary-title")
+
+      assertTextEqualsMessage(errorSummaryTitle.text, "error.summary.title")
+
+      val errorSummaryList = doc.getElementsByClass("govuk-list govuk-error-summary__list")
+
+      errorSummaryList.isEmpty shouldBe false
+
+      assertTextEqualsMessage(errorSummaryList.text, "2iReviewResult.error.invalid")
+    }
+
+    "display an error message" in new Test {
+
+      val boundForm: Form[ApprovalStatus] = form.bind(Map(fieldName -> ApprovalStatus.SubmittedFor2iReview.toString))
+
+      val doc = asDocument(createView(processId, boundForm))
+
+      val errorMessageSpan = doc.getElementById("value-error")
+
+      val errorMsg = messages("2iReviewResult.error.invalid")
+
+      errorMessageSpan.text.replaceAll("\u00a0", " ") shouldBe s"Error: $errorMsg".replaceAll("&nbsp;", " ")
+    }
+
   }
 
 }

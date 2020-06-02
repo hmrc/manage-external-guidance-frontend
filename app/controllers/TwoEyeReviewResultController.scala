@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import controllers.actions.TwoEyeReviewerIdentifierAction
 import forms.TwoEyeReviewResultFormProvider
-import models.forms.TwoEyeReviewResultType
+import models.ApprovalStatus
 
 import views.html.twoeye_review_result
 
@@ -45,14 +45,14 @@ class TwoEyeReviewResultController @Inject() (
   val logger = Logger(getClass)
 
   def onPageLoad(processId: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
-    val form: Form[TwoEyeReviewResultType] = formProvider()
+    val form: Form[ApprovalStatus] = formProvider()
 
     Future.successful(Ok(view(processId, form)))
 
   }
 
   def onSubmit(processId: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
-    val form: Form[TwoEyeReviewResultType] = formProvider()
+    val form: Form[ApprovalStatus] = formProvider()
 
     form
       .bindFromRequest()

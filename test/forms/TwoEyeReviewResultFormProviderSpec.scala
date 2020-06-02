@@ -16,7 +16,7 @@
 
 package forms
 
-import models.forms.TwoEyeReviewResultType
+import models.ApprovalStatus
 
 import play.api.data.{Form, FormError}
 
@@ -28,11 +28,11 @@ class TwoEyeReviewResultFormProviderSpec extends BaseSpec {
 
     val formProvider = new TwoEyeReviewResultFormProvider()
 
-    val form: Form[TwoEyeReviewResultType] = formProvider()
+    val form: Form[ApprovalStatus] = formProvider()
 
     val fieldName = "value"
 
-    val requiredKeyError = "2iReviewResultType.error.required"
+    val requiredKeyError = "2iReviewResult.error.required"
     val requiredKeyFormError = FormError(fieldName, requiredKeyError)
 
     val invalidResultType = "invalidResultType"
@@ -48,9 +48,11 @@ class TwoEyeReviewResultFormProviderSpec extends BaseSpec {
 
     "bind all valid values" in new Test {
 
-      for (value <- TwoEyeReviewResultType.values) {
+      val values: Seq[ApprovalStatus] = Seq(ApprovalStatus.WithDesignerForUpdate, ApprovalStatus.ApprovedForPublishing)
 
-        val boundForm: Form[TwoEyeReviewResultType] = form.bind(Map(fieldName -> value.toString))
+      for (value <- values) {
+
+        val boundForm: Form[ApprovalStatus] = form.bind(Map(fieldName -> value.toString))
 
         val result = boundForm.apply(fieldName)
 
@@ -60,7 +62,7 @@ class TwoEyeReviewResultFormProviderSpec extends BaseSpec {
 
     "not bind an invalid value" in new Test {
 
-      val boundForm: Form[TwoEyeReviewResultType] = form.bind(Map(fieldName -> invalidResultType))
+      val boundForm: Form[ApprovalStatus] = form.bind(Map(fieldName -> invalidResultType))
 
       val result = boundForm.apply(fieldName)
 
@@ -69,7 +71,7 @@ class TwoEyeReviewResultFormProviderSpec extends BaseSpec {
 
     "not create a binding when no value is submitted" in new Test {
 
-      val boundForm: Form[TwoEyeReviewResultType] = form.bind(emptyFormData)
+      val boundForm: Form[ApprovalStatus] = form.bind(emptyFormData)
 
       val result = boundForm.apply(fieldName)
 
@@ -78,7 +80,7 @@ class TwoEyeReviewResultFormProviderSpec extends BaseSpec {
 
     "not create a binding when the submitted value is a blank string" in new Test {
 
-      val boundForm: Form[TwoEyeReviewResultType] = form.bind(Map(fieldName -> blank))
+      val boundForm: Form[ApprovalStatus] = form.bind(Map(fieldName -> blank))
 
       val result = boundForm.apply(fieldName)
 
