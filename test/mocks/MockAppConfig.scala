@@ -31,4 +31,5 @@ object MockAppConfig extends AppConfig {
   lazy val twoEyeReviewerRole: String = "2iReviewer"
   lazy val factCheckerRole: String = "FactChecker"
   lazy val publisherRole: String = "Publisher"
+  override lazy val gtmContainer: String = "someContainer"
 }

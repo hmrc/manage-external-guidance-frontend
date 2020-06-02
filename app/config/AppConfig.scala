@@ -33,6 +33,7 @@ trait AppConfig {
   val twoEyeReviewerRole: String
   val factCheckerRole: String
   val publisherRole: String
+  val gtmContainer: String
 }
 
 @Singleton
@@ -51,4 +52,6 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val twoEyeReviewerRole: String = servicesConfig.getString("strideAuth.roles.twoEyeReviewer")
   lazy val factCheckerRole: String = servicesConfig.getString("strideAuth.roles.factChecker")
   lazy val publisherRole: String = servicesConfig.getString("strideAuth.roles.publisher")
+  lazy val gtmContainer:String = config.get[String]("gtm.container")
+
 }
