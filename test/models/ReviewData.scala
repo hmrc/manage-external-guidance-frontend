@@ -17,6 +17,7 @@
 package models
 
 import java.time.LocalDate
+import java.util.UUID
 
 import models.PageReviewStatus.NotStarted
 
@@ -25,6 +26,7 @@ trait ReviewData {
   val id: String = "Oct20001"
 
   val reviewInfo: ApprovalProcessReview = ApprovalProcessReview(
+    UUID.randomUUID().toString,
     id,
     id,
     "Telling HMRC about extra income",

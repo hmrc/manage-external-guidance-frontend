@@ -54,6 +54,7 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val twoEyeReviewerRole: String = servicesConfig.getString("strideAuth.roles.twoEyeReviewer")
   lazy val factCheckerRole: String = servicesConfig.getString("strideAuth.roles.factChecker")
   lazy val publisherRole: String = servicesConfig.getString("strideAuth.roles.publisher")
-  lazy val gtmContainer:String = config.get[String]("gtm.container")
+  lazy val gtmContainer: String = config.get[String]("gtm.container")
   lazy val viewApprovalUrl: String = s"${viewExternalGuidanceBaseUrl}${config.get[String]("urls.viewExternalGuidanceApprovalUrl")}"
+
 }
