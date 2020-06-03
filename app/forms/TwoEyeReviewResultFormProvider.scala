@@ -20,13 +20,14 @@ import javax.inject.Inject
 
 import play.api.data.Form
 
-import forms.mappings.Mappings
-import models.forms.TwoEyeReviewResultType
+import forms.mappings.{Constraints, Mappings}
+import models.ApprovalStatus
 
-class TwoEyeReviewResultFormProvider @Inject() extends Mappings {
+class TwoEyeReviewResultFormProvider @Inject() extends Mappings with Constraints {
 
-  def apply(): Form[TwoEyeReviewResultType] =
+  def apply(): Form[ApprovalStatus] =
     Form(
-      "value" -> enumerable[TwoEyeReviewResultType]("2iReviewResultType.error.required")
+      "value" -> enumerable[ApprovalStatus]("2iReviewResult.error.required")
+        .verifying(contains[ApprovalStatus](Seq(ApprovalStatus.WithDesignerForUpdate, ApprovalStatus.ApprovedForPublishing), "2iReviewResult.error.invalid"))
     )
 }

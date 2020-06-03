@@ -15,7 +15,7 @@
  *@
 
 @import controllers.routes._
-@import models.forms.TwoEyeReviewResultType
+@import models.ApprovalStatus._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.helpers._
@@ -42,7 +42,18 @@
     @inputRadio(
       form = form,
       legend = "2iReviewResult.heading",
-      items = TwoEyeReviewResultType.options(form),
+      items = Seq(
+        RadioItem(
+          value = Some(WithDesignerForUpdate.toString),
+          content = Text(messages(s"2iReviewResult.${WithDesignerForUpdate.toString}")),
+          checked = form("value").value.contains(WithDesignerForUpdate.toString)        
+        ),
+        RadioItem(
+          value = Some(ApprovedForPublishing.toString),
+          content = Text(messages(s"2iReviewResult.${ApprovedForPublishing.toString}")),
+          checked = form("value").value.contains(ApprovedForPublishing.toString)
+        )
+      ),
       inline = false,
       legendAsHeading = true,
       classes = "govuk-visually-hidden"

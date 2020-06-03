@@ -16,18 +16,15 @@
 
 package services
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-import scala.concurrent.Future
-import scala.util.{Failure, Success}
-
-import models.{ApprovalProcessReview, RequestOutcome, ReviewData}
-import models.errors.InternalServerError
-
-import uk.gov.hmrc.http.HeaderCarrier
-
 import base.BaseSpec
 import mocks.MockReviewConnector
+import models._
+import models.errors.InternalServerError
+import uk.gov.hmrc.http.HeaderCarrier
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 class ReviewServiceSpec extends BaseSpec {
 
@@ -38,43 +35,83 @@ class ReviewServiceSpec extends BaseSpec {
     lazy val reviewService = new ReviewService(mockReviewConnector)
   }
 
-  "The review service" should {
+  "The review service" when {
+    "calling the approval2iReview method" should {
+      "Return an instance of the class ApprovalProcessReview after a successful call to the review connector" in new Test {
 
-    "Return an instance of the class ApprovalProcessReview after a successful call to the review connector" in new Test {
+        MockReviewConnector
+          .approval2iReview(id)
+          .returns(Future.successful(Right(reviewInfo)))
 
-      MockReviewConnector
-        .approval2iReview(id)
-        .returns(Future.successful(Right(reviewInfo)))
+        val result: Future[RequestOutcome[ApprovalProcessReview]] = reviewService.approval2iReview(id)
 
-      val result: Future[RequestOutcome[ApprovalProcessReview]] = reviewService.approval2iReview(id)
+        result.onComplete {
+          case Success(response) =>
+            response match {
+              case Right(approvalProcessReview) => approvalProcessReview shouldBe reviewInfo
+              case Left(error) => fail(s"Unexpected error returned by mock review connector : ${error.toString}")
+            }
+          case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+        }
+      }
 
-      result.onComplete {
-        case Success(response) =>
-          response match {
-            case Right(approvalProcessReview) => approvalProcessReview shouldBe reviewInfo
-            case Left(error) => fail(s"Unexpected error returned by mock review connector : ${error.toString}")
-          }
-        case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+      "Return an error following an unsuccessful call to the connector" in new Test {
+
+        MockReviewConnector
+          .approval2iReview(id)
+          .returns(Future.successful(Left(InternalServerError)))
+
+        val result: Future[RequestOutcome[ApprovalProcessReview]] = reviewService.approval2iReview(id)
+
+        result.onComplete {
+          case Success(response) =>
+            response match {
+              case Right(approvalProcessReview) => fail("Approval process review returned when error expected")
+              case Left(error) => error shouldBe InternalServerError
+            }
+          case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+        }
       }
     }
 
-    "Return an error following an unsuccessful call to the connector" in new Test {
+    "calling the approval2iReviewComplete method" should {
+      "Return no content after a successful call to the review connector" in new Test {
 
-      MockReviewConnector
-        .approval2iReview(id)
-        .returns(Future.successful(Left(InternalServerError)))
+        val info = ApprovalProcessStatusChange("userId", "userName", ApprovalStatus.ApprovedForPublishing)
+        MockReviewConnector
+          .approval2iReviewComplete(id, info)
+          .returns(Future.successful(Right(())))
 
-      val result: Future[RequestOutcome[ApprovalProcessReview]] = reviewService.approval2iReview(id)
+        val result: Future[RequestOutcome[Unit]] = reviewService.approval2iReviewComplete(id, ApprovalStatus.ApprovedForPublishing)
 
-      result.onComplete {
-        case Success(response) =>
-          response match {
-            case Right(approvalProcessReview) => fail("Approval process review returned when error expected")
-            case Left(error) => error shouldBe InternalServerError
-          }
-        case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+        result.onComplete {
+          case Success(response) =>
+            response match {
+              case Right(()) => succeed
+              case Left(error) => fail(s"Unexpected error returned by mock review connector : ${error.toString}")
+            }
+          case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+        }
+      }
+
+      "Return an error following an unsuccessful call to the connector" in new Test {
+
+        val info = ApprovalProcessStatusChange("userId", "userName", ApprovalStatus.ApprovedForPublishing)
+        MockReviewConnector
+          .approval2iReviewComplete(id, info)
+          .returns(Future.successful(Left(InternalServerError)))
+
+        val result: Future[RequestOutcome[Unit]] = reviewService.approval2iReviewComplete(id, info.status)
+
+        result.onComplete {
+          case Success(response) =>
+            response match {
+              case Right(_) => fail("Approval process review returned when error expected")
+              case Left(error) => error shouldBe InternalServerError
+            }
+          case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+        }
       }
     }
-
   }
 }

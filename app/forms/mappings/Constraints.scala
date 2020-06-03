@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-package models
+package forms.mappings
 
-import java.time.LocalDate
+import models.ApprovalStatus
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.data.validation.{Constraint, Invalid, Valid}
 
-case class ApprovalProcessReview(id: String, ocelotId: String, title: String, lastUpdated: LocalDate, pages: List[PageReview])
+trait Constraints {
 
-object ApprovalProcessReview {
-  implicit val formats: OFormat[ApprovalProcessReview] = Json.format[ApprovalProcessReview]
+  protected def contains[A](allowedStatuses: Seq[ApprovalStatus], errorKey: String): Constraint[ApprovalStatus] = {
+
+    Constraint { input =>
+      if (allowedStatuses.contains(input)) {
+        Valid
+      } else {
+        Invalid(errorKey)
+      }
+    }
+  }
+
 }

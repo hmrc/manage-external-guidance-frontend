@@ -15,7 +15,7 @@
  *@
 
 @import config.AppConfig
-@import models.{PageReview, ApprovalProcessReview}
+@import models.ApprovalProcessReview
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
@@ -61,7 +61,7 @@
 
       <ul class="app-task-list__items">
         <li class="app-task-list__item">
-          <span class="app-task-list__task-name"><a href="#" aria-describedby="send-confirmation">@messages("2iReview.sendConfirmation")</a></span>
+          <span class="app-task-list__task-name"><a href="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).toString}" aria-describedby="send-confirmation">@messages("2iReview.sendConfirmation")</a></span>
           <span class="hmrc-status-tag" id="send-confirmation">@messages("2iReview.sendConfirmationStatus")</span>
         </li>
       </ul>
