@@ -33,6 +33,7 @@ class TwoEyeReviewSpec extends ViewSpecBase {
     val approvalProcessReview = ApprovalProcessReview(
       UUID.randomUUID().toString,
       "oct9005",
+      "oct9005",
       "Telling HMRC about extra income",
       LocalDate.of(2020, 5, 10),
       List(
