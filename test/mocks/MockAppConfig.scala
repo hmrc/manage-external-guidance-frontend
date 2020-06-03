@@ -32,4 +32,5 @@ object MockAppConfig extends AppConfig {
   lazy val factCheckerRole: String = "FactChecker"
   lazy val publisherRole: String = "Publisher"
   override lazy val gtmContainer: String = "someContainer"
+  lazy val viewApprovalUrl: String = "http://localhost:9741/guidance/approval"
 }

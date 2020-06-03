@@ -27,6 +27,7 @@ class TwoEyeReviewerControllerISpec extends IntegrationSpec {
   private val successPayload: JsValue = Json.parse(
     """{
       |  "id":"oct90005",
+      |  "ocelotId":"oct90005",
       |  "title":"Telling HMRC about extra income",
       |  "lastUpdated":"2020-05-10",
       |  "pages":[

@@ -17,6 +17,7 @@ pageReviewStatus.NotStarted = Not reviewed
 pageReviewStatus.Complete = Reviewed
 
 2iReview.heading = 2i content review
+2iReview.viewGuidance = View the complete guidance (opens in a new window or tab)
 2iReview.reviewPagesHeading = Review all pages
 2iReview.pagesReviewedConfirmationHeading = Confirm you''ve 2i-reviewed all pages.
 2iReview.sendConfirmation = Send confirmation
