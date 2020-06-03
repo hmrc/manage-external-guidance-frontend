@@ -28,7 +28,6 @@ trait ReviewData {
   val reviewInfo: ApprovalProcessReview = ApprovalProcessReview(
     UUID.randomUUID().toString,
     id,
-    id,
     "Telling HMRC about extra income",
     LocalDate.of(2020, 5, 10),
     List(
