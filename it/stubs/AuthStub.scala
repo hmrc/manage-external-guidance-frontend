@@ -27,6 +27,9 @@ object AuthStub extends WireMockMethods {
   private val authoriseUri: String = "/auth/authorise"
   private val internalId: String = "id"
   private val credId: String = "5001002"
+  private val name: String = "Harold"
+  private val lastName: String = "Walker"
+  private val email: String = "harold.walker@worldmail.com"
 
   def authorise(): StubMapping =
     when(method = POST, uri = authoriseUri)
@@ -37,7 +40,26 @@ object AuthStub extends WireMockMethods {
           "optionalCredentials" -> Json.obj(
             "providerId" -> credId,
             "providerType" -> "PrivilegedApplication"
-          )
+          ),
+          "optionalName" -> Json.obj(
+            "name" -> name,
+            "lastName" -> lastName
+          ),
+          "email" -> email
+        )
+      )
+
+  def incompleteAuthorisation(): StubMapping =
+    when(method = POST, uri = authoriseUri)
+      .thenReturn(
+        status = Status.OK,
+        body = Json.obj(
+          "internalId" -> internalId,
+          "optionalCredentials" -> Json.obj(
+            "providerId" -> credId,
+            "providerType" -> "PrivilegedApplication"
+          ),
+          "email" -> email
         )
       )
 

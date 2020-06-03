@@ -31,8 +31,10 @@ pageReviewStatus.Complete = Reviewed
 2iReviewResultType.approveGuidanceForPublishing = Approve guidance for publishing
 2iReviewResultType.error.required = You must select one of the options shown
 
-error.unauthorized401.pageTitle = You can’t access this service with this account
-error.unauthorized401.heading = You can’t access this service with this account
+error.unauthorized401.pageTitle.service = You can’t access this service with this account
+error.unauthorized401.pageTitle.page = You can’t access this page with this account
+error.unauthorized401.heading.service = You can’t access this service with this account
+error.unauthorized401.heading.page = You can’t access this page with this account
 error.unauthorized401.message =
 
 # Compliance statement
