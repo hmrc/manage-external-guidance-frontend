@@ -24,8 +24,8 @@ import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
@@ -55,20 +55,21 @@ class TwoEyeReviewerAuthenticatedIdentifierAction @Inject() (
 
     val unauthorizedResult = Unauthorized(
       errorHandler.standardErrorTemplate(
-        "error.unauthorized401.pageTitle",
-        "error.unauthorized401.heading",
+        "error.unauthorized401.pageTitle.page",
+        "error.unauthorized401.heading.page",
         "error.unauthorized401.message"
       )(request)
     )
 
     // Restrict access to users with 2i reviewer role
-    authorised(Enrolment(appConfig.twoEyeReviewerRole) and AuthProviders(PrivilegedApplication)).retrieve(credentials) {
-      case Some(Credentials(providerId, _)) =>
-        block(IdentifierRequest(request, providerId))
-      case None =>
-        logger.warn("Identifier action could not retrieve provider identifier in method invokeBlock")
-        Future.successful(unauthorizedResult)
-    } recover {
+    authorised(Enrolment(appConfig.twoEyeReviewerRole) and AuthProviders(PrivilegedApplication))
+      .retrieve(Retrievals.credentials and Retrievals.name and Retrievals.email) {
+        case Some(Credentials(providerId, _)) ~ Some(Name(Some(name), _)) ~ Some(email) =>
+          block(IdentifierRequest(request, providerId, name, email))
+        case _ =>
+          logger.warn("Identifier action could not retrieve required user details in method invokeBlock")
+          Future.successful(unauthorizedResult)
+      } recover {
       case _: NoActiveSession =>
         Redirect(appConfig.loginUrl, Map("successURL" -> Seq(appConfig.continueUrl)))
       case authEx: AuthorisationException =>
