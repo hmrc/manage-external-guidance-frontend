@@ -30,7 +30,7 @@
   govukButton: GovukButton
 )
 
-@(processId: String, page: String, comment: Option[String], result: Option[YesNoAnswer], form: Form[_])(implicit request: Request[_], messages: Messages)
+@(processId: String, page: String, form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @layout(messages("2iPageReview.title")){
 

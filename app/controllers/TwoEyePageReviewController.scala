@@ -20,16 +20,16 @@ import config.ErrorHandler
 import controllers.actions.TwoEyeReviewerIdentifierAction
 import forms.TwoEyePageReviewFormProvider
 import javax.inject.{Inject, Singleton}
-import models.{PageReviewDetail, PageReviewStatus, YesNoAnswer}
 import models.errors.{NotFoundError, StaleDataError}
 import models.forms.TwoEyePageReview
-import views.html.twoeye_page_review
+import models.{PageReviewDetail, PageReviewStatus}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ReviewService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.twoeye_page_review
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -51,7 +51,7 @@ class TwoEyePageReviewController @Inject() (
     reviewService.approval2iPageReview(processId, page) map {
       case Right(data) =>
         val form: Form[TwoEyePageReview] = formProvider()
-        Ok(view(processId, page, data.comment, data.result, form))
+        Ok(view(processId, page, form))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval 2i page review for process $processId and page $page returned error $err")
@@ -65,9 +65,8 @@ class TwoEyePageReviewController @Inject() (
     form
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[TwoEyePageReview]) => { Future.successful(BadRequest(view(processId, page, Some(formWithErrors.get.comment), Some(formWithErrors.get.answer), formWithErrors))) },
+        (formWithErrors: Form[TwoEyePageReview]) => { Future.successful(BadRequest(view(processId, page, formWithErrors))) },
         result => {
-          println("Does the page meet the standards : " + result.answer.toString + " Comment : " + result.comment)
           val reviewDetail = PageReviewDetail(processId, page, Some(result.answer), PageReviewStatus.Complete, Some(result.comment))
           reviewService.approval2iPageReviewComplete(processId, page, reviewDetail).map {
             case Right(_) => Redirect(routes.TwoEyeReviewController.approval(processId))
