@@ -3,6 +3,9 @@ footer.links.accessibility.text=Accessibility
 backlink.label = Back
 error.summary.title = There is a problem
 
+radio.item.yes = Yes
+radio.item.no = No
+
 approvals.tableTitle = Interactive guidance
 approvals.processTitle = Title
 approvals.dateProcessUpdatedTitle = Date last updated
@@ -23,6 +26,17 @@ pageReviewStatus.Complete = Reviewed
 2iReview.pagesReviewedConfirmationHeading = Confirm you''ve 2i-reviewed all pages.
 2iReview.sendConfirmation = Send confirmation
 2iReview.sendConfirmationStatus = Not reviewed
+
+2iPageReview.answer.error.required = You must select one of the options shown
+# Under normal circumstances this error should not be raised (requires "comment" field key to be missing from the form data)
+2iPageReview.comment.error.required = No comment supplied
+2iPageReview.comment.error.length = The maximum length for a page review comment has been exceeded
+
+2iPageReview.title = Does the page meet GOV.UK standards?
+2iPageReview.heading = Does the page meet GOV.UK standards?
+2iPageReview.textarea.label = Comments
+2iPageReview.textarea.hint = Add a hint here
+2iPageReview.saveReview = Save review
 
 2iReviewResult.title = What would you like to do?
 2iReviewResult.heading = What would you like to do?
