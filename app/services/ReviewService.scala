@@ -18,7 +18,7 @@ package services
 
 import connectors.ReviewConnector
 import javax.inject.{Inject, Singleton}
-import models.{ApprovalProcessReview, ApprovalProcessStatusChange, ApprovalStatus, RequestOutcome}
+import models.{ApprovalProcessReview, ApprovalProcessStatusChange, ApprovalStatus, PageReviewDetail, RequestOutcome}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,6 +36,19 @@ class ReviewService @Inject() (reviewConnector: ReviewConnector) {
 
     val changeInfo = ApprovalProcessStatusChange("userId", "userName", status)
     reviewConnector.approval2iReviewComplete(id, changeInfo)
+
+  }
+
+  def approval2iPageReview(id: String, pageUrl: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[PageReviewDetail]] = {
+
+    reviewConnector.approval2iReviewPageInfo(id, pageUrl)
+
+  }
+
+  def approval2iPageReviewComplete(id: String, pageUrl: String, pageReviewDetail: PageReviewDetail)
+                                  (implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] = {
+
+    reviewConnector.approval2iReviewPageComplete(id, pageUrl, pageReviewDetail)
 
   }
 }

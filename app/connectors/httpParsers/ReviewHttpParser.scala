@@ -17,7 +17,7 @@
 package connectors.httpParsers
 
 import models.errors.{Error, InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
-import models.{ApprovalProcessReview, RequestOutcome}
+import models.{ApprovalProcessReview, PageReviewDetail, RequestOutcome}
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsSuccess}
@@ -44,6 +44,21 @@ object ReviewHttpParser extends HttpParser {
 
   implicit val postReviewCompleteHttpReads: HttpReads[RequestOutcome[Unit]] = {
     case (_, _, response) if response.status == NO_CONTENT => Right(())
+    case (_, _, response) if response.status == NOT_FOUND =>
+      checkNotFoundResponse(response)
+    case _ =>
+      logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
+      Left(InternalServerError)
+  }
+
+  implicit val getReviewPageDetailsHttpReads: HttpReads[RequestOutcome[PageReviewDetail]] = {
+    case (_, _, response) if response.status == OK =>
+      response.json.validate[PageReviewDetail] match {
+        case JsSuccess(data, _) => Right(data)
+        case JsError(_) =>
+          logger.error(s"Unable to parse review page data response from external-guidance.")
+          Left(MalformedResponseError)
+      }
     case (_, _, response) if response.status == NOT_FOUND =>
       checkNotFoundResponse(response)
     case _ =>
