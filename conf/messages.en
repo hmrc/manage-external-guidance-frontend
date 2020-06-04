@@ -11,7 +11,8 @@ approvals.processStatusTitle = Status
 approvalsStatus.SubmittedFor2iReview = Submitted for 2i review
 approvalsStatus.SubmittedForFactCheck = Submitted for fact check
 approvalsStatus.WithDesignerForUpdate = With designer for update
-approvalsStatus.ApprovedForPublishing = Approved to be publishing
+approvalsStatus.ApprovedForPublishing = Approved for publishing
+approvalsStatus.Published = Published
 
 pageReviewStatus.NotStarted = Not reviewed
 pageReviewStatus.Complete = Reviewed

@@ -26,8 +26,9 @@ object ApprovalStatus extends Enumerable.Implicits {
   case object SubmittedForFactCheck extends WithName("SubmittedForFactCheck") with ApprovalStatus
   case object WithDesignerForUpdate extends WithName("WithDesignerForUpdate") with ApprovalStatus
   case object ApprovedForPublishing extends WithName("ApprovedForPublishing") with ApprovalStatus
+  case object Published extends WithName("Published") with ApprovalStatus
 
-  val values: Seq[ApprovalStatus] = Seq(SubmittedFor2iReview, SubmittedForFactCheck, WithDesignerForUpdate, ApprovedForPublishing)
+  val values: Seq[ApprovalStatus] = Seq(SubmittedFor2iReview, SubmittedForFactCheck, WithDesignerForUpdate, ApprovedForPublishing, Published)
 
   implicit val enumerable: Enumerable[ApprovalStatus] = Enumerable(values.map(v => v.toString -> v): _*)
 
