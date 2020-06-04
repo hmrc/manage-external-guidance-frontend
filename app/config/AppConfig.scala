@@ -41,12 +41,12 @@ trait AppConfig {
 class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
   private val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
   private val serviceIdentifier = "MyService"
+  private lazy val externalGuidanceViewerHost: String = config.get[String]("external-guidance-viewer.host")
   val analyticsToken: String = config.get[String](s"google-analytics.token")
   val analyticsHost: String = config.get[String](s"google-analytics.host")
   val reportAProblemPartialUrl: String = s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifier"
   val reportAProblemNonJSUrl: String = s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
-  lazy val externalGuidanceBaseUrl: String = servicesConfig.baseUrl("external-guidance")
-  lazy val viewExternalGuidanceBaseUrl: String = servicesConfig.baseUrl("view-external-guidance-frontend")
+  lazy val externalGuidanceBaseUrl: String = servicesConfig.baseUrl("external-guidance")  
   val appName: String = config.get[String]("appName")
   lazy val loginUrl: String = servicesConfig.getString("strideAuth.login.url")
   lazy val continueUrl: String = servicesConfig.getString("strideAuth.login.continueUrl")
@@ -55,6 +55,6 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val factCheckerRole: String = servicesConfig.getString("strideAuth.roles.factChecker")
   lazy val publisherRole: String = servicesConfig.getString("strideAuth.roles.publisher")
   lazy val gtmContainer: String = config.get[String]("gtm.container")
-  lazy val viewApprovalUrl: String = s"${viewExternalGuidanceBaseUrl}${config.get[String]("urls.viewExternalGuidanceApprovalUrl")}"
+  lazy val viewApprovalUrl: String = s"${externalGuidanceViewerHost}${config.get[String]("external-guidance-viewer.approvalUrl")}"
 
 }
