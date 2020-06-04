@@ -17,6 +17,7 @@
 @this(govukRadios: GovukRadios)
 
 @(form: Form[_],
+  fieldName: String,
   legend: String,
   items: Seq[RadioItem],
   legendAsHeading: Boolean = true,
@@ -27,7 +28,7 @@
 
 @govukRadios(Radios(
   classes = s"${if(inline){"govuk-radios--inline"}}",
-  name = "value",
+  name = fieldName,
   fieldset = Some(Fieldset(
     legend = Some(Legend(
       content = Text(messages(legend)),
@@ -39,7 +40,7 @@
     content = HtmlContent(hint)
   )},
   items = items,
-  errorMessage = form("value").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+  errorMessage = form(fieldName).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
 ))
 
 @{

@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package forms.mappings
+package models
 
-import models.Enumerable
-import play.api.data.FieldMapping
-import play.api.data.Forms.of
+sealed trait YesNoAnswer
 
-trait Mappings extends Formatters {
+object YesNoAnswer extends Enumerable.Implicits {
 
-  protected def text(errorKey: String = "error.required"): FieldMapping[String] =
-    of(stringFormatter(errorKey))
+  case object Yes extends WithName("Yes") with YesNoAnswer
+  case object No extends WithName("No") with YesNoAnswer
 
-  protected def optionalText(errorKey: String = "error.required"): FieldMapping[String] =
-    of(optionalStringFormatter(errorKey))
+  val values: Seq[YesNoAnswer] = Seq(Yes, No)
 
-  protected def enumerable[A](requiredKey: String = "error.required", invalidKey: String = "error.invalid")(implicit ev: Enumerable[A]): FieldMapping[A] =
-    of(enumerableFormatter[A](requiredKey, invalidKey))
-
+  implicit val enumerable: Enumerable[YesNoAnswer] = Enumerable(values.map(v => v.toString -> v): _*)
 }

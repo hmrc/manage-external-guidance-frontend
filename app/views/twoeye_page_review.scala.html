@@ -15,7 +15,8 @@
  *@
 
 @import controllers.routes._
-@import models.ApprovalStatus._
+@import models.YesNoAnswer._
+
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.helpers._
@@ -25,42 +26,59 @@
   formWithCSRF: FormWithCSRF,
   errorSummary: components.errorSummary,
   inputRadio: components.inputRadio,
+  govukTextarea: GovukTextarea,
   govukButton: GovukButton
 )
 
-@(processId: String, form: Form[_])(implicit request: Request[_], messages: Messages)
+@(processId: String, page: String, form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@layout(messages("2iReviewResult.title")){
+@layout(messages("2iPageReview.title")){
 
   @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).toString,
-                          content = Text(messages("backlink.label"))))
+    content = Text(messages("backlink.label"))))
 
-  @formWithCSRF(action = routes.TwoEyeReviewResultController.onSubmit(processId)) {
+  @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, page)) {
 
     @errorSummary(form.errors)
 
     @inputRadio(
       form = form,
-      fieldName = "value",
-      legend = "2iReviewResult.heading",
+      fieldName = "answer",
+      legend = "2iPageReview.heading",
       items = Seq(
         RadioItem(
-          value = Some(WithDesignerForUpdate.toString),
-          content = Text(messages(s"2iReviewResult.${WithDesignerForUpdate.toString}")),
-          checked = form("value").value.contains(WithDesignerForUpdate.toString)        
+          value = Some(Yes.toString),
+          content = Text(messages("radio.item.yes")),
+          checked = form("answer").value.contains(Yes.toString)
         ),
         RadioItem(
-          value = Some(ApprovedForPublishing.toString),
-          content = Text(messages(s"2iReviewResult.${ApprovedForPublishing.toString}")),
-          checked = form("value").value.contains(ApprovedForPublishing.toString)
+          value = Some(No.toString),
+          content = Text(messages("radio.item.no")),
+          checked = form("answer").value.contains(No.toString)
         )
       ),
-      inline = false,
+      inline = true,
       legendAsHeading = true,
       classes = "govuk-visually-hidden"
     )
 
-    @govukButton( Button( content = Text( messages( "2iReviewResult.completeReview" ) ) ) )
+    @govukTextarea(
+      Textarea(
+        id = "comment",
+        name = "comment",
+        label = Label(
+        content = Text(messages("2iPageReview.textarea.label"))
+       ),
+       hint = Some(
+                    Hint(
+                      content = Text(messages("2iPageReview.textarea.hint"))
+                     )
+                  )
+      )
+
+    )
+
+    @govukButton( Button( content = Text( messages( "2iPageReview.saveReview" ) ) ) )
   }
 
 }
