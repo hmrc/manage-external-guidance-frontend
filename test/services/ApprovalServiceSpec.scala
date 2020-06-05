@@ -42,13 +42,13 @@ class ApprovalServiceSpec extends BaseSpec {
 
   "The approvalProcess service" should {
 
-    "Return an instance of the class ApprovalResponse after a successful call by the connector" in new Test {
+    "Return an instance of the class ApprovalResponse after a successful call to the 2i Review connector" in new Test {
 
       MockApprovalConnector
-        .submitForApproval(dummyProcess)
+        .submitFor2iReview(dummyProcess)
         .returns(Future.successful(Right(ApprovalResponse(processId))))
 
-      val result: Future[RequestOutcome[ApprovalResponse]] = service.submitForApproval(dummyProcess)
+      val result: Future[RequestOutcome[ApprovalResponse]] = service.submitFor2iReview(dummyProcess)
 
       result.onComplete {
         case Success(response) =>
@@ -61,13 +61,13 @@ class ApprovalServiceSpec extends BaseSpec {
 
     }
 
-    "Return an error after an unsuccessful call by the connector" in new Test {
+    "Return an error after an unsuccessful call to the 2i review connector" in new Test {
 
       MockApprovalConnector
-        .submitForApproval(dummyProcess)
+        .submitFor2iReview(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[ApprovalResponse]] = service.submitForApproval(dummyProcess)
+      val result: Future[RequestOutcome[ApprovalResponse]] = service.submitFor2iReview(dummyProcess)
 
       result.onComplete {
         case Success(response) =>
@@ -79,7 +79,44 @@ class ApprovalServiceSpec extends BaseSpec {
       }
     }
 
-    "Return a list of ManageProcesses after an successful call by the connector" in new Test {
+    "Return an instance of the class ApprovalResponse after a successful call to the fact check connector" in new Test {
+
+      MockApprovalConnector
+        .submitForFactCheck(dummyProcess)
+        .returns(Future.successful(Right(ApprovalResponse(processId))))
+
+      val result: Future[RequestOutcome[ApprovalResponse]] = service.submitForFactCheck(dummyProcess)
+
+      result.onComplete {
+        case Success(response) =>
+          response match {
+            case Right(response) => response.id shouldBe processId
+            case Left(error) => fail(s"Unexpected error returned by approvalProcess connector : ${error.toString}")
+          }
+        case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+      }
+
+    }
+
+    "Return an error after an unsuccessful call to the fact check connector" in new Test {
+
+      MockApprovalConnector
+        .submitForFactCheck(dummyProcess)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val result: Future[RequestOutcome[ApprovalResponse]] = service.submitForFactCheck(dummyProcess)
+
+      result.onComplete {
+        case Success(response) =>
+          response match {
+            case Right(_) => fail("Approval response returned when an error was expected")
+            case Left(error) => error shouldBe InternalServerError
+          }
+        case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+      }
+    }
+
+    "Return a list of Processes after an successful call to the summaries connector" in new Test {
 
       MockApprovalConnector.approvalSummaries
         .returns(Future.successful(Right(List())))
