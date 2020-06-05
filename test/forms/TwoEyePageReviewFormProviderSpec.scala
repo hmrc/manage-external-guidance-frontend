@@ -83,20 +83,20 @@ class TwoEyePageReviewFormProviderSpec extends BaseSpec {
       result.errors.headOption shouldBe Some(requiredAnswerKeyFormError)
     }
 
-    "raise an error when the comment is missing" in new Test {
+    // "raise an error when the comment is missing" in new Test {
 
-      // Note in reality this is unlikely to happen
+    //   // Note in reality this is unlikely to happen
 
-      val boundForm: Form[TwoEyePageReview] = form.bind(
-        Map(
-          answer -> YesNoAnswer.Yes.toString
-        )
-      )
+    //   val boundForm: Form[TwoEyePageReview] = form.bind(
+    //     Map(
+    //       answer -> YesNoAnswer.Yes.toString
+    //     )
+    //   )
 
-      val result = boundForm.apply(comment)
+    //   val result = boundForm.apply(comment)
 
-      result.errors.headOption shouldBe Some(requiredCommentKeyFormError)
-    }
+    //   result.errors.headOption shouldBe Some(requiredCommentKeyFormError)
+    // }
 
     // TODO: Require tests for maximum length of commente when this is known
   }

@@ -22,14 +22,6 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 
 trait Constraints {
 
-  protected def maxLength(maximum: Int, errorKey: String): Constraint[String] =
-    Constraint {
-      case str if str.length <= maximum =>
-        Valid
-      case _ =>
-        Invalid(errorKey, maximum)
-    }
-
   protected def contains[A](allowedStatuses: Seq[ApprovalStatus], errorKey: String): Constraint[ApprovalStatus] = {
 
     Constraint { input =>

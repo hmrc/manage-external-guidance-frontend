@@ -36,18 +36,6 @@ trait Formatters {
       Map(key -> value.trim)
   }
 
-  private[mappings] def optionalStringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
-
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
-      data.get(key) match {
-        case None => Left(Seq(FormError(key, errorKey)))
-        case Some(s) => Right(s.trim)
-      }
-
-    override def unbind(key: String, value: String): Map[String, String] =
-      Map(key -> value.trim)
-  }
-
   private[mappings] def enumerableFormatter[A](requiredKey: String, invalidKey: String)(implicit ev: Enumerable[A]): Formatter[A] =
     new Formatter[A] {
 

@@ -37,6 +37,7 @@ pageReviewStatus.Complete = Reviewed
 2iPageReview.textarea.label = Comments
 2iPageReview.textarea.hint = Add a hint here
 2iPageReview.saveReview = Save review
+2iPageReview.viewGuidancePage = View the page (opens in a new window or tab).
 
 2iReviewResult.title = What would you like to do?
 2iReviewResult.heading = What would you like to do?

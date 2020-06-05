@@ -17,6 +17,7 @@
 @import controllers.routes._
 @import models.YesNoAnswer._
 
+@import config.AppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.helpers._
@@ -27,10 +28,15 @@
   errorSummary: components.errorSummary,
   inputRadio: components.inputRadio,
   govukTextarea: GovukTextarea,
-  govukButton: GovukButton
+  govukButton: GovukButton,
+  appConfig: AppConfig
 )
 
 @(processId: String, page: String, form: Form[_])(implicit request: Request[_], messages: Messages)
+
+@viewLink(id: String, url: String) = {
+  <p><a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@processId@page">@messages("2iPageReview.viewGuidancePage")</a></p>
+}
 
 @layout(messages("2iPageReview.title")){
 
@@ -57,9 +63,10 @@
           checked = form("answer").value.contains(No.toString)
         )
       ),
+      hint = Some(viewLink(processId, page)),
+      sectionHeading = Some(page),
       inline = true,
-      legendAsHeading = true,
-      classes = "govuk-visually-hidden"
+      legendAsHeading = true
     )
 
     @* TODO

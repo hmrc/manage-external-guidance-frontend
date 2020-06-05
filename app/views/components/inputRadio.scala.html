@@ -14,31 +14,32 @@
  * limitations under the License.
  *@
 
-@this(govukRadios: GovukRadios)
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.helpers._
+
+@this(govukRadios: GovukRadios, hmrcPageHeading: HmrcPageHeading)
 
 @(form: Form[_],
   fieldName: String,
   legend: String,
   items: Seq[RadioItem],
+  sectionHeading: Option[String] = None,
   legendAsHeading: Boolean = true,
   hint: Option[Html] = None,
-  classes: String = "govuk-fieldset__legend--xl",
   inline: Boolean = false
 )(implicit messages: Messages)
 
 @govukRadios(Radios(
-  classes = s"${if(inline){"govuk-radios--inline"}}",
+  classes = "govuk-radios--inline",
   name = fieldName,
   fieldset = Some(Fieldset(
     legend = Some(Legend(
-      content = Text(messages(legend)),
-      isPageHeading = legendAsHeading,
-      classes = if(legendAsHeading) "govuk-label--xl" else "govuk-visually-hidden"
+      content = HtmlContent(hmrcPageHeading(PageHeading(text = messages(legend), section = sectionHeading))),
+      isPageHeading = legendAsHeading
     ))
   )),
-  hint = hint.map { hint => Hint(
-    content = HtmlContent(hint)
-  )},
+  hint = hint.map { hint => Hint(content = HtmlContent(hint))},
   items = items,
   errorMessage = form(fieldName).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
 ))
