@@ -85,7 +85,7 @@ class ApprovalsListSpec extends ViewSpecBase {
             cellData(0).text shouldBe s.title
             Option(cellData(0).getElementsByTag("a").first).fold(fail("Missing link from page url cell")) { a =>
               elementAttrs(a).get("href").fold(fail("Missing href attribute within anchor")) { href =>
-                href shouldBe s"/external-guidance/2i-review/${s.id}"
+                href shouldBe s.getSummaryPageUrl
               }
             }
             cellData(1).text shouldBe s.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))

@@ -10,6 +10,8 @@ POST       /2i-page-review/:id/*page          controllers.TwoEyePageReviewContro
 GET        /2i-result/:id                     controllers.TwoEyeReviewResultController.onPageLoad(id)
 POST       /2i-result/:id                     controllers.TwoEyeReviewResultController.onSubmit(id)
 
+GET        /fact-check/:id                    controllers.FactCheckController.approval(id)
+
 GET        /accessibility                     controllers.AccessibilityStatementController.getPage
 
 GET        /hello-world                       controllers.HelloWorldController.helloWorld
