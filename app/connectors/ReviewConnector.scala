@@ -44,4 +44,21 @@ class ReviewConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
 
     httpClient.POST[ApprovalProcessStatusChange, RequestOutcome[Unit]](reviewEndPoint, info)
   }
+
+  def approvalFactCheck(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalProcessReview]] = {
+
+    val reviewEndPoint: String = s"${appConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/fact-check"
+
+    httpClient.GET[RequestOutcome[ApprovalProcessReview]](reviewEndPoint)
+  }
+
+  def approvalFactCheckComplete(
+      id: String,
+      info: ApprovalProcessStatusChange
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] = {
+
+    val reviewEndPoint: String = s"${appConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/fact-check"
+
+    httpClient.POST[ApprovalProcessStatusChange, RequestOutcome[Unit]](reviewEndPoint, info)
+  }
 }

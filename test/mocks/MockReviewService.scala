@@ -39,6 +39,17 @@ trait MockReviewService extends MockFactory {
       (mockReviewService
         .approval2iReviewComplete(_: String, _: ApprovalStatus)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, status, *, *)
+
+    def approvalFactCheck(id: String): CallHandler[Future[RequestOutcome[ApprovalProcessReview]]] =
+      (mockReviewService
+        .approvalFactCheck(_: String)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, *, *)
+
+    def approvalFactCheckComplete(id: String, status: ApprovalStatus): CallHandler[Future[RequestOutcome[Unit]]] =
+      (mockReviewService
+        .approvalFactCheckComplete(_: String, _: ApprovalStatus)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, status, *, *)
+
   }
 
 }

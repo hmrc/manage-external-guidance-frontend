@@ -38,4 +38,15 @@ class ReviewService @Inject() (reviewConnector: ReviewConnector) {
     reviewConnector.approval2iReviewComplete(id, changeInfo)
 
   }
+
+  def approvalFactCheck(id: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalProcessReview]] = {
+
+    reviewConnector.approvalFactCheck(id)
+  }
+
+  def approvalFactCheckComplete(id: String, status: ApprovalStatus)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] = {
+
+    val changeInfo = ApprovalProcessStatusChange("userId", "userName", status)
+    reviewConnector.approvalFactCheckComplete(id, changeInfo)
+  }
 }

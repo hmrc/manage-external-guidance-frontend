@@ -19,7 +19,17 @@ package models
 import play.api.libs.json.{Json, OFormat}
 import java.time.LocalDate
 
-case class ApprovalProcessSummary(id: String, title: String, lastUpdated: LocalDate, status: ApprovalStatus)
+import controllers.routes
+
+case class ApprovalProcessSummary(id: String, title: String, lastUpdated: LocalDate, status: ApprovalStatus) {
+  def getSummaryPageUrl: String = {
+    status match {
+      case ApprovalStatus.SubmittedFor2iReview => routes.TwoEyeReviewController.approval(id).toString
+      case ApprovalStatus.SubmittedForFactCheck => routes.FactCheckController.approval(id).toString
+      case _ => "#"
+    }
+  }
+}
 
 object ApprovalProcessSummary {
   implicit val formats: OFormat[ApprovalProcessSummary] = Json.format[ApprovalProcessSummary]

@@ -28,19 +28,24 @@ import scala.concurrent.Future
 
 class ReviewConnectorSpec extends BaseSpec {
 
-  private trait ReviewInfoTest extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout with ReviewData {
+  private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout with ReviewData {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val connector: ReviewConnector = new ReviewConnector(mockHttpClient, MockAppConfig)
-    val endpoint: String = s"${MockAppConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review"
 
     val reviewStatusChange = ApprovalProcessStatusChange("user", "email", ApprovalStatus.ApprovedForPublishing)
+  }
+  private trait TwoEyeReviewTest extends Test {
+    val endpoint: String = s"${MockAppConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review"
+  }
+  private trait FactCheckTest extends Test {
+    val endpoint: String = s"${MockAppConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/fact-check"
   }
 
   "Calling method approval2iReview with a valid id" should {
 
-    "Return an instance of ApprovalProcessReview for a successful call" in new ReviewInfoTest {
+    "Return an instance of ApprovalProcessReview for a successful call" in new TwoEyeReviewTest {
 
       MockedHttpClient
         .get(endpoint)
@@ -53,7 +58,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     }
 
-    "Return an instance of MalformedResponseError when an error occurs" in new ReviewInfoTest {
+    "Return an instance of MalformedResponseError when an error occurs" in new TwoEyeReviewTest {
 
       MockedHttpClient
         .get(endpoint)
@@ -65,7 +70,7 @@ class ReviewConnectorSpec extends BaseSpec {
       response shouldBe Left(MalformedResponseError)
     }
 
-    "Return an instance of NotFoundError class when an error occurs" in new ReviewInfoTest {
+    "Return an instance of NotFoundError class when an error occurs" in new TwoEyeReviewTest {
 
       MockedHttpClient
         .get(endpoint)
@@ -77,7 +82,7 @@ class ReviewConnectorSpec extends BaseSpec {
       response shouldBe Left(NotFoundError)
     }
 
-    "Return an instance of StaleDataError class when an error occurs" in new ReviewInfoTest {
+    "Return an instance of StaleDataError class when an error occurs" in new TwoEyeReviewTest {
 
       MockedHttpClient
         .get(endpoint)
@@ -89,7 +94,7 @@ class ReviewConnectorSpec extends BaseSpec {
       response shouldBe Left(StaleDataError)
     }
 
-    "Return an instance of InternalServererror class when an error occurs" in new ReviewInfoTest {
+    "Return an instance of InternalServererror class when an error occurs" in new TwoEyeReviewTest {
 
       MockedHttpClient
         .get(endpoint)
@@ -105,7 +110,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
   "Calling method approval2iReviewComplete with a valid id and payload" should {
 
-    "Return true for a successful call" in new ReviewInfoTest {
+    "Return true for a successful call" in new TwoEyeReviewTest {
 
       MockedHttpClient
         .post(endpoint, reviewStatusChange)
@@ -118,7 +123,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     }
 
-    "Return an instance of MalformedResponseError when an error occurs" in new ReviewInfoTest {
+    "Return an instance of MalformedResponseError when an error occurs" in new TwoEyeReviewTest {
 
       MockedHttpClient
         .post(endpoint, reviewStatusChange)
@@ -130,7 +135,7 @@ class ReviewConnectorSpec extends BaseSpec {
       response shouldBe Left(MalformedResponseError)
     }
 
-    "Return an instance of NotFoundError class when an error occurs" in new ReviewInfoTest {
+    "Return an instance of NotFoundError class when an error occurs" in new TwoEyeReviewTest {
 
       MockedHttpClient
         .post(endpoint, reviewStatusChange)
@@ -142,7 +147,7 @@ class ReviewConnectorSpec extends BaseSpec {
       response shouldBe Left(NotFoundError)
     }
 
-    "Return an instance of StaleDataError class when an error occurs" in new ReviewInfoTest {
+    "Return an instance of StaleDataError class when an error occurs" in new TwoEyeReviewTest {
 
       MockedHttpClient
         .post(endpoint, reviewStatusChange)
@@ -154,7 +159,7 @@ class ReviewConnectorSpec extends BaseSpec {
       response shouldBe Left(StaleDataError)
     }
 
-    "Return an instance of InternalServererror class when an error occurs" in new ReviewInfoTest {
+    "Return an instance of InternalServererror class when an error occurs" in new TwoEyeReviewTest {
 
       MockedHttpClient
         .post(endpoint, reviewStatusChange)
@@ -162,6 +167,136 @@ class ReviewConnectorSpec extends BaseSpec {
 
       val response: RequestOutcome[Unit] =
         await(connector.approval2iReviewComplete(id, reviewStatusChange))
+
+      response shouldBe Left(InternalServerError)
+    }
+
+  }
+
+  "Calling method approvalFactCheck with a valid id" should {
+
+    "Return an instance of ApprovalProcessReview for a successful call" in new FactCheckTest {
+
+      MockedHttpClient
+        .get(endpoint)
+        .returns(Future.successful(Right(reviewInfo)))
+
+      val response: RequestOutcome[ApprovalProcessReview] =
+        await(connector.approvalFactCheck(id))
+
+      response shouldBe Right(reviewInfo)
+
+    }
+
+    "Return an instance of MalformedResponseError when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .get(endpoint)
+        .returns(Future.successful(Left(MalformedResponseError)))
+
+      val response: RequestOutcome[ApprovalProcessReview] =
+        await(connector.approvalFactCheck(id))
+
+      response shouldBe Left(MalformedResponseError)
+    }
+
+    "Return an instance of NotFoundError class when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .get(endpoint)
+        .returns(Future.successful(Left(NotFoundError)))
+
+      val response: RequestOutcome[ApprovalProcessReview] =
+        await(connector.approvalFactCheck(id))
+
+      response shouldBe Left(NotFoundError)
+    }
+
+    "Return an instance of StaleDataError class when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .get(endpoint)
+        .returns(Future.successful(Left(StaleDataError)))
+
+      val response: RequestOutcome[ApprovalProcessReview] =
+        await(connector.approvalFactCheck(id))
+
+      response shouldBe Left(StaleDataError)
+    }
+
+    "Return an instance of InternalServererror class when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .get(endpoint)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val response: RequestOutcome[ApprovalProcessReview] =
+        await(connector.approvalFactCheck(id))
+
+      response shouldBe Left(InternalServerError)
+    }
+
+  }
+
+  "Calling method approvalFactCheckComplete with a valid id and payload" should {
+
+    "Return true for a successful call" in new FactCheckTest {
+
+      MockedHttpClient
+        .post(endpoint, reviewStatusChange)
+        .returns(Future.successful(Right(true)))
+
+      val response: RequestOutcome[Unit] =
+        await(connector.approvalFactCheckComplete(id, reviewStatusChange))
+
+      response shouldBe Right(true)
+
+    }
+
+    "Return an instance of MalformedResponseError when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .post(endpoint, reviewStatusChange)
+        .returns(Future.successful(Left(MalformedResponseError)))
+
+      val response: RequestOutcome[Unit] =
+        await(connector.approvalFactCheckComplete(id, reviewStatusChange))
+
+      response shouldBe Left(MalformedResponseError)
+    }
+
+    "Return an instance of NotFoundError class when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .post(endpoint, reviewStatusChange)
+        .returns(Future.successful(Left(NotFoundError)))
+
+      val response: RequestOutcome[Unit] =
+        await(connector.approvalFactCheckComplete(id, reviewStatusChange))
+
+      response shouldBe Left(NotFoundError)
+    }
+
+    "Return an instance of StaleDataError class when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .post(endpoint, reviewStatusChange)
+        .returns(Future.successful(Left(StaleDataError)))
+
+      val response: RequestOutcome[Unit] =
+        await(connector.approvalFactCheckComplete(id, reviewStatusChange))
+
+      response shouldBe Left(StaleDataError)
+    }
+
+    "Return an instance of InternalServererror class when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .post(endpoint, reviewStatusChange)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val response: RequestOutcome[Unit] =
+        await(connector.approvalFactCheckComplete(id, reviewStatusChange))
 
       response shouldBe Left(InternalServerError)
     }
