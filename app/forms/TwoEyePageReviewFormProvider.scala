@@ -31,8 +31,6 @@ class TwoEyePageReviewFormProvider @Inject() extends Mappings with Constraints {
     Form(
       mapping(
         "answer" -> enumerable[YesNoAnswer]("2iPageReview.answer.error.required"),
-        "comment" -> optionalText("2iPageReview.comment.error.required")
-          .verifying(maxLength(100, "2iPageReview.comment.error.length"))
       )(TwoEyePageReview.apply)(TwoEyePageReview.unapply)
     )
   }

@@ -18,4 +18,4 @@ package models.forms
 
 import models.YesNoAnswer
 
-case class TwoEyePageReview(answer: YesNoAnswer, comment: String)
+case class TwoEyePageReview(answer: YesNoAnswer)

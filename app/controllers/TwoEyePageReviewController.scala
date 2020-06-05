@@ -49,9 +49,11 @@ class TwoEyePageReviewController @Inject() (
 
   def onPageLoad(processId: String, page: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
     reviewService.approval2iPageReview(processId, page) map {
-      case Right(data) =>
-        val form: Form[TwoEyePageReview] = formProvider()
+      case Right(data) if data.result.isDefined =>
+        val form: Form[TwoEyePageReview] = formProvider().bind(Map("answer" -> data.result.fold("")(_.toString)))
         Ok(view(processId, page, form))
+        
+      case Right(data) => Ok(view(processId, page, formProvider()))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval 2i page review for process $processId and page $page returned error $err")
@@ -67,7 +69,7 @@ class TwoEyePageReviewController @Inject() (
       .fold(
         (formWithErrors: Form[TwoEyePageReview]) => { Future.successful(BadRequest(view(processId, page, formWithErrors))) },
         result => {
-          val reviewDetail = PageReviewDetail(processId, page, Some(result.answer), PageReviewStatus.Complete, Some(result.comment))
+          val reviewDetail = PageReviewDetail(processId, page, Some(result.answer), PageReviewStatus.Complete)
           reviewService.approval2iPageReviewComplete(processId, page, reviewDetail).map {
             case Right(_) => Redirect(routes.TwoEyeReviewController.approval(processId))
             case Left(NotFoundError) =>
