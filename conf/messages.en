@@ -41,7 +41,7 @@ factCheck.viewGuidance = View the complete guidance (opens in a new window or ta
 factCheck.reviewPagesHeading = Check all pages for factual accuracy
 factCheck.pagesReviewedConfirmationHeading = Confirm you''ve fact checked all pages.
 factCheck.sendConfirmation = Confirm
-factCheck.sendConfirmationStatus = Not reviewed
+factCheck.sendConfirmationStatus =
 
 
 error.unauthorized401.pageTitle.service = You can’t access this service with this account
