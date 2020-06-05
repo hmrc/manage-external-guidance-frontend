@@ -63,7 +63,6 @@ class TwoEyePageReviewController @Inject() (
 
   def onSubmit(processId: String, page: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
     val form: Form[TwoEyePageReview] = formProvider()
-
     form
       .bindFromRequest()
       .fold(
@@ -83,8 +82,6 @@ class TwoEyePageReviewController @Inject() (
               logger.error(s"Request for approval 2i review process for process $processId returned error $err")
               InternalServerError(errorHandler.internalServerErrorTemplate)
           }
-
-//          Future.successful(Ok("Does the page meet the standards : " + result.answer.toString + " Comment : " + result.comment))
         }
       )
   }

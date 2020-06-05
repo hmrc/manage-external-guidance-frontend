@@ -16,10 +16,10 @@
 
 package models
 
-import java.time.LocalDate
+import java.time.{LocalDateTime, LocalDate}
 import java.util.UUID
-
-import models.PageReviewStatus.NotStarted
+import models.YesNoAnswer._
+import models.PageReviewStatus._
 
 trait ReviewData {
 
@@ -41,4 +41,15 @@ trait ReviewData {
     )
   )
 
+  val reviewDetail = PageReviewDetail(
+    id,
+    "sold-goods-or-services/did-you-only-sell-personal-possessions",
+    None,
+    NotStarted,
+    None,
+    LocalDateTime.of(2020, 5, 10,0,0,0),
+    None
+  )
+
+  val updatedReviewDetail = reviewDetail.copy(result = Some(Yes), status = Complete, updateDate = LocalDateTime.of(2020, 5, 10,0,0,0))
 }

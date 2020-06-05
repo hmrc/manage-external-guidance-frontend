@@ -16,7 +16,7 @@
 
 package mocks
 
-import models.{ApprovalProcessReview, ApprovalStatus, RequestOutcome}
+import models.{ApprovalProcessReview, ApprovalStatus, PageReviewDetail, RequestOutcome}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import services.ReviewService
@@ -39,6 +39,26 @@ trait MockReviewService extends MockFactory {
       (mockReviewService
         .approval2iReviewComplete(_: String, _: ApprovalStatus)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, status, *, *)
+
+    def approval2iPageReview(id: String, pageUrl: String): CallHandler[Future[RequestOutcome[PageReviewDetail]]] =
+      (mockReviewService
+        .approval2iPageReview(_: String, _: String)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, pageUrl, *, *)
+
+    def approval2iPageReviewComplete(id: String, pageUrl: String, pageReviewDetail: PageReviewDetail): CallHandler[Future[RequestOutcome[Unit]]] =
+      (mockReviewService
+        .approval2iPageReviewComplete(_: String, _: String, _: PageReviewDetail)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(
+          where { (i: String, u: String, p: PageReviewDetail, _: ExecutionContext, _: HeaderCarrier) =>
+            i == id &&
+            u == pageUrl &&
+            p.id == pageReviewDetail.id &&
+            p.pageUrl == pageReviewDetail.pageUrl &&
+            p.result == pageReviewDetail.result &&
+            p.status == pageReviewDetail.status &&
+            p.updateUser == pageReviewDetail.updateUser
+          }
+        )
   }
 
 }

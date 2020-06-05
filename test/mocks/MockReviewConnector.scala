@@ -17,7 +17,7 @@
 package mocks
 
 import connectors.ReviewConnector
-import models.{ApprovalProcessReview, ApprovalProcessStatusChange, RequestOutcome}
+import models.{ApprovalProcessReview, ApprovalProcessStatusChange, PageReviewDetail, RequestOutcome}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
@@ -30,18 +30,34 @@ trait MockReviewConnector extends MockFactory {
 
   object MockReviewConnector {
 
-    def approval2iReview(id: String): CallHandler[Future[RequestOutcome[ApprovalProcessReview]]] = {
-
+    def approval2iReview(id: String): CallHandler[Future[RequestOutcome[ApprovalProcessReview]]] =
       (mockReviewConnector
         .approval2iReview(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, *, *)
-    }
-
-    def approval2iReviewComplete(id: String, info: ApprovalProcessStatusChange): CallHandler[Future[RequestOutcome[Unit]]] = {
+    
+    def approval2iReviewComplete(id: String, info: ApprovalProcessStatusChange): CallHandler[Future[RequestOutcome[Unit]]] =
       (mockReviewConnector
         .approval2iReviewComplete(_: String, _: ApprovalProcessStatusChange)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, info, *, *)
-    }
 
+    def approval2iReviewPageInfo(id: String, pageUrl: String): CallHandler[Future[RequestOutcome[PageReviewDetail]]] =
+      (mockReviewConnector
+        .approval2iReviewPageInfo(_: String, _: String)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, pageUrl, *, *)
+
+     def approval2iReviewPageComplete(id: String, pageUrl: String, info: PageReviewDetail): CallHandler[Future[RequestOutcome[Unit]]] =
+      (mockReviewConnector
+        .approval2iReviewPageComplete(_: String, _: String, _: PageReviewDetail)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(
+          where { (i: String, u: String, p: PageReviewDetail, _: ExecutionContext, _: HeaderCarrier) =>
+            i == id &&
+            u == pageUrl &&
+            p.id == info.id &&
+            p.pageUrl == info.pageUrl &&
+            p.result == info.result &&
+            p.status == info.status &&
+            p.updateUser == info.updateUser
+          }
+        )
   }
 }
