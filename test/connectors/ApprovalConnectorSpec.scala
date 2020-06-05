@@ -29,40 +29,77 @@ import scala.concurrent.Future
 
 class ApprovalConnectorSpec extends BaseSpec {
 
-  private trait SubmitForApprovalTest extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
+  private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val connector: ApprovalConnector = new ApprovalConnector(mockHttpClient, MockAppConfig)
-    val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/approval"
 
     val id: String = "Oct90005"
     val dummyProcess: JsValue = Json.obj("processId" -> id)
 
   }
 
-  "Calling method submitForApproval with a dummy process" should {
 
-    "Return an instance of the class ApprovalResponse for a successful call" in new SubmitForApprovalTest {
+  "Calling method submitFor2iReview with a dummy process" should {
+
+    trait SubmitFor2iReviewTest extends Test {
+
+      val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/approval/2i-review"
+
+    }
+    "Return an instance of the class ApprovalResponse for a successful call" in new SubmitFor2iReviewTest {
 
       MockedHttpClient
         .post(endpoint, dummyProcess)
         .returns(Future.successful(Right(ApprovalResponse(id))))
 
       val response: RequestOutcome[ApprovalResponse] =
-        await(connector.submitForApproval(dummyProcess))
+        await(connector.submitFor2iReview(dummyProcess))
 
       response shouldBe Right(ApprovalResponse(id))
     }
 
-    "Return an instance of an error class when an error occurs" in new SubmitForApprovalTest {
+    "Return an instance of an error class when an error occurs" in new SubmitFor2iReviewTest {
 
       MockedHttpClient
         .post(endpoint, dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
       val response: RequestOutcome[ApprovalResponse] =
-        await(connector.submitForApproval(dummyProcess))
+        await(connector.submitFor2iReview(dummyProcess))
+
+      response shouldBe Left(InternalServerError)
+    }
+  }
+
+  "Calling method submitForFactCheck with a dummy process" should {
+
+    trait SubmitForFactCheckTest extends Test {
+
+      val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/approval/fact-check"
+
+    }
+    "Return an instance of the class ApprovalResponse for a successful call" in new SubmitForFactCheckTest {
+
+      MockedHttpClient
+        .post(endpoint, dummyProcess)
+        .returns(Future.successful(Right(ApprovalResponse(id))))
+
+      val response: RequestOutcome[ApprovalResponse] =
+        await(connector.submitForFactCheck(dummyProcess))
+
+      response shouldBe Right(ApprovalResponse(id))
+    }
+
+    "Return an instance of an error class when an error occurs" in new SubmitForFactCheckTest {
+
+      MockedHttpClient
+        .post(endpoint, dummyProcess)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val response: RequestOutcome[ApprovalResponse] =
+        await(connector.submitForFactCheck(dummyProcess))
 
       response shouldBe Left(InternalServerError)
     }

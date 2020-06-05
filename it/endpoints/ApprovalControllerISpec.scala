@@ -25,18 +25,19 @@ import support.IntegrationSpec
 
 class ApprovalControllerISpec extends IntegrationSpec {
 
-  private val endPoint = "/process/approval"
+  private val endPoint2iReview = "/process/approval/2i-review"
+  private val endPointFactCheck = "/process/approval/fact-check"
   private val invalidRequestContent: JsObject = Json.obj("message" -> "hi")
 
-  "calling the approval POST endpoint" should {
+  "calling the approval 2i Review POST endpoint" should {
     "return an CREATED response" in {
 
       AuditStub.audit()
 
       val responsePayload = Json.obj("id" -> "oct90001")
-      ExternalGuidanceStub.saveApproval(Status.CREATED, responsePayload)
+      ExternalGuidanceStub.save2iReview(Status.CREATED, responsePayload)
 
-      val request = buildRequest(endPoint)
+      val request = buildRequest(endPoint2iReview)
       val response: WSResponse = await(request.post(invalidRequestContent))
       response.status shouldBe Status.CREATED
     }
@@ -46,9 +47,9 @@ class ApprovalControllerISpec extends IntegrationSpec {
       AuditStub.audit()
 
       val responsePayload: JsValue = Json.toJson(InvalidProcessError)
-      ExternalGuidanceStub.saveApproval(Status.BAD_REQUEST, responsePayload)
+      ExternalGuidanceStub.save2iReview(Status.BAD_REQUEST, responsePayload)
 
-      val request = buildRequest(endPoint)
+      val request = buildRequest(endPoint2iReview)
       val response: WSResponse = await(request.post(invalidRequestContent))
       response.status shouldBe Status.BAD_REQUEST
     }
@@ -58,9 +59,47 @@ class ApprovalControllerISpec extends IntegrationSpec {
       AuditStub.audit()
 
       val responsePayload: JsValue = Json.toJson(InternalServerError)
-      ExternalGuidanceStub.saveApproval(Status.INTERNAL_SERVER_ERROR, responsePayload)
+      ExternalGuidanceStub.save2iReview(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
-      val request = buildRequest(endPoint)
+      val request = buildRequest(endPoint2iReview)
+      val response: WSResponse = await(request.post(invalidRequestContent))
+      response.status shouldBe Status.INTERNAL_SERVER_ERROR
+    }
+  }
+
+  "calling the approval Fact Check POST endpoint" should {
+    "return an CREATED response" in {
+
+      AuditStub.audit()
+
+      val responsePayload = Json.obj("id" -> "oct90001")
+      ExternalGuidanceStub.saveFactCheck(Status.CREATED, responsePayload)
+
+      val request = buildRequest(endPointFactCheck)
+      val response: WSResponse = await(request.post(invalidRequestContent))
+      response.status shouldBe Status.CREATED
+    }
+
+    "return a BAD_REQUEST response when the external guidance microservice rejects an invalid process" in {
+
+      AuditStub.audit()
+
+      val responsePayload: JsValue = Json.toJson(InvalidProcessError)
+      ExternalGuidanceStub.saveFactCheck(Status.BAD_REQUEST, responsePayload)
+
+      val request = buildRequest(endPointFactCheck)
+      val response: WSResponse = await(request.post(invalidRequestContent))
+      response.status shouldBe Status.BAD_REQUEST
+    }
+
+    "return an INTERNAL_SERVER_ERROR response when the external guidance microservice returns an internal server error" in {
+
+      AuditStub.audit()
+
+      val responsePayload: JsValue = Json.toJson(InternalServerError)
+      ExternalGuidanceStub.saveFactCheck(Status.INTERNAL_SERVER_ERROR, responsePayload)
+
+      val request = buildRequest(endPointFactCheck)
       val response: WSResponse = await(request.post(invalidRequestContent))
       response.status shouldBe Status.INTERNAL_SERVER_ERROR
     }
@@ -69,7 +108,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
   "calling the approval OPTIONS endpoint" should {
     "return an OK response" in {
       AuditStub.audit()
-      val request = buildRequest(endPoint)
+      val request = buildRequest(endPoint2iReview)
       val response: WSResponse = await(request.options())
       response.status shouldBe Status.OK
     }

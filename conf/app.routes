@@ -15,7 +15,13 @@ GET        /bye-world                         controllers.HelloWorldController.b
 POST       /process/scratch                   controllers.apis.ScratchController.submitScratchProcess
 OPTIONS    /process/scratch                   controllers.apis.ScratchController.scratchProcessOptions
 
-POST       /process/approval                  controllers.apis.ApprovalController.submitForApproval
+POST       /process/approval                  controllers.apis.ApprovalController.submitFor2iReview
 OPTIONS    /process/approval                  controllers.apis.ApprovalController.options
+
+POST       /process/approval/2i-review        controllers.apis.ApprovalController.submitFor2iReview
+OPTIONS    /process/approval/2i-review        controllers.apis.ApprovalController.options
+
+POST       /process/approval/fact-check       controllers.apis.ApprovalController.submitForFactCheck
+OPTIONS    /process/approval/fact-check       controllers.apis.ApprovalController.options
 
 ->         /govuk-frontend          govuk.Routes
