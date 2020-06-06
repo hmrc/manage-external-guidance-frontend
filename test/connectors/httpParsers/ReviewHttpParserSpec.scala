@@ -17,7 +17,7 @@
 package connectors.httpParsers
 
 import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
-import models.{ApprovalProcessReview, RequestOutcome, ReviewData}
+import models.{ApprovalProcessReview, PageReviewDetail, PageReviewStatus, RequestOutcome, ReviewData}
 import org.scalatest.{Matchers, WordSpec}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
@@ -108,4 +108,50 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
     }
   }
 
+  "The ReviewHttpParser.getReviewPageDetailsHttpReads" when {
+    val pageUrl = "pageUrl"
+    val pageReviewDetail = PageReviewDetail(id, pageUrl, None, PageReviewStatus.NotStarted)
+
+    class GetReviewPageDetailsSetup(status: Int, optJson: Option[JsValue] = None) {
+      private val httpMethod = "GET"
+      private val url = "/"
+      val httpResponse = HttpResponse(status, optJson, Map())
+
+      def readResponse: RequestOutcome[PageReviewDetail] =
+        getReviewPageDetailsHttpReads.read(httpMethod, url, httpResponse)
+    }
+
+    "the response is OK" when {
+      "the json successfully deserializes to the model" should {
+        "Return ApprovalProcessReview" in new GetReviewPageDetailsSetup(OK, Some(Json.toJson(pageReviewDetail))) {
+          readResponse shouldBe Right(pageReviewDetail)
+        }
+      }
+      "the json is malformed" should {
+        "return MalformedResponseError" in new GetReviewPageDetailsSetup(OK, Some(Json.obj())) {
+          readResponse shouldBe Left(MalformedResponseError)
+        }
+      }
+    }
+    "the response is NOT_FOUND with a code of NOT_FOUND_ERROR" should {
+      "return NotFoundError" in new GetReviewPageDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR", "message" -> ""))) {
+        readResponse shouldBe Left(NotFoundError)
+      }
+    }
+    "the response is NOT_FOUND with a code of STALE_DATA_ERROR" should {
+      "return StaleDataError" in new GetReviewPageDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "STALE_DATA_ERROR", "message" -> ""))) {
+        readResponse shouldBe Left(StaleDataError)
+      }
+    }
+    "the response is NOT_FOUND and has malformed error json" should {
+      "return MalformedResponseError" in new GetReviewPageDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
+        readResponse shouldBe Left(MalformedResponseError)
+      }
+    }
+    "the response is anything else" should {
+      "return InternalServerError" in new GetReviewPageDetailsSetup(INTERNAL_SERVER_ERROR) {
+        readResponse shouldBe Left(InternalServerError)
+      }
+    }
+  }
 }

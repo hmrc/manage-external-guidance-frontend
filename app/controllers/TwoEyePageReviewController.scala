@@ -53,7 +53,7 @@ class TwoEyePageReviewController @Inject() (
         val form: Form[TwoEyePageReview] = formProvider().bind(Map("answer" -> data.result.fold("")(_.toString)))
         Ok(view(processId, page, form))
         
-      case Right(data) => Ok(view(processId, page, formProvider()))
+      case Right(_) => Ok(view(processId, page, formProvider()))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval 2i page review for process $processId and page $page returned error $err")
@@ -78,7 +78,7 @@ class TwoEyePageReviewController @Inject() (
               logger.warn(s"The requested approval 2i review for process $processId can no longer be found")
               NotFound(errorHandler.notFoundTemplate)
             case Left(err) =>
-              // Handle stale data, internal server and any unexpected errors
+              // Handle internal server and any unexpected errors
               logger.error(s"Request for approval 2i review process for process $processId returned error $err")
               InternalServerError(errorHandler.internalServerErrorTemplate)
           }
