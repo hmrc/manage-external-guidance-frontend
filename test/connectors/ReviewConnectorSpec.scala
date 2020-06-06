@@ -36,7 +36,7 @@ class ReviewConnectorSpec extends BaseSpec {
     val endpoint: String = s"${MockAppConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review"
 
     val reviewStatusChange = ApprovalProcessStatusChange("user", "email", ApprovalStatus.ApprovedForPublishing)
-    
+
   }
 
   "Calling method approval2iReview with a valid id" should {
@@ -174,7 +174,7 @@ class ReviewConnectorSpec extends BaseSpec {
     "Return an instance of PageReviewDetail for a successful call" in new ReviewInfoTest {
 
       MockedHttpClient
-        .get(s"${endpoint}/${reviewDetail.pageUrl}")
+        .get(s"$endpoint/${reviewDetail.pageUrl}")
         .returns(Future.successful(Right(reviewDetail)))
 
       val response: RequestOutcome[PageReviewDetail] =
@@ -187,7 +187,7 @@ class ReviewConnectorSpec extends BaseSpec {
     "Return an instance of MalformedResponseError when an error occurs" in new ReviewInfoTest {
 
       MockedHttpClient
-        .get(s"${endpoint}/${reviewDetail.pageUrl}")
+        .get(s"$endpoint/${reviewDetail.pageUrl}")
         .returns(Future.successful(Left(MalformedResponseError)))
 
       val response: RequestOutcome[PageReviewDetail] =
@@ -199,7 +199,7 @@ class ReviewConnectorSpec extends BaseSpec {
     "Return an instance of NotFoundError class when an error occurs" in new ReviewInfoTest {
 
       MockedHttpClient
-        .get(s"${endpoint}/${reviewDetail.pageUrl}")
+        .get(s"$endpoint/${reviewDetail.pageUrl}")
         .returns(Future.successful(Left(NotFoundError)))
 
       val response: RequestOutcome[PageReviewDetail] =
@@ -211,7 +211,7 @@ class ReviewConnectorSpec extends BaseSpec {
     "Return an instance of StaleDataError class when an error occurs" in new ReviewInfoTest {
 
       MockedHttpClient
-        .get(s"${endpoint}/${reviewDetail.pageUrl}")
+        .get(s"$endpoint/${reviewDetail.pageUrl}")
         .returns(Future.successful(Left(StaleDataError)))
 
       val response: RequestOutcome[PageReviewDetail] =
@@ -223,7 +223,7 @@ class ReviewConnectorSpec extends BaseSpec {
     "Return an instance of InternalServererror class when an error occurs" in new ReviewInfoTest {
 
       MockedHttpClient
-        .get(s"${endpoint}/${reviewDetail.pageUrl}")
+        .get(s"$endpoint/${reviewDetail.pageUrl}")
         .returns(Future.successful(Left(InternalServerError)))
 
       val response: RequestOutcome[PageReviewDetail] =
@@ -239,7 +239,7 @@ class ReviewConnectorSpec extends BaseSpec {
     "Return true for a successful call" in new ReviewInfoTest {
 
       MockedHttpClient
-        .post(s"${endpoint}/${updatedReviewDetail.pageUrl}", updatedReviewDetail)
+        .post(s"$endpoint/${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Right(true)))
 
       val response: RequestOutcome[Unit] =
@@ -252,7 +252,7 @@ class ReviewConnectorSpec extends BaseSpec {
     "Return an instance of MalformedResponseError when an error occurs" in new ReviewInfoTest {
 
       MockedHttpClient
-        .post(s"${endpoint}/${updatedReviewDetail.pageUrl}", updatedReviewDetail)
+        .post(s"$endpoint/${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Left(MalformedResponseError)))
 
       val response: RequestOutcome[Unit] =
@@ -264,7 +264,7 @@ class ReviewConnectorSpec extends BaseSpec {
     "Return an instance of NotFoundError class when an error occurs" in new ReviewInfoTest {
 
       MockedHttpClient
-        .post(s"${endpoint}/${updatedReviewDetail.pageUrl}", updatedReviewDetail)
+        .post(s"$endpoint/${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Left(NotFoundError)))
 
       val response: RequestOutcome[Unit] =
@@ -276,7 +276,7 @@ class ReviewConnectorSpec extends BaseSpec {
     "Return an instance of StaleDataError class when an error occurs" in new ReviewInfoTest {
 
       MockedHttpClient
-        .post(s"${endpoint}/${updatedReviewDetail.pageUrl}", updatedReviewDetail)
+        .post(s"$endpoint/${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Left(StaleDataError)))
 
       val response: RequestOutcome[Unit] =
@@ -288,7 +288,7 @@ class ReviewConnectorSpec extends BaseSpec {
     "Return an instance of InternalServererror class when an error occurs" in new ReviewInfoTest {
 
       MockedHttpClient
-        .post(s"${endpoint}/${updatedReviewDetail.pageUrl}", updatedReviewDetail)
+        .post(s"$endpoint/${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Left(InternalServerError)))
 
       val response: RequestOutcome[Unit] =

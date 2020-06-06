@@ -33,4 +33,3 @@ case class PageReviewDetail(
 object PageReviewDetail {
   implicit val formats: OFormat[PageReviewDetail] = Json.format[PageReviewDetail]
 }
-

@@ -47,9 +47,9 @@ trait ReviewData {
     None,
     NotStarted,
     None,
-    LocalDateTime.of(2020, 5, 10,0,0,0),
+    LocalDateTime.of(2020, 5, 10, 0, 0, 0),
     None
   )
 
-  val updatedReviewDetail = reviewDetail.copy(result = Some(Yes), status = Complete, updateDate = LocalDateTime.of(2020, 5, 10,0,0,0))
+  val updatedReviewDetail = reviewDetail.copy(result = Some(Yes), status = Complete, updateDate = LocalDateTime.of(2020, 5, 10, 0, 0, 0))
 }

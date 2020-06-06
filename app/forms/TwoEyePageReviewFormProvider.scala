@@ -30,7 +30,7 @@ class TwoEyePageReviewFormProvider @Inject() extends Mappings with Constraints {
   def apply(): Form[TwoEyePageReview] = {
     Form(
       mapping(
-        "answer" -> enumerable[YesNoAnswer]("2iPageReview.answer.error.required"),
+        "answer" -> enumerable[YesNoAnswer]("2iPageReview.answer.error.required")
       )(TwoEyePageReview.apply)(TwoEyePageReview.unapply)
     )
   }

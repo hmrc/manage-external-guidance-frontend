@@ -36,7 +36,9 @@ class ReviewService @Inject() (reviewConnector: ReviewConnector) {
   def approval2iPageReview(id: String, pageUrl: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[PageReviewDetail]] =
     reviewConnector.approval2iReviewPageInfo(id, pageUrl)
 
-  def approval2iPageReviewComplete(id: String, pageUrl: String, pageReviewDetail: PageReviewDetail)
-                                  (implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] =
+  def approval2iPageReviewComplete(id: String, pageUrl: String, pageReviewDetail: PageReviewDetail)(
+      implicit ex: ExecutionContext,
+      hc: HeaderCarrier
+  ): Future[RequestOutcome[Unit]] =
     reviewConnector.approval2iReviewPageComplete(id, pageUrl, pageReviewDetail)
 }

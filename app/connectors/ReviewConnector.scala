@@ -53,10 +53,10 @@ class ReviewConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
   }
 
   def approval2iReviewPageComplete(
-                                id: String,
-                                pageUrl: String,
-                                info: PageReviewDetail
-                              )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] = {
+      id: String,
+      pageUrl: String,
+      info: PageReviewDetail
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] = {
 
     val reviewEndPoint: String = s"${appConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review/$pageUrl"
 

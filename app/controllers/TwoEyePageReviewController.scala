@@ -52,7 +52,7 @@ class TwoEyePageReviewController @Inject() (
       case Right(data) if data.result.isDefined =>
         val form: Form[TwoEyePageReview] = formProvider().bind(Map("answer" -> data.result.fold("")(_.toString)))
         Ok(view(processId, page, form))
-        
+
       case Right(_) => Ok(view(processId, page, formProvider()))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors

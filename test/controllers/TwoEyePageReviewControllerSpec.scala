@@ -44,12 +44,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
     val formProvider = new TwoEyePageReviewFormProvider()
 
     val reviewController =
-      new TwoEyePageReviewController(errorHandler,
-                                     FakeTwoEyeReviewerIdentifierAction,
-                                     formProvider,
-                                     view,
-                                     mockReviewService,
-                                     messagesControllerComponents)
+      new TwoEyePageReviewController(errorHandler, FakeTwoEyeReviewerIdentifierAction, formProvider, view, mockReviewService, messagesControllerComponents)
 
     val fakeRequest = FakeRequest("POST", "/")
   }
@@ -145,27 +140,27 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
 
-     "Return the Http status not found when the process review data requested is out of date in some way" in new Test {
+    "Return the Http status not found when the process review data requested is out of date in some way" in new Test {
 
-       MockReviewService
-         .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
-         .returns(Future.successful(Left(StaleDataError)))
+      MockReviewService
+        .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
+        .returns(Future.successful(Left(StaleDataError)))
 
-       val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
-       status(result) shouldBe Status.NOT_FOUND
-     }
+      status(result) shouldBe Status.NOT_FOUND
+    }
 
-     "Return an Html error page when the process review data requested is out of date in some way" in new Test {
+    "Return an Html error page when the process review data requested is out of date in some way" in new Test {
 
-       MockReviewService
-         .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
-         .returns(Future.successful(Left(StaleDataError)))
+      MockReviewService
+        .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
+        .returns(Future.successful(Left(StaleDataError)))
 
-       val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
-       contentType(result) shouldBe Some(MimeTypes.HTML)
-     }
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+    }
 
     "Return the Http status internal server error when n unexpected error occurs" in new Test {
 

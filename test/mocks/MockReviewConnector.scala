@@ -34,7 +34,7 @@ trait MockReviewConnector extends MockFactory {
       (mockReviewConnector
         .approval2iReview(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, *, *)
-    
+
     def approval2iReviewComplete(id: String, info: ApprovalProcessStatusChange): CallHandler[Future[RequestOutcome[Unit]]] =
       (mockReviewConnector
         .approval2iReviewComplete(_: String, _: ApprovalProcessStatusChange)(_: ExecutionContext, _: HeaderCarrier))
@@ -45,7 +45,7 @@ trait MockReviewConnector extends MockFactory {
         .approval2iReviewPageInfo(_: String, _: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, pageUrl, *, *)
 
-     def approval2iReviewPageComplete(id: String, pageUrl: String, info: PageReviewDetail): CallHandler[Future[RequestOutcome[Unit]]] =
+    def approval2iReviewPageComplete(id: String, pageUrl: String, info: PageReviewDetail): CallHandler[Future[RequestOutcome[Unit]]] =
       (mockReviewConnector
         .approval2iReviewPageComplete(_: String, _: String, _: PageReviewDetail)(_: ExecutionContext, _: HeaderCarrier))
         .expects(
