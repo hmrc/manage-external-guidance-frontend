@@ -18,7 +18,7 @@ package controllers
 
 import base.ControllerBaseSpec
 import config.ErrorHandler
-import controllers.actions.{FakeFactCheckerIdentifierAction, FakeTwoEyeReviewerIdentifierAction}
+import controllers.actions.FakeFactCheckerIdentifierAction
 import mocks.MockReviewService
 import models.ReviewData
 import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
@@ -28,7 +28,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.{fact_check_content_review, twoeye_content_review}
+import views.html.fact_check_content_review
 
 import scala.concurrent.Future
 

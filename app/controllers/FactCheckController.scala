@@ -19,6 +19,7 @@ package controllers
 import config.ErrorHandler
 import controllers.actions.FactCheckerIdentifierAction
 import javax.inject.{Inject, Singleton}
+import models.ApprovalStatus.WithDesignerForUpdate
 import models.errors.{MalformedResponseError, NotFoundError, StaleDataError}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -55,10 +56,26 @@ class FactCheckController @Inject()(
         InternalServerError(errorHandler.internalServerErrorTemplate)
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
-        logger.error(s"Request for approval 2i review process for process $id returned error $err")
+        logger.error(s"Request for approval fact check for process $id returned error $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
 
+  }
+
+  def onConfirm(processId: String): Action[AnyContent] = factCheckIdentifierAction.async { implicit request =>
+    reviewService.approvalFactCheckComplete(processId, WithDesignerForUpdate).map {
+      case Right(_) => Redirect(routes.AdminController.approvalSummaries())
+      case Left(NotFoundError) =>
+        logger.error(s"Unable to retrieve approval 2i review for process $processId")
+        NotFound(errorHandler.notFoundTemplate)
+      case Left(StaleDataError) =>
+        logger.warn(s"The requested approval 2i review for process $processId can no longer be found")
+        NotFound(errorHandler.notFoundTemplate)
+      case Left(err) =>
+        // Handle stale data, internal server and any unexpected errors
+        logger.error(s"Request for approval 2i review process for process $processId returned error $err")
+        InternalServerError(errorHandler.internalServerErrorTemplate)
+    }
   }
 
 }
