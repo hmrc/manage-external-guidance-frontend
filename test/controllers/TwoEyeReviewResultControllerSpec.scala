@@ -55,7 +55,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return SEE_OTHER for a successful post of the review completion for a process" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Right(())))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
@@ -66,7 +66,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return an Html document displaying the details of the review result" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Right(())))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
@@ -77,7 +77,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return the Http status Not found when the process review does not exist" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(NotFoundError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
@@ -88,7 +88,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return an Html error page when the process review does not exist" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(NotFoundError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
@@ -99,7 +99,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return the Http status internal server error when the process review data returned to the application is malformed" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(MalformedResponseError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
@@ -110,7 +110,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return an Html error page when the process review data returned to the application is malformed" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(MalformedResponseError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
@@ -121,7 +121,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return the Http status not found when the process review data requested is out of date in some way" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(StaleDataError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
@@ -132,7 +132,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return an Html error page when the process review data requested is out of date in some way" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(StaleDataError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
@@ -143,7 +143,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return the Http status internal server error when an unexpected error occurs" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(InternalServerError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
@@ -154,7 +154,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return an Html error page when an unexpected error occurs" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(InternalServerError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))

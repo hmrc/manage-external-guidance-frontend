@@ -18,7 +18,7 @@ package services
 
 import connectors.ReviewConnector
 import javax.inject.{Inject, Singleton}
-import models.{ApprovalProcessReview, ApprovalProcessStatusChange, ApprovalStatus, RequestOutcome}
+import models.{ApprovalProcessReview, ApprovalProcessStatusChange, ApprovalStatus, PageReviewDetail, RequestOutcome}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,16 +26,18 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ReviewService @Inject() (reviewConnector: ReviewConnector) {
 
-  def approval2iReview(id: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalProcessReview]] = {
-
+  def approval2iReview(id: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalProcessReview]] =
     reviewConnector.approval2iReview(id)
 
-  }
+  def approval2iReviewComplete(id: String, userPid: String, userName: String, status: ApprovalStatus)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] =
+    reviewConnector.approval2iReviewComplete(id, ApprovalProcessStatusChange(userPid, userName, status))
 
-  def approval2iReviewComplete(id: String, status: ApprovalStatus)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] = {
+  def approval2iPageReview(id: String, pageUrl: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[PageReviewDetail]] =
+    reviewConnector.approval2iReviewPageInfo(id, pageUrl)
 
-    val changeInfo = ApprovalProcessStatusChange("userId", "userName", status)
-    reviewConnector.approval2iReviewComplete(id, changeInfo)
-
-  }
+  def approval2iPageReviewComplete(id: String, pageUrl: String, pageReviewDetail: PageReviewDetail)(
+      implicit ex: ExecutionContext,
+      hc: HeaderCarrier
+  ): Future[RequestOutcome[Unit]] =
+    reviewConnector.approval2iReviewPageComplete(id, pageUrl, pageReviewDetail)
 }

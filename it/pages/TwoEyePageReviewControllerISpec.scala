@@ -15,25 +15,28 @@
  */
 package pages
 
-import models.ApprovalStatus
+import models.{PageReviewDetail, PageReviewStatus, YesNoAnswer}
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
 import stubs.{AuditStub, AuthStub, ExternalGuidanceStub}
 import support.IntegrationSpec
 
-class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
+class TwoEyePageReviewControllerISpec extends IntegrationSpec {
 
-  "GET /2i-result/id" when {
+  "GET /2i-page-review/id/pageUrl" when {
 
     "user is authorised" should {
 
       "return OK (200)" in {
+        val dataReturned = PageReviewDetail("oct90005", "pageUrl", Some(YesNoAnswer.Yes), PageReviewStatus.NotStarted)
+
+        ExternalGuidanceStub.approval2iPageReview(Status.OK, Json.toJson(dataReturned))
 
         AuditStub.audit()
         AuthStub.authorise()
 
-        val request: WSRequest = buildRequest("/2i-result/oct90005")
+        val request: WSRequest = buildRequest("/2i-page-review/oct90005//pageUrl")
         val response: WSResponse = await(request.get())
 
         response.status shouldBe Status.OK
@@ -48,7 +51,7 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
         AuditStub.audit()
         AuthStub.unauthorised()
 
-        val request: WSRequest = buildRequest("/2i-result/oct90005")
+        val request: WSRequest = buildRequest("/2i-page-review/oct90005/pageUrl")
         val response: WSResponse = await(request.get())
 
         response.status shouldBe Status.UNAUTHORIZED
@@ -57,7 +60,7 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
     }
   }
 
-  "POST /2i-result/id" when {
+  "POST /2i-page-review/id/pageUrl" when {
 
     "user is authorised" when {
 
@@ -68,10 +71,10 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
           AuditStub.audit()
           AuthStub.authorise()
 
-          ExternalGuidanceStub.approval2iReviewComplete(Status.NO_CONTENT, Json.parse("{}"))
+          ExternalGuidanceStub.approval2iPageReviewComplete(Status.NO_CONTENT, Json.parse("{}"))
 
-          val request: WSRequest = buildRequest("/2i-result/oct90005")
-          val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.WithDesignerForUpdate.toString)))
+          val request: WSRequest = buildRequest("/2i-page-review/oct90005//pageUrl")
+          val response: WSResponse = await(request.post(Json.obj("answer" -> YesNoAnswer.Yes.toString)))
           response.status shouldBe Status.SEE_OTHER
         }
       }
@@ -85,8 +88,8 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
 
           ExternalGuidanceStub.approval2iReviewComplete(Status.NO_CONTENT, Json.parse("{}"))
 
-          val request: WSRequest = buildRequest("/2i-result/oct90005")
-          val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.SubmittedFor2iReview.toString)))
+          val request: WSRequest = buildRequest("/2i-page-review/oct90005/pageUrl")
+          val response: WSResponse = await(request.post(Json.obj("answer" -> "")))
           response.status shouldBe Status.BAD_REQUEST
         }
       }
@@ -98,8 +101,8 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
         AuditStub.audit()
         AuthStub.unauthorised()
 
-        val request: WSRequest = buildRequest("/2i-result/oct90005")
-        val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.WithDesignerForUpdate.toString)))
+        val request: WSRequest = buildRequest("/2i-page-review/oct90005/pageUrl")
+        val response: WSResponse = await(request.post(Json.obj("answer" -> YesNoAnswer.Yes.toString)))
         response.status shouldBe Status.UNAUTHORIZED
 
       }

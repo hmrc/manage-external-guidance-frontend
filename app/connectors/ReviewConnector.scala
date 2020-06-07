@@ -19,7 +19,7 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.ReviewHttpParser._
 import javax.inject.{Inject, Singleton}
-import models.{ApprovalProcessReview, ApprovalProcessStatusChange, RequestOutcome}
+import models.{ApprovalProcessReview, ApprovalProcessStatusChange, PageReviewDetail, RequestOutcome}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -43,5 +43,23 @@ class ReviewConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
     val reviewEndPoint: String = s"${appConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review"
 
     httpClient.POST[ApprovalProcessStatusChange, RequestOutcome[Unit]](reviewEndPoint, info)
+  }
+
+  def approval2iReviewPageInfo(id: String, pageUrl: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[PageReviewDetail]] = {
+
+    val reviewEndPoint: String = s"${appConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review/$pageUrl"
+
+    httpClient.GET[RequestOutcome[PageReviewDetail]](reviewEndPoint)
+  }
+
+  def approval2iReviewPageComplete(
+      id: String,
+      pageUrl: String,
+      info: PageReviewDetail
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] = {
+
+    val reviewEndPoint: String = s"${appConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review/$pageUrl"
+
+    httpClient.POST[PageReviewDetail, RequestOutcome[Unit]](reviewEndPoint, info)
   }
 }

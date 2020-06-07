@@ -1,0 +1,96 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.routes._
+@import models.YesNoAnswer._
+
+@import config.AppConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.helpers._
+
+@this(layout: main_layout,
+  govukBackLink: GovukBackLink,
+  formWithCSRF: FormWithCSRF,
+  errorSummary: components.errorSummary,
+  inputRadio: components.inputRadio,
+  govukTextarea: GovukTextarea,
+  govukButton: GovukButton,
+  appConfig: AppConfig
+)
+
+@(processId: String, page: String, form: Form[_])(implicit request: Request[_], messages: Messages)
+
+@viewLink(id: String, url: String) = {
+  <p><a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@processId@page">@messages("2iPageReview.viewGuidancePage")</a></p>
+}
+
+@layout(messages("2iPageReview.title")){
+
+  @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).toString,
+    content = Text(messages("backlink.label"))))
+
+  @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, page)) {
+
+    @errorSummary(form.errors)
+
+    @inputRadio(
+      form = form,
+      fieldName = "answer",
+      legend = "2iPageReview.heading",
+      items = Seq(
+        RadioItem(
+          value = Some(Yes.toString),
+          content = Text(messages("radio.item.yes")),
+          checked = form("answer").value.contains(Yes.toString)
+        ),
+        RadioItem(
+          value = Some(No.toString),
+          content = Text(messages("radio.item.no")),
+          checked = form("answer").value.contains(No.toString)
+        )
+      ),
+      hint = Some(viewLink(processId, page)),
+      sectionHeading = Some(page),
+      inline = true,
+      legendAsHeading = true
+    )
+
+    @* TODO
+    @govukTextarea(
+      Textarea(
+        id = "comment",
+        name = "comment",
+        label = Label(
+        content = Text(messages("2iPageReview.textarea.label"))
+       ),
+       hint = Some(
+                    Hint(
+                      content = Text(messages("2iPageReview.textarea.hint"))
+                     )
+                  )
+      )
+
+    )
+    *@
+
+    @govukButton( Button( content = Text( messages( "2iPageReview.saveReview" ) ) ) )
+  }
+
+}
+@{
+//$COVERAGE-OFF$
+}

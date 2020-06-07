@@ -82,7 +82,7 @@ class ReviewServiceSpec extends BaseSpec {
           .approval2iReviewComplete(id, info)
           .returns(Future.successful(Right(())))
 
-        val result: Future[RequestOutcome[Unit]] = reviewService.approval2iReviewComplete(id, ApprovalStatus.ApprovedForPublishing)
+        val result: Future[RequestOutcome[Unit]] = reviewService.approval2iReviewComplete(id, "userId", "userName", ApprovalStatus.ApprovedForPublishing)
 
         result.onComplete {
           case Success(response) =>
@@ -101,13 +101,57 @@ class ReviewServiceSpec extends BaseSpec {
           .approval2iReviewComplete(id, info)
           .returns(Future.successful(Left(InternalServerError)))
 
-        val result: Future[RequestOutcome[Unit]] = reviewService.approval2iReviewComplete(id, info.status)
+        val result: Future[RequestOutcome[Unit]] = reviewService.approval2iReviewComplete(id, "userId", "userName", info.status)
 
         result.onComplete {
           case Success(response) =>
             response match {
               case Right(_) => fail("Approval process review returned when error expected")
               case Left(error) => error shouldBe InternalServerError
+            }
+          case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+        }
+      }
+    }
+
+    "calling the approval2iPageReview method" should {
+      "Return an instance of the class ApprovalProcessReview after a successful call to the review connector" in new Test {
+
+        val pageUrl = "pageUrl"
+        val pageReviewDetail = PageReviewDetail(id, pageUrl, None, PageReviewStatus.NotStarted)
+        MockReviewConnector
+          .approval2iReviewPageInfo(id, "pageUrl")
+          .returns(Future.successful(Right(pageReviewDetail)))
+
+        val result: Future[RequestOutcome[PageReviewDetail]] = reviewService.approval2iPageReview(id, pageUrl)
+
+        result.onComplete {
+          case Success(response) =>
+            response match {
+              case Right(pageReview) => pageReviewDetail shouldBe pageReview
+              case Left(error) => fail(s"Unexpected error returned by mock review connector : ${error.toString}")
+            }
+          case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+        }
+      }
+    }
+
+    "calling the approval2iPageReviewComplete method" should {
+      "Return no content after a successful call to the review connector" in new Test {
+
+        val pageUrl = "pageUrl"
+        val info = PageReviewDetail(id, pageUrl, None, PageReviewStatus.NotStarted)
+        MockReviewConnector
+          .approval2iReviewPageComplete(id, pageUrl, info)
+          .returns(Future.successful(Right(())))
+
+        val result: Future[RequestOutcome[Unit]] = reviewService.approval2iPageReviewComplete(id, pageUrl, info)
+
+        result.onComplete {
+          case Success(response) =>
+            response match {
+              case Right(()) => succeed
+              case Left(error) => fail(s"Unexpected error returned by mock review connector : ${error.toString}")
             }
           case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
         }
