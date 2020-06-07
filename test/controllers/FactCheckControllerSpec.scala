@@ -20,7 +20,7 @@ import base.ControllerBaseSpec
 import config.ErrorHandler
 import controllers.actions.FakeFactCheckerIdentifierAction
 import mocks.MockReviewService
-import models.ReviewData
+import models.{ApprovalStatus, ReviewData}
 import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{MimeTypes, Status}
@@ -38,16 +38,16 @@ class FactCheckControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
 
     implicit val hc = HeaderCarrier()
 
-    val errorHandler = injector.instanceOf[ErrorHandler]
+    val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
 
-    val view = injector.instanceOf[fact_check_content_review]
+    val view: fact_check_content_review = injector.instanceOf[fact_check_content_review]
 
     val reviewController = new FactCheckController(errorHandler, FakeFactCheckerIdentifierAction, view, mockReviewService, messagesControllerComponents)
 
-    val fakeRequest = FakeRequest("GET", "/")
+    val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
   }
 
-  "The fact check controller" should {
+  "The fact check controller when loading the page" should {
 
     "Return 200 for a successful retrieval of the review for a process" in new Test {
 
@@ -141,4 +141,118 @@ class FactCheckControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
 
   }
 
+  "The fact check controller when confirming the review" should {
+
+    "Return SEE_OTHER for a successful post of the review completion for a process" in new Test {
+
+      MockReviewService
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .returns(Future.successful(Right(())))
+
+      val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
+
+      status(result) shouldBe Status.SEE_OTHER
+    }
+
+    "Return an Html document displaying the details of the review result" in new Test {
+
+      MockReviewService
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .returns(Future.successful(Right(())))
+
+      val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
+
+      contentType(result) shouldBe None
+    }
+
+    "Return the Http status Not found when the process review does not exist" in new Test {
+
+      MockReviewService
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .returns(Future.successful(Left(NotFoundError)))
+
+      val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
+
+      status(result) shouldBe Status.NOT_FOUND
+    }
+
+    "Return an Html error page when the process review does not exist" in new Test {
+
+      MockReviewService
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .returns(Future.successful(Left(NotFoundError)))
+
+      val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
+
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+    }
+
+    "Return the Http status internal server error when the process review data returned to the application is malformed" in new Test {
+
+      MockReviewService
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .returns(Future.successful(Left(MalformedResponseError)))
+
+      val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
+
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+    }
+
+    "Return an Html error page when the process review data returned to the application is malformed" in new Test {
+
+      MockReviewService
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .returns(Future.successful(Left(MalformedResponseError)))
+
+      val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
+
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+    }
+
+    "Return the Http status not found when the process review data requested is out of date in some way" in new Test {
+
+      MockReviewService
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .returns(Future.successful(Left(StaleDataError)))
+
+      val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
+
+      status(result) shouldBe Status.NOT_FOUND
+    }
+
+    "Return an Html error page when the process review data requested is out of date in some way" in new Test {
+
+      MockReviewService
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .returns(Future.successful(Left(StaleDataError)))
+
+      val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
+
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+    }
+
+    "Return the Http status internal server error when an unexpected error occurs" in new Test {
+
+      MockReviewService
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
+
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+    }
+
+    "Return an Html error page when an unexpected error occurs" in new Test {
+
+      MockReviewService
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
+
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+    }
+
+  }
+  
 }

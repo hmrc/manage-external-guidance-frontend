@@ -40,7 +40,7 @@ class FactCheckController @Inject()(
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  val logger = Logger(getClass)
+  val logger: Logger = Logger(getClass)
 
   def approval(id: String): Action[AnyContent] = factCheckIdentifierAction.async { implicit request =>
     reviewService.approvalFactCheck(id).map {
@@ -63,7 +63,7 @@ class FactCheckController @Inject()(
   }
 
   def onConfirm(processId: String): Action[AnyContent] = factCheckIdentifierAction.async { implicit request =>
-    reviewService.approvalFactCheckComplete(processId, WithDesignerForUpdate).map {
+    reviewService.approvalFactCheckComplete(processId, request.credId, request.name, WithDesignerForUpdate).map {
       case Right(_) => Redirect(routes.AdminController.approvalSummaries())
       case Left(NotFoundError) =>
         logger.error(s"Unable to retrieve approval 2i review for process $processId")

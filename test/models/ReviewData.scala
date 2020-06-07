@@ -41,7 +41,7 @@ trait ReviewData {
     )
   )
 
-  val reviewDetail = PageReviewDetail(
+  val reviewDetail: PageReviewDetail = PageReviewDetail(
     id,
     "sold-goods-or-services/did-you-only-sell-personal-possessions",
     None,
@@ -51,5 +51,9 @@ trait ReviewData {
     None
   )
 
-  val updatedReviewDetail = reviewDetail.copy(result = Some(Yes), status = Complete, updateDate = LocalDateTime.of(2020, 5, 10, 0, 0, 0))
+  val updatedReviewDetail: PageReviewDetail =
+    reviewDetail.copy(result = Some(Yes),
+      status = Complete,
+      updateDate = LocalDateTime.of(2020, 5, 10, 0, 0, 0),
+      updateUser = Some("7010010:George Hudson"))
 }

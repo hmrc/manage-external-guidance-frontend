@@ -65,10 +65,10 @@ trait MockReviewService extends MockFactory {
         .approvalFactCheck(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, *, *)
 
-    def approvalFactCheckComplete(id: String, status: ApprovalStatus): CallHandler[Future[RequestOutcome[Unit]]] =
+    def approvalFactCheckComplete(id: String, userId: String, userName: String, status: ApprovalStatus): CallHandler[Future[RequestOutcome[Unit]]] =
       (mockReviewService
-        .approvalFactCheckComplete(_: String, _: ApprovalStatus)(_: ExecutionContext, _: HeaderCarrier))
-        .expects(id, status, *, *)
+        .approvalFactCheckComplete(_: String, _: String, _:String, _: ApprovalStatus)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, userId, userName, status, *, *)
 
   }
 

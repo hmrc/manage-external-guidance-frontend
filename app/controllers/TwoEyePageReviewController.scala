@@ -22,7 +22,8 @@ import forms.TwoEyePageReviewFormProvider
 import javax.inject.{Inject, Singleton}
 import models.errors.{NotFoundError, StaleDataError}
 import models.forms.TwoEyePageReview
-import models.{PageReviewDetail, PageReviewStatus}
+import models.PageReviewDetail
+import models.PageReviewStatus._
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -45,7 +46,7 @@ class TwoEyePageReviewController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  val logger = Logger(getClass)
+  val logger: Logger = Logger(getClass)
 
   def onPageLoad(processId: String, page: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
     reviewService.approval2iPageReview(processId, page) map {
@@ -68,7 +69,7 @@ class TwoEyePageReviewController @Inject() (
       .fold(
         (formWithErrors: Form[TwoEyePageReview]) => { Future.successful(BadRequest(view(processId, page, formWithErrors))) },
         result => {
-          val reviewDetail = PageReviewDetail(processId, page, Some(result.answer), PageReviewStatus.Complete)
+          val reviewDetail = PageReviewDetail(processId, page, Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
           reviewService.approval2iPageReviewComplete(processId, page, reviewDetail).map {
             case Right(_) => Redirect(routes.TwoEyeReviewController.approval(processId))
             case Left(NotFoundError) =>

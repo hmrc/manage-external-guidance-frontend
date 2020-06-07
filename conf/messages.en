@@ -44,7 +44,7 @@ pageReviewStatus.Complete = Reviewed
 2iReviewResult.completeReview = Complete 2i review
 
 2iReviewResult.WithDesignerForUpdate = Send 2i review responses to the designer
-2iReviewResult.ApprovedForPublishing = Approve guidance for publishing
+2iReviewResult.Published = Approve guidance for publishing
 2iReviewResult.error.required = You must select one of the options shown
 2iReviewResult.error.invalid = Invalid value submitted
 
