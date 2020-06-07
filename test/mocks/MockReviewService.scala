@@ -35,10 +35,10 @@ trait MockReviewService extends MockFactory {
         .approval2iReview(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, *, *)
 
-    def approval2iReviewComplete(id: String, status: ApprovalStatus): CallHandler[Future[RequestOutcome[Unit]]] =
+    def approval2iReviewComplete(id: String, userPid: String, userName: String, status: ApprovalStatus): CallHandler[Future[RequestOutcome[Unit]]] =
       (mockReviewService
-        .approval2iReviewComplete(_: String, _: ApprovalStatus)(_: ExecutionContext, _: HeaderCarrier))
-        .expects(id, status, *, *)
+        .approval2iReviewComplete(_: String, _: String, _: String, _: ApprovalStatus)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, userPid, userName, status, *, *)
 
     def approval2iPageReview(id: String, pageUrl: String): CallHandler[Future[RequestOutcome[PageReviewDetail]]] =
       (mockReviewService

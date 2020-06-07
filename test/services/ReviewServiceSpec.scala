@@ -82,7 +82,7 @@ class ReviewServiceSpec extends BaseSpec {
           .approval2iReviewComplete(id, info)
           .returns(Future.successful(Right(())))
 
-        val result: Future[RequestOutcome[Unit]] = reviewService.approval2iReviewComplete(id, ApprovalStatus.ApprovedForPublishing)
+        val result: Future[RequestOutcome[Unit]] = reviewService.approval2iReviewComplete(id, "userId", "userName", ApprovalStatus.ApprovedForPublishing)
 
         result.onComplete {
           case Success(response) =>
@@ -101,7 +101,7 @@ class ReviewServiceSpec extends BaseSpec {
           .approval2iReviewComplete(id, info)
           .returns(Future.successful(Left(InternalServerError)))
 
-        val result: Future[RequestOutcome[Unit]] = reviewService.approval2iReviewComplete(id, info.status)
+        val result: Future[RequestOutcome[Unit]] = reviewService.approval2iReviewComplete(id, "userId", "userName", info.status)
 
         result.onComplete {
           case Success(response) =>

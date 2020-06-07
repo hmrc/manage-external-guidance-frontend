@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import controllers.actions.TwoEyeReviewerIdentifierAction
 import forms.TwoEyeReviewResultFormProvider
 import models.ApprovalStatus
-
+import models.requests.IdentifierRequest
 import views.html.twoeye_review_result
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -58,7 +58,7 @@ class TwoEyeReviewResultController @Inject() (
 
   }
 
-  def onSubmit(processId: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
+  def onSubmit(processId: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request: IdentifierRequest[_] =>
     val form: Form[ApprovalStatus] = formProvider()
 
     form
@@ -66,7 +66,7 @@ class TwoEyeReviewResultController @Inject() (
       .fold(
         (formWithErrors: Form[_]) => { Future.successful(BadRequest(view(processId, formWithErrors))) },
         status => {
-          reviewService.approval2iReviewComplete(processId, status).map {
+          reviewService.approval2iReviewComplete(processId, request.credId, request.name, status).map {
             case Right(_) => Redirect(routes.AdminController.approvalSummaries())
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval 2i review for process $processId")
