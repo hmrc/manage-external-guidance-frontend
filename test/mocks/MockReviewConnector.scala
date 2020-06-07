@@ -73,5 +73,18 @@ trait MockReviewConnector extends MockFactory {
         .expects(id, info, *, *)
     }
 
+    def approvalFactCheck(id: String): CallHandler[Future[RequestOutcome[ApprovalProcessReview]]] = {
+
+      (mockReviewConnector
+        .approvalFactCheck(_: String)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, *, *)
+    }
+
+    def approvalFactCheckComplete(id: String, info: ApprovalProcessStatusChange): CallHandler[Future[RequestOutcome[Unit]]] = {
+      (mockReviewConnector
+        .approvalFactCheckComplete(_: String, _: ApprovalProcessStatusChange)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, info, *, *)
+    }
+
   }
 }

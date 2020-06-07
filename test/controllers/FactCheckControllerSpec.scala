@@ -254,5 +254,5 @@ class FactCheckControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
     }
 
   }
-  
+
 }
