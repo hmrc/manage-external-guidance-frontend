@@ -11,7 +11,7 @@ GET        /2i-result/:id                     controllers.TwoEyeReviewResultCont
 POST       /2i-result/:id                     controllers.TwoEyeReviewResultController.onSubmit(id)
 
 GET        /fact-check/:id                    controllers.FactCheckController.approval(id)
-GET        /fact-check-result/:id             controllers.FactCheckController.onConfirm(id)
+GET        /fact-check-result/:id             controllers.FactCheckConfirmController.onConfirm(id)
 
 GET        /accessibility                     controllers.AccessibilityStatementController.getPage
 
