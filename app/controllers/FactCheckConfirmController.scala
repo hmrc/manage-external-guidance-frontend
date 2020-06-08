@@ -19,21 +19,22 @@ package controllers
 import config.ErrorHandler
 import controllers.actions.FactCheckerIdentifierAction
 import javax.inject.{Inject, Singleton}
-import models.errors.{MalformedResponseError, NotFoundError, StaleDataError}
+import models.ApprovalStatus.WithDesignerForUpdate
+import models.errors.{NotFoundError, StaleDataError}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ReviewService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.fact_check_content_review
+import views.html.fact_check_complete
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class FactCheckController @Inject() (
+class FactCheckConfirmController @Inject()(
     errorHandler: ErrorHandler,
     factCheckIdentifierAction: FactCheckerIdentifierAction,
-    view: fact_check_content_review,
+    view: fact_check_complete,
     reviewService: ReviewService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
@@ -41,23 +42,20 @@ class FactCheckController @Inject() (
 
   val logger: Logger = Logger(getClass)
 
-  def approval(id: String): Action[AnyContent] = factCheckIdentifierAction.async { implicit request =>
-    reviewService.approvalFactCheck(id).map {
-      case Right(approvalProcessReview) => Ok(view(approvalProcessReview))
+  def onConfirm(processId: String): Action[AnyContent] = factCheckIdentifierAction.async { implicit request =>
+    reviewService.approvalFactCheckComplete(processId, request.credId, request.name, WithDesignerForUpdate).map {
+      case Right(_) => Ok(view())
       case Left(NotFoundError) =>
-        logger.error(s"Unable to retrieve approval fact check for process $id")
+        logger.error(s"Unable to retrieve approval fact check for process $processId")
         NotFound(errorHandler.notFoundTemplate)
       case Left(StaleDataError) =>
-        logger.warn(s"The requested approval fact check for process $id can no longer be found")
+        logger.warn(s"The requested fact check for process $processId can no longer be found")
         NotFound(errorHandler.notFoundTemplate)
-      case Left(MalformedResponseError) =>
-        logger.error(s"A malformed response was returned for the approval fact check review for process $id")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
       case Left(err) =>
-        // Handle stale data, internal server and any unexpected errors
-        logger.error(s"Request for approval fact check for process $id returned error $err")
+        // Handle internal server and any unexpected errors
+        logger.error(s"Request for fact check confirm for process $processId returned error $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
-
   }
+
 }
