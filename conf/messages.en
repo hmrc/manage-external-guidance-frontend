@@ -58,6 +58,16 @@ factCheck.pagesReviewedConfirmationHeading = Confirm you''ve fact checked all pa
 factCheck.sendConfirmation = Confirm
 factCheck.sendConfirmationStatus =
 
+factCheckPageReview.answer.error.required = You must select one of the options shown
+factCheckPageReview.comment.error.required = No comment supplied
+factCheckPageReview.comment.error.length = The maximum length for a page review comment has been exceeded
+
+factCheckPageReview.title = Does the page meet GOV.UK standards?
+factCheckPageReview.heading = Does the page meet GOV.UK standards?
+factCheckPageReview.textarea.label = Comments
+factCheckPageReview.textarea.hint = Add a hint here
+factCheckPageReview.saveReview = Save review
+factCheckPageReview.viewGuidancePage = View the page (opens in a new window or tab).
 
 error.unauthorized401.pageTitle.service = You can’t access this service with this account
 error.unauthorized401.pageTitle.page = You can’t access this page with this account

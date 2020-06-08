@@ -30,7 +30,7 @@ class FactCheckPageReviewFormProvider @Inject() extends Mappings with Constraint
   def apply(): Form[FactCheckPageReview] = {
     Form(
       mapping(
-        "answer" -> enumerable[YesNoAnswer]("FactCheckPageReview.answer.error.required")
+        "answer" -> enumerable[YesNoAnswer]("factCheckPageReview.answer.error.required")
       )(FactCheckPageReview.apply)(FactCheckPageReview.unapply)
     )
   }
