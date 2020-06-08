@@ -31,7 +31,7 @@ import views.html.fact_check_content_review
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class FactCheckController @Inject()(
+class FactCheckController @Inject() (
     errorHandler: ErrorHandler,
     factCheckIdentifierAction: FactCheckerIdentifierAction,
     view: fact_check_content_review,

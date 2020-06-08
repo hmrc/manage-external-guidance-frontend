@@ -434,4 +434,134 @@ class ReviewConnectorSpec extends BaseSpec {
 
   }
 
+  "Calling method factCheckPageInfo with a valid id" should {
+
+    "Return an instance of PageReviewDetail for a successful call" in new FactCheckTest {
+
+      MockedHttpClient
+        .get(s"$endpoint${reviewDetail.pageUrl}")
+        .returns(Future.successful(Right(reviewDetail)))
+
+      val response: RequestOutcome[PageReviewDetail] =
+        await(connector.factCheckPageInfo(id, reviewDetail.pageUrl))
+
+      response shouldBe Right(reviewDetail)
+
+    }
+
+    "Return an instance of MalformedResponseError when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .get(s"$endpoint${reviewDetail.pageUrl}")
+        .returns(Future.successful(Left(MalformedResponseError)))
+
+      val response: RequestOutcome[PageReviewDetail] =
+        await(connector.factCheckPageInfo(id, reviewDetail.pageUrl))
+
+      response shouldBe Left(MalformedResponseError)
+    }
+
+    "Return an instance of NotFoundError class when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .get(s"$endpoint${reviewDetail.pageUrl}")
+        .returns(Future.successful(Left(NotFoundError)))
+
+      val response: RequestOutcome[PageReviewDetail] =
+        await(connector.factCheckPageInfo(id, reviewDetail.pageUrl))
+
+      response shouldBe Left(NotFoundError)
+    }
+
+    "Return an instance of StaleDataError class when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .get(s"$endpoint${reviewDetail.pageUrl}")
+        .returns(Future.successful(Left(StaleDataError)))
+
+      val response: RequestOutcome[PageReviewDetail] =
+        await(connector.factCheckPageInfo(id, reviewDetail.pageUrl))
+
+      response shouldBe Left(StaleDataError)
+    }
+
+    "Return an instance of InternalServererror class when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .get(s"$endpoint${reviewDetail.pageUrl}")
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val response: RequestOutcome[PageReviewDetail] =
+        await(connector.factCheckPageInfo(id, reviewDetail.pageUrl))
+
+      response shouldBe Left(InternalServerError)
+    }
+
+  }
+
+  "Calling method factCheckPageComplete with a valid id and payload" should {
+
+    "Return true for a successful call" in new FactCheckTest {
+
+      MockedHttpClient
+        .post(s"$endpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
+        .returns(Future.successful(Right(true)))
+
+      val response: RequestOutcome[Unit] =
+        await(connector.factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail))
+
+      response shouldBe Right(true)
+
+    }
+
+    "Return an instance of MalformedResponseError when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .post(s"$endpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
+        .returns(Future.successful(Left(MalformedResponseError)))
+
+      val response: RequestOutcome[Unit] =
+        await(connector.factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail))
+
+      response shouldBe Left(MalformedResponseError)
+    }
+
+    "Return an instance of NotFoundError class when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .post(s"$endpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
+        .returns(Future.successful(Left(NotFoundError)))
+
+      val response: RequestOutcome[Unit] =
+        await(connector.factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail))
+
+      response shouldBe Left(NotFoundError)
+    }
+
+    "Return an instance of StaleDataError class when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .post(s"$endpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
+        .returns(Future.successful(Left(StaleDataError)))
+
+      val response: RequestOutcome[Unit] =
+        await(connector.factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail))
+
+      response shouldBe Left(StaleDataError)
+    }
+
+    "Return an instance of InternalServererror class when an error occurs" in new FactCheckTest {
+
+      MockedHttpClient
+        .post(s"$endpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val response: RequestOutcome[Unit] =
+        await(connector.factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail))
+
+      response shouldBe Left(InternalServerError)
+    }
+
+  }
+
 }

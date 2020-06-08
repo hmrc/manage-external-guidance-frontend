@@ -73,5 +73,25 @@ trait MockReviewConnector extends MockFactory {
         .expects(id, info, *, *)
     }
 
+    def factCheckPageInfo(id: String, pageUrl: String): CallHandler[Future[RequestOutcome[PageReviewDetail]]] =
+      (mockReviewConnector
+        .factCheckPageInfo(_: String, _: String)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, pageUrl, *, *)
+
+    def factCheckPageComplete(id: String, pageUrl: String, info: PageReviewDetail): CallHandler[Future[RequestOutcome[Unit]]] =
+      (mockReviewConnector
+        .factCheckPageComplete(_: String, _: String, _: PageReviewDetail)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(
+          where { (i: String, u: String, p: PageReviewDetail, _: ExecutionContext, _: HeaderCarrier) =>
+            i == id &&
+            u == pageUrl &&
+            p.id == info.id &&
+            p.pageUrl == info.pageUrl &&
+            p.result == info.result &&
+            p.status == info.status &&
+            p.updateUser == info.updateUser
+          }
+        )
+
   }
 }

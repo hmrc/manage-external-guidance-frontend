@@ -49,7 +49,7 @@ class FactCheckPageReviewController @Inject() (
   val logger: Logger = Logger(getClass)
 
   def onPageLoad(processId: String, page: String): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
-    reviewService.factCheckPageReview(processId, page) map {
+    reviewService.factCheckPageInfo(processId, page) map {
       case Right(data) if data.result.isDefined =>
         val form: Form[FactCheckPageReview] = formProvider().bind(Map("answer" -> data.result.fold("")(_.toString)))
         Ok(view(processId, page, form))
@@ -70,7 +70,7 @@ class FactCheckPageReviewController @Inject() (
         (formWithErrors: Form[FactCheckPageReview]) => { Future.successful(BadRequest(view(processId, page, formWithErrors))) },
         result => {
           val reviewDetail = PageReviewDetail(processId, page, Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
-          reviewService.factCheckPageReviewComplete(processId, page, reviewDetail).map {
+          reviewService.factCheckPageComplete(processId, page, reviewDetail).map {
             case Right(_) => Redirect(routes.TwoEyeReviewController.approval(processId))
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval 2i page review for process $processId")

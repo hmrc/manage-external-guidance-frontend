@@ -236,6 +236,51 @@ class ReviewServiceSpec extends BaseSpec {
       }
     }
 
+    "calling the factCheckPageReview method" should {
+      "Return an instance of the class ApprovalProcessReview after a successful call to the review connector" in new Test {
+
+        val pageUrl = "pageUrl"
+        val pageReviewDetail = PageReviewDetail(id, pageUrl, None, PageReviewStatus.NotStarted)
+        MockReviewConnector
+          .factCheckPageInfo(id, "pageUrl")
+          .returns(Future.successful(Right(pageReviewDetail)))
+
+        val result: Future[RequestOutcome[PageReviewDetail]] = reviewService.factCheckPageInfo(id, pageUrl)
+
+        result.onComplete {
+          case Success(response) =>
+            response match {
+              case Right(pageReview) => pageReviewDetail shouldBe pageReview
+              case Left(error) => fail(s"Unexpected error returned by mock review connector : ${error.toString}")
+            }
+          case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+        }
+      }
+    }
+
+    "calling the factCheckPageReviewComplete method" should {
+      "Return no content after a successful call to the review connector" in new Test {
+
+        val pageUrl = "pageUrl"
+        val info = PageReviewDetail(id, pageUrl, None, PageReviewStatus.NotStarted)
+        MockReviewConnector
+          .factCheckPageComplete(id, pageUrl, info)
+          .returns(Future.successful(Right(())))
+
+        val result: Future[RequestOutcome[Unit]] = reviewService.factCheckPageComplete(id, pageUrl, info)
+
+        result.onComplete {
+          case Success(response) =>
+            response match {
+              case Right(()) => succeed
+              case Left(error) => fail(s"Unexpected error returned by mock review connector : ${error.toString}")
+            }
+          case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+        }
+      }
+    }
+
+
   }
 
 }
