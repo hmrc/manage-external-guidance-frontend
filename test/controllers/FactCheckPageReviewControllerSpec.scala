@@ -37,16 +37,16 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
 
   private trait Test extends ReviewData {
 
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val errorHandler = injector.instanceOf[ErrorHandler]
-    val view = injector.instanceOf[fact_check_page_review]
+    val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
+    val view: fact_check_page_review = injector.instanceOf[fact_check_page_review]
     val formProvider = new FactCheckPageReviewFormProvider()
 
     val reviewController =
       new FactCheckPageReviewController(errorHandler, FakeFactCheckerIdentifierAction, formProvider, view, mockReviewService, messagesControllerComponents)
 
-    val fakeRequest = FakeRequest("POST", "/")
+    val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "/")
   }
   "The fact check controller when loading the page" should {
     "Return OK when the page data is retrieved successfully" in new Test {
@@ -54,6 +54,17 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
       MockReviewService
         .factCheckPageInfo(id, reviewDetail.pageUrl)
         .returns(Future.successful(Right(reviewDetail)))
+
+      val result: Future[Result] = reviewController.onPageLoad(id, updatedReviewDetail.pageUrl)(fakeRequest)
+
+      status(result) shouldBe Status.OK
+    }
+
+    "Return OK when the page data is retrieved successfully and contains a result" in new Test {
+
+      MockReviewService
+        .factCheckPageInfo(id, reviewDetail.pageUrl)
+        .returns(Future.successful(Right(updatedReviewDetail)))
 
       val result: Future[Result] = reviewController.onPageLoad(id, updatedReviewDetail.pageUrl)(fakeRequest)
 

@@ -36,7 +36,7 @@ class TwoEyePageReviewControllerISpec extends IntegrationSpec {
         AuditStub.audit()
         AuthStub.authorise()
 
-        val request: WSRequest = buildRequest("/2i-page-review/oct90005//pageUrl")
+        val request: WSRequest = buildRequest("/2i-page-review/oct90005/pageUrl")
         val response: WSResponse = await(request.get())
 
         response.status shouldBe Status.OK
@@ -73,7 +73,7 @@ class TwoEyePageReviewControllerISpec extends IntegrationSpec {
 
           ExternalGuidanceStub.approval2iPageReviewComplete(Status.NO_CONTENT, Json.parse("{}"))
 
-          val request: WSRequest = buildRequest("/2i-page-review/oct90005//pageUrl")
+          val request: WSRequest = buildRequest("/2i-page-review/oct90005/pageUrl")
           val response: WSResponse = await(request.post(Json.obj("answer" -> YesNoAnswer.Yes.toString)))
           response.status shouldBe Status.SEE_OTHER
         }
