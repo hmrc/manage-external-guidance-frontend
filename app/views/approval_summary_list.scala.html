@@ -16,7 +16,7 @@
 
 @import config.AppConfig
 @import models.ApprovalProcessSummary
-
+@import models.ApprovalStatus._
 @import java.time.LocalDate
 @import java.time.format.DateTimeFormatter
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -25,6 +25,14 @@
 
 @(summaries: Seq[ApprovalProcessSummary])(implicit request: Request[_], messages: Messages)
 
+@processReviewUrl(summary: ApprovalProcessSummary) = @{
+  summary.status match {
+      case SubmittedFor2iReview => routes.TwoEyeReviewController.approval(summary.id).toString
+      case SubmittedForFactCheck => routes.FactCheckController.approval(summary.id).toString
+      case _ => "#"  
+  }
+}
+
 @layout(messages("approvals.tableTitle")) {
 
 <h1 class="govuk-heading-xl">@messages("approvals.tableTitle")</h1>
@@ -32,10 +40,10 @@
 @govukTable(Table(
     for(summary <- summaries) yield {
       Seq(
-        TableRow(content = HtmlContent(s"""<a href="${routes.TwoEyeReviewController.approval(summary.id).toString}">${summary.title}</a>""")), 
+        TableRow(content = HtmlContent(s"""<a href="${processReviewUrl(summary)}">${summary.title}</a>""")),
         TableRow(content = Text(summary.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))), 
         TableRow(content = Text(messages(s"approvalsStatus.${summary.status.toString}")))
-      ), 
+      )
     },
     head = Some(List(
       HeadCell(content = Text(messages("approvals.processTitle"))), 

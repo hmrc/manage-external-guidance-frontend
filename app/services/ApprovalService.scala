@@ -32,8 +32,11 @@ class ApprovalService @Inject() (connector: ApprovalConnector) {
   def approvalSummaries(implicit context: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ApprovalProcessSummary]]] =
     connector.approvalSummaries
 
-  def submitForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
-    connector.submitForApproval(process)
+  def submitFor2iReview(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
+    connector.submitFor2iReview(process)
   }
 
+  def submitForFactCheck(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
+    connector.submitForFactCheck(process)
+  }
 }

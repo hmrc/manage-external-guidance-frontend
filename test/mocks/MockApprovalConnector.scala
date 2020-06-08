@@ -36,13 +36,19 @@ trait MockApprovalConnector extends MockFactory {
         .approvalSummaries(_: ExecutionContext, _: HeaderCarrier))
         .expects(*, *)
 
-    def submitForApproval(process: JsValue): CallHandler[Future[RequestOutcome[ApprovalResponse]]] = {
+    def submitFor2iReview(process: JsValue): CallHandler[Future[RequestOutcome[ApprovalResponse]]] = {
 
       (mockApprovalConnector
-        .submitForApproval(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
+        .submitFor2iReview(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
         .expects(process, *, *)
     }
 
+    def submitForFactCheck(process: JsValue): CallHandler[Future[RequestOutcome[ApprovalResponse]]] = {
+
+      (mockApprovalConnector
+        .submitForFactCheck(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(process, *, *)
+    }
   }
 
 }

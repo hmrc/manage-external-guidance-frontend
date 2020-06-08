@@ -36,13 +36,21 @@ class ApprovalConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig)
     httpClient.GET[RequestOutcome[List[ApprovalProcessSummary]]](summaryEndPoint, Seq.empty, Seq.empty)
   }
 
-  def submitForApproval(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
+  def submitFor2iReview(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
 
     import connectors.httpParsers.ApprovalHttpParser.saveApprovalHttpReads
 
-    val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/approval"
+    val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/approval/2i-review"
 
     httpClient.POST[JsValue, RequestOutcome[ApprovalResponse]](endpoint, process, Seq.empty)
   }
 
+  def submitForFactCheck(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
+
+    import connectors.httpParsers.ApprovalHttpParser.saveApprovalHttpReads
+
+    val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/approval/fact-check"
+
+    httpClient.POST[JsValue, RequestOutcome[ApprovalResponse]](endpoint, process, Seq.empty)
+  }
 }

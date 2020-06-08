@@ -44,9 +44,20 @@ pageReviewStatus.Complete = Reviewed
 2iReviewResult.completeReview = Complete 2i review
 
 2iReviewResult.WithDesignerForUpdate = Send 2i review responses to the designer
-2iReviewResult.ApprovedForPublishing = Approve guidance for publishing
+2iReviewResult.Published = Approve guidance for publishing
 2iReviewResult.error.required = You must select one of the options shown
 2iReviewResult.error.invalid = Invalid value submitted
+
+factCheck.pageReviewStatus.NotStarted = Not checked
+factCheck.pageReviewStatus.Complete = Checked
+
+factCheck.heading = Fact Check
+factCheck.viewGuidance = View the complete guidance (opens in a new window or tab)
+factCheck.reviewPagesHeading = Check all pages for factual accuracy
+factCheck.pagesReviewedConfirmationHeading = Confirm you''ve fact checked all pages.
+factCheck.sendConfirmation = Confirm
+factCheck.sendConfirmationStatus =
+
 
 error.unauthorized401.pageTitle.service = You can’t access this service with this account
 error.unauthorized401.pageTitle.page = You can’t access this page with this account

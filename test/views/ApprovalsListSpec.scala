@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter
 import models.ApprovalStatus._
 import models._
 import views.html._
-
+import controllers.routes
 import scala.collection.JavaConverters._
 
 class ApprovalsListSpec extends ViewSpecBase {
@@ -85,7 +85,11 @@ class ApprovalsListSpec extends ViewSpecBase {
             cellData(0).text shouldBe s.title
             Option(cellData(0).getElementsByTag("a").first).fold(fail("Missing link from page url cell")) { a =>
               elementAttrs(a).get("href").fold(fail("Missing href attribute within anchor")) { href =>
-                href shouldBe s"/external-guidance/2i-review/${s.id}"
+                s.status match {
+                  case SubmittedFor2iReview => href shouldBe routes.TwoEyeReviewController.approval(s.id).toString
+                  case SubmittedForFactCheck => href shouldBe routes.FactCheckController.approval(s.id).toString
+                  case _ => href shouldBe "#"  
+                }
               }
             }
             cellData(1).text shouldBe s.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))

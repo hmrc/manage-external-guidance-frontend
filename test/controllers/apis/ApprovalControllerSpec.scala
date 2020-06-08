@@ -45,29 +45,26 @@ class ApprovalControllerSpec extends BaseSpec with GuiceOneAppPerSuite with Mock
 
   private val expectedId: String = "oct90001"
 
-  "POST /approval" should {
+  "POST /approval/2i-review" should {
 
     "return 201" in {
 
       MockApprovalService
-        .submitForApproval(dummyProcess)
+        .submitFor2iReview(dummyProcess)
         .returns(Future.successful(Right(ApprovalResponse(expectedId))))
 
-      val result = {
-        controller.submitForApproval()(fakeRequestWithBody)
-      }
+      val result = controller.submitFor2iReview()(fakeRequestWithBody)
 
       status(result) shouldBe Status.CREATED
-
     }
 
     "return JSON" in {
 
       MockApprovalService
-        .submitForApproval(dummyProcess)
+        .submitFor2iReview(dummyProcess)
         .returns(Future.successful(Right(ApprovalResponse(expectedId))))
 
-      val result = controller.submitForApproval()(fakeRequestWithBody)
+      val result = controller.submitFor2iReview()(fakeRequestWithBody)
 
       contentType(result) shouldBe Some("application/json")
 
@@ -81,10 +78,10 @@ class ApprovalControllerSpec extends BaseSpec with GuiceOneAppPerSuite with Mock
     "Handle an error raised owing to an invalid process being submitted" in {
 
       MockApprovalService
-        .submitForApproval(dummyProcess)
+        .submitFor2iReview(dummyProcess)
         .returns(Future.successful(Left(InvalidProcessError)))
 
-      val result = controller.submitForApproval()(fakeRequestWithBody)
+      val result = controller.submitFor2iReview()(fakeRequestWithBody)
 
       status(result) shouldBe Status.BAD_REQUEST
 
@@ -99,10 +96,10 @@ class ApprovalControllerSpec extends BaseSpec with GuiceOneAppPerSuite with Mock
     "Handle an internal server error" in {
 
       MockApprovalService
-        .submitForApproval(dummyProcess)
+        .submitFor2iReview(dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result = controller.submitForApproval()(fakeRequestWithBody)
+      val result = controller.submitFor2iReview()(fakeRequestWithBody)
 
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
 
@@ -132,6 +129,70 @@ class ApprovalControllerSpec extends BaseSpec with GuiceOneAppPerSuite with Mock
       expectedHeaders.foreach { header =>
         headers(result) should contain(header)
       }
+    }
+
+  }
+
+  "POST /approval/fact-check" should {
+
+    "return 201" in {
+
+      MockApprovalService
+        .submitForFactCheck(dummyProcess)
+        .returns(Future.successful(Right(ApprovalResponse(expectedId))))
+
+      val result = controller.submitForFactCheck()(fakeRequestWithBody)
+      status(result) shouldBe Status.CREATED
+    }
+
+    "return JSON" in {
+
+      MockApprovalService
+        .submitForFactCheck(dummyProcess)
+        .returns(Future.successful(Right(ApprovalResponse(expectedId))))
+
+      val result = controller.submitForFactCheck()(fakeRequestWithBody)
+
+      contentType(result) shouldBe Some("application/json")
+
+      val jsValue: JsValue = Json.parse(contentAsString(result))
+      val actualResponse: ApprovalResponse = jsValue.as[ApprovalResponse]
+
+      actualResponse.id shouldBe expectedId
+    }
+
+    "Handle an error raised owing to an invalid process being submitted" in {
+
+      MockApprovalService
+        .submitForFactCheck(dummyProcess)
+        .returns(Future.successful(Left(InvalidProcessError)))
+
+      val result = controller.submitForFactCheck()(fakeRequestWithBody)
+
+      status(result) shouldBe Status.BAD_REQUEST
+
+      val jsValue: JsValue = Json.parse(contentAsString(result))
+      val actualError: Error = jsValue.as[Error]
+
+      actualError.code shouldBe InvalidProcessError.code
+      actualError.message shouldBe InvalidProcessError.message
+    }
+
+    "Handle an internal server error" in {
+
+      MockApprovalService
+        .submitForFactCheck(dummyProcess)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val result = controller.submitForFactCheck()(fakeRequestWithBody)
+
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+
+      val jsValue: JsValue = Json.parse(contentAsString(result))
+      val actualError: Error = jsValue.as[Error]
+
+      actualError.code shouldBe InternalServerError.code
+      actualError.message shouldBe InternalServerError.message
     }
 
   }

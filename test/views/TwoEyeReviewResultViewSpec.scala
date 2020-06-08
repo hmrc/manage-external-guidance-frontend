@@ -109,7 +109,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
       }
 
       elementAttrs(radios.last).get("value").fold(fail("Missing value on second radio button ")) { value =>
-        value shouldBe ApprovalStatus.ApprovedForPublishing.toString
+        value shouldBe ApprovalStatus.Published.toString
       }
 
       val labels = doc.getElementsByTag("label").asScala.toList
@@ -123,7 +123,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
       radioLabels.size shouldBe 2
 
       radioLabels.head.text shouldBe messages(s"2iReviewResult.${ApprovalStatus.WithDesignerForUpdate.toString}")
-      radioLabels.last.text shouldBe messages(s"2iReviewResult.${ApprovalStatus.ApprovedForPublishing.toString}")
+      radioLabels.last.text shouldBe messages(s"2iReviewResult.${ApprovalStatus.Published.toString}")
     }
 
     "display the complete 2i review button" in new Test {

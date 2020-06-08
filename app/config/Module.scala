@@ -26,5 +26,6 @@ class Module extends AbstractModule {
     bind(classOf[AppConfig]).to(classOf[AppConfigImpl])
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction])
     bind(classOf[TwoEyeReviewerIdentifierAction]).to(classOf[TwoEyeReviewerAuthenticatedIdentifierAction])
+    bind(classOf[FactCheckerIdentifierAction]).to(classOf[FactCheckerAuthenticatedIdentifierAction])
   }
 }

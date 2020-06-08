@@ -48,7 +48,7 @@ class TwoEyeReviewResultFormProviderSpec extends BaseSpec {
 
     "bind all valid values" in new Test {
 
-      val values: Seq[ApprovalStatus] = Seq(ApprovalStatus.WithDesignerForUpdate, ApprovalStatus.ApprovedForPublishing)
+      val values: Seq[ApprovalStatus] = Seq(ApprovalStatus.WithDesignerForUpdate, ApprovalStatus.Published)
 
       for (value <- values) {
 

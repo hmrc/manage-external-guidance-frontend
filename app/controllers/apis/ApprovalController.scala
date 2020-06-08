@@ -18,6 +18,7 @@ package controllers.apis
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
+import models.{ApprovalResponse, RequestOutcome}
 import models.errors.InvalidProcessError
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
@@ -32,10 +33,17 @@ class ApprovalController @Inject() (appConfig: AppConfig, approvalService: Appro
 
   implicit val config: AppConfig = appConfig
 
-  def submitForApproval(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
-    approvalService.submitForApproval(request.body).map {
-      case Right(approvalResponse) =>
-        Created(Json.toJson(approvalResponse))
+  def submitFor2iReview(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
+    checkSubmissionReturn(approvalService.submitFor2iReview(request.body))
+  }
+
+  def submitForFactCheck(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
+    checkSubmissionReturn(approvalService.submitForFactCheck(request.body))
+  }
+
+  private def checkSubmissionReturn (result: Future[RequestOutcome[ApprovalResponse]]): Future[Result] = {
+    result.map {
+      case Right(approvalResponse) => Created(Json.toJson(approvalResponse))
       case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError))
       case Left(error) => InternalServerError(Json.toJson(error))
     }
