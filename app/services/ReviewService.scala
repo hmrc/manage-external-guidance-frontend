@@ -61,4 +61,14 @@ class ReviewService @Inject() (reviewConnector: ReviewConnector) {
     hc: HeaderCarrier
   ): Future[RequestOutcome[Unit]] =
     reviewConnector.approvalFactCheckComplete(id, ApprovalProcessStatusChange(userPid, userName, status))
+
+  def factCheckPageReview(id: String, pageUrl: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[PageReviewDetail]] =
+    reviewConnector.factCheckReviewPageInfo(id, pageUrl)
+
+  def factCheckPageReviewComplete(id: String, pageUrl: String, pageReviewDetail: PageReviewDetail)(
+      implicit ex: ExecutionContext,
+      hc: HeaderCarrier
+  ): Future[RequestOutcome[Unit]] =
+    reviewConnector.factCheckReviewPageComplete(id, pageUrl, pageReviewDetail)
+
 }
