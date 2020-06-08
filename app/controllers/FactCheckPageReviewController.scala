@@ -71,7 +71,7 @@ class FactCheckPageReviewController @Inject() (
         result => {
           val reviewDetail = PageReviewDetail(processId, page, Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
           reviewService.factCheckPageComplete(processId, page, reviewDetail).map {
-            case Right(_) => Redirect(routes.TwoEyeReviewController.approval(processId))
+            case Right(_) => Redirect(routes.FactCheckController.approval(processId))
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval 2i page review for process $processId")
               NotFound(errorHandler.notFoundTemplate)
