@@ -25,7 +25,7 @@
 
 @(summaries: Seq[ApprovalProcessSummary])(implicit request: Request[_], messages: Messages)
 
-@pageUrl(summary: ApprovalProcessSummary) = @{
+@processReviewUrl(summary: ApprovalProcessSummary) = @{
   summary.status match {
       case SubmittedFor2iReview => routes.TwoEyeReviewController.approval(summary.id).toString
       case SubmittedForFactCheck => routes.FactCheckController.approval(summary.id).toString
@@ -40,7 +40,7 @@
 @govukTable(Table(
     for(summary <- summaries) yield {
       Seq(
-        TableRow(content = HtmlContent(s"""<a href="${pageUrl(summary)}">${summary.title}</a>""")),
+        TableRow(content = HtmlContent(s"""<a href="${processReviewUrl(summary)}">${summary.title}</a>""")),
         TableRow(content = Text(summary.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))), 
         TableRow(content = Text(messages(s"approvalsStatus.${summary.status.toString}")))
       )
