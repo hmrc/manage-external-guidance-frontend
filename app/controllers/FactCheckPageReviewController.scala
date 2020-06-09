@@ -49,12 +49,12 @@ class FactCheckPageReviewController @Inject() (
   val logger: Logger = Logger(getClass)
 
   def onPageLoad(processId: String, page: String): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
-    reviewService.factCheckPageInfo(processId, page) map {
+    reviewService.factCheckPageInfo(processId, s"/$page") map {
       case Right(data) if data.result.isDefined =>
         val form: Form[FactCheckPageReview] = formProvider().bind(Map("answer" -> data.result.fold("")(_.toString)))
-        Ok(view(processId, page, form))
+        Ok(view(processId, s"/$page", form))
 
-      case Right(_) => Ok(view(processId, page, formProvider()))
+      case Right(_) => Ok(view(processId, s"/$page", formProvider()))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval 2i page review for process $processId and page $page returned error $err")
@@ -67,10 +67,10 @@ class FactCheckPageReviewController @Inject() (
     form
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[FactCheckPageReview]) => { Future.successful(BadRequest(view(processId, page, formWithErrors))) },
+        (formWithErrors: Form[FactCheckPageReview]) => { Future.successful(BadRequest(view(processId, s"/$page", formWithErrors))) },
         result => {
-          val reviewDetail = PageReviewDetail(processId, page, Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
-          reviewService.factCheckPageComplete(processId, page, reviewDetail).map {
+          val reviewDetail = PageReviewDetail(processId, s"/$page", Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
+          reviewService.factCheckPageComplete(processId, s"/$page", reviewDetail).map {
             case Right(_) => Redirect(routes.FactCheckController.approval(processId))
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval 2i page review for process $processId")
