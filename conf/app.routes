@@ -4,14 +4,18 @@ GET        /assets/*file                              controllers.Assets.version
 GET        /process/approval                          controllers.AdminController.approvalSummaries
 GET        /2i-review/:id                             controllers.TwoEyeReviewController.approval(id)
         
-GET        /2i-page-review/:id*page                  controllers.TwoEyePageReviewController.onPageLoad(id: String, page: String)
-POST       /2i-page-review/:id*page                  controllers.TwoEyePageReviewController.onSubmit(id: String, page: String )
+GET        /2i-page-review/:id/                       controllers.TwoEyePageReviewController.onPageLoad(id: String, page: String ?= "")
+GET        /2i-page-review/:id/*page                  controllers.TwoEyePageReviewController.onPageLoad(id: String, page: String)
+POST       /2i-page-review/:id/                       controllers.TwoEyePageReviewController.onSubmit(id: String, page: String ?= "")
+POST       /2i-page-review/:id/*page                  controllers.TwoEyePageReviewController.onSubmit(id: String, page: String )
         
 GET        /2i-result/:id                             controllers.TwoEyeReviewResultController.onPageLoad(id)
 POST       /2i-result/:id                             controllers.TwoEyeReviewResultController.onSubmit(id)
 
-GET        /fact-check-page-review/:id*page          controllers.FactCheckPageReviewController.onPageLoad(id: String, page: String)
-POST       /fact-check-page-review/:id*page          controllers.FactCheckPageReviewController.onSubmit(id: String, page: String )
+GET        /fact-check-page-review/:id/               controllers.FactCheckPageReviewController.onPageLoad(id: String, page: String ?= "")
+GET        /fact-check-page-review/:id/*page          controllers.FactCheckPageReviewController.onPageLoad(id: String, page: String)
+POST       /fact-check-page-review/:id/               controllers.FactCheckPageReviewController.onSubmit(id: String, page: String ?= "")
+POST       /fact-check-page-review/:id/*page          controllers.FactCheckPageReviewController.onSubmit(id: String, page: String )
 
 GET        /fact-check/:id                            controllers.FactCheckController.approval(id)
 GET        /fact-check-result/:id                     controllers.FactCheckController.onConfirm(id)
