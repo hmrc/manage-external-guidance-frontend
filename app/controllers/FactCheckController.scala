@@ -66,14 +66,14 @@ class FactCheckController @Inject() (
     reviewService.approvalFactCheckComplete(processId, request.credId, request.name, WithDesignerForUpdate).map {
       case Right(_) => Redirect(routes.AdminController.approvalSummaries())
       case Left(NotFoundError) =>
-        logger.error(s"Unable to retrieve approval 2i review for process $processId")
+        logger.error(s"Unable to retrieve approval fact check review for process $processId")
         NotFound(errorHandler.notFoundTemplate)
       case Left(StaleDataError) =>
-        logger.warn(s"The requested approval 2i review for process $processId can no longer be found")
+        logger.warn(s"The requested approval fact check review for process $processId can no longer be found")
         NotFound(errorHandler.notFoundTemplate)
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
-        logger.error(s"Request for approval 2i review process for process $processId returned error $err")
+        logger.error(s"Request for approval fact check review process for process $processId returned error $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }

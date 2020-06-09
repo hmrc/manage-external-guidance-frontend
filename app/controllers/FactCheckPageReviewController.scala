@@ -57,7 +57,7 @@ class FactCheckPageReviewController @Inject() (
       case Right(_) => Ok(view(processId, s"/$page", formProvider()))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
-        logger.error(s"Request for approval 2i page review for process $processId and page $page returned error $err")
+        logger.error(s"Request for approval fact check page review for process $processId and page $page returned error $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
@@ -73,14 +73,14 @@ class FactCheckPageReviewController @Inject() (
           reviewService.factCheckPageComplete(processId, s"/$page", reviewDetail).map {
             case Right(_) => Redirect(routes.FactCheckController.approval(processId))
             case Left(NotFoundError) =>
-              logger.error(s"Unable to retrieve approval 2i page review for process $processId")
+              logger.error(s"Unable to retrieve approval fact check page review for process $processId")
               NotFound(errorHandler.notFoundTemplate)
             case Left(StaleDataError) =>
-              logger.warn(s"The requested approval 2i review for process $processId can no longer be found")
+              logger.warn(s"The requested approval fact check review for process $processId can no longer be found")
               NotFound(errorHandler.notFoundTemplate)
             case Left(err) =>
               // Handle internal server and any unexpected errors
-              logger.error(s"Request for approval 2i review process for process $processId returned error $err")
+              logger.error(s"Request for approval fact check review process for process $processId returned error $err")
               InternalServerError(errorHandler.internalServerErrorTemplate)
           }
         }
