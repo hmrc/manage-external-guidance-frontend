@@ -28,7 +28,8 @@ object ExternalGuidanceStub extends WireMockMethods {
   private val approvalSummaryUri: String = s"/external-guidance/approval"
   private val approval2iReviewUri: String = "/external-guidance/approval/oct90005/2i-review"
   private val approval2iPageReviewUri: String = "/external-guidance/approval/oct90005/2i-page-review/pageUrl"
-  private val approvalFactCheckPageReviewUri: String = "/external-guidance/approval/oct90005/fact-check-page-review/pageUrl"
+  private val factCheckReviewUri: String = "/external-guidance/approval/oct90005/fact-check"
+  private val factCheckPageReviewUri: String = "/external-guidance/approval/oct90005/fact-check-page-review/pageUrl"
 
   def saveScratch(status: Int, response: JsValue): StubMapping = {
     when(method = POST, uri = saveScratchUri)
@@ -70,13 +71,23 @@ object ExternalGuidanceStub extends WireMockMethods {
       .thenReturn(status, response)
   }
 
-  def approvalFactCheckPageReview(status: Int, response: JsValue): StubMapping = {
-    when(method = GET, uri = approvalFactCheckPageReviewUri)
+  def factCheck(status: Int, response: JsValue): StubMapping = {
+    when(method = GET, uri = factCheckReviewUri)
       .thenReturn(status, response)
   }
 
-  def approvalFactCheckPageReviewComplete(status: Int, response: JsValue): StubMapping = {
-    when(method = POST, uri = approvalFactCheckPageReviewUri)
+  def factCheckComplete(status: Int, response: JsValue): StubMapping = {
+    when(method = POST, uri = factCheckReviewUri)
+      .thenReturn(status, response)
+  }
+
+  def factCheckPageReview(status: Int, response: JsValue): StubMapping = {
+    when(method = GET, uri = factCheckPageReviewUri)
+      .thenReturn(status, response)
+  }
+
+  def factCheckPageReviewComplete(status: Int, response: JsValue): StubMapping = {
+    when(method = POST, uri = factCheckPageReviewUri)
       .thenReturn(status, response)
   }
 }
