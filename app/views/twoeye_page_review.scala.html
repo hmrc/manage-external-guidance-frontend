@@ -43,7 +43,7 @@
   @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).toString,
     content = Text(messages("backlink.label"))))
 
-  @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, page)) {
+  @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, page.drop(1))) {
 
     @errorSummary(form.errors)
 
