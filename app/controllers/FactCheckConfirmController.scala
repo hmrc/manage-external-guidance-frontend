@@ -46,7 +46,7 @@ class FactCheckConfirmController @Inject()(
     reviewService.approvalFactCheckComplete(processId, request.credId, request.name, WithDesignerForUpdate).map {
       case Right(_) => Ok(view())
       case Left(NotFoundError) =>
-        logger.error(s"Unable to retrieve approval fact check for process $processId")
+        logger.error(s"FactCheck confirmation: Unable to retrieve approval fact check for process $processId")
         NotFound(errorHandler.notFoundTemplate)
       case Left(StaleDataError) =>
         logger.warn(s"The requested fact check for process $processId can no longer be found")
