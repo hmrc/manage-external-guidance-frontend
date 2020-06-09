@@ -35,22 +35,22 @@
 @(processId: String, page: String, form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @viewLink(id: String, url: String) = {
-  <p><a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@processId@page">@messages("2iPageReview.viewGuidancePage")</a></p>
+  <p><a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@processId@page">@messages("factCheckPageReview.viewGuidancePage")</a></p>
 }
 
-@layout(messages("2iPageReview.title")){
+@layout(messages("factCheckPageReview.title")){
 
-  @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).toString,
+  @govukBackLink(BackLink(href = routes.FactCheckController.approval(processId).toString,
     content = Text(messages("backlink.label"))))
 
-  @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, page.drop(1))) {
+  @formWithCSRF(action = routes.FactCheckPageReviewController.onSubmit(processId, page.drop(1))) {
 
     @errorSummary(form.errors)
 
     @inputRadio(
       form = form,
       fieldName = "answer",
-      legend = "2iPageReview.heading",
+      legend = "factCheckPageReview.heading",
       items = Seq(
         RadioItem(
           value = Some(Yes.toString),
@@ -75,11 +75,11 @@
         id = "comment",
         name = "comment",
         label = Label(
-        content = Text(messages("2iPageReview.textarea.label"))
+        content = Text(messages("factCheckPageReview.textarea.label"))
        ),
        hint = Some(
                     Hint(
-                      content = Text(messages("2iPageReview.textarea.hint"))
+                      content = Text(messages("factCheckPageReview.textarea.hint"))
                      )
                   )
       )
@@ -87,7 +87,7 @@
     )
     *@
 
-    @govukButton( Button( content = Text( messages( "2iPageReview.saveReview" ) ) ) )
+    @govukButton( Button( content = Text( messages( "factCheckPageReview.saveReview" ) ) ) )
   }
 
 }

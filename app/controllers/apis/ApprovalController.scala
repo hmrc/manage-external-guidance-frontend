@@ -41,7 +41,7 @@ class ApprovalController @Inject() (appConfig: AppConfig, approvalService: Appro
     checkSubmissionReturn(approvalService.submitForFactCheck(request.body))
   }
 
-  private def checkSubmissionReturn (result: Future[RequestOutcome[ApprovalResponse]]): Future[Result] = {
+  private def checkSubmissionReturn(result: Future[RequestOutcome[ApprovalResponse]]): Future[Result] = {
     result.map {
       case Right(approvalResponse) => Created(Json.toJson(approvalResponse))
       case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError))

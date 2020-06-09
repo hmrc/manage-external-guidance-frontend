@@ -29,12 +29,9 @@ class ReviewService @Inject() (reviewConnector: ReviewConnector) {
   def approval2iReview(id: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalProcessReview]] =
     reviewConnector.approval2iReview(id)
 
-  def approval2iReviewComplete(id: String,
-                               userPid: String,
-                               userName: String,
-                               status: ApprovalStatus)(
-    implicit ex: ExecutionContext,
-    hc: HeaderCarrier
+  def approval2iReviewComplete(id: String, userPid: String, userName: String, status: ApprovalStatus)(
+      implicit ex: ExecutionContext,
+      hc: HeaderCarrier
   ): Future[RequestOutcome[Unit]] =
     reviewConnector.approval2iReviewComplete(id, ApprovalProcessStatusChange(userPid, userName, status))
 
@@ -48,17 +45,24 @@ class ReviewService @Inject() (reviewConnector: ReviewConnector) {
     reviewConnector.approval2iReviewPageComplete(id, pageUrl, pageReviewDetail)
 
   def approvalFactCheck(id: String)(
-    implicit ex: ExecutionContext,
-    hc: HeaderCarrier
+      implicit ex: ExecutionContext,
+      hc: HeaderCarrier
   ): Future[RequestOutcome[ApprovalProcessReview]] =
     reviewConnector.approvalFactCheck(id)
 
-  def approvalFactCheckComplete(id: String,
-                                userPid: String,
-                                userName: String,
-                                status: ApprovalStatus)(
-    implicit ex: ExecutionContext,
-    hc: HeaderCarrier
+  def approvalFactCheckComplete(id: String, userPid: String, userName: String, status: ApprovalStatus)(
+      implicit ex: ExecutionContext,
+      hc: HeaderCarrier
   ): Future[RequestOutcome[Unit]] =
     reviewConnector.approvalFactCheckComplete(id, ApprovalProcessStatusChange(userPid, userName, status))
+
+  def factCheckPageInfo(id: String, pageUrl: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[PageReviewDetail]] =
+    reviewConnector.factCheckPageInfo(id, pageUrl)
+
+  def factCheckPageComplete(id: String, pageUrl: String, pageReviewDetail: PageReviewDetail)(
+      implicit ex: ExecutionContext,
+      hc: HeaderCarrier
+  ): Future[RequestOutcome[Unit]] =
+    reviewConnector.factCheckPageComplete(id, pageUrl, pageReviewDetail)
+
 }

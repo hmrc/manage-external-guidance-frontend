@@ -17,11 +17,10 @@
 package controllers
 
 import config.ErrorHandler
-import controllers.actions.TwoEyeReviewerIdentifierAction
-import forms.TwoEyePageReviewFormProvider
+import controllers.actions.FactCheckerIdentifierAction
 import javax.inject.{Inject, Singleton}
 import models.errors.{NotFoundError, StaleDataError}
-import models.forms.TwoEyePageReview
+import models.forms.FactCheckPageReview
 import models.PageReviewDetail
 import models.PageReviewStatus._
 import play.api.Logger
@@ -30,17 +29,18 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ReviewService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.twoeye_page_review
+import forms.FactCheckPageReviewFormProvider
+import views.html.fact_check_page_review
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class TwoEyePageReviewController @Inject() (
+class FactCheckPageReviewController @Inject() (
     errorHandler: ErrorHandler,
-    twoEyeReviewerIdentifierAction: TwoEyeReviewerIdentifierAction,
-    formProvider: TwoEyePageReviewFormProvider,
-    view: twoeye_page_review,
+    factCheckerReviewerIdentifierAction: FactCheckerIdentifierAction,
+    formProvider: FactCheckPageReviewFormProvider,
+    view: fact_check_page_review,
     reviewService: ReviewService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
@@ -48,39 +48,39 @@ class TwoEyePageReviewController @Inject() (
 
   val logger: Logger = Logger(getClass)
 
-  def onPageLoad(processId: String, page: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
-    reviewService.approval2iPageReview(processId, s"/$page") map {
+  def onPageLoad(processId: String, page: String): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
+    reviewService.factCheckPageInfo(processId, s"/$page") map {
       case Right(data) if data.result.isDefined =>
-        val form: Form[TwoEyePageReview] = formProvider().bind(Map("answer" -> data.result.fold("")(_.toString)))
+        val form: Form[FactCheckPageReview] = formProvider().bind(Map("answer" -> data.result.fold("")(_.toString)))
         Ok(view(processId, s"/$page", form))
 
       case Right(_) => Ok(view(processId, s"/$page", formProvider()))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
-        logger.error(s"Request for approval 2i page review for process $processId and page /$page returned error $err")
+        logger.error(s"Request for approval fact check page review for process $processId and page $page returned error $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
 
-  def onSubmit(processId: String, page: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
-    val form: Form[TwoEyePageReview] = formProvider()
+  def onSubmit(processId: String, page: String): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
+    val form: Form[FactCheckPageReview] = formProvider()
     form
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[TwoEyePageReview]) => { Future.successful(BadRequest(view(processId, s"/$page", formWithErrors))) },
+        (formWithErrors: Form[FactCheckPageReview]) => { Future.successful(BadRequest(view(processId, s"/$page", formWithErrors))) },
         result => {
           val reviewDetail = PageReviewDetail(processId, s"/$page", Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
-          reviewService.approval2iPageReviewComplete(processId, s"/$page", reviewDetail).map {
-            case Right(_) => Redirect(routes.TwoEyeReviewController.approval(processId))
+          reviewService.factCheckPageComplete(processId, s"/$page", reviewDetail).map {
+            case Right(_) => Redirect(routes.FactCheckController.approval(processId))
             case Left(NotFoundError) =>
-              logger.error(s"Unable to retrieve approval 2i page review for process $processId")
+              logger.error(s"Unable to retrieve approval fact check page review for process $processId")
               NotFound(errorHandler.notFoundTemplate)
             case Left(StaleDataError) =>
-              logger.warn(s"The requested approval 2i review for process $processId can no longer be found")
+              logger.warn(s"The requested approval fact check review for process $processId can no longer be found")
               NotFound(errorHandler.notFoundTemplate)
             case Left(err) =>
               // Handle internal server and any unexpected errors
-              logger.error(s"Request for approval 2i review process for process $processId returned error $err")
+              logger.error(s"Request for approval fact check review process for process $processId returned error $err")
               InternalServerError(errorHandler.internalServerErrorTemplate)
           }
         }

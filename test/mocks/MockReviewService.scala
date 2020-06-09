@@ -70,6 +70,25 @@ trait MockReviewService extends MockFactory {
         .approvalFactCheckComplete(_: String, _: String, _:String, _: ApprovalStatus)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, userId, userName, status, *, *)
 
+    def factCheckPageInfo(id: String, pageUrl: String): CallHandler[Future[RequestOutcome[PageReviewDetail]]] =
+      (mockReviewService
+        .factCheckPageInfo(_: String, _: String)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, pageUrl, *, *)
+
+    def factCheckPageComplete(id: String, pageUrl: String, pageReviewDetail: PageReviewDetail): CallHandler[Future[RequestOutcome[Unit]]] =
+      (mockReviewService
+        .factCheckPageComplete(_: String, _: String, _: PageReviewDetail)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(
+          where { (i: String, u: String, p: PageReviewDetail, _: ExecutionContext, _: HeaderCarrier) =>
+            i == id &&
+            u == pageUrl &&
+            p.id == pageReviewDetail.id &&
+            p.pageUrl == pageReviewDetail.pageUrl &&
+            p.result == pageReviewDetail.result &&
+            p.status == pageReviewDetail.status &&
+            p.updateUser == pageReviewDetail.updateUser
+          }
+        )
   }
 
 }
