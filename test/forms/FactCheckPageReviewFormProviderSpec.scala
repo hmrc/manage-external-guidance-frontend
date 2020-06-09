@@ -30,74 +30,22 @@ class FactCheckPageReviewFormProviderSpec extends BaseSpec {
     val form: Form[FactCheckPageReview] = formProvider()
 
     val answer = "answer"
-    val comment = "comment"
-
-    val definedComment = "This page is acceptable"
-    val emptyComment = ""
 
     val requiredAnswerKeyError = "factCheckPageReview.answer.error.required"
     val requiredAnswerKeyFormError = FormError(answer, requiredAnswerKeyError)
-
-    val requiredCommentKeyError = "factCheckPPageReview.comment.error.required"
-    val requiredCommentKeyFormError = FormError(comment, requiredCommentKeyError)
   }
 
-  "The two eye page review form provider" should {
+  "The fact check page review form provider" should {
 
-    "bind a valid response and defined comment" in new Test {
+    "bind a valid response" in new Test {
 
       val boundForm: Form[FactCheckPageReview] = form.bind(
         Map(
-          answer -> YesNoAnswer.Yes.toString,
-          comment -> definedComment
+          answer -> YesNoAnswer.Yes.toString
         )
       )
 
       boundForm.apply(answer).value shouldBe Some(YesNoAnswer.Yes.toString)
-      boundForm.apply(comment).value shouldBe Some(definedComment)
     }
-
-    "bind a valid response and empty comment" in new Test {
-
-      val boundForm: Form[FactCheckPageReview] = form.bind(
-        Map(
-          answer -> YesNoAnswer.No.toString,
-          comment -> emptyComment
-        )
-      )
-
-      boundForm.apply(answer).value shouldBe Some(YesNoAnswer.No.toString)
-      boundForm.apply(comment).value shouldBe Some(emptyComment)
-    }
-
-    "raise an error when no answer is given" in new Test {
-
-      val boundForm: Form[FactCheckPageReview] = form.bind(
-        Map(
-          comment -> definedComment
-        )
-      )
-
-      val result = boundForm.apply(answer)
-
-      result.errors.headOption shouldBe Some(requiredAnswerKeyFormError)
-    }
-
-    // "raise an error when the comment is missing" in new Test {
-
-    //   // Note in reality this is unlikely to happen
-
-    //   val boundForm: Form[FactCheckPageReview] = form.bind(
-    //     Map(
-    //       answer -> YesNoAnswer.Yes.toString
-    //     )
-    //   )
-
-    //   val result = boundForm.apply(comment)
-
-    //   result.errors.headOption shouldBe Some(requiredCommentKeyFormError)
-    // }
-
-    // TODO: Require tests for maximum length of commente when this is known
   }
 }
