@@ -10,12 +10,12 @@ This code is open source software licensed under the [Apache 2.0 License]("http:
 
 ## Endpoints
 
-### `POST: /external-guidance/scratch`
+### `POST: /external-guidance/process/scratch`
 
 #### Purpose
 
 Allows Ocelot to send over a scratch process and check how it looks in the browser.
-The generated ID is returned to the caller.
+The generated ID is returned to the caller, with a location header enabling the user to be redirected to view the submitted process.
 
 #### Request Body
 
@@ -24,6 +24,11 @@ This is the json string representing the Ocelot process
 #### Success Response
 
 **HTTP Status**: `201`
+
+**Headers**:
+```
+location -> "/guidance/scratch/:id"
+```
 
 **Example Response Body**:
 ```
@@ -61,7 +66,7 @@ This is the json string representing the Ocelot process
     </tbody>
 </table>
 
-### `POST: /external-guidance/approval/fact-check`
+### `POST: /external-guidance/process/approval/fact-check`
 
 #### Purpose
 
@@ -112,7 +117,7 @@ This is the json string representing the Ocelot process
     </tbody>
 </table>
 
-### `POST: /external-guidance/approval/2i-review`
+### `POST: /external-guidance/process/approval/2i-review`
 
 #### Purpose
 
