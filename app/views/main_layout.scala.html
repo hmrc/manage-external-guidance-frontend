@@ -47,6 +47,7 @@
 
 @headerBlock = {
     @govUkHeader(Header(
+        serviceUrl = Some(controllers.routes.AdminController.approvalSummaries.toString),
         serviceName = Some(messages("service.name"))
     ))
 }

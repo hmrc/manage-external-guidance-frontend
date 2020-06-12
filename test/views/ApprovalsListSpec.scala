@@ -40,6 +40,23 @@ class ApprovalsListSpec extends ViewSpecBase {
   }
 
   "Approval Summary List page" should {
+
+    "Render header with service name link" in new Test {
+
+      val headers = doc.getElementsByClass("govuk-header__content")
+
+      headers.size() shouldBe 1
+
+      Option(headers.first.getElementsByTag("a").first).fold(fail("Service Url link not found")) { a =>
+        a.text shouldBe messages("service.name")
+
+        elementAttrs(a).get("href").fold(fail("Missing href attribute in anchor")) { href =>
+          href shouldBe routes.AdminController.approvalSummaries().url
+
+        }
+      }
+    }
+
     "Render with correct heading" in new Test {
 
       doc.getElementsByTag("h1").asScala.filter(elementAttrs(_).get("class") == Some("govuk-heading-xl")).toList match {
@@ -81,17 +98,27 @@ class ApprovalsListSpec extends ViewSpecBase {
         rows.zip(summaries).foreach {
           case (r, s) =>
             val cellData = r.getElementsByTag("td").asScala.toList
+
             cellData.size shouldBe 3
-            cellData(0).text shouldBe s.title
-            Option(cellData(0).getElementsByTag("a").first).fold(fail("Missing link from page url cell")) { a =>
-              elementAttrs(a).get("href").fold(fail("Missing href attribute within anchor")) { href =>
-                s.status match {
-                  case SubmittedFor2iReview => href shouldBe routes.TwoEyeReviewController.approval(s.id).toString
-                  case SubmittedForFactCheck => href shouldBe routes.FactCheckController.approval(s.id).toString
-                  case _ => href shouldBe "#"  
+
+            s.status match {
+
+              case SubmittedForFactCheck | SubmittedFor2iReview => {
+
+                cellData.head.text shouldBe s.title
+
+                Option(cellData.head.getElementsByTag("a").first).fold(fail("Missing link from page url cell")) { a =>
+                  elementAttrs(a).get("href").fold(fail("Missing href attribute within anchor")) { href =>
+                    s.status match {
+                      case SubmittedFor2iReview => href shouldBe routes.TwoEyeReviewController.approval(s.id).toString
+                      case SubmittedForFactCheck => href shouldBe routes.FactCheckController.approval(s.id).toString
+                    }
+                  }
                 }
               }
+              case _ => cellData.head.text shouldBe s.title
             }
+
             cellData(1).text shouldBe s.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
             cellData(2).text shouldBe messages(s"approvalsStatus.${s.status.toString}")
         }
