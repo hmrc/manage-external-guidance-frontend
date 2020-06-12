@@ -40,6 +40,23 @@ class ApprovalsListSpec extends ViewSpecBase {
   }
 
   "Approval Summary List page" should {
+
+    "Render header with service name link" in new Test {
+
+      val headers = doc.getElementsByClass("govuk-header__content")
+
+      headers.size() shouldBe 1
+
+      Option(headers.first.getElementsByTag("a").first).fold(fail("Service Url link not found")) { a =>
+        a.text shouldBe messages("service.name")
+
+        elementAttrs(a).get("href").fold(fail("Missing href attribute in anchor")) { href =>
+          href shouldBe routes.AdminController.approvalSummaries().url
+
+        }
+      }
+    }
+
     "Render with correct heading" in new Test {
 
       doc.getElementsByTag("h1").asScala.filter(elementAttrs(_).get("class") == Some("govuk-heading-xl")).toList match {

@@ -21,6 +21,7 @@
 @import views.components.FooterLinks
 
 @import config.AppConfig
+@import controllers.routes._
 
 @this(layout: GovukLayout,
         phaseBanner : GovukPhaseBanner,
@@ -47,6 +48,7 @@
 
 @headerBlock = {
     @govUkHeader(Header(
+        serviceUrl = Some(routes.AdminController.approvalSummaries.toString),
         serviceName = Some(messages("service.name"))
     ))
 }
