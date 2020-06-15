@@ -37,3 +37,9 @@ object StaleDataError extends Error("STALE_DATA_ERROR", "The resource requested 
 object MalformedResponseError extends Error("BAD_REQUEST", "The response received could not be parsed")
 
 object BadRequestError extends Error("BAD_REQUEST_ERROR", "The request is invalid.")
+
+object IncompleteDataError
+  extends Error(
+    "INCOMPLETE_DATA_ERROR",
+    "Data is not in the required state for the requested action."
+  )

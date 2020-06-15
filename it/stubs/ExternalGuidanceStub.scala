@@ -26,6 +26,7 @@ object ExternalGuidanceStub extends WireMockMethods {
   private val saveFor2iReviewUri: String = s"/external-guidance/approval/2i-review"
   private val saveForFactCheckUri: String = s"/external-guidance/approval/fact-check"
   private val approvalSummaryUri: String = s"/external-guidance/approval"
+  private val approval2iReviewConfirmCheckUri: String = "/external-guidance/approval/oct90005/2i-review/confirm"
   private val approval2iReviewUri: String = "/external-guidance/approval/oct90005/2i-review"
   private val approval2iPageReviewUri: String = "/external-guidance/approval/oct90005/2i-page-review/pageUrl"
   private val factCheckReviewUri: String = "/external-guidance/approval/oct90005/fact-check"
@@ -53,6 +54,11 @@ object ExternalGuidanceStub extends WireMockMethods {
 
   def approval2iReview(status: Int, response: JsValue): StubMapping = {
     when(method = GET, uri = approval2iReviewUri)
+      .thenReturn(status, response)
+  }
+
+  def approval2iReviewCheck(status: Int, response: JsValue): StubMapping = {
+    when(method = GET, uri = approval2iReviewConfirmCheckUri)
       .thenReturn(status, response)
   }
 

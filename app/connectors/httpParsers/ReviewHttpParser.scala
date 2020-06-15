@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.errors.{Error, InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
+import models.errors._
 import models.{ApprovalProcessReview, PageReviewDetail, RequestOutcome}
 import play.api.Logger
 import play.api.http.Status._
@@ -36,16 +36,17 @@ object ReviewHttpParser extends HttpParser {
           Left(MalformedResponseError)
       }
     case (_, _, response) if response.status == NOT_FOUND =>
-      checkNotFoundResponse(response)
+      Left(checkErrorResponse(response))
     case _ =>
       logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
       Left(InternalServerError)
   }
 
   implicit val postReviewCompleteHttpReads: HttpReads[RequestOutcome[Unit]] = {
-    case (_, _, response) if response.status == NO_CONTENT => Right(())
-    case (_, _, response) if response.status == NOT_FOUND =>
-      checkNotFoundResponse(response)
+    case (_, _, response) => response.status match {
+      case NO_CONTENT => Right(())
+      case _ => Left(checkErrorResponse(response))
+    }
     case _ =>
       logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
       Left(InternalServerError)
@@ -60,23 +61,33 @@ object ReviewHttpParser extends HttpParser {
           Left(MalformedResponseError)
       }
     case (_, _, response) if response.status == NOT_FOUND =>
-      checkNotFoundResponse(response)
+      Left(checkErrorResponse(response))
     case _ =>
       logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
       Left(InternalServerError)
   }
 
-  private def checkNotFoundResponse(response: HttpResponse) = {
+  private def extractError(response: HttpResponse): RequestOutcome[Error] = {
     response.json.validate[Error] match {
-      case JsSuccess(error, _) =>
-        if (error.code == NotFoundError.code) {
-          Left(NotFoundError)
-        } else {
-          Left(StaleDataError)
-        }
+      case JsSuccess(error, _) => Right(error)
       case JsError(_) =>
-        logger.error(s"Unable to parse NOT_FOUND response from external-guidance.")
+        logger.error(s"Unable to parse response from external-guidance. Json received: ${response.json}")
         Left(MalformedResponseError)
+    }
+  }
+
+  private def checkErrorResponse(response: HttpResponse): Error = {
+    extractError(response) match {
+      case Right(expectedError) => expectedError.code match {
+        case NotFoundError.code => NotFoundError
+        case StaleDataError.code => StaleDataError
+        case IncompleteDataError.code => IncompleteDataError
+        case BadRequestError.code => BadRequestError
+        case _ => InternalServerError
+      }
+      case Left(_) =>
+        logger.error(s"Unable to parse response from external-guidance. JSON Received: ${response.json}")
+        MalformedResponseError
     }
   }
 }

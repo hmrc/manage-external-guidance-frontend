@@ -29,6 +29,9 @@ class ReviewService @Inject() (reviewConnector: ReviewConnector) {
   def approval2iReview(id: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalProcessReview]] =
     reviewConnector.approval2iReview(id)
 
+  def approval2iReviewCheck(id: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] =
+    reviewConnector.approval2iReviewConfirmCheck(id)
+
   def approval2iReviewComplete(id: String, userPid: String, userName: String, status: ApprovalStatus)(
       implicit ex: ExecutionContext,
       hc: HeaderCarrier

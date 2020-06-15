@@ -82,7 +82,7 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
 
   "The ReviewHttpParser.postReviewCompleteHttpReads" when {
     "the response is NO_CONTENT" should {
-      "Return true" in new PostReviewCompleteSetup(NO_CONTENT) {
+      "Return Unit" in new PostReviewCompleteSetup(NO_CONTENT) {
         readResponse shouldBe Right(())
       }
     }
@@ -102,7 +102,7 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
       }
     }
     "the response is anything else" should {
-      "return InternalServerError" in new PostReviewCompleteSetup(INTERNAL_SERVER_ERROR) {
+      "return InternalServerError" in new PostReviewCompleteSetup(INTERNAL_SERVER_ERROR, Some(Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> ""))) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
