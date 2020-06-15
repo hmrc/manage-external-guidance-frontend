@@ -26,7 +26,7 @@ pageReviewStatus.Complete = Reviewed
 2iReview.sendConfirmation = Confirm
 2iReview.sendConfirmationStatus = Not reviewed
 
-2iPageReview.answer.error.required = You must select one of the options shown
+2iPageReview.answer.error.required = You must confirm if the page meets GOV.UK standards
 # Under normal circumstances this error should not be raised (requires "comment" field key to be missing from the form data)
 2iPageReview.comment.error.required = No comment supplied
 2iPageReview.comment.error.length = The maximum length for a page review comment has been exceeded
@@ -49,8 +49,7 @@ pageReviewStatus.Complete = Reviewed
 
 2iReviewResult.WithDesignerForUpdate = Send 2i review responses to the designer
 2iReviewResult.Published = Approve guidance for publishing
-2iReviewResult.error.required = You must select one of the options shown
-2iReviewResult.error.invalid = Invalid value submitted
+2iReviewResult.error.required = You must confirm what you would like to do
 
 factCheck.pageReviewStatus.NotStarted = Not checked
 factCheck.pageReviewStatus.Complete = Checked
@@ -62,12 +61,12 @@ factCheck.pagesReviewedConfirmationHeading = Confirm you've fact checked all pag
 factCheck.sendConfirmation = Confirm
 factCheck.sendConfirmationStatus =
 
-factCheckPageReview.answer.error.required = You must select one of the options shown
+factCheckPageReview.answer.error.required = You must confirm if the page is factually accurate
 factCheckPageReview.comment.error.required = No comment supplied
 factCheckPageReview.comment.error.length = The maximum length for a page review comment has been exceeded
 
-factCheckPageReview.title = Does the page meet GOV.UK standards?
-factCheckPageReview.heading = Does the page meet GOV.UK standards?
+factCheckPageReview.title = Is the page factually accurate?
+factCheckPageReview.heading = Is the page factually accurate?
 factCheckPageReview.textarea.label = Comments
 factCheckPageReview.textarea.hint = Add a hint here
 factCheckPageReview.saveReview = Save review

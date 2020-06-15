@@ -211,7 +211,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       errorSummaryList.isEmpty shouldBe false
 
-      assertTextEqualsMessage(errorSummaryList.text, "2iReviewResult.error.invalid")
+      assertTextEqualsMessage(errorSummaryList.text, "2iReviewResult.error.required")
     }
 
     "display an error message" in new Test {
@@ -222,7 +222,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       val errorMessageSpan = doc.getElementById("value-error")
 
-      val errorMsg = messages("2iReviewResult.error.invalid")
+      val errorMsg = messages("2iReviewResult.error.required")
 
       errorMessageSpan.text.replaceAll("\u00a0", " ") shouldBe s"Error: $errorMsg".replaceAll("&nbsp;", " ")
     }
