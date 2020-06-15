@@ -39,7 +39,7 @@ pageReviewStatus.Complete = Reviewed
 2iPageReview.saveReview = Save review
 2iPageReview.viewGuidancePage = View the page (opens in a new window or tab).
 
-2iReviewError.title = 2i content review
+2iReviewError.title = Some pages have not been reviewed
 2iReviewError.heading = Some pages have not been reviewed
 2iReviewError.info = You must review all pages before you can continue.
 2iReviewError.back = Go Back
@@ -73,12 +73,12 @@ factCheckPageReview.textarea.hint = Add a hint here
 factCheckPageReview.saveReview = Save review
 factCheckPageReview.viewGuidancePage = View the page (opens in a new window or tab).
 
-factCheckComplete.title = You have completed the fact check
+factCheckComplete.title = Your responses have been sent to the designer
 factCheckComplete.heading = Your responses have been sent to the designer
 factCheckComplete.info = If you need to amend or add to the fact check, contact the designer.
 factCheckComplete.close = Close
 
-factCheckError.title = Fact check content review
+factCheckError.title = Some pages have not been fact checked
 factCheckError.heading = Some pages have not been fact checked
 factCheckError.info = You must fact check all pages before you can send your responses to the designer.
 factCheckError.back = Go Back
