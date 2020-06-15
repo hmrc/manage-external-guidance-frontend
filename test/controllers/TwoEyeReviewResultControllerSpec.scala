@@ -29,7 +29,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.twoeye_review_result
+import views.html.{twoeye_confirm_error, twoeye_review_result}
 
 import scala.concurrent.Future
 
@@ -42,10 +42,11 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     val errorHandler = injector.instanceOf[ErrorHandler]
 
     val view = injector.instanceOf[twoeye_review_result]
+    val errorView = injector.instanceOf[twoeye_confirm_error]
     val formProvider = new TwoEyeReviewResultFormProvider()
 
     val reviewController =
-      new TwoEyeReviewResultController(errorHandler, FakeTwoEyeReviewerIdentifierAction, formProvider, view, mockReviewService, messagesControllerComponents)
+      new TwoEyeReviewResultController(errorHandler, FakeTwoEyeReviewerIdentifierAction, formProvider, view, errorView, mockReviewService, messagesControllerComponents)
 
     val fakeRequest = FakeRequest("POST", "/")
   }

@@ -28,7 +28,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.{fact_check_complete, fact_check_content_review}
+import views.html.{fact_check_complete, fact_check_confirm_error}
 
 import scala.concurrent.Future
 
@@ -41,8 +41,15 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
 
     val view: fact_check_complete = injector.instanceOf[fact_check_complete]
+    val errorView: fact_check_confirm_error = injector.instanceOf[fact_check_confirm_error]
 
-    val reviewController = new FactCheckConfirmController(errorHandler, FakeFactCheckerIdentifierAction, view, mockReviewService, messagesControllerComponents)
+    val reviewController = new FactCheckConfirmController(
+      errorHandler,
+      FakeFactCheckerIdentifierAction,
+      view,
+      errorView,
+      mockReviewService,
+      messagesControllerComponents)
 
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
   }

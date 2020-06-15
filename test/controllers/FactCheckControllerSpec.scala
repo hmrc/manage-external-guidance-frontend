@@ -20,7 +20,7 @@ import base.ControllerBaseSpec
 import config.ErrorHandler
 import controllers.actions.FakeFactCheckerIdentifierAction
 import mocks.MockReviewService
-import models.{ApprovalStatus, ReviewData}
+import models.ReviewData
 import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{MimeTypes, Status}
