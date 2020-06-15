@@ -55,7 +55,6 @@ factCheck.pageReviewStatus.NotStarted = Not checked
 factCheck.pageReviewStatus.Complete = Checked
 
 factCheck.heading = Fact Check
-factCheck.viewGuidance = View the complete guidance (opens in a new window or tab)
 factCheck.reviewPagesHeading = Check all pages for factual accuracy
 factCheck.pagesReviewedConfirmationHeading = Confirm you've fact checked all pages
 factCheck.sendConfirmation = Confirm

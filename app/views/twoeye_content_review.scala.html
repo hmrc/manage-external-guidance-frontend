@@ -14,12 +14,11 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.ApprovalProcessReview
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(layout: main_layout, govukTable : GovukTable, govukBackLink : GovukBackLink, appConfig: AppConfig)
+@this(layout: main_layout, govukTable : GovukTable, govukBackLink : GovukBackLink)
 
 @(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
 
