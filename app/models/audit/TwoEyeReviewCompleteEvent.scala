@@ -16,22 +16,23 @@
 
 package models.audit
 
-import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsValue, Json, Writes}
 import utils.JsonObjectSugar
 
-case class FactCheckSubmissionEvent(PID: String, processID: String, processTitle: String) extends AuditEvent {
+case class TwoEyeReviewCompleteEvent(PID: String, processID: String, processTitle: String) extends AuditEvent {
   val submittedDate: LocalDate = LocalDate.now
-  override val transactionName: String = "submittedForFactCheck"
+  override val transactionName: String = "2iReviewCompleted"
   override val detail: JsValue = Json.toJson(this)
-  override val auditType: String = "submittedForFactCheck"
+  override val auditType: String = "2iReviewCompleted"
 }
 
-object FactCheckSubmissionEvent extends JsonObjectSugar {
-  val dateFormatter = DateTimeFormat.forPattern("YYYY-MM-dd")
+object TwoEyeReviewCompleteEvent extends JsonObjectSugar {
 
-  implicit val writes: Writes[FactCheckSubmissionEvent] = Writes { event =>
+  val dateFormatter: DateTimeFormatter = DateTimeFormat.forPattern("YYYY-MM-dd")
+
+  implicit val writes: Writes[TwoEyeReviewCompleteEvent] = Writes { event =>
     jsonObjNoNulls(
       "PID" -> event.PID,
       "processID" -> event.processID,

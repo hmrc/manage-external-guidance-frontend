@@ -16,6 +16,8 @@
 
 package connectors
 
+import java.time.LocalDate
+
 import base.BaseSpec
 import mocks.{MockAppConfig, MockHttpClient}
 import models._
@@ -35,6 +37,7 @@ class ReviewConnectorSpec extends BaseSpec {
     val connector: ReviewConnector = new ReviewConnector(mockHttpClient, MockAppConfig)
 
     val reviewStatusChange: ApprovalProcessStatusChange = ApprovalProcessStatusChange("user", "email", ApprovalStatus.ApprovedForPublishing)
+    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published)
 
   }
   private trait TwoEyeReviewTest extends Test {
@@ -113,16 +116,16 @@ class ReviewConnectorSpec extends BaseSpec {
 
   "Calling method approval2iReviewComplete with a valid id and payload" should {
 
-    "Return true for a successful call" in new TwoEyeReviewTest {
+    "Return ApprovalProcessSummary for a successful call" in new TwoEyeReviewTest {
 
       MockedHttpClient
         .post(endpoint, reviewStatusChange)
-        .returns(Future.successful(Right(true)))
+        .returns(Future.successful(Right(approvalProcessSummary)))
 
-      val response: RequestOutcome[Unit] =
+      val response: RequestOutcome[ApprovalProcessSummary] =
         await(connector.approval2iReviewComplete(id, reviewStatusChange))
 
-      response shouldBe Right(true)
+      response shouldBe Right(approvalProcessSummary)
 
     }
 
@@ -132,7 +135,7 @@ class ReviewConnectorSpec extends BaseSpec {
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(MalformedResponseError)))
 
-      val response: RequestOutcome[Unit] =
+      val response: RequestOutcome[ApprovalProcessSummary] =
         await(connector.approval2iReviewComplete(id, reviewStatusChange))
 
       response shouldBe Left(MalformedResponseError)
@@ -144,7 +147,7 @@ class ReviewConnectorSpec extends BaseSpec {
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(NotFoundError)))
 
-      val response: RequestOutcome[Unit] =
+      val response: RequestOutcome[ApprovalProcessSummary] =
         await(connector.approval2iReviewComplete(id, reviewStatusChange))
 
       response shouldBe Left(NotFoundError)
@@ -156,7 +159,7 @@ class ReviewConnectorSpec extends BaseSpec {
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(StaleDataError)))
 
-      val response: RequestOutcome[Unit] =
+      val response: RequestOutcome[ApprovalProcessSummary] =
         await(connector.approval2iReviewComplete(id, reviewStatusChange))
 
       response shouldBe Left(StaleDataError)
@@ -168,7 +171,7 @@ class ReviewConnectorSpec extends BaseSpec {
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val response: RequestOutcome[Unit] =
+      val response: RequestOutcome[ApprovalProcessSummary] =
         await(connector.approval2iReviewComplete(id, reviewStatusChange))
 
       response shouldBe Left(InternalServerError)
@@ -247,12 +250,12 @@ class ReviewConnectorSpec extends BaseSpec {
 
       MockedHttpClient
         .post(endpoint, reviewStatusChange)
-        .returns(Future.successful(Right(true)))
+        .returns(Future.successful(Right(approvalProcessSummary)))
 
-      val response: RequestOutcome[Unit] =
+      val response: RequestOutcome[ApprovalProcessSummary] =
         await(connector.approvalFactCheckComplete(id, reviewStatusChange))
 
-      response shouldBe Right(true)
+      response shouldBe Right(approvalProcessSummary)
 
     }
 
@@ -262,7 +265,7 @@ class ReviewConnectorSpec extends BaseSpec {
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(MalformedResponseError)))
 
-      val response: RequestOutcome[Unit] =
+      val response: RequestOutcome[ApprovalProcessSummary] =
         await(connector.approvalFactCheckComplete(id, reviewStatusChange))
 
       response shouldBe Left(MalformedResponseError)
@@ -274,7 +277,7 @@ class ReviewConnectorSpec extends BaseSpec {
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(NotFoundError)))
 
-      val response: RequestOutcome[Unit] =
+      val response: RequestOutcome[ApprovalProcessSummary] =
         await(connector.approvalFactCheckComplete(id, reviewStatusChange))
 
       response shouldBe Left(NotFoundError)
@@ -286,7 +289,7 @@ class ReviewConnectorSpec extends BaseSpec {
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(StaleDataError)))
 
-      val response: RequestOutcome[Unit] =
+      val response: RequestOutcome[ApprovalProcessSummary] =
         await(connector.approvalFactCheckComplete(id, reviewStatusChange))
 
       response shouldBe Left(StaleDataError)
@@ -298,7 +301,7 @@ class ReviewConnectorSpec extends BaseSpec {
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val response: RequestOutcome[Unit] =
+      val response: RequestOutcome[ApprovalProcessSummary] =
         await(connector.approvalFactCheckComplete(id, reviewStatusChange))
 
       response shouldBe Left(InternalServerError)

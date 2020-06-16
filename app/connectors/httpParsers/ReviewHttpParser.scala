@@ -16,8 +16,8 @@
 
 package connectors.httpParsers
 
-import models.errors._
-import models.{ApprovalProcessReview, PageReviewDetail, RequestOutcome}
+import models.errors.{InternalServerError, MalformedResponseError}
+import models.{ApprovalProcessReview, ApprovalProcessSummary, PageReviewDetail, RequestOutcome}
 import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads
@@ -35,13 +35,17 @@ object ReviewHttpParser extends HttpParser {
           Left(MalformedResponseError)
       }
     case (_, _, response) => Left(response.checkErrorResponse)
+    case _ =>
+      logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
+      Left(InternalServerError)
   }
 
   implicit val postReviewCompleteHttpReads: HttpReads[RequestOutcome[Unit]] = {
-    case (_, _, response) => response.status match {
-      case NO_CONTENT => Right(())
-      case _ => Left(response.checkErrorResponse)
-    }
+    case (method, url, response) if response.status == NO_CONTENT => Right(())
+    case (method, url, response) => Left(response.checkErrorResponse)
+    case _ =>
+      logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
+      Left(InternalServerError)
   }
 
   implicit val getReviewPageDetailsHttpReads: HttpReads[RequestOutcome[PageReviewDetail]] = {
@@ -55,6 +59,18 @@ object ReviewHttpParser extends HttpParser {
         }
       case _ => Left(response.checkErrorResponse)
     }
+  }
+
+  implicit val getApprovalSummaryHttpReads: HttpReads[RequestOutcome[ApprovalProcessSummary]] = {
+    case (_, _, response) if response.status == OK =>
+      response.validateJson[ApprovalProcessSummary] match {
+        case Some(result) => Right(result)
+        case None => Left(MalformedResponseError)
+      }
+    case (_, _, response) => Left(response.checkErrorResponse)
+    case unknown =>
+      Logger.info(s"unexpected $unknown response received when retrieving summary list")
+      Left(InternalServerError)
   }
 
 }

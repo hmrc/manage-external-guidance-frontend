@@ -19,9 +19,8 @@ package controllers.apis
 import java.util.UUID.randomUUID
 
 import base.BaseSpec
-import mocks.{MockAppConfig, MockScratchService, MockAuditService}
+import mocks.{MockAppConfig, MockScratchService}
 import models.ScratchResponse
-import models.audit._
 import models.errors.{Error, InternalServerError, InvalidProcessError}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
@@ -32,11 +31,11 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockScratchService with MockAuditService {
+class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockScratchService {
 
   private val fakeRequest = FakeRequest("OPTIONS", "/")
 
-  private val controller = new ScratchController(MockAppConfig, mockScratchService, mockAuditService, stubMessagesControllerComponents())
+  private val controller = new ScratchController(MockAppConfig, mockScratchService, stubMessagesControllerComponents())
 
   private val dummyProcess: JsValue = Json.parse(
     """|{
@@ -54,10 +53,6 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
     "return 201" in {
 
-      val event = ApprovedForPublishingEvent("SomeonePID", "Scratch", "Scratch Title")
-
-      MockAuditService.audit(event)
-
       MockScratchService
         .scratchProcess(dummyProcess)
         .returns(Future.successful(Right(ScratchResponse(uuid))))
@@ -71,10 +66,6 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
     }
 
     "return process location in request header" in {
-
-      val event = ApprovedForPublishingEvent("SomeonePID", "Scratch", "Scratch Title")
-
-      MockAuditService.audit(event)
 
       MockScratchService
         .scratchProcess(dummyProcess)
@@ -94,10 +85,6 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
     }
 
     "return JSON" in {
-
-      val event = ApprovedForPublishingEvent("SomeonePID", "Scratch", "Scratch Title")
-
-      MockAuditService.audit(event)
 
       MockScratchService
         .scratchProcess(dummyProcess)
