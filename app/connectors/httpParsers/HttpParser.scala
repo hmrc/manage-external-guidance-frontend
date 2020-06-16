@@ -45,9 +45,9 @@ trait HttpParser {
         None
     }
 
-
     def checkErrorResponse: Error = {
       validateJson[Error] match {
+//        case Some(expectedError) => expectedError
         case Some(expectedError) => expectedError.code match {
           case NotFoundError.code => NotFoundError
           case StaleDataError.code => StaleDataError
@@ -58,7 +58,7 @@ trait HttpParser {
         }
         case None =>
           logger.error(s"Unable to parse error response from external-guidance. JSON Received: ${response.json}")
-          InternalServerError
+          MalformedResponseError
       }
     }
   }

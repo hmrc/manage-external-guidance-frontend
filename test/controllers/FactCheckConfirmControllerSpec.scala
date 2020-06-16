@@ -16,12 +16,15 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import base.ControllerBaseSpec
 import config.ErrorHandler
 import controllers.actions.FakeFactCheckerIdentifierAction
-import mocks.MockReviewService
+import mocks.{MockAuditService, MockReviewService}
+import models.audit.FactCheckCompleteEvent
 import models.errors.{IncompleteDataError, InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
-import models.{ApprovalStatus, ReviewData}
+import models.{ApprovalProcessSummary, ApprovalStatus, ReviewData}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{Messages, MessagesApi}
@@ -33,7 +36,7 @@ import views.html.{fact_check_complete, fact_check_confirm_error}
 
 import scala.concurrent.Future
 
-class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuite with MockReviewService {
+class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuite with MockReviewService with MockAuditService {
 
   private trait Test extends ReviewData {
 
@@ -42,13 +45,21 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
 
     val view: fact_check_complete = injector.instanceOf[fact_check_complete]
+    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary(id, "title", LocalDate.now, ApprovalStatus.Published)
+    val event: FactCheckCompleteEvent = FactCheckCompleteEvent(credential, id, "title")
     val errorView: fact_check_confirm_error = injector.instanceOf[fact_check_confirm_error]
 
     def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
     implicit val messages: Messages = messagesApi.preferred(FakeRequest("GET", "/"))
 
-    val reviewController =
-      new FactCheckConfirmController(errorHandler, FakeFactCheckerIdentifierAction, view, errorView, mockReviewService, messagesControllerComponents)
+    val reviewController = new FactCheckConfirmController(
+      errorHandler,
+      FakeFactCheckerIdentifierAction,
+      view,
+      errorView,
+      mockReviewService,
+      mockAuditService,
+      messagesControllerComponents)
 
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
   }
@@ -57,9 +68,11 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
 
     "display the correct view for a successful post of the review completion for a process" in new Test {
 
+      MockAuditService.audit(event)
+
       MockReviewService
         .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
-        .returns(Future.successful(Right(())))
+        .returns(Future.successful(Right(approvalProcessSummary)))
 
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
 
@@ -68,6 +81,8 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
       contentAsString(result) shouldBe view()(fakeRequest, messages).toString
     }
     "display the error view when the process is not in a state to be completed" in new Test {
+
+      MockAuditService.audit(event)
 
       MockReviewService
         .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
