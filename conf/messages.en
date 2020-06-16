@@ -25,7 +25,6 @@ pageReviewStatus.Complete = Reviewed
 2iReview.reviewPagesHeading = Review all pages
 2iReview.pagesReviewedConfirmationHeading = Confirm you''ve 2i-reviewed all pages.
 2iReview.sendConfirmation = Confirm
-2iReview.sendConfirmationStatus = Not reviewed
 
 2iPageReview.answer.error.required = You must confirm if the page meets GOV.UK standards
 # Under normal circumstances this error should not be raised (requires "comment" field key to be missing from the form data)
@@ -60,7 +59,6 @@ factCheck.reviewPagesHeading = Check all pages for factual accuracy
 factCheck.pagesReviewedConfirmationHeading = Confirm you've fact checked all pages
 factCheck.sendConfirmation = Confirm
 factCheck.sendConfirmationComment = This will send your fact check responses to the designer
-factCheck.sendConfirmationStatus =
 
 factCheckPageReview.answer.error.required = You must confirm if the page is factually accurate
 factCheckPageReview.comment.error.required = No comment supplied
