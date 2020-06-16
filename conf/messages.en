@@ -1,4 +1,4 @@
-service.name = External Guidance
+service.name = Manage and publish interactive guidance
 footer.links.accessibility.text=Accessibility
 backlink.label = Back
 error.summary.title = There is a problem
@@ -8,12 +8,12 @@ radio.item.no = No
 
 approvals.tableTitle = Interactive guidance
 approvals.processTitle = Title
-approvals.dateProcessUpdatedTitle = Date last updated
+approvals.dateProcessUpdatedTitle = Last updated
 approvals.processStatusTitle = Status
 
-approvalsStatus.SubmittedFor2iReview = Submitted for 2i review
-approvalsStatus.SubmittedForFactCheck = Submitted for fact check
-approvalsStatus.WithDesignerForUpdate = With designer for update
+approvalsStatus.SubmittedFor2iReview = Sent to 2i
+approvalsStatus.SubmittedForFactCheck = Sent to fact check
+approvalsStatus.WithDesignerForUpdate = Review complete
 approvalsStatus.ApprovedForPublishing = Approved for publishing
 approvalsStatus.Published = Published
 
@@ -24,7 +24,7 @@ pageReviewStatus.Complete = Reviewed
 2iReview.viewGuidance = View the complete guidance (opens in a new window or tab)
 2iReview.reviewPagesHeading = Review all pages
 2iReview.pagesReviewedConfirmationHeading = Confirm you''ve 2i-reviewed all pages.
-2iReview.sendConfirmation = Send confirmation
+2iReview.sendConfirmation = Confirm
 2iReview.sendConfirmationStatus = Not reviewed
 
 2iPageReview.answer.error.required = You must confirm if the page meets GOV.UK standards
@@ -56,10 +56,10 @@ factCheck.pageReviewStatus.NotStarted = Not checked
 factCheck.pageReviewStatus.Complete = Checked
 
 factCheck.heading = Fact Check
-factCheck.viewGuidance = View the complete guidance (opens in a new window or tab)
 factCheck.reviewPagesHeading = Check all pages for factual accuracy
-factCheck.pagesReviewedConfirmationHeading = Confirm you''ve fact checked all pages.
+factCheck.pagesReviewedConfirmationHeading = Confirm you've fact checked all pages
 factCheck.sendConfirmation = Confirm
+factCheck.sendConfirmationComment = This will send your fact check responses to the designer
 factCheck.sendConfirmationStatus =
 
 factCheckPageReview.answer.error.required = You must confirm if the page is factually accurate
