@@ -28,7 +28,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.{fact_check_complete, fact_check_content_review}
+import views.html.fact_check_complete
 
 import scala.concurrent.Future
 
