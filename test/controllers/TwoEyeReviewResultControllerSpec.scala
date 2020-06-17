@@ -21,10 +21,12 @@ import config.ErrorHandler
 import controllers.actions.FakeTwoEyeReviewerIdentifierAction
 import forms.TwoEyeReviewResultFormProvider
 import mocks.MockReviewService
-import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
+import models.errors.{IncompleteDataError, InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
 import models.{ApprovalStatus, ReviewData}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.data.Form
 import play.api.http.{MimeTypes, Status}
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -37,18 +39,24 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
 
   private trait Test extends ReviewData {
 
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val errorHandler = injector.instanceOf[ErrorHandler]
+    val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
 
-    val view = injector.instanceOf[twoeye_review_result]
-    val errorView = injector.instanceOf[twoeye_confirm_error]
-    val formProvider = new TwoEyeReviewResultFormProvider()
+    val view: twoeye_review_result = injector.instanceOf[twoeye_review_result]
+    val errorView: twoeye_confirm_error = injector.instanceOf[twoeye_confirm_error]
+    val formProvider: TwoEyeReviewResultFormProvider = new TwoEyeReviewResultFormProvider()
+    val form: Form[ApprovalStatus] = formProvider()
 
-    val reviewController =
+    def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
+
+    implicit val messages: Messages = messagesApi.preferred(FakeRequest("GET", "/"))
+
+    val reviewController: TwoEyeReviewResultController =
       new TwoEyeReviewResultController(errorHandler, FakeTwoEyeReviewerIdentifierAction, formProvider, view, errorView, mockReviewService, messagesControllerComponents)
 
-    val fakeRequest = FakeRequest("POST", "/")
+    val fakePostRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest("POST", "/").withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString))
+    val fakeGetRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
   }
 
   "The two eye review controller" should {
@@ -59,18 +67,18 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Right(())))
 
-      val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
       status(result) shouldBe Status.SEE_OTHER
     }
 
-    "Return an Html document displaying the details of the review result" in new Test {
+    "Return No content for a successful post" in new Test {
 
       MockReviewService
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Right(())))
 
-      val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
       contentType(result) shouldBe None
     }
@@ -81,7 +89,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(NotFoundError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
       status(result) shouldBe Status.NOT_FOUND
     }
@@ -92,7 +100,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(NotFoundError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
@@ -103,7 +111,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(MalformedResponseError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
@@ -114,7 +122,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(MalformedResponseError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
@@ -125,7 +133,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(StaleDataError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
       status(result) shouldBe Status.NOT_FOUND
     }
@@ -136,7 +144,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(StaleDataError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
@@ -147,7 +155,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
@@ -158,11 +166,73 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id)(fakeRequest.withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString)))
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
 
+  }
+
+  "The two eye review controller onPageLoad method" should {
+
+    "display the correct view when the process is in a state to be completed" in new Test {
+
+      MockReviewService
+        .approval2iReviewCheck(id)
+        .returns(Future.successful(Right(())))
+
+      val result: Future[Result] = reviewController.onPageLoad(id)(fakeGetRequest)
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+      contentAsString(result) shouldBe view(id, form)(fakeGetRequest, messages).toString
+    }
+
+    "display the error view when the process is not in a state to be completed" in new Test {
+
+      MockReviewService
+        .approval2iReviewCheck(id)
+        .returns(Future.successful(Left(IncompleteDataError)))
+
+      val result: Future[Result] = reviewController.onPageLoad(id)(fakeGetRequest)
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+      contentAsString(result) shouldBe errorView(id)(fakeGetRequest, messages).toString
+    }
+    "return not found when the process cannot be found" in new Test {
+
+      MockReviewService
+        .approval2iReviewCheck(id)
+        .returns(Future.successful(Left(NotFoundError)))
+
+      val result: Future[Result] = reviewController.onPageLoad(id)(fakeGetRequest)
+
+      status(result) shouldBe Status.NOT_FOUND
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+    }
+    "return not found when the process data is no longer in a state expected" in new Test {
+
+      MockReviewService
+        .approval2iReviewCheck(id)
+        .returns(Future.successful(Left(StaleDataError)))
+
+      val result: Future[Result] = reviewController.onPageLoad(id)(fakeGetRequest)
+
+      status(result) shouldBe Status.NOT_FOUND
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+    }
+    "return Internal Server Error when an error is returned" in new Test {
+
+      MockReviewService
+        .approval2iReviewCheck(id)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val result: Future[Result] = reviewController.onPageLoad(id)(fakeGetRequest)
+
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+    }
   }
 
 }

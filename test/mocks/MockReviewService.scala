@@ -26,13 +26,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait MockReviewService extends MockFactory {
 
-  val mockReviewService = mock[ReviewService]
+  val mockReviewService: ReviewService = mock[ReviewService]
 
   object MockReviewService {
 
     def approval2iReview(id: String): CallHandler[Future[RequestOutcome[ApprovalProcessReview]]] =
       (mockReviewService
         .approval2iReview(_: String)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, *, *)
+
+    def approval2iReviewCheck(id: String): CallHandler[Future[RequestOutcome[Unit]]] =
+      (mockReviewService
+        .approval2iReviewCheck(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, *, *)
 
     def approval2iReviewComplete(id: String, userPid: String, userName: String, status: ApprovalStatus): CallHandler[Future[RequestOutcome[Unit]]] =

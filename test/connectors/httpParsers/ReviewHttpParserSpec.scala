@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
+import models.errors.{IncompleteDataError, InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
 import models.{ApprovalProcessReview, PageReviewDetail, PageReviewStatus, RequestOutcome, ReviewData}
 import org.scalatest.{Matchers, WordSpec}
 import play.api.libs.json.{JsValue, Json}
@@ -30,7 +30,7 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
   class GetReviewDetailsSetup(status: Int, optJson: Option[JsValue] = None) {
     private val httpMethod = "GET"
     private val url = "/"
-    val httpResponse = HttpResponse(status, optJson, Map())
+    val httpResponse: AnyRef with HttpResponse = HttpResponse(status, optJson, Map())
 
     def readResponse: RequestOutcome[ApprovalProcessReview] =
       getReviewDetailsHttpReads.read(httpMethod, url, httpResponse)
@@ -60,12 +60,12 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
       }
     }
     "the response is NOT_FOUND and has malformed error json" should {
-      "return MalformedResponseError" in new GetReviewDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
-        readResponse shouldBe Left(MalformedResponseError)
+      "return InternalServerError" in new GetReviewDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
+        readResponse shouldBe Left(InternalServerError)
       }
     }
     "the response is anything else" should {
-      "return InternalServerError" in new GetReviewDetailsSetup(INTERNAL_SERVER_ERROR) {
+      "return InternalServerError" in new GetReviewDetailsSetup(INTERNAL_SERVER_ERROR, Some(Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> ""))) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
@@ -74,7 +74,7 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
   class PostReviewCompleteSetup(status: Int, optJson: Option[JsValue] = None) {
     private val httpMethod = "GET"
     private val url = "/"
-    val httpResponse = HttpResponse(status, optJson, Map())
+    val httpResponse: AnyRef with HttpResponse = HttpResponse(status, optJson, Map())
 
     def readResponse: RequestOutcome[Unit] =
       postReviewCompleteHttpReads.read(httpMethod, url, httpResponse)
@@ -91,14 +91,19 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
         readResponse shouldBe Left(NotFoundError)
       }
     }
+    "the response is INCOMPLETE_DATA_ERROR" should {
+      "return IncompleteDataError" in new PostReviewCompleteSetup(BAD_REQUEST, Some(Json.obj("code" -> "INCOMPLETE_DATA_ERROR", "message" -> ""))) {
+        readResponse shouldBe Left(IncompleteDataError)
+      }
+    }
     "the response is NOT_FOUND with a code of STALE_DATA_ERROR" should {
       "return StaleDataError" in new PostReviewCompleteSetup(NOT_FOUND, Some(Json.obj("code" -> "STALE_DATA_ERROR", "message" -> ""))) {
         readResponse shouldBe Left(StaleDataError)
       }
     }
     "the response is NOT_FOUND and has malformed error json" should {
-      "return MalformedResponseError" in new PostReviewCompleteSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
-        readResponse shouldBe Left(MalformedResponseError)
+      "return InternalServerError" in new PostReviewCompleteSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
+        readResponse shouldBe Left(InternalServerError)
       }
     }
     "the response is anything else" should {
@@ -115,7 +120,7 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
     class GetReviewPageDetailsSetup(status: Int, optJson: Option[JsValue] = None) {
       private val httpMethod = "GET"
       private val url = "/"
-      val httpResponse = HttpResponse(status, optJson, Map())
+      val httpResponse: AnyRef with HttpResponse = HttpResponse(status, optJson, Map())
 
       def readResponse: RequestOutcome[PageReviewDetail] =
         getReviewPageDetailsHttpReads.read(httpMethod, url, httpResponse)
@@ -144,12 +149,12 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
       }
     }
     "the response is NOT_FOUND and has malformed error json" should {
-      "return MalformedResponseError" in new GetReviewPageDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
-        readResponse shouldBe Left(MalformedResponseError)
+      "return InternalServerError" in new GetReviewPageDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
+        readResponse shouldBe Left(InternalServerError)
       }
     }
     "the response is anything else" should {
-      "return InternalServerError" in new GetReviewPageDetailsSetup(INTERNAL_SERVER_ERROR) {
+      "return InternalServerError" in new GetReviewPageDetailsSetup(INTERNAL_SERVER_ERROR, Some(Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> ""))) {
         readResponse shouldBe Left(InternalServerError)
       }
     }

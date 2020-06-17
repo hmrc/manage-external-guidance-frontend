@@ -23,11 +23,11 @@
 @layout(messages("factCheckError.title")) {
 
   @govukBackLink(BackLink(href = routes.FactCheckController.approval(processId).toString,
-    content = Text(messages("backlink.label"))))
+    content = Text(messages("backlink.label")), attributes = Map("id" -> "back-link")))
 
-    <h1 class="govuk-heading-xl">@messages("factCheckError.heading")</h1>
-    <p class="govuk-body">@messages("factCheckError.info")</p>
-    <a href="@{routes.FactCheckController.approval(processId).toString}" aria-describedby="close" class="govuk-button" data-module="govuk-button">@messages("factCheckError.back")</a>
+    <h1 id="fact-check-error-heading" class="govuk-heading-xl">@messages("factCheckError.heading")</h1>
+    <p id="fact-check-error-info" class="govuk-body">@messages("factCheckError.info")</p>
+    <a id="fact-check-error-link" href="@{routes.FactCheckController.approval(processId).toString}" class="govuk-button" data-module="govuk-button">@messages("factCheckError.back")</a>
 }
 @{
  //$COVERAGE-OFF$

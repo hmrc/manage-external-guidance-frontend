@@ -16,6 +16,7 @@
 
 package connectors.httpParsers
 
+import models.errors._
 import play.api.Logger
 import play.api.libs.json._
 import uk.gov.hmrc.http.HttpResponse
@@ -42,6 +43,23 @@ trait HttpParser {
       case JsError(error) =>
         logger.error(s"Unable to parse JSON in response: $error")
         None
+    }
+
+
+    def checkErrorResponse: Error = {
+      validateJson[Error] match {
+        case Some(expectedError) => expectedError.code match {
+          case NotFoundError.code => NotFoundError
+          case StaleDataError.code => StaleDataError
+          case IncompleteDataError.code => IncompleteDataError
+          case BadRequestError.code => BadRequestError
+          case InvalidProcessError.code => InvalidProcessError
+          case _ => InternalServerError
+        }
+        case None =>
+          logger.error(s"Unable to parse error response from external-guidance. JSON Received: ${response.json}")
+          InternalServerError
+      }
     }
   }
 

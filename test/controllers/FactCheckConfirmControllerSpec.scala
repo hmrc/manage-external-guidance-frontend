@@ -20,10 +20,11 @@ import base.ControllerBaseSpec
 import config.ErrorHandler
 import controllers.actions.FakeFactCheckerIdentifierAction
 import mocks.MockReviewService
-import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
+import models.errors.{IncompleteDataError, InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
 import models.{ApprovalStatus, ReviewData}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{MimeTypes, Status}
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -36,12 +37,15 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
 
   private trait Test extends ReviewData {
 
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
 
     val view: fact_check_complete = injector.instanceOf[fact_check_complete]
     val errorView: fact_check_confirm_error = injector.instanceOf[fact_check_confirm_error]
+
+    def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
+    implicit val messages: Messages = messagesApi.preferred(FakeRequest("GET", "/"))
 
     val reviewController = new FactCheckConfirmController(
       errorHandler,
@@ -56,7 +60,7 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
 
   "The fact check controller when confirming the review" should {
 
-    "Return OK for a successful post of the review completion for a process" in new Test {
+    "display the correct view for a successful post of the review completion for a process" in new Test {
 
       MockReviewService
         .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
@@ -65,17 +69,20 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
 
       status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+      contentAsString(result) shouldBe view()(fakeRequest, messages).toString
     }
-
-    "Return an Html document displaying the details of the review result" in new Test {
+    "display the error view when the process is not in a state to be completed" in new Test {
 
       MockReviewService
         .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
-        .returns(Future.successful(Right(())))
+        .returns(Future.successful(Left(IncompleteDataError)))
 
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
 
-      contentType(result) shouldBe Some("text/html")
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+      contentAsString(result) shouldBe errorView(id)(fakeRequest, messages).toString
     }
 
     "Return the Http status Not found when the process review does not exist" in new Test {

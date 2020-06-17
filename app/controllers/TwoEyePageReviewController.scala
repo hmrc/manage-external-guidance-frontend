@@ -20,10 +20,10 @@ import config.ErrorHandler
 import controllers.actions.TwoEyeReviewerIdentifierAction
 import forms.TwoEyePageReviewFormProvider
 import javax.inject.{Inject, Singleton}
-import models.errors.{NotFoundError, StaleDataError}
-import models.forms.TwoEyePageReview
 import models.PageReviewDetail
 import models.PageReviewStatus._
+import models.errors.{NotFoundError, StaleDataError}
+import models.forms.TwoEyePageReview
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -50,11 +50,12 @@ class TwoEyePageReviewController @Inject() (
 
   def onPageLoad(processId: String, page: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
     reviewService.approval2iPageReview(processId, s"/$page") map {
-      case Right(data) if data.result.isDefined =>
-        val form: Form[TwoEyePageReview] = formProvider().bind(Map("answer" -> data.result.fold("")(_.toString)))
+      case Right(data) =>
+        val form: Form[TwoEyePageReview] = data.result.fold(formProvider()) { answer =>
+          formProvider().bind(Map("answer" -> answer.toString))
+        }
         Ok(view(processId, s"/$page", form))
 
-      case Right(_) => Ok(view(processId, s"/$page", formProvider()))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval 2i page review for process $processId and page /$page returned error $err")
