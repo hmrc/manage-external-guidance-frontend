@@ -17,6 +17,7 @@
 package connectors.httpParsers
 
 import base.BaseSpec
+import models.errors.{InternalServerError, InvalidProcessError}
 import play.api.http.{HttpVerbs, Status}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.http.HttpResponse
@@ -53,4 +54,19 @@ class HttpParserSpec extends BaseSpec with HttpVerbs with Status with HttpParser
     }
   }
 
+  "Calling checkErrorResponse with a valid JSON response" should {
+    "return InvalidProcessError" in {
+      val json = Json.obj("code" -> "BAD_REQUEST", "message" -> "")
+      val response = HttpResponse(BAD_REQUEST, Some(json))
+      response.checkErrorResponse shouldBe InvalidProcessError
+    }
+  }
+
+  "Calling checkErrorResponse with empty JSON response" should {
+    "return InternalServerError" in {
+      val json = Json.obj()
+      val response = HttpResponse(BAD_REQUEST, Some(json))
+      response.checkErrorResponse shouldBe InternalServerError
+    }
+  }
 }

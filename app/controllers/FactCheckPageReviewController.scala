@@ -50,11 +50,11 @@ class FactCheckPageReviewController @Inject() (
 
   def onPageLoad(processId: String, page: String): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
     reviewService.factCheckPageInfo(processId, s"/$page") map {
-      case Right(data) if data.result.isDefined =>
-        val form: Form[FactCheckPageReview] = formProvider().bind(Map("answer" -> data.result.fold("")(_.toString)))
+      case Right(data) =>
+        val form: Form[FactCheckPageReview] = data.result.fold(formProvider()) { answer =>
+          formProvider().bind(Map("answer" -> answer.toString))
+        }
         Ok(view(processId, s"/$page", form))
-
-      case Right(_) => Ok(view(processId, s"/$page", formProvider()))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval fact check page review for process $processId and page $page returned error $err")

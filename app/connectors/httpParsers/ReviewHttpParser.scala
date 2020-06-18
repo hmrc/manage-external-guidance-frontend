@@ -20,8 +20,7 @@ import models.errors._
 import models.{ApprovalProcessReview, PageReviewDetail, RequestOutcome}
 import play.api.Logger
 import play.api.http.Status._
-import play.api.libs.json.{JsError, JsSuccess}
-import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import uk.gov.hmrc.http.HttpReads
 
 object ReviewHttpParser extends HttpParser {
 
@@ -29,65 +28,33 @@ object ReviewHttpParser extends HttpParser {
 
   implicit val getReviewDetailsHttpReads: HttpReads[RequestOutcome[ApprovalProcessReview]] = {
     case (_, _, response) if response.status == OK =>
-      response.json.validate[ApprovalProcessReview] match {
-        case JsSuccess(data, _) => Right(data)
-        case JsError(_) =>
+      response.validateJson[ApprovalProcessReview] match {
+        case Some(data) => Right(data)
+        case None =>
           logger.error(s"Unable to parse review data response from external-guidance.")
           Left(MalformedResponseError)
       }
-    case (_, _, response) if response.status == NOT_FOUND =>
-      Left(checkErrorResponse(response))
-    case _ =>
-      logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
-      Left(InternalServerError)
+    case (_, _, response) => Left(response.checkErrorResponse)
   }
 
   implicit val postReviewCompleteHttpReads: HttpReads[RequestOutcome[Unit]] = {
     case (_, _, response) => response.status match {
       case NO_CONTENT => Right(())
-      case _ => Left(checkErrorResponse(response))
+      case _ => Left(response.checkErrorResponse)
     }
-    case _ =>
-      logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
-      Left(InternalServerError)
   }
 
   implicit val getReviewPageDetailsHttpReads: HttpReads[RequestOutcome[PageReviewDetail]] = {
-    case (_, _, response) if response.status == OK =>
-      response.json.validate[PageReviewDetail] match {
-        case JsSuccess(data, _) => Right(data)
-        case JsError(_) =>
-          logger.error(s"Unable to parse review page data response from external-guidance.")
-          Left(MalformedResponseError)
-      }
-    case (_, _, response) if response.status == NOT_FOUND =>
-      Left(checkErrorResponse(response))
-    case _ =>
-      logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
-      Left(InternalServerError)
-  }
-
-  private def extractError(response: HttpResponse): RequestOutcome[Error] = {
-    response.json.validate[Error] match {
-      case JsSuccess(error, _) => Right(error)
-      case JsError(_) =>
-        logger.error(s"Unable to parse response from external-guidance. Json received: ${response.json}")
-        Left(MalformedResponseError)
+    case (_, _, response) => response.status match {
+      case OK =>
+        response.validateJson[PageReviewDetail] match {
+          case Some(data) => Right(data)
+          case None =>
+            logger.error(s"Unable to parse review page data response from external-guidance.")
+            Left(MalformedResponseError)
+        }
+      case _ => Left(response.checkErrorResponse)
     }
   }
 
-  private def checkErrorResponse(response: HttpResponse): Error = {
-    extractError(response) match {
-      case Right(expectedError) => expectedError.code match {
-        case NotFoundError.code => NotFoundError
-        case StaleDataError.code => StaleDataError
-        case IncompleteDataError.code => IncompleteDataError
-        case BadRequestError.code => BadRequestError
-        case _ => InternalServerError
-      }
-      case Left(_) =>
-        logger.error(s"Unable to parse response from external-guidance. JSON Received: ${response.json}")
-        MalformedResponseError
-    }
-  }
 }

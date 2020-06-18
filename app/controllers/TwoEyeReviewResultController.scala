@@ -22,16 +22,13 @@ import forms.TwoEyeReviewResultFormProvider
 import javax.inject.{Inject, Singleton}
 import models.ApprovalStatus
 import models.errors.{IncompleteDataError, NotFoundError, StaleDataError}
+import models.requests.IdentifierRequest
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ReviewService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import controllers.actions.TwoEyeReviewerIdentifierAction
-import forms.TwoEyeReviewResultFormProvider
-import models.ApprovalStatus
-import models.requests.IdentifierRequest
 import views.html.{twoeye_confirm_error, twoeye_review_result}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -65,7 +62,7 @@ class TwoEyeReviewResultController @Inject() (
         logger.warn(s"The requested 2i review approval check for process $processId failed - stale data")
         NotFound(errorHandler.notFoundTemplate)
       case Left(err) =>
-        // Handle stale data, internal server and any unexpected errors
+        // Handle internal server and any unexpected errors
         logger.error(s"Request for approval 2i review process for process $processId returned error $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
