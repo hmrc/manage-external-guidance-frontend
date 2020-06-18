@@ -114,11 +114,11 @@ class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
   "Parsing an error summary response" should {
 
-    "return an invalid process error for a bad request" in new SummaryTest {
+    "return an invalid process error for an internal_server_response" in new SummaryTest {
 
-      val httpResponse: HttpResponse = HttpResponse(BAD_REQUEST)
+      val httpResponse: HttpResponse = HttpResponse(INTERNAL_SERVER_ERROR)
       private val result = getApprovalSummaryListHttpReads.read(GET, url, httpResponse)
-      result shouldBe Left(InvalidProcessError)
+      result shouldBe Left(InternalServerError)
     }
 
     "return an internal server error for an invalid response" in new Test {
