@@ -49,7 +49,7 @@
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a href="@{routes.TwoEyePageReviewController.onPageLoad(review.ocelotId, page.title.drop(1)).toString}" aria-describedby="page-@index">
-                  <span class="govuk-visually-hidden">@messages("2iReview.visuallyHiddenPage") @page.title</span>@page.title
+                  <span class="govuk-visually-hidden">@messages("2iReview.visuallyHiddenPage")</span>@page.title
               </a>
             </span>
             <span class="hmrc-status-tag" id="page-@index">@messages(s"pageReviewStatus.${page.status.toString}")</span>

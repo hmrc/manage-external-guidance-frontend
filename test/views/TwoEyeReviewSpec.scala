@@ -113,7 +113,7 @@ class TwoEyeReviewSpec extends ViewSpecBase {
               // The visually hidden text and link text are combined in the anchor text
               val url = a.text.drop(hiddenSpan.text.length)
 
-              a.text.dropRight(url.length) shouldBe s"${messages("2iReview.visuallyHiddenPage")} $url"
+              a.text.dropRight(url.length) shouldBe messages("2iReview.visuallyHiddenPage")
 
               approvalProcessReview.pages.find(_.title == url).fold(fail(s"Missing page with url $url")) { page =>
                 messages(s"pageReviewStatus.${page.status.toString}") shouldBe li.getElementById(statusId).text

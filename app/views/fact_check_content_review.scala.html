@@ -44,7 +44,7 @@
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
               <a href="@{routes.FactCheckPageReviewController.onPageLoad(review.ocelotId, page.title.drop(1)).toString}" aria-describedby="page-@index">
-                  <span class="govuk-visually-hidden">@messages("factCheck.visuallyHiddenPage") @page.title</span>@page.title
+                  <span class="govuk-visually-hidden">@messages("factCheck.visuallyHiddenPage")</span>@page.title
               </a>
             </span>
             <span class="hmrc-status-tag" id="page-@index">@messages(s"factCheck.pageReviewStatus.${page.status.toString}")</span>
