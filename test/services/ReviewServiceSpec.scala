@@ -21,6 +21,7 @@ import java.time.LocalDate
 import base.BaseSpec
 import mocks.MockReviewConnector
 import models._
+import models.audit.AuditInfo
 import models.errors.InternalServerError
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -34,6 +35,7 @@ class ReviewServiceSpec extends BaseSpec {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
     val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published)
+    val auditInfo: AuditInfo = AuditInfo("credential", id, "title", 1, "author", 2, 2)
 
     lazy val reviewService = new ReviewService(mockReviewConnector)
   }
@@ -83,15 +85,15 @@ class ReviewServiceSpec extends BaseSpec {
         val info: ApprovalProcessStatusChange = ApprovalProcessStatusChange("userPid", "userName", ApprovalStatus.ApprovedForPublishing)
         MockReviewConnector
           .approval2iReviewComplete(id, info)
-          .returns(Future.successful(Right(approvalProcessSummary)))
+          .returns(Future.successful(Right(auditInfo)))
 
-        val result: Future[RequestOutcome[ApprovalProcessSummary]] =
+        val result: Future[RequestOutcome[AuditInfo]] =
           reviewService.approval2iReviewComplete(id, "userPid", "userName", ApprovalStatus.ApprovedForPublishing)
 
         result.onComplete {
           case Success(response) =>
             response match {
-              case Right(approvalProcessSummary) => succeed
+              case Right(_) => succeed
               case Left(error) => fail(s"Unexpected error returned by mock review connector : ${error.toString}")
             }
           case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
@@ -105,12 +107,12 @@ class ReviewServiceSpec extends BaseSpec {
           .approval2iReviewComplete(id, info)
           .returns(Future.successful(Left(InternalServerError)))
 
-        val result: Future[RequestOutcome[ApprovalProcessSummary]] = reviewService.approval2iReviewComplete(id, "userPid", "userName", info.status)
+        val result: Future[RequestOutcome[AuditInfo]] = reviewService.approval2iReviewComplete(id, "userPid", "userName", info.status)
 
         result.onComplete {
           case Success(response) =>
             response match {
-              case Right(_) => fail("Approval process review returned when error expected")
+              case Right(_) => fail("AuditInfo returned when error expected")
               case Left(error) => error shouldBe InternalServerError
             }
           case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
@@ -206,9 +208,9 @@ class ReviewServiceSpec extends BaseSpec {
         val info: ApprovalProcessStatusChange = ApprovalProcessStatusChange("userPid", "userName", ApprovalStatus.WithDesignerForUpdate)
         MockReviewConnector
           .approvalFactCheckComplete(id, info)
-          .returns(Future.successful(Right(approvalProcessSummary)))
+          .returns(Future.successful(Right(auditInfo)))
 
-        val result: Future[RequestOutcome[ApprovalProcessSummary]] =
+        val result: Future[RequestOutcome[AuditInfo]] =
           reviewService.approvalFactCheckComplete(id, "userPid", "userName", ApprovalStatus.WithDesignerForUpdate)
 
         result.onComplete {
@@ -228,7 +230,7 @@ class ReviewServiceSpec extends BaseSpec {
           .approvalFactCheckComplete(id, info)
           .returns(Future.successful(Left(InternalServerError)))
 
-        val result: Future[RequestOutcome[ApprovalProcessSummary]] = reviewService.approvalFactCheckComplete(id, "userPid", "userName", info.status)
+        val result: Future[RequestOutcome[AuditInfo]] = reviewService.approvalFactCheckComplete(id, "userPid", "userName", info.status)
 
         result.onComplete {
           case Success(response) =>

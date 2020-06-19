@@ -17,7 +17,8 @@
 package mocks
 
 import connectors.ReviewConnector
-import models.{ApprovalProcessReview, ApprovalProcessStatusChange, ApprovalProcessSummary, PageReviewDetail, RequestOutcome}
+import models.audit.AuditInfo
+import models.{ApprovalProcessReview, ApprovalProcessStatusChange, PageReviewDetail, RequestOutcome}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
@@ -35,7 +36,7 @@ trait MockReviewConnector extends MockFactory {
         .approval2iReview(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, *, *)
 
-    def approval2iReviewComplete(id: String, info: ApprovalProcessStatusChange): CallHandler[Future[RequestOutcome[ApprovalProcessSummary]]] =
+    def approval2iReviewComplete(id: String, info: ApprovalProcessStatusChange): CallHandler[Future[RequestOutcome[AuditInfo]]] =
       (mockReviewConnector
         .approval2iReviewComplete(_: String, _: ApprovalProcessStatusChange)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, info, *, *)
@@ -67,7 +68,7 @@ trait MockReviewConnector extends MockFactory {
         .expects(id, *, *)
     }
 
-    def approvalFactCheckComplete(id: String, info: ApprovalProcessStatusChange): CallHandler[Future[RequestOutcome[ApprovalProcessSummary]]] = {
+    def approvalFactCheckComplete(id: String, info: ApprovalProcessStatusChange): CallHandler[Future[RequestOutcome[AuditInfo]]] = {
       (mockReviewConnector
         .approvalFactCheckComplete(_: String, _: ApprovalProcessStatusChange)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, info, *, *)

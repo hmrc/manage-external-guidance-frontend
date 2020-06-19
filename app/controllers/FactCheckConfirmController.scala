@@ -47,9 +47,10 @@ class FactCheckConfirmController @Inject()(
 
   def onConfirm(processId: String): Action[AnyContent] = factCheckIdentifierAction.async { implicit request =>
     reviewService.approvalFactCheckComplete(processId, request.credId, request.name, WithDesignerForUpdate).map {
-      case Right(ap) =>
-        auditService.audit(FactCheckCompleteEvent(request.credId, processId, ap.title))
+      case Right(auditInfo) =>
+        auditService.audit(FactCheckCompleteEvent(auditInfo))
         Ok(view())
+      case Left(IncompleteDataError) => Ok(errorView(processId))
       case Left(NotFoundError) =>
         logger.error(s"FactCheck confirmation: Unable to retrieve approval fact check for process $processId")
         NotFound(errorHandler.notFoundTemplate)

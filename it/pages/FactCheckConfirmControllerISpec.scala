@@ -15,6 +15,7 @@
  */
 package pages
 
+import models.audit.AuditInfo
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
@@ -32,7 +33,8 @@ class FactCheckConfirmControllerISpec extends IntegrationSpec {
           AuditStub.audit()
           AuthStub.authorise()
 
-          ExternalGuidanceStub.factCheckComplete(NO_CONTENT, Json.parse("{}"))
+          val auditInfo: AuditInfo = AuditInfo("pid", "oct90005", "title", 1, "author", 2, 2)
+          ExternalGuidanceStub.factCheckComplete(OK, Json.toJson(auditInfo))
 
           val response: WSResponse = await(request.get)
           response.status shouldBe OK
