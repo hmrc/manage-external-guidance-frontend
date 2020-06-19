@@ -26,17 +26,12 @@
   govukBackLink: GovukBackLink,
   formWithCSRF: FormWithCSRF,
   errorSummary: components.errorSummary,
-  inputRadio: components.inputRadio,
+  radiosWithSubHeading: components.radiosWithSubHeading,
   govukTextarea: GovukTextarea,
-  govukButton: GovukButton,
-  appConfig: AppConfig
+  govukButton: GovukButton
 )
 
 @(processId: String, page: String, form: Form[_])(implicit request: Request[_], messages: Messages)
-
-@viewLink(id: String, url: String) = {
-  <p><a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@processId@page">@messages("2iPageReview.viewGuidancePage")</a></p>
-}
 
 @layout(messages("2iPageReview.title")){
 
@@ -46,46 +41,13 @@
   @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, page.drop(1))) {
 
     @errorSummary(form.errors)
-
-    @inputRadio(
-      form = form,
-      fieldName = "answer",
-      legend = "2iPageReview.heading",
-      items = Seq(
-        RadioItem(
-          value = Some(Yes.toString),
-          content = Text(messages("radio.item.yes")),
-          checked = form("answer").value.contains(Yes.toString)
-        ),
-        RadioItem(
-          value = Some(No.toString),
-          content = Text(messages("radio.item.no")),
-          checked = form("answer").value.contains(No.toString)
-        )
-      ),
-      hint = Some(viewLink(processId, page)),
-      sectionHeading = Some(page),
-      inline = true,
-      legendAsHeading = true
-    )
-
-    @* TODO
-    @govukTextarea(
-      Textarea(
-        id = "comment",
-        name = "comment",
-        label = Label(
-        content = Text(messages("2iPageReview.textarea.label"))
-       ),
-       hint = Some(
-                    Hint(
-                      content = Text(messages("2iPageReview.textarea.hint"))
-                     )
-                  )
-      )
-
-    )
-    *@
+    
+    @radiosWithSubHeading(form("answer").value, 
+                page, 
+                processId, 
+                "answer", 
+                "2iPageReview.heading", 
+                "2iPageReview.viewGuidancePage")
 
     @govukButton( Button( content = Text( messages( "2iPageReview.saveReview" ) ) ) )
   }
