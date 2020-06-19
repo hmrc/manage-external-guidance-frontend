@@ -72,7 +72,6 @@ class TwoEyeReviewSpec extends ViewSpecBase {
         Option(uls(1).getElementsByTag("a").first).fold(fail("Missing Send confirmation link")) { a =>
           a.text shouldBe messages("2iReview.sendConfirmation")
         }
-        uls(1).getElementById("send-confirmation").text shouldBe messages("2iReview.sendConfirmationStatus")
       }
     }
 

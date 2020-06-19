@@ -32,6 +32,7 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
 
         AuditStub.audit()
         AuthStub.authorise()
+        ExternalGuidanceStub.approval2iReviewCheck(Status.NO_CONTENT, Json.parse("{}"))
 
         val request: WSRequest = buildRequest("/2i-result/oct90005")
         val response: WSResponse = await(request.get())

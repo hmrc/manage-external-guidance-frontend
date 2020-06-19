@@ -26,7 +26,6 @@ pageReviewStatus.Complete = Reviewed
 2iReview.visuallyHiddenPage = 2i review page with the URL
 2iReview.pagesReviewedConfirmationHeading = Confirm you''ve 2i-reviewed all pages.
 2iReview.sendConfirmation = Confirm
-2iReview.sendConfirmationStatus = Not reviewed
 
 2iPageReview.answer.error.required = You must confirm if the page meets GOV.UK standards
 # Under normal circumstances this error should not be raised (requires "comment" field key to be missing from the form data)
@@ -40,10 +39,10 @@ pageReviewStatus.Complete = Reviewed
 2iPageReview.saveReview = Save review
 2iPageReview.viewGuidancePage = View the page (opens in a new window or tab).
 
-2iReview.error.title = 2i content review
-2iReview.error.heading = Review all the pages to complete 2i
-2iReview.error.info = Some of the pages have not been reviewed. You will need to review all pages to complete 2i.
-2iReview.error.back = Go Back
+2iReviewError.title = Some pages have not been reviewed
+2iReviewError.heading = Some pages have not been reviewed
+2iReviewError.info = You must review all pages before you can continue.
+2iReviewError.back = Go Back
 
 2iReviewResult.title = What would you like to do?
 2iReviewResult.heading = What would you like to do?
@@ -62,7 +61,6 @@ factCheck.visuallyHiddenPage = Fact check page with the URL
 factCheck.pagesReviewedConfirmationHeading = Confirm you've fact checked all pages
 factCheck.sendConfirmation = Confirm
 factCheck.sendConfirmationComment = This will send your fact check responses to the designer
-factCheck.sendConfirmationStatus =
 
 factCheckPageReview.answer.error.required = You must confirm if the page is factually accurate
 factCheckPageReview.comment.error.required = No comment supplied
@@ -75,25 +73,15 @@ factCheckPageReview.textarea.hint = Add a hint here
 factCheckPageReview.saveReview = Save review
 factCheckPageReview.viewGuidancePage = View the page (opens in a new window or tab).
 
-factCheckComplete.title = You have completed the fact check
+factCheckComplete.title = Your responses have been sent to the designer
 factCheckComplete.heading = Your responses have been sent to the designer
 factCheckComplete.info = If you need to amend or add to the fact check, contact the designer.
 factCheckComplete.close = Close
 
-factCheck.error.title = Fact check content review
-factCheck.error.heading = Check all the pages to complete fact check
-factCheck.error.info = Some of the pages have not been fact checked. You will need to check all pages to complete fact check.
-factCheck.error.back = Go Back
-
-factCheckComplete.title = You have completed the fact check
-factCheckComplete.heading = Your responses have been sent to the designer
-factCheckComplete.info = If you need to amend or add to the fact check, contact the designer.
-factCheckComplete.close = Close
-
-factCheck.error.title = Fact check content review
-factCheck.error.heading = Check all the pages to complete fact check
-factCheck.error.info = Some of the pages have not been fact checked. You will need to check all pages to complete fact check.
-factCheck.error.back = Go Back
+factCheckError.title = Some pages have not been fact checked
+factCheckError.heading = Some pages have not been fact checked
+factCheckError.info = You must fact check all pages before you can send your responses to the designer.
+factCheckError.back = Go Back
 
 error.unauthorized401.pageTitle.service = You can’t access this service with this account
 error.unauthorized401.pageTitle.page = You can’t access this page with this account

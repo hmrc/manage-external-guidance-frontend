@@ -33,7 +33,7 @@ object ApprovalHttpParser extends HttpParser {
           Left(InternalServerError)
       }
     case (_, _, response) if response.status == BAD_REQUEST => Left(InvalidProcessError)
-    case _ => Left(InternalServerError)
+    case (_, _, response) => Left(response.checkErrorResponse)
   }
 
   implicit val getApprovalSummaryListHttpReads: HttpReads[RequestOutcome[List[ApprovalProcessSummary]]] = {
@@ -44,11 +44,7 @@ object ApprovalHttpParser extends HttpParser {
           Logger.error("Unable to parse successful response when retrieving summary list")
           Left(InternalServerError)
       }
-    case (_, _, response) if response.status == BAD_REQUEST =>
-      Left(InvalidProcessError)
-    case unknown =>
-      Logger.info(s"unexpected $unknown response received when retrieving summary list")
-      Left(InternalServerError)
+    case (_, _, response) => Left(response.checkErrorResponse)
   }
 
 }

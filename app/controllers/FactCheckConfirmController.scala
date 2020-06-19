@@ -20,13 +20,13 @@ import config.ErrorHandler
 import controllers.actions.FactCheckerIdentifierAction
 import javax.inject.{Inject, Singleton}
 import models.ApprovalStatus.WithDesignerForUpdate
-import models.errors.{NotFoundError, StaleDataError}
+import models.errors.{IncompleteDataError, NotFoundError, StaleDataError}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ReviewService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.fact_check_complete
+import views.html.{fact_check_complete, fact_check_confirm_error}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -35,6 +35,7 @@ class FactCheckConfirmController @Inject()(
     errorHandler: ErrorHandler,
     factCheckIdentifierAction: FactCheckerIdentifierAction,
     view: fact_check_complete,
+    errorView: fact_check_confirm_error,
     reviewService: ReviewService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
@@ -43,8 +44,10 @@ class FactCheckConfirmController @Inject()(
   val logger: Logger = Logger(getClass)
 
   def onConfirm(processId: String): Action[AnyContent] = factCheckIdentifierAction.async { implicit request =>
+
     reviewService.approvalFactCheckComplete(processId, request.credId, request.name, WithDesignerForUpdate).map {
       case Right(_) => Ok(view())
+      case Left(IncompleteDataError) => Ok(errorView(processId))
       case Left(NotFoundError) =>
         logger.error(s"FactCheck confirmation: Unable to retrieve approval fact check for process $processId")
         NotFound(errorHandler.notFoundTemplate)

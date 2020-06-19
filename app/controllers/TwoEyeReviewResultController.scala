@@ -21,19 +21,15 @@ import controllers.actions.TwoEyeReviewerIdentifierAction
 import forms.TwoEyeReviewResultFormProvider
 import javax.inject.{Inject, Singleton}
 import models.ApprovalStatus
-import models.errors.{NotFoundError, StaleDataError}
+import models.errors.{IncompleteDataError, NotFoundError, StaleDataError}
+import models.requests.IdentifierRequest
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ReviewService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-
-import controllers.actions.TwoEyeReviewerIdentifierAction
-import forms.TwoEyeReviewResultFormProvider
-import models.ApprovalStatus
-import models.requests.IdentifierRequest
-import views.html.twoeye_review_result
+import views.html.{twoeye_confirm_error, twoeye_review_result}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -44,17 +40,32 @@ class TwoEyeReviewResultController @Inject() (
     twoEyeReviewerIdentifierAction: TwoEyeReviewerIdentifierAction,
     formProvider: TwoEyeReviewResultFormProvider,
     view: twoeye_review_result,
+    errorView: twoeye_confirm_error,
     reviewService: ReviewService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  val logger = Logger(getClass)
+  val logger: Logger = Logger(getClass)
 
   def onPageLoad(processId: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
-    val form: Form[ApprovalStatus] = formProvider()
 
-    Future.successful(Ok(view(processId, form)))
+    reviewService.approval2iReviewCheck(processId) map {
+      case Right(()) =>
+        val form: Form[ApprovalStatus] = formProvider()
+        Ok(view(processId, form))
+      case Left(IncompleteDataError) => Ok(errorView(processId))
+      case Left(NotFoundError) =>
+        logger.error(s"Unable to check 2i review approval for process $processId not found")
+        NotFound(errorHandler.notFoundTemplate)
+      case Left(StaleDataError) =>
+        logger.warn(s"The requested 2i review approval check for process $processId failed - stale data")
+        NotFound(errorHandler.notFoundTemplate)
+      case Left(err) =>
+        // Handle internal server and any unexpected errors
+        logger.error(s"Request for approval 2i review process for process $processId returned error $err")
+        InternalServerError(errorHandler.internalServerErrorTemplate)
+    }
 
   }
 

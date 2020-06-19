@@ -79,4 +79,24 @@ trait ViewSpecBase extends BaseSpec with GuiceOneAppPerSuite {
   }
 
   def elementAttrs(el: Element): Map[String, String] = el.attributes.asScala.toList.map(attr => (attr.getKey, attr.getValue)).toMap
+
+  def checkTextOnElementById(doc: Document, elementId: String, expectedMessageKey: String, args: Any*): Unit = {
+    val optionElement: Option[Element] = Option(doc.getElementById(elementId))
+    optionElement match {
+      case Some(tag) => assertTextEqualsMessage(tag.text, expectedMessageKey, args)
+      case _ => fail
+    }
+  }
+
+  def checkAttributeOnElementById(doc: Document, elementId: String, attribute: String, expectedValue: String): Unit = {
+    val optionElement: Option[Element] = Option(doc.getElementById(elementId))
+    optionElement match {
+      case Some(tag) =>
+        val attrs = elementAttrs(tag)
+        attrs.get(attribute).fold(fail(s"Missing $attribute attribute")) { attr =>
+          attr shouldBe expectedValue
+        }
+      case _ => fail
+    }
+  }
 }
