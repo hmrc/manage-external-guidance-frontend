@@ -15,9 +15,7 @@
  *@
 
 @import controllers.routes._
-@import models.YesNoAnswer._
 
-@import config.AppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.helpers._
@@ -26,17 +24,12 @@
   govukBackLink: GovukBackLink,
   formWithCSRF: FormWithCSRF,
   errorSummary: components.errorSummary,
-  inputRadio: components.inputRadio,
+  radiosWithSubHeading: components.radiosWithSubHeading,
   govukTextarea: GovukTextarea,
-  govukButton: GovukButton,
-  appConfig: AppConfig
+  govukButton: GovukButton
 )
 
 @(processId: String, page: String, form: Form[_])(implicit request: Request[_], messages: Messages)
-
-@viewLink(id: String, url: String) = {
-  <p><a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@processId@page">@messages("factCheckPageReview.viewGuidancePage")</a></p>
-}
 
 @layout(messages("factCheckPageReview.title")){
 
@@ -47,50 +40,18 @@
 
     @errorSummary(form.errors)
 
-    @inputRadio(
-      form = form,
-      fieldName = "answer",
-      legend = "factCheckPageReview.heading",
-      items = Seq(
-        RadioItem(
-          value = Some(Yes.toString),
-          content = Text(messages("radio.item.yes")),
-          checked = form("answer").value.contains(Yes.toString)
-        ),
-        RadioItem(
-          value = Some(No.toString),
-          content = Text(messages("radio.item.no")),
-          checked = form("answer").value.contains(No.toString)
-        )
-      ),
-      hint = Some(viewLink(processId, page)),
-      sectionHeading = Some(page),
-      inline = true,
-      legendAsHeading = true
-    )
-
-    @* TODO
-    @govukTextarea(
-      Textarea(
-        id = "comment",
-        name = "comment",
-        label = Label(
-        content = Text(messages("factCheckPageReview.textarea.label"))
-       ),
-       hint = Some(
-                    Hint(
-                      content = Text(messages("factCheckPageReview.textarea.hint"))
-                     )
-                  )
-      )
-
-    )
-    *@
+    @radiosWithSubHeading(form("answer").value,
+                page, 
+                processId, 
+                "answer", 
+                "factCheckPageReview.heading", 
+                "factCheckPageReview.viewGuidancePage")    
 
     @govukButton( Button( content = Text( messages( "factCheckPageReview.saveReview" ) ) ) )
   }
 
 }
+
 @{
 //$COVERAGE-OFF$
 }

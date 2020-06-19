@@ -24,7 +24,6 @@
   fieldName: String,
   legend: String,
   items: Seq[RadioItem],
-  sectionHeading: Option[String] = None,
   legendAsHeading: Boolean = true,
   hint: Option[Html] = None,
   inline: Boolean = false
@@ -35,7 +34,7 @@
   name = fieldName,
   fieldset = Some(Fieldset(
     legend = Some(Legend(
-      content = HtmlContent(hmrcPageHeading(PageHeading(text = messages(legend), section = sectionHeading))),
+      content = Text(messages(legend)),
       isPageHeading = legendAsHeading
     ))
   )),
