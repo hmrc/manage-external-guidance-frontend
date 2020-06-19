@@ -16,8 +16,6 @@
 
 package connectors
 
-import java.time.LocalDate
-
 import base.BaseSpec
 import mocks.{MockAppConfig, MockHttpClient}
 import models._
@@ -38,7 +36,7 @@ class ReviewConnectorSpec extends BaseSpec {
     val connector: ReviewConnector = new ReviewConnector(mockHttpClient, MockAppConfig)
 
     val reviewStatusChange: ApprovalProcessStatusChange = ApprovalProcessStatusChange("user", "email", ApprovalStatus.ApprovedForPublishing)
-    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published)
+    val auditInfo: AuditInfo = AuditInfo("pid", "id", "title", 1, "author", 2, 2)
 
   }
   private trait TwoEyeReviewTest extends Test {
@@ -117,16 +115,16 @@ class ReviewConnectorSpec extends BaseSpec {
 
   "Calling method approval2iReviewComplete with a valid id and payload" should {
 
-    "Return ApprovalProcessSummary for a successful call" in new TwoEyeReviewTest {
+    "Return AuditInfo details for a successful call" in new TwoEyeReviewTest {
 
       MockedHttpClient
         .post(endpoint, reviewStatusChange)
-        .returns(Future.successful(Right(approvalProcessSummary)))
+        .returns(Future.successful(Right(auditInfo)))
 
       val response: RequestOutcome[AuditInfo] =
         await(connector.approval2iReviewComplete(id, reviewStatusChange))
 
-      response shouldBe Right(approvalProcessSummary)
+      response shouldBe Right(auditInfo)
 
     }
 
@@ -247,16 +245,16 @@ class ReviewConnectorSpec extends BaseSpec {
 
   "Calling method approvalFactCheckComplete with a valid id and payload" should {
 
-    "Return true for a successful call" in new FactCheckTest {
+    "Return AuditInfo details for a successful call" in new FactCheckTest {
 
       MockedHttpClient
         .post(endpoint, reviewStatusChange)
-        .returns(Future.successful(Right(approvalProcessSummary)))
+        .returns(Future.successful(Right(auditInfo)))
 
       val response: RequestOutcome[AuditInfo] =
         await(connector.approvalFactCheckComplete(id, reviewStatusChange))
 
-      response shouldBe Right(approvalProcessSummary)
+      response shouldBe Right(auditInfo)
 
     }
 
