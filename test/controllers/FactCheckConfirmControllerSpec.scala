@@ -47,13 +47,8 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
     implicit val messages: Messages = messagesApi.preferred(FakeRequest("GET", "/"))
 
-    val reviewController = new FactCheckConfirmController(
-      errorHandler,
-      FakeFactCheckerIdentifierAction,
-      view,
-      errorView,
-      mockReviewService,
-      messagesControllerComponents)
+    val reviewController =
+      new FactCheckConfirmController(errorHandler, FakeFactCheckerIdentifierAction, view, errorView, mockReviewService, messagesControllerComponents)
 
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
   }

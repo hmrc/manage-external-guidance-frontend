@@ -68,6 +68,7 @@ class TwoEyeReviewSpec extends ViewSpecBase {
 
         val uls = ol.getElementsByTag("ul").asScala.toList
         uls.size shouldBe 2
+
         Option(uls(1).getElementsByTag("a").first).fold(fail("Missing Send confirmation link")) { a =>
           a.text shouldBe messages("2iReview.sendConfirmation")
         }
@@ -108,9 +109,15 @@ class TwoEyeReviewSpec extends ViewSpecBase {
         listItems.foreach { li =>
           val a = li.getElementsByTag("a").first
           elementAttrs(a).get("aria-describedby").fold(fail("Missing aria-describedby on file link")) { statusId =>
-            val url = a.text
-            approvalProcessReview.pages.find(_.title == url).fold(fail(s"Missing page with url $url")) { page =>
-              messages(s"pageReviewStatus.${page.status.toString}") shouldBe li.getElementById(statusId).text
+            Option(a.getElementsByTag("span").first).fold(fail("Missing span element in href")) { hiddenSpan =>
+              // The visually hidden text and link text are combined in the anchor text
+              val url = a.text.drop(hiddenSpan.text.length)
+
+              a.text.dropRight(url.length) shouldBe messages("2iReview.visuallyHiddenPage")
+
+              approvalProcessReview.pages.find(_.title == url).fold(fail(s"Missing page with url $url")) { page =>
+                messages(s"pageReviewStatus.${page.status.toString}") shouldBe li.getElementById(statusId).text
+              }
             }
           }
         }
