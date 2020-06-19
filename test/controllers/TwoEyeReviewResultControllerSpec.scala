@@ -23,8 +23,8 @@ import config.ErrorHandler
 import controllers.actions.FakeTwoEyeReviewerIdentifierAction
 import forms.TwoEyeReviewResultFormProvider
 import mocks.{MockAuditService, MockReviewService}
-import models.audit.TwoEyeReviewCompleteEvent
-import models.errors.{IncompleteDataError, InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
+import models.audit.{AuditInfo, TwoEyeReviewCompleteEvent}
+import models.errors._
 import models.{ApprovalProcessSummary, ApprovalStatus, ReviewData}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.Form
@@ -51,7 +51,8 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     val form: Form[ApprovalStatus] = formProvider()
 
     val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published)
-    val event: TwoEyeReviewCompleteEvent = TwoEyeReviewCompleteEvent(credential, id, "title")
+    val auditInfo: AuditInfo = AuditInfo(credential, id, "title", 1, "author", 2, 2)
+    val event: TwoEyeReviewCompleteEvent = TwoEyeReviewCompleteEvent(auditInfo)
     def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
     val reviewController = new TwoEyeReviewResultController(
@@ -76,7 +77,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
       MockAuditService.audit(event)
       MockReviewService
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
-        .returns(Future.successful(Right(approvalProcessSummary)))
+        .returns(Future.successful(Right(auditInfo)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
@@ -88,7 +89,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
       MockAuditService.audit(event)
       MockReviewService
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
-        .returns(Future.successful(Right(approvalProcessSummary)))
+        .returns(Future.successful(Right(auditInfo)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 

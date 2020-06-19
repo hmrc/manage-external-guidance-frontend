@@ -16,16 +16,17 @@
 
 package services
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import java.util.UUID
-import uk.gov.hmrc.http.HeaderCarrier
-import org.joda.time.DateTime
+
 import base.BaseSpec
-import play.api.libs.json._
 import mocks.{MockAppConfig, MockAuditConnector}
+import models.audit.{TwoEyeReviewCompleteEvent, _}
+import org.joda.time.DateTime
+import play.api.libs.json._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import models.audit.TwoEyeReviewCompleteEvent
-import models.audit._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class AuditServiceSpec extends BaseSpec {
 
@@ -35,8 +36,11 @@ class AuditServiceSpec extends BaseSpec {
     val PID: String = "SomeonePID"
     val processID: String = "ext90002"
     val processTitle: String = "A process title"
+    val processVersion: Int = 1
+    val ocelotVersion: Int = 3
+    val ocelotLastUpdate: Long = 10000000
+    val ocelotAuthor: String = "12345"
     val submissionTime: DateTime = new DateTime(2020, 4, 23, 13, 0, 0)
-
     val eventUUID: String = UUID.randomUUID().toString
 
     def tagsData(name: String, path: Option[String] = None): Map[String, String] =
@@ -50,9 +54,10 @@ class AuditServiceSpec extends BaseSpec {
         "clientPort" -> "-",
         "transactionName" -> name
       )
-    val twoEyeReviewCompleteEvent: TwoEyeReviewCompleteEvent = TwoEyeReviewCompleteEvent(PID, processID, processTitle)
-    val factCheckCompleteEvent: FactCheckCompleteEvent = FactCheckCompleteEvent(PID, processID, processTitle)
-    val publishedEvent: PublishedEvent = PublishedEvent(PID, processID, processTitle)
+    val auditInfo: AuditInfo = AuditInfo(PID, processID, processTitle, processVersion, ocelotAuthor, ocelotLastUpdate, ocelotVersion)
+    val twoEyeReviewCompleteEvent: TwoEyeReviewCompleteEvent = TwoEyeReviewCompleteEvent(auditInfo)
+    val factCheckCompleteEvent: FactCheckCompleteEvent = FactCheckCompleteEvent(auditInfo)
+    val publishedEvent: PublishedEvent = PublishedEvent(auditInfo)
   }
 
   "The Audit service" should {
@@ -74,7 +79,7 @@ class AuditServiceSpec extends BaseSpec {
 
     }
 
-    "Accept an FactCheckCompleteEvent object" in new Test {
+    "Accept a FactCheckCompleteEvent object" in new Test {
       val details: JsValue = Json.toJson(factCheckCompleteEvent)
       val path: Option[String] = Some("/guidance/approve")
       val extendedEvent: ExtendedDataEvent = ExtendedDataEvent(

@@ -16,8 +16,9 @@
 
 package connectors.httpParsers
 
-import models.errors.{InternalServerError, MalformedResponseError}
-import models.{ApprovalProcessReview, ApprovalProcessSummary, PageReviewDetail, RequestOutcome}
+import models.audit.AuditInfo
+import models.errors.MalformedResponseError
+import models.{ApprovalProcessReview, PageReviewDetail, RequestOutcome}
 import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads
@@ -35,17 +36,11 @@ object ReviewHttpParser extends HttpParser {
           Left(MalformedResponseError)
       }
     case (_, _, response) => Left(response.checkErrorResponse)
-    case _ =>
-      logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
-      Left(InternalServerError)
   }
 
   implicit val postReviewCompleteHttpReads: HttpReads[RequestOutcome[Unit]] = {
-    case (method, url, response) if response.status == NO_CONTENT => Right(())
-    case (method, url, response) => Left(response.checkErrorResponse)
-    case _ =>
-      logger.error(s"Received service unavailable response from external-guidance. Service could be having issues.")
-      Left(InternalServerError)
+    case (_, _, response) if response.status == NO_CONTENT => Right(())
+    case (_, _, response) => Left(response.checkErrorResponse)
   }
 
   implicit val getReviewPageDetailsHttpReads: HttpReads[RequestOutcome[PageReviewDetail]] = {
@@ -61,16 +56,13 @@ object ReviewHttpParser extends HttpParser {
     }
   }
 
-  implicit val getApprovalSummaryHttpReads: HttpReads[RequestOutcome[ApprovalProcessSummary]] = {
+  implicit val getAuditInfoHttpReads: HttpReads[RequestOutcome[AuditInfo]] = {
     case (_, _, response) if response.status == OK =>
-      response.validateJson[ApprovalProcessSummary] match {
+      response.validateJson[AuditInfo] match {
         case Some(result) => Right(result)
         case None => Left(MalformedResponseError)
       }
     case (_, _, response) => Left(response.checkErrorResponse)
-    case unknown =>
-      Logger.info(s"unexpected $unknown response received when retrieving summary list")
-      Left(InternalServerError)
   }
 
 }

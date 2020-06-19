@@ -18,7 +18,8 @@ package services
 
 import connectors.ReviewConnector
 import javax.inject.{Inject, Singleton}
-import models.{ApprovalProcessReview, ApprovalProcessStatusChange, ApprovalProcessSummary, ApprovalStatus, PageReviewDetail, RequestOutcome}
+import models._
+import models.audit.AuditInfo
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,7 +36,7 @@ class ReviewService @Inject() (reviewConnector: ReviewConnector) {
   def approval2iReviewComplete(id: String, userPid: String, userName: String, status: ApprovalStatus)(
       implicit ex: ExecutionContext,
       hc: HeaderCarrier
-  ): Future[RequestOutcome[ApprovalProcessSummary]] =
+  ): Future[RequestOutcome[AuditInfo]] =
     reviewConnector.approval2iReviewComplete(id, ApprovalProcessStatusChange(userPid, userName, status))
 
   def approval2iPageReview(id: String, pageUrl: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[PageReviewDetail]] =
@@ -56,7 +57,7 @@ class ReviewService @Inject() (reviewConnector: ReviewConnector) {
   def approvalFactCheckComplete(id: String, userPid: String, userName: String, status: ApprovalStatus)(
       implicit ex: ExecutionContext,
       hc: HeaderCarrier
-  ): Future[RequestOutcome[ApprovalProcessSummary]] =
+  ): Future[RequestOutcome[AuditInfo]] =
     reviewConnector.approvalFactCheckComplete(id, ApprovalProcessStatusChange(userPid, userName, status))
 
   def factCheckPageInfo(id: String, pageUrl: String)(implicit ex: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[PageReviewDetail]] =

@@ -16,7 +16,8 @@
 
 package mocks
 
-import models.{ApprovalProcessReview, ApprovalProcessSummary, ApprovalStatus, PageReviewDetail, RequestOutcome}
+import models.audit.AuditInfo
+import models.{ApprovalProcessReview, ApprovalStatus, PageReviewDetail, RequestOutcome}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import services.ReviewService
@@ -43,7 +44,7 @@ trait MockReviewService extends MockFactory {
     def approval2iReviewComplete(id: String,
                                  userPid: String,
                                  userName: String,
-                                 status: ApprovalStatus): CallHandler[Future[RequestOutcome[ApprovalProcessSummary]]] =
+                                 status: ApprovalStatus): CallHandler[Future[RequestOutcome[AuditInfo]]] =
       (mockReviewService
         .approval2iReviewComplete(_: String, _: String, _: String, _: ApprovalStatus)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, userPid, userName, status, *, *)
@@ -76,7 +77,7 @@ trait MockReviewService extends MockFactory {
     def approvalFactCheckComplete(id: String,
                                   userId: String,
                                   userName: String,
-                                  status: ApprovalStatus): CallHandler[Future[RequestOutcome[ApprovalProcessSummary]]] =
+                                  status: ApprovalStatus): CallHandler[Future[RequestOutcome[AuditInfo]]] =
       (mockReviewService
         .approvalFactCheckComplete(_: String, _: String, _:String, _: ApprovalStatus)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, userId, userName, status, *, *)

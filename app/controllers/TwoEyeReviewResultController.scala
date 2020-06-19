@@ -80,10 +80,10 @@ class TwoEyeReviewResultController @Inject() (
         (formWithErrors: Form[_]) => { Future.successful(BadRequest(view(processId, formWithErrors))) },
         status => {
           reviewService.approval2iReviewComplete(processId, request.credId, request.name, status).map {
-            case Right(ap) =>
-              auditService.audit(TwoEyeReviewCompleteEvent(request.credId, processId, ap.title))
+            case Right(auditInfo) =>
+              auditService.audit(TwoEyeReviewCompleteEvent(auditInfo))
               if (status == ApprovalStatus.Published) {
-                auditService.audit(PublishedEvent(request.credId, processId, ap.title))
+                auditService.audit(PublishedEvent(auditInfo))
               }
               Redirect(routes.AdminController.approvalSummaries())
             case Left(NotFoundError) =>

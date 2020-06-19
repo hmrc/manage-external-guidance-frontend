@@ -19,7 +19,8 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.ReviewHttpParser._
 import javax.inject.{Inject, Singleton}
-import models.{ApprovalProcessReview, ApprovalProcessStatusChange, ApprovalProcessSummary, PageReviewDetail, RequestOutcome}
+import models.audit.AuditInfo
+import models.{ApprovalProcessReview, ApprovalProcessStatusChange, PageReviewDetail, RequestOutcome}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -45,11 +46,11 @@ class ReviewConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
   def approval2iReviewComplete(
       id: String,
       info: ApprovalProcessStatusChange
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalProcessSummary]] = {
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[AuditInfo]] = {
 
     val reviewEndPoint: String = s"${appConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-review"
 
-    httpClient.POST[ApprovalProcessStatusChange, RequestOutcome[ApprovalProcessSummary]](reviewEndPoint, info)
+    httpClient.POST[ApprovalProcessStatusChange, RequestOutcome[AuditInfo]](reviewEndPoint, info)
   }
 
   def approval2iReviewPageInfo(id: String, pageUrl: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[PageReviewDetail]] = {
@@ -80,11 +81,11 @@ class ReviewConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
   def approvalFactCheckComplete(
       id: String,
       info: ApprovalProcessStatusChange
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalProcessSummary]] = {
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[AuditInfo]] = {
 
     val reviewEndPoint: String = s"${appConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/fact-check"
 
-    httpClient.POST[ApprovalProcessStatusChange, RequestOutcome[ApprovalProcessSummary]](reviewEndPoint, info)
+    httpClient.POST[ApprovalProcessStatusChange, RequestOutcome[AuditInfo]](reviewEndPoint, info)
   }
 
   def factCheckPageInfo(id: String, pageUrl: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[PageReviewDetail]] = {
