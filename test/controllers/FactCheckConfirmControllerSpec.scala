@@ -16,16 +16,13 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import base.ControllerBaseSpec
 import config.ErrorHandler
 import controllers.actions.FakeFactCheckerIdentifierAction
 import mocks.{MockAuditService, MockReviewService}
 import models.audit.{AuditInfo, FactCheckCompleteEvent}
 import models.errors._
-import models.{ApprovalProcessSummary, ApprovalStatus, ReviewData}
-import models.audit.FactCheckCompleteEvent
+import models.{ApprovalStatus, ReviewData}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{Messages, MessagesApi}
@@ -46,7 +43,6 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
 
     val view: fact_check_complete = injector.instanceOf[fact_check_complete]
-    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary(id, "title", LocalDate.now, ApprovalStatus.Published)
     val errorView: fact_check_confirm_error = injector.instanceOf[fact_check_confirm_error]
     val auditInfo: AuditInfo = AuditInfo(credential, id, "title", 1, "author", 2, 2)
     val event: FactCheckCompleteEvent = FactCheckCompleteEvent(auditInfo)
