@@ -88,6 +88,20 @@ class ApprovalsListSpec extends ViewSpecBase {
       }
     }
 
+    "define a link to the general comments and feedback page" in new Test {
+
+      Option(doc.getElementsByClass("govuk-grid-column-two-thirds").first).fold(fail("Missing layout grid")) { gridDiv =>
+        Option(gridDiv.getElementsByTag("a").first).fold(fail("No anchor elements found in layout grid")) { a =>
+          a.text shouldBe messages("approvals.commentsAndFeedback")
+
+          elementAttrs(a).get("class").fold(fail("Missing class attribute on comments and feedback link")) { clss =>
+            clss shouldBe "govuk-link"
+          }
+        }
+      }
+
+    }
+
     "include a table entry for each approval summary in order" in new Test {
 
       Option(doc.getElementsByTag("tbody").first).fold(fail("Missing table body")) { tbody =>

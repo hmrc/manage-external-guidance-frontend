@@ -35,6 +35,7 @@ trait AppConfig {
   val publisherRole: String
   val gtmContainer: String
   val viewApprovalUrl: String
+  val commentsAndFeedbackUrl: String
 }
 
 @Singleton
@@ -48,6 +49,7 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   val reportAProblemNonJSUrl: String = s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
   lazy val externalGuidanceBaseUrl: String = servicesConfig.baseUrl("external-guidance")
   val appName: String = config.get[String]("appName")
+  val commentsAndFeedbackUrl = config.get[String]("appLinks.commentsAndFeedbackUrl")
   lazy val loginUrl: String = servicesConfig.getString("strideAuth.login.url")
   lazy val continueUrl: String = servicesConfig.getString("strideAuth.login.continueUrl")
   lazy val designerRole: String = servicesConfig.getString("strideAuth.roles.designer")

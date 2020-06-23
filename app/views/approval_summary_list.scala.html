@@ -21,7 +21,7 @@
 @import java.time.format.DateTimeFormatter
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(layout: main_layout, govukTable : GovukTable)
+@this(layout: main_layout, govukTable : GovukTable, appConfig: AppConfig)
 
 @(summaries: Seq[ApprovalProcessSummary])(implicit request: Request[_], messages: Messages)
 
@@ -36,6 +36,10 @@
 @layout(messages("approvals.tableTitle")) {
 
 <h1 class="govuk-heading-xl">@messages("approvals.tableTitle")</h1>
+
+<p class="govuk-body">
+ <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.commentsAndFeedbackUrl">@messages("approvals.commentsAndFeedback")</a>
+</p>
 
 @govukTable(Table(
     for(summary <- summaries) yield {
