@@ -16,27 +16,31 @@
 
 package models.audit
 
-import org.joda.time.format.DateTimeFormat
 import org.joda.time.LocalDate
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import play.api.libs.json.{JsValue, Json, Writes}
 import utils.JsonObjectSugar
 
-case class ReadyForPublishingEvent(PID: String, processID: String, processTitle: String) extends AuditEvent {
+case class PublishedEvent(auditInfo: AuditInfo) extends AuditEvent {
   val submittedDate: LocalDate = LocalDate.now
-  override val transactionName: String = "readyForPublishing"
+  override val transactionName: String = "published"
   override val detail: JsValue = Json.toJson(this)
-  override val auditType: String = "readyForPublishing"
+  override val auditType: String = "published"
 }
 
-object ReadyForPublishingEvent extends JsonObjectSugar {
-  val dateFormatter = DateTimeFormat.forPattern("YYYY-MM-dd")
+object PublishedEvent extends JsonObjectSugar {
+  val dateFormatter: DateTimeFormatter = DateTimeFormat.forPattern("YYYY-MM-dd")
 
-  implicit val writes: Writes[ReadyForPublishingEvent] = Writes { event =>
+  implicit val writes: Writes[PublishedEvent] = Writes { event =>
     jsonObjNoNulls(
-      "PID" -> event.PID,
-      "processID" -> event.processID,
+      "PID" -> event.auditInfo.pid,
+      "processID" -> event.auditInfo.processId,
       "submittedDate" -> event.submittedDate.toString(dateFormatter),
-      "processTitle" -> event.processTitle
+      "processTitle" -> event.auditInfo.processTitle,
+      "processVersion" -> event.auditInfo.processVersion,
+      "ocelotAuthor" -> event.auditInfo.ocelotAuthor,
+      "ocelotLastUpdate" -> event.auditInfo.ocelotLastUpdate,
+      "ocelotVersion" -> event.auditInfo.ocelotVersion
     )
   }
 }

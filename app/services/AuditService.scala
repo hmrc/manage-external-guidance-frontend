@@ -49,7 +49,7 @@ class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnect
 
   def audit(event: AuditEvent, path: Option[String] = None)(implicit hc: HeaderCarrier, context: ExecutionContext): Unit =
     auditConnector.sendExtendedEvent(toExtendedDataEvent(event, path)).map {
-      case Success => logger.info(s"Audit successful")
+      case Success => logger.info(s"Audit successful: $path - $event ")
       case Failure(err, _) => logger.warn(s"Audit failed with error $err")
       case Disabled => logger.info("Auditing Disabled")
     }

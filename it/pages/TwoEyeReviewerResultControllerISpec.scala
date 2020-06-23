@@ -16,6 +16,7 @@
 package pages
 
 import models.ApprovalStatus
+import models.audit.AuditInfo
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
@@ -61,18 +62,27 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
   "POST /2i-result/id" when {
 
     "user is authorised" when {
-
-      "user selects a valid selection" should {
-
+      "user selects to send guidance to designer" should {
         "receive a redirect" in {
-
           AuditStub.audit()
           AuthStub.authorise()
-
-          ExternalGuidanceStub.approval2iReviewComplete(Status.NO_CONTENT, Json.parse("{}"))
+          val auditInfo: AuditInfo = AuditInfo("pid", "oct90005", "title", 1, "author", 2, 2)
+          ExternalGuidanceStub.approval2iReviewComplete(Status.OK, Json.toJsObject(auditInfo))
 
           val request: WSRequest = buildRequest("/2i-result/oct90005")
           val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.WithDesignerForUpdate.toString)))
+          response.status shouldBe Status.SEE_OTHER
+        }
+      }
+      "user selects to publish guidance" should {
+        "receive a redirect" in {
+          AuditStub.audit()
+          AuthStub.authorise()
+          val auditInfo: AuditInfo = AuditInfo("pid", "oct90005", "title", 1, "author", 2, 2)
+          ExternalGuidanceStub.approval2iReviewComplete(Status.OK, Json.toJsObject(auditInfo))
+
+          val request: WSRequest = buildRequest("/2i-result/oct90005")
+          val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.Published.toString)))
           response.status shouldBe Status.SEE_OTHER
         }
       }

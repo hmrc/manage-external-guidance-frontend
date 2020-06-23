@@ -16,13 +16,16 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import base.ControllerBaseSpec
 import config.ErrorHandler
 import controllers.actions.FakeTwoEyeReviewerIdentifierAction
 import forms.TwoEyeReviewResultFormProvider
-import mocks.MockReviewService
-import models.errors.{IncompleteDataError, InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
-import models.{ApprovalStatus, ReviewData}
+import mocks.{MockAuditService, MockReviewService}
+import models.audit.{AuditInfo, TwoEyeReviewCompleteEvent}
+import models.errors._
+import models.{ApprovalProcessSummary, ApprovalStatus, ReviewData}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.Form
 import play.api.http.{MimeTypes, Status}
@@ -35,25 +38,33 @@ import views.html.{twoeye_confirm_error, twoeye_review_result}
 
 import scala.concurrent.Future
 
-class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuite with MockReviewService {
+class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuite with MockReviewService with MockAuditService {
 
   private trait Test extends ReviewData {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
-
     val view: twoeye_review_result = injector.instanceOf[twoeye_review_result]
     val errorView: twoeye_confirm_error = injector.instanceOf[twoeye_confirm_error]
     val formProvider: TwoEyeReviewResultFormProvider = new TwoEyeReviewResultFormProvider()
     val form: Form[ApprovalStatus] = formProvider()
 
+    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published)
+    val auditInfo: AuditInfo = AuditInfo(credential, id, "title", 1, "author", 2, 2)
+    val event: TwoEyeReviewCompleteEvent = TwoEyeReviewCompleteEvent(auditInfo)
     def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
+    val reviewController = new TwoEyeReviewResultController(
+      errorHandler,
+      FakeTwoEyeReviewerIdentifierAction,
+      formProvider,
+      view,
+      errorView,
+      mockReviewService,
+      mockAuditService,
+      messagesControllerComponents)
     implicit val messages: Messages = messagesApi.preferred(FakeRequest("GET", "/"))
-
-    val reviewController: TwoEyeReviewResultController =
-      new TwoEyeReviewResultController(errorHandler, FakeTwoEyeReviewerIdentifierAction, formProvider, view, errorView, mockReviewService, messagesControllerComponents)
 
     val fakePostRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest("POST", "/").withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString))
     val fakeGetRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
@@ -63,20 +74,22 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
 
     "Return SEE_OTHER for a successful post of the review completion for a process" in new Test {
 
+      MockAuditService.audit(event)
       MockReviewService
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
-        .returns(Future.successful(Right(())))
+        .returns(Future.successful(Right(auditInfo)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
       status(result) shouldBe Status.SEE_OTHER
     }
 
-    "Return No content for a successful post" in new Test {
+    "Return an Html document displaying the details of the review result" in new Test {
 
+      MockAuditService.audit(event)
       MockReviewService
         .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
-        .returns(Future.successful(Right(())))
+        .returns(Future.successful(Right(auditInfo)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 

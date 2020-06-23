@@ -16,7 +16,8 @@
 
 package connectors.httpParsers
 
-import models.errors._
+import models.audit.AuditInfo
+import models.errors.MalformedResponseError
 import models.{ApprovalProcessReview, PageReviewDetail, RequestOutcome}
 import play.api.Logger
 import play.api.http.Status._
@@ -38,10 +39,8 @@ object ReviewHttpParser extends HttpParser {
   }
 
   implicit val postReviewCompleteHttpReads: HttpReads[RequestOutcome[Unit]] = {
-    case (_, _, response) => response.status match {
-      case NO_CONTENT => Right(())
-      case _ => Left(response.checkErrorResponse)
-    }
+    case (_, _, response) if response.status == NO_CONTENT => Right(())
+    case (_, _, response) => Left(response.checkErrorResponse)
   }
 
   implicit val getReviewPageDetailsHttpReads: HttpReads[RequestOutcome[PageReviewDetail]] = {
@@ -55,6 +54,15 @@ object ReviewHttpParser extends HttpParser {
         }
       case _ => Left(response.checkErrorResponse)
     }
+  }
+
+  implicit val getAuditInfoHttpReads: HttpReads[RequestOutcome[AuditInfo]] = {
+    case (_, _, response) if response.status == OK =>
+      response.validateJson[AuditInfo] match {
+        case Some(result) => Right(result)
+        case None => Left(MalformedResponseError)
+      }
+    case (_, _, response) => Left(response.checkErrorResponse)
   }
 
 }

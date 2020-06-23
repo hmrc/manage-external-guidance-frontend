@@ -21,13 +21,14 @@ import controllers.actions.TwoEyeReviewerIdentifierAction
 import forms.TwoEyeReviewResultFormProvider
 import javax.inject.{Inject, Singleton}
 import models.ApprovalStatus
+import models.audit.{PublishedEvent, TwoEyeReviewCompleteEvent}
 import models.errors.{IncompleteDataError, NotFoundError, StaleDataError}
 import models.requests.IdentifierRequest
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.ReviewService
+import services.{AuditService, ReviewService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.{twoeye_confirm_error, twoeye_review_result}
 
@@ -42,6 +43,7 @@ class TwoEyeReviewResultController @Inject() (
     view: twoeye_review_result,
     errorView: twoeye_confirm_error,
     reviewService: ReviewService,
+    auditService: AuditService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -78,7 +80,12 @@ class TwoEyeReviewResultController @Inject() (
         (formWithErrors: Form[_]) => { Future.successful(BadRequest(view(processId, formWithErrors))) },
         status => {
           reviewService.approval2iReviewComplete(processId, request.credId, request.name, status).map {
-            case Right(_) => Redirect(routes.AdminController.approvalSummaries())
+            case Right(auditInfo) =>
+              auditService.audit(TwoEyeReviewCompleteEvent(auditInfo))
+              if (status == ApprovalStatus.Published) {
+                auditService.audit(PublishedEvent(auditInfo))
+              }
+              Redirect(routes.AdminController.approvalSummaries())
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval 2i review for process $processId")
               NotFound(errorHandler.notFoundTemplate)
