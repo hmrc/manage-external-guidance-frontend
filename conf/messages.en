@@ -7,6 +7,7 @@ radio.item.yes = Yes
 radio.item.no = No
 
 approvals.tableTitle = Interactive guidance
+approvals.commentsAndFeedback = View all interactive guidance comments and feedback
 approvals.processTitle = Title
 approvals.dateProcessUpdatedTitle = Last updated
 approvals.processStatusTitle = Status
