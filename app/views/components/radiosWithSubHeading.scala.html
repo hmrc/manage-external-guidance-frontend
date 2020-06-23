@@ -19,10 +19,12 @@
 @import uk.gov.hmrc.govukfrontend.views.html.helpers._
 @import config.AppConfig
 @import models.YesNoAnswer._
+@import play.api.data.FormError
 
 @this(appConfig: AppConfig)
 
 @(answer: Option[String],
+  errors: Seq[FormError],
   page: String,
   processId: String,
   fieldName: String,
@@ -36,7 +38,7 @@
 
   @checked(answer: Option[String], value: String) = {@if(answer.contains(value)) {checked}}
 
-  <div class="govuk-form-group">
+  <div class="govuk-form-group @if(!errors.isEmpty) {govuk-form-group--error}">
     <fieldset class="govuk-fieldset" aria-describedby="@fieldName-hint">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
           <span class="govuk-caption-l">@page</span>
@@ -45,6 +47,14 @@
       <span id="@fieldName-hint" class="govuk-hint">
         @viewLink(linkText, processId, page)
       </span>
+
+      @for(err <- errors) {
+      <span id="@fieldName-error" class="govuk-error-message">
+        <span class="govuk-visually-hidden">@messages("error.prefix")</span>
+        @messages(err.message, err.args:_*)
+      </span>
+      }
+
       <div class="govuk-radios govuk-radios--inline">
         <div class="govuk-radios__item">
           <input class="govuk-radios__input" id="@fieldName" name="@fieldName" type="radio" value="@Yes.toString" @checked(answer, Yes.toString)>
