@@ -16,20 +16,20 @@
 
 package services
 
-import javax.inject.{Inject, Singleton}
 import config.AppConfig
-import play.api.libs.json.JodaWrites
-import play.api.libs.json._
+import javax.inject.{Inject, Singleton}
+import models.audit.AuditEvent
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.http.HeaderNames
+import play.api.libs.json.{JodaWrites, _}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
-import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Disabled, Failure, Success}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Disabled, Failure, Success}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+
 import scala.concurrent.ExecutionContext
-import models.audit.AuditEvent
 
 @Singleton
 class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnector) {
@@ -43,7 +43,7 @@ class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnect
     ExtendedDataEvent(
       auditSource = appConfig.appName,
       auditType = event.auditType,
-      tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(event.transactionName, path.fold(referrer(hc))(x => x)),
+      tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(event.auditType, path.fold(referrer(hc))(x => x)),
       detail = Json.toJson(AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()).as[JsObject].deepMerge(event.detail.as[JsObject])
     )
 

@@ -16,31 +16,6 @@
 
 package models.audit
 
-import org.joda.time.LocalDate
-import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
-import play.api.libs.json.{JsValue, Json, Writes}
-import utils.JsonObjectSugar
-
 case class FactCheckCompleteEvent(auditInfo: AuditInfo) extends AuditEvent {
-  val submittedDate: LocalDate = LocalDate.now
-  override val transactionName: String = "factCheckComplete"
-  override val detail: JsValue = Json.toJson(this)
   override val auditType: String = "factCheckComplete"
-}
-
-object FactCheckCompleteEvent extends JsonObjectSugar {
-  val dateFormatter: DateTimeFormatter = DateTimeFormat.forPattern("YYYY-MM-dd")
-
-  implicit val writes: Writes[FactCheckCompleteEvent] = Writes { event =>
-    jsonObjNoNulls(
-      "PID" -> event.auditInfo.pid,
-      "processID" -> event.auditInfo.processId,
-      "submittedDate" -> event.submittedDate.toString(dateFormatter),
-      "processTitle" -> event.auditInfo.processTitle,
-      "processVersion" -> event.auditInfo.processVersion,
-      "ocelotAuthor" -> event.auditInfo.ocelotAuthor,
-      "ocelotLastUpdate" -> event.auditInfo.ocelotLastUpdate,
-      "ocelotVersion" -> event.auditInfo.ocelotVersion
-    )
-  }
 }
