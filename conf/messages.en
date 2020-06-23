@@ -58,7 +58,7 @@ factCheck.pageReviewStatus.Complete = Checked
 factCheck.heading = Fact Check
 factCheck.reviewPagesHeading = Check all pages for factual accuracy
 factCheck.visuallyHiddenPage = Fact check page with the URL
-factCheck.pagesReviewedConfirmationHeading = Confirm you've fact checked all pages
+factCheck.pagesReviewedConfirmationHeading = Confirm you''ve fact checked all pages
 factCheck.sendConfirmation = Confirm
 factCheck.sendConfirmationComment = This will send your fact check responses to the designer
 
