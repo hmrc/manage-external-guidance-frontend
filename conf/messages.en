@@ -2,7 +2,7 @@ service.name = Manage and publish interactive guidance
 footer.links.accessibility.text=Accessibility
 backlink.label = Back
 error.summary.title = There is a problem
-
+error.prefix = Error:
 radio.item.yes = Yes
 radio.item.no = No
 
