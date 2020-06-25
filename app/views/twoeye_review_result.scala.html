@@ -54,9 +54,7 @@
           content = Text(messages(s"2iReviewResult.${Published.toString}")),
           checked = form("value").value.contains(Published.toString)
         )
-      ),
-      inline = false,
-      legendAsHeading = true
+      )
     )
 
     @govukButton( Button( content = Text( messages( "2iReviewResult.completeReview" ) ) ) )
