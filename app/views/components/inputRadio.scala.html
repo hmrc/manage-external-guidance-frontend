@@ -24,18 +24,16 @@
   fieldName: String,
   legend: String,
   items: Seq[RadioItem],
-  legendAsHeading: Boolean = true,
   hint: Option[Html] = None,
-  inline: Boolean = false
 )(implicit messages: Messages)
 
 @govukRadios(Radios(
-  classes = "govuk-radios--inline",
   name = fieldName,
   fieldset = Some(Fieldset(
     legend = Some(Legend(
       content = Text(messages(legend)),
-      isPageHeading = legendAsHeading
+      classes = "govuk-fieldset__legend--xl",
+      isPageHeading = true
     ))
   )),
   hint = hint.map { hint => Hint(content = HtmlContent(hint))},
