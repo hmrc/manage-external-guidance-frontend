@@ -35,7 +35,7 @@
         tag = Some(Tag(
             content = Text("beta")
         )),
-        content = HtmlContent("""This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.""")
+        content = HtmlContent(s"""${messages("feedback.before")} <a id="beta-feedback-link" class="govuk-link" href="${appConfig.contactFrontendFeedbackUrl}">${messages("feedback.linkLabel")}</a> ${messages("feedback.after")}""")
     ))
 }
 
@@ -50,6 +50,18 @@
         serviceUrl = Some(controllers.routes.AdminController.approvalSummaries.toString),
         serviceName = Some(messages("service.name"))
     ))
+}
+
+@content = {
+<div class="govuk-!-margin-bottom-6">
+    @contentBlock
+</div>
+
+<div class="govuk-body">
+    <a id="getpagehelp-link" lang="en" hreflang="en" class="govuk-link " target="_blank" href="@{appConfig.reportAProblemNonJSUrl}">
+        @messages("getPageHelp.linkText")
+    </a>
+</div>
 }
 
 @scripts = {
@@ -68,7 +80,7 @@
     headerBlock = Some(headerBlock),
     beforeContentBlock = Some(beforeContentBlock),
     footerItems = footerLinks.items,
-    bodyEndBlock = Some(scripts))(contentBlock)
+    bodyEndBlock = Some(scripts))(content)
 
 @{
     //$COVERAGE-OFF$

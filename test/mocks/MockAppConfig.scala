@@ -17,6 +17,7 @@
 package mocks
 
 import config.AppConfig
+import play.api.mvc.RequestHeader
 
 object MockAppConfig extends AppConfig {
   override val analyticsToken: String = "token"
@@ -34,4 +35,6 @@ object MockAppConfig extends AppConfig {
   override lazy val gtmContainer: String = "someContainer"
   lazy val viewApprovalUrl: String = "http://localhost:9741/guidance/approval"
   lazy val commentsAndFeedbackUrl: String = "http://www.gov.uk"
+
+  override def contactFrontendFeedbackUrl(implicit request: RequestHeader): String = "somefeedbackUrl"
 }

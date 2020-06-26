@@ -6,6 +6,12 @@ error.prefix = Error:
 radio.item.yes = Yes
 radio.item.no = No
 
+feedback.before = This is a new service – your
+feedback.linkLabel = feedback
+feedback.after = will help us to improve it.
+
+getPageHelp.linkText = Get help with this page (opens in a new window or tab)
+
 approvals.tableTitle = Interactive guidance
 approvals.commentsAndFeedback = View all interactive guidance comments and feedback
 approvals.processTitle = Title
