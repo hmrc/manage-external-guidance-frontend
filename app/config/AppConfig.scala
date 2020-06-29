@@ -18,6 +18,8 @@ package config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import play.api.mvc.RequestHeader
+import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
@@ -36,17 +38,23 @@ trait AppConfig {
   val gtmContainer: String
   val viewApprovalUrl: String
   val commentsAndFeedbackUrl: String
+
+  def contactFrontendFeedbackUrl(implicit requestHeader: RequestHeader): String
 }
 
 @Singleton
 class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
-  private val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
-  private val serviceIdentifier = "MyService"
+
+  private lazy val host = servicesConfig.getString("host")
+  private lazy val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
+  private lazy val serviceIdentifier = servicesConfig.getString("contact-frontend-urls.serviceIdentifier")
+  private lazy val betaFeedback = servicesConfig.getString("contact-frontend-urls.betaFeedback")
   private lazy val externalGuidanceViewerHost: String = config.get[String]("external-guidance-viewer.host")
+
   val analyticsToken: String = config.get[String](s"google-analytics.token")
   val analyticsHost: String = config.get[String](s"google-analytics.host")
   val reportAProblemPartialUrl: String = s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifier"
-  val reportAProblemNonJSUrl: String = s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
+  val reportAProblemNonJSUrl: String = s"""$contactBaseUrl${servicesConfig.getString("contact-frontend-urls.reportAProblemNonJSUrl")}"""
   lazy val externalGuidanceBaseUrl: String = servicesConfig.baseUrl("external-guidance")
   val appName: String = config.get[String]("appName")
   val commentsAndFeedbackUrl = config.get[String]("appLinks.commentsAndFeedbackUrl")
@@ -58,5 +66,9 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val publisherRole: String = servicesConfig.getString("strideAuth.roles.publisher")
   lazy val gtmContainer: String = config.get[String]("gtm.container")
   lazy val viewApprovalUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.approvalUrl")}"
+
+  def contactFrontendFeedbackUrl(implicit requestHeader: RequestHeader): String = {
+    s"$contactBaseUrl$betaFeedback?service=$serviceIdentifier&backUrl=${SafeRedirectUrl(host + requestHeader.uri).encodedUrl}"
+  }
 
 }

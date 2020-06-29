@@ -23,6 +23,7 @@ import models.ApprovalStatus._
 import models._
 import views.html._
 import controllers.routes
+import play.api.test.FakeRequest
 import scala.collection.JavaConverters._
 
 class ApprovalsListSpec extends ViewSpecBase {
@@ -36,7 +37,10 @@ class ApprovalsListSpec extends ViewSpecBase {
       ApprovalProcessSummary("oct9007", "Telling HMRC about extra income", LocalDate.of(2020, 4, 1), WithDesignerForUpdate),
       ApprovalProcessSummary("oct9008", "Find a lost user ID and password", LocalDate.of(2020, 4, 2), SubmittedForFactCheck)
     )
-    val doc = asDocument(approvalsListView(summaries))
+
+    implicit val fakeRequest = FakeRequest("GET", "/process/approval")
+
+    val doc = asDocument(approvalsListView(summaries)(fakeRequest, messages))
   }
 
   "Approval Summary List page" should {
@@ -52,7 +56,6 @@ class ApprovalsListSpec extends ViewSpecBase {
 
         elementAttrs(a).get("href").fold(fail("Missing href attribute in anchor")) { href =>
           href shouldBe routes.AdminController.approvalSummaries().url
-
         }
       }
     }
@@ -135,6 +138,28 @@ class ApprovalsListSpec extends ViewSpecBase {
 
             cellData(1).text shouldBe s.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
             cellData(2).text shouldBe messages(s"approvalsStatus.${s.status.toString}")
+        }
+      }
+    }
+
+    "Render link to contact frontend beta feedback page" in new Test {
+
+      Option(doc.getElementById("beta-feedback-link")).fold(fail("Test cannot locate beta feedback link")) { a =>
+        a.text shouldBe messages("feedback.linkLabel")
+
+        elementAttrs(a).get("href").fold(fail("Test cannot locate href attribute in beta feedback link")) { href =>
+          href shouldBe appConfig.contactFrontendFeedbackUrl
+        }
+      }
+    }
+
+    "Render link to contact frontend page help" in new Test {
+
+      Option(doc.getElementById("getpagehelp-link")).fold(fail("Test cannot locate contact frontend page help link")) { a =>
+        a.text shouldBe messages("getPageHelp.linkText")
+
+        elementAttrs(a).get("href").fold(fail("Test cannot locate href attribute in contact frontend page help link")) { href =>
+          href shouldBe appConfig.reportAProblemNonJSUrl
         }
       }
     }
