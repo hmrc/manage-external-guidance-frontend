@@ -28,28 +28,35 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ScratchController @Inject() (appConfig: AppConfig, scratchService: ScratchService, mcc: MessagesControllerComponents)
-    extends FrontendController(mcc) {
+class ScratchController @Inject() (appConfig: AppConfig, scratchService: ScratchService, mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
+
+  val corsHeaders: Seq[(String, String)] = Seq(
+    "Access-Control-Allow-Origin" -> "*",
+    "Access-Control-Allow-Headers" -> "*",
+    "Access-Control-Allow-Methods" -> "POST, OPTIONS"
+  )
 
   def submitScratchProcess(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
     scratchService.submitScratchProcess(request.body).map {
       case Right(submissionResponse) =>
         val location: String = s"/guidance/scratch/${submissionResponse.id}"
-        Created(Json.toJson(submissionResponse)).withHeaders("location" -> location)
-      case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError))
-      case Left(error) => InternalServerError(Json.toJson(error))
+        Created(Json.toJson(submissionResponse))
+          .withHeaders("location" -> location)
+          .withHeaders(corsHeaders: _*)
+      case Left(InvalidProcessError) =>
+        BadRequest(Json.toJson(InvalidProcessError))
+          .withHeaders(corsHeaders: _*)
+      case Left(error) =>
+        InternalServerError(Json.toJson(error))
+          .withHeaders(corsHeaders: _*)
     }
   }
 
   val scratchProcessOptions: Action[AnyContent] = Action.async { _ =>
     Future.successful(
-      Ok("").withHeaders(
-        "Access-Control-Allow-Origin" -> "*",
-        "Access-Control-Allow-Headers" -> "*",
-        "Access-Control-Allow-Methods" -> "POST, OPTIONS"
-      )
+      Ok("").withHeaders(corsHeaders: _*)
     )
   }
 

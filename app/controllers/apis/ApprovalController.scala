@@ -33,6 +33,12 @@ class ApprovalController @Inject() (appConfig: AppConfig, approvalService: Appro
 
   implicit val config: AppConfig = appConfig
 
+  val corsHeaders: Seq[(String, String)] = Seq(
+    "Access-Control-Allow-Origin" -> "*",
+    "Access-Control-Allow-Headers" -> "*",
+    "Access-Control-Allow-Methods" -> "POST, OPTIONS"
+  )
+
   def submitFor2iReview(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
     checkSubmissionReturn(approvalService.submitFor2iReview(request.body))
   }
@@ -43,19 +49,15 @@ class ApprovalController @Inject() (appConfig: AppConfig, approvalService: Appro
 
   private def checkSubmissionReturn(result: Future[RequestOutcome[ApprovalResponse]]): Future[Result] = {
     result.map {
-      case Right(approvalResponse) => Created(Json.toJson(approvalResponse))
-      case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError))
-      case Left(error) => InternalServerError(Json.toJson(error))
+      case Right(approvalResponse) => Created(Json.toJson(approvalResponse)).withHeaders(corsHeaders: _*)
+      case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError)).withHeaders(corsHeaders: _*)
+      case Left(error) => InternalServerError(Json.toJson(error)).withHeaders(corsHeaders: _*)
     }
   }
 
   val options: Action[AnyContent] = Action.async { _ =>
     Future.successful(
-      Ok("").withHeaders(
-        "Access-Control-Allow-Origin" -> "*",
-        "Access-Control-Allow-Headers" -> "*",
-        "Access-Control-Allow-Methods" -> "POST, OPTIONS"
-      )
+      Ok("").withHeaders(corsHeaders: _*)
     )
   }
 
