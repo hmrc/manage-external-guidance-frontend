@@ -16,10 +16,29 @@
 
 package models.audit
 
-import play.api.libs.json.JsValue
+import org.joda.time.LocalDate
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
+import play.api.libs.json.{JsValue, Json, Writes}
+import utils.JsonObjectSugar
 
-trait AuditEvent {
-  val transactionName: String
-  val detail: JsValue
+abstract class AuditEvent {
+  val auditInfo: AuditInfo
+  val detail: JsValue = Json.toJson(this)
   val auditType: String
+}
+object AuditEvent extends JsonObjectSugar {
+  val dateFormatter: DateTimeFormatter = DateTimeFormat.forPattern("YYYY-MM-dd")
+
+  implicit val writes: Writes[AuditEvent] = Writes { event =>
+    jsonObjNoNulls(
+      "PID" -> event.auditInfo.pid,
+      "processID" -> event.auditInfo.processId,
+      "submittedDate" -> LocalDate.now.toString(dateFormatter),
+      "processTitle" -> event.auditInfo.processTitle,
+      "processVersion" -> event.auditInfo.processVersion,
+      "ocelotAuthor" -> event.auditInfo.ocelotAuthor,
+      "ocelotLastUpdate" -> event.auditInfo.ocelotLastUpdate,
+      "ocelotVersion" -> event.auditInfo.ocelotVersion
+    )
+  }
 }

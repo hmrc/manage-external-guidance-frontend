@@ -16,8 +16,9 @@
 
 package connectors.httpParsers
 
-import models.errors.{IncompleteDataError, InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
-import models.{ApprovalProcessReview, PageReviewDetail, PageReviewStatus, RequestOutcome, ReviewData}
+import models._
+import models.audit.AuditInfo
+import models.errors._
 import org.scalatest.{Matchers, WordSpec}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
@@ -159,4 +160,57 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
       }
     }
   }
+
+  "The ReviewHttpParser.getAuditInfoHttpReads" when {
+    val ocelotLastUpdate: Long = 12345678
+    val auditInfo: AuditInfo = AuditInfo("pid", id, "title", 1, "author", ocelotLastUpdate, 2)
+
+    class TestSetup(status: Int, optJson: Option[JsValue] = None) {
+      private val httpMethod = "GET"
+      private val url = "/"
+      val httpResponse: AnyRef with HttpResponse = HttpResponse(status, optJson, Map())
+
+      def readResponse: RequestOutcome[AuditInfo] =
+        getAuditInfoHttpReads.read(httpMethod, url, httpResponse)
+    }
+
+    "the response is OK" when {
+      "the json successfully deserializes to the model" should {
+        "Return AuditInfo" in new TestSetup(OK, Some(Json.toJson(auditInfo))) {
+          readResponse shouldBe Right(auditInfo)
+        }
+      }
+      "the json is malformed" should {
+        "return MalformedResponseError" in new TestSetup(OK, Some(Json.obj())) {
+          readResponse shouldBe Left(MalformedResponseError)
+        }
+      }
+    }
+    "the response is BAD_REQUEST" should {
+      "return BadRequestError" in new TestSetup(BAD_REQUEST, Some(Json.toJson(BadRequestError))) {
+        readResponse shouldBe Left(BadRequestError)
+      }
+    }
+    "the response is NOT_FOUND with a code of NOT_FOUND_ERROR" should {
+      "return NotFoundError" in new TestSetup(NOT_FOUND, Some(Json.toJson(NotFoundError))) {
+        readResponse shouldBe Left(NotFoundError)
+      }
+    }
+    "the response is NOT_FOUND with a code of STALE_DATA_ERROR" should {
+      "return StaleDataError" in new TestSetup(NOT_FOUND, Some(Json.toJson(StaleDataError))) {
+        readResponse shouldBe Left(StaleDataError)
+      }
+    }
+    "the response is NOT_FOUND and has malformed error json" should {
+      "return InternalServerError" in new TestSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
+        readResponse shouldBe Left(InternalServerError)
+      }
+    }
+    "the response is anything else" should {
+      "return InternalServerError" in new TestSetup(INTERNAL_SERVER_ERROR, Some(Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> ""))) {
+        readResponse shouldBe Left(InternalServerError)
+      }
+    }
+  }
+
 }

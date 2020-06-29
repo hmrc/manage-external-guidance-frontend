@@ -45,7 +45,6 @@ trait HttpParser {
         None
     }
 
-
     def checkErrorResponse: Error = {
       validateJson[Error] match {
         case Some(expectedError) => expectedError.code match {
