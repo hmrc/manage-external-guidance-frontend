@@ -35,7 +35,8 @@ class ScratchController @Inject() (appConfig: AppConfig, scratchService: Scratch
   val corsHeaders: Seq[(String, String)] = Seq(
     "Access-Control-Allow-Origin" -> "*",
     "Access-Control-Allow-Headers" -> "*",
-    "Access-Control-Allow-Methods" -> "POST, OPTIONS"
+    "Access-Control-Allow-Methods" -> "POST, OPTIONS",
+    "Access-Control-Expose-Headers" -> "Location"
   )
 
   def submitScratchProcess(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
