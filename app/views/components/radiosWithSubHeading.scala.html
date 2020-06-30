@@ -39,7 +39,7 @@
   @checked(answer: Option[String], value: String) = {@if(answer.contains(value)) {checked}}
 
   <div class="govuk-form-group @if(!errors.isEmpty) {govuk-form-group--error}">
-    <fieldset class="govuk-fieldset" aria-describedby="@fieldName-hint">
+    <fieldset class="govuk-fieldset" aria-describedby="@fieldName-hint @if(!errors.isEmpty) {@fieldName-error}">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
           <span class="govuk-caption-l">@page</span>
           <h1 class="govuk-heading-xl govuk-fieldset__heading">@messages(heading)</h1>

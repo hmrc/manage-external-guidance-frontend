@@ -183,6 +183,18 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       errorMessageSpan.text.replaceAll("\u00a0", " ") shouldBe s"Error: $errorMsg".replaceAll("&nbsp;", " ")
     }
+
+    "Add id of error message span to the aria field of fieldset" in new Test {
+
+      val boundForm: Form[ApprovalStatus] = form.bind(emptyFormData)
+
+      val doc = asDocument(createView(processId, boundForm))
+
+      val fieldSet = doc.getElementsByTag("fieldset").first()
+
+      elementAttrs(fieldSet)("aria-describedby").contains("value-error") shouldBe true
+    }
+
   }
 
   "Following a failed submission 2i review result owing to invalid data submission" should {
@@ -225,6 +237,17 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
       val errorMsg = messages("2iReviewResult.error.required")
 
       errorMessageSpan.text.replaceAll("\u00a0", " ") shouldBe s"Error: $errorMsg".replaceAll("&nbsp;", " ")
+    }
+
+    "Add id of error message span to the aria field of fieldset" in new Test {
+
+      val boundForm: Form[ApprovalStatus] = form.bind(emptyFormData)
+
+      val doc = asDocument(createView(processId, boundForm))
+
+      val fieldSet = doc.getElementsByTag("fieldset").first()
+
+      elementAttrs(fieldSet)("aria-describedby").contains("value-error") shouldBe true
     }
 
   }
