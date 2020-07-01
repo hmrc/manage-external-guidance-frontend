@@ -12,6 +12,12 @@ feedback.after = will help us to improve it.
 
 getPageHelp.linkText = Get help with this page (opens in a new window or tab)
 
+#Shutter/Service unavailable page
+serviceUnavailable.title = Sorry, the service is unavailable
+serviceUnavailable.heading = Sorry, the service is unavailable
+serviceUnavailable.availableLater = You will be able to use the service later.
+serviceUnavailable.answersSaved = We saved your review.
+
 approvals.tableTitle = Interactive guidance
 approvals.commentsAndFeedback = View all interactive guidance comments and feedback
 approvals.processTitle = Title
