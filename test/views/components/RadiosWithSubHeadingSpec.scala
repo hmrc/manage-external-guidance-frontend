@@ -20,7 +20,6 @@ import org.jsoup.nodes.Element
 
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.Injector
-import play.api.test.FakeRequest
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.FormError
 import views.html.components.radiosWithSubHeading
@@ -59,10 +58,7 @@ class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
                             linkText)
     val doc = asDocument(html)
     val fieldset: Element = doc.getElementsByTag("fieldset").first
-    val legend: Element = doc.getElementsByTag("legend").first
-    val h1: Element = doc.getElementsByTag("h1").first
     val inputs: List[Element] = doc.getElementsByTag("input").asScala.toList
-    val hintSpan: Element = doc.getElementById(s"${fieldName}-hint")
 
     "contain fieldset with appropriate aria-describedby" in new Test {
       Option(fieldset).fold(fail("No fieldset found")){ fs =>
@@ -73,7 +69,7 @@ class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
     "contains fieldset two radio inputs" in new Test {
       inputs.size shouldBe 2
       inputs.map{ inp =>
-        elementAttrs(inp)("type") shouldBe "radio" 
+        elementAttrs(inp)("type") shouldBe "radio"
       }
     }
   }
@@ -90,10 +86,6 @@ class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
                             linkText)
     val doc = asDocument(html)
     val fieldset: Element = doc.getElementsByTag("fieldset").first
-    val legend: Element = doc.getElementsByTag("legend").first
-    val h1: Element = doc.getElementsByTag("h1").first
-    val inputs: List[Element] = doc.getElementsByTag("input").asScala.toList
-    val hintSpan: Element = doc.getElementById(s"${fieldName}-hint")
 
     "contain fieldset with appropriate aria-describedby link to error msg span" in new Test {
       Option(fieldset).fold(fail("No fieldset found")){ fs =>
