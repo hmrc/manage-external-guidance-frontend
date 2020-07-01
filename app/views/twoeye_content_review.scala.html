@@ -21,7 +21,20 @@
 
 @this(layout: main_layout, govukTable : GovukTable, govukBackLink : GovukBackLink, appConfig: AppConfig)
 
-@(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
+@(review: ApprovalProcessReview, incompletePages: Int, totalPages: Int, reviewedPages: Int)(implicit request: Request[_], messages: Messages)
+
+@reviewStatus() = @{
+  incompletePages match {
+    case 0 => "Review Complete - all pages reviewed"
+    case _ => s"Review Incomplete - $reviewedPages of $totalPages pages reviewed"
+  }
+}
+@buttonAvailable() = @{
+  incompletePages match {
+    case 0 => ""
+    case _ => s"disabled='disabled' aria-disabled='true'"
+  }
+}
 
 @layout(s"${review.title} - ${messages("2iReview.heading")}") {
 
@@ -37,14 +50,13 @@
     <a class="govuk-link" target="_blank" rel="noopener noreferrer" href = "@appConfig.viewApprovalUrl/@review.ocelotId">@messages("2iReview.viewGuidance")</a>
   </p>
 
-  <ol class="app-task-list">
-    <li>
-
       <h2 class="app-task-list__section">
-        <span class="app-task-list__section-number">1. </span>@messages("2iReview.reviewPagesHeading")
+        @messages("2iReview.reviewPagesHeading")
       </h2>
-
-      <ul class="app-task-list__items">        
+      <p>
+        @reviewStatus()
+      </p>
+      <ul class="app-task-list__items app-task-list__items-no-number">
         @for((page, index) <- review.pages.zipWithIndex) {
           <li class="app-task-list__item">
             <span class="app-task-list__task-name">
@@ -57,23 +69,11 @@
         }
       </ul>
 
-    </li>
-
-    <li>
-
-      <h2 class="app-task-list__section">
-        <span class="app-task-list__section-number">2. </span>@messages("2iReview.pagesReviewedConfirmationHeading")
-      </h2>
-
-      <ul class="app-task-list__items">
-        <li class="app-task-list__item">
-          <span class="app-task-list__task-name"><a href="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).toString}">@messages("2iReview.sendConfirmation")</a></span>
-        </li>
-      </ul>
-
-    </li>
-
-  </ol>
+      <form method="get" action="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).toString}">
+        <button class="govuk-button" data-module="govuk-button" data-prevent-double-click="true">
+          @messages("2iReview.sendConfirmation")
+        </button>
+      </form>
 
 }
 @{

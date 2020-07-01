@@ -16,21 +16,19 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
-
-import scala.concurrent.ExecutionContext.Implicits.global
-
-import play.api.mvc._
-import play.api.i18n.I18nSupport
-import play.api.Logger
-
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-
 import config.ErrorHandler
 import controllers.actions.TwoEyeReviewerIdentifierAction
+import javax.inject.{Inject, Singleton}
+import models.PageReviewStatus
 import models.errors.{MalformedResponseError, NotFoundError, StaleDataError}
+import play.api.Logger
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import services.ReviewService
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.twoeye_content_review
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class TwoEyeReviewController @Inject() (
@@ -46,7 +44,10 @@ class TwoEyeReviewController @Inject() (
 
   def approval(id: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
     reviewService.approval2iReview(id).map {
-      case Right(approvalProcessReview) => Ok(view(approvalProcessReview))
+      case Right(approvalProcessReview) =>
+        val incompletePages = approvalProcessReview.pages.count(p => p.status == PageReviewStatus.NotStarted)
+        val totalPages = approvalProcessReview.pages.size
+        Ok(view(approvalProcessReview, incompletePages, totalPages, totalPages - incompletePages))
       case Left(NotFoundError) => {
         logger.error(s"Unable to retrieve approval 2i review for process $id")
         NotFound(errorHandler.notFoundTemplate)
