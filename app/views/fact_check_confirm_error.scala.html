@@ -20,7 +20,7 @@
 
 @(processId: String)(implicit request: Request[_], messages: Messages)
 
-@layout(messages("factCheckError.title")) {
+@layout(s"${messages("factCheckError.title")} - ${messages("factCheck.heading")}") {
 
   @govukBackLink(BackLink(href = routes.FactCheckController.approval(processId).toString,
     content = Text(messages("backlink.label")), attributes = Map("id" -> "back-link")))

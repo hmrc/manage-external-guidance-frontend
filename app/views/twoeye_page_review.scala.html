@@ -33,7 +33,12 @@
 
 @(processId: String, page: String, form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@layout(messages("2iPageReview.title")){
+@pageTitle(errs: Seq[FormError]) = @{
+  val title = s"${messages("2iPageReview.title")} - ${messages("2iReview.heading")}"
+  errs.headOption.fold(title)(_ => s"${messages("error.prefix")} ${title}")
+}
+
+@layout(pageTitle(form.errors)){
 
   @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).toString,
     content = Text(messages("backlink.label"))))

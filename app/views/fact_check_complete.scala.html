@@ -22,7 +22,7 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(messages("factCheckComplete.heading")) {
+@layout(s"${messages("factCheckComplete.heading")} - ${messages("factCheck.heading")}") {
 
     <h1 class="govuk-heading-xl">@messages("factCheckComplete.heading")</h1>
     <p class="govuk-body">@messages("factCheckComplete.info")</p>

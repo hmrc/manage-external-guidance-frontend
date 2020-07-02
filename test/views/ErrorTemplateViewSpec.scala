@@ -39,8 +39,9 @@ class ErrorTemplateViewSpec extends ViewSpecBase {
   "Error template view" should {
 
     "Display the correct page title in the browser for an unauthorized user" in new Test {
-
-      assertEqualsMessage(doc, "title", "error.unauthorized401.pageTitle")
+      Option(doc.getElementsByTag("title").first).fold(fail("Missing title")){ title =>
+        title.text shouldBe s"${messages("error.unauthorized401.pageTitle")}${titleSuffix()}"
+      }
     }
 
     "Display the correct page heading for an unauthorised user" in new Test {

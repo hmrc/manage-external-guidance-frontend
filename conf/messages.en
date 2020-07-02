@@ -1,4 +1,5 @@
 service.name = Manage and publish interactive guidance
+service.govuk = GOV.UK
 footer.links.accessibility.text=Accessibility
 backlink.label = Back
 error.summary.title = There is a problem

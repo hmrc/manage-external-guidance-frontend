@@ -41,6 +41,8 @@ trait ViewSpecBase extends BaseSpec with GuiceOneAppPerSuite {
 
   implicit val appConfig: AppConfig = injector.instanceOf[AppConfig]
 
+  def titleSuffix(): String = s" - ${messages("service.name")} - ${messages("service.govuk")}"
+
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())
 
   def assertEqualsMessage(doc: Document, cssSelector: String, expectedMessageKey: String): Assertion =

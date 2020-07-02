@@ -30,7 +30,7 @@
 
 @(processId: String, form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@layout(messages("2iReviewResult.title")){
+@layout(s"${messages("2iReviewResult.title")} - ${messages("2iReview.heading")}"){
 
   @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).toString,
                           content = Text(messages("backlink.label"))))

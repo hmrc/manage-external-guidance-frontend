@@ -53,17 +53,6 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
   "Following a GET request 2i review" should {
 
-    "display the expected page title" in new Test {
-
-      val doc = asDocument(createView(processId, form))
-
-      val titles = doc.getElementsByTag("title")
-
-      titles.size() shouldBe 1
-
-      assertTextEqualsMessage(titles.first.text, "2iReviewResult.title")
-    }
-
     "include a back link" in new Test {
 
       val doc = asDocument(createView(processId, form))

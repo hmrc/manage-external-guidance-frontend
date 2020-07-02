@@ -36,12 +36,6 @@ class TwoEyeConfirmErrorViewSpec extends ViewSpecBase {
 
   "Following a GET request 2i review confirm error" should {
 
-    "display the expected page title" in new Test {
-      val titles: Elements = doc.getElementsByTag("title")
-      titles.size() shouldBe 1
-      assertTextEqualsMessage(titles.first.text, "2iReviewError.title")
-    }
-
     "include a back link" in new Test {
       checkTextOnElementById(doc, "back-link", "backlink.label")
       checkAttributeOnElementById(doc, "back-link", "class", "govuk-back-link")

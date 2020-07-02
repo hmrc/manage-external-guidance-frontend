@@ -31,7 +31,12 @@
 
 @(processId: String, page: String, form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@layout(messages("factCheckPageReview.title")){
+@pageTitle(errs: Seq[FormError]) = @{
+  val title = s"${messages("factCheckPageReview.title")} - ${messages("factCheck.heading")}"
+  errs.headOption.fold(title)(_ => s"${messages("error.prefix")} ${title}")
+}
+
+@layout(pageTitle(form.errors)){
 
   @govukBackLink(BackLink(href = routes.FactCheckController.approval(processId).toString,
     content = Text(messages("backlink.label"))))

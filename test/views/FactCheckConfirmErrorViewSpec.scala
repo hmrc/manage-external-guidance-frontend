@@ -36,12 +36,6 @@ class FactCheckConfirmErrorViewSpec extends ViewSpecBase {
 
   "Following a GET request fact check confirm error" should {
 
-    "display the expected page title" in new Test {
-      val titles: Elements = doc.getElementsByTag("title")
-      titles.size() shouldBe 1
-      assertTextEqualsMessage(titles.first.text, "factCheckError.title")
-    }
-
     "include a back link" in new Test {
       checkTextOnElementById(doc, "back-link", "backlink.label")
       checkAttributeOnElementById(doc, "back-link", "class", "govuk-back-link")
