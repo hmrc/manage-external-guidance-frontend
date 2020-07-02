@@ -42,7 +42,7 @@
   }
 
   @viewLink(linkText: String, id: String, url: String) = {
-    <p><a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url">@messages(linkText)</a></p>
+    <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url">@messages(linkText)</a>
   }
 
   @checked(answer: Option[String], value: String) = {@if(answer.contains(value)) {checked}}
