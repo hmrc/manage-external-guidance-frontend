@@ -85,12 +85,6 @@ class ApprovalsListSpec extends ViewSpecBase {
       }
     }
 
-    "Set the page title" in new Test {
-      Option(doc.getElementsByTag("title").first).fold(fail("Missing title element")) { title =>
-        title.text shouldBe messages("approvals.tableTitle")
-      }
-    }
-
     "define a link to the general comments and feedback page" in new Test {
 
       Option(doc.getElementsByClass("govuk-grid-column-two-thirds").first).fold(fail("Missing layout grid")) { gridDiv =>

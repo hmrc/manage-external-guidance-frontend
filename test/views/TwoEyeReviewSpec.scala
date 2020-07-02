@@ -91,12 +91,6 @@ class TwoEyeReviewSpec extends ViewSpecBase {
       }
     }
 
-    "Set the page title" in new Test {
-      Option(doc.getElementsByTag("title").first).fold(fail("Missing title element")) { title =>
-        title.text shouldBe approvalProcessReview.title
-      }
-    }
-
     "Render a page containing all listing all of files and their status" in new Test {
 
       Option(doc.getElementsByTag("ul").first).fold(fail("Missing ul element")) { ul =>

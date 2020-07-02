@@ -35,7 +35,7 @@ class PageTitleSpec extends ViewSpecBase {
 
   def expectedTitleText(h1Text: String, section: Option[String] = None): String =
     section.fold(s"${h1Text} - ${messages("service.name")} - ${messages("service.govuk")}"){s =>
-      s"${h1Text} - ${s} - ${messages("service.name")} - ${messages("service.govuk")}"
+      s"${h1Text} - ${s}${titleSuffix()}"
     }
 
   def checkTitle(doc: Document, section: Option[String] = None, prefix: Option[String] = None): Unit =
@@ -118,6 +118,6 @@ class PageTitleSpec extends ViewSpecBase {
       val formProvider = new TwoEyeReviewResultFormProvider()
       checkTitle(asDocument(view("", formProvider())(FakeRequest("GET", "/blah"), messages)), Some(messages("2iReview.heading")))
     }
-    
+ 
   }
 }
