@@ -32,6 +32,15 @@
   linkText: String
 )(implicit messages: Messages)
 
+  @ariaDescribedBy(s: String) = { aria-describedby="@s" }
+
+  @optionalAria(name: String) = @{
+    Seq(Some(name+"-hint"), errors.headOption.map(err => name+"-error")).flatten match {
+      case Nil => ""
+      case l => ariaDescribedBy(l.mkString(" "))
+    }
+  }
+
   @viewLink(linkText: String, id: String, url: String) = {
     <p><a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url">@messages(linkText)</a></p>
   }
@@ -39,7 +48,7 @@
   @checked(answer: Option[String], value: String) = {@if(answer.contains(value)) {checked}}
 
   <div class="govuk-form-group @if(!errors.isEmpty) {govuk-form-group--error}">
-    <fieldset class="govuk-fieldset" aria-describedby="@fieldName-hint @if(!errors.isEmpty) {@fieldName-error}">
+    <fieldset class="govuk-fieldset" @optionalAria(fieldName)>
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
           <span class="govuk-caption-l">@page</span>
           <h1 class="govuk-heading-xl govuk-fieldset__heading">@messages(heading)</h1>
