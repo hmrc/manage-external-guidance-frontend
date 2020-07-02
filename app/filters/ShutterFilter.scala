@@ -37,9 +37,11 @@ class ShutterFilter @Inject() (configuration: Configuration, val messagesApi: Me
 
     implicit val request: Request[_] = Request(rh, "")
 
+    val logger = Logger(getClass)
     val shuttered: Boolean = configuration.get[Boolean]("shuttered")
-    val notAnAssestsRequest = !rh.path.startsWith("/external-guidance/assets/")
-    if (shuttered && notAnAssestsRequest) {
+    val notAnAssetsRequest = !rh.path.startsWith("/external-guidance/assets/")
+    if (shuttered && notAnAssetsRequest) {
+      logger.info(s"Returned a shuttered response for ${rh.path}")
       Future.successful(ServiceUnavailable(view()))
     } else {
       next(rh)
