@@ -70,7 +70,7 @@ class TwoEyePageReviewController @Inject() (
       .fold(
         (formWithErrors: Form[TwoEyePageReview]) => { Future.successful(BadRequest(view(processId, s"/$page", formWithErrors))) },
         result => {
-          val reviewDetail = PageReviewDetail(processId, s"/$page", Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
+          val reviewDetail = PageReviewDetail(processId, s"/$page", "", Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
           reviewService.approval2iPageReviewComplete(processId, s"/$page", reviewDetail).map {
             case Right(_) => Redirect(routes.TwoEyeReviewController.approval(processId))
             case Left(NotFoundError) =>

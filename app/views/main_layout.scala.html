@@ -14,19 +14,17 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
-@import uk.gov.hmrc.hmrcfrontend.views.html.components._
-
 @import views.components.FooterLinks
-
-@import config.AppConfig
 
 @this(layout: GovukLayout,
         phaseBanner : GovukPhaseBanner,
         govUkHeader: GovukHeader,
         footerLinks: FooterLinks,
         appConfig: AppConfig)
+
 
 @(pageTitle: String)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 

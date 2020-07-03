@@ -15,12 +15,20 @@
  *@
 
 @import models.ApprovalProcessReview
-
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(layout: main_layout, govukTable : GovukTable, govukBackLink : GovukBackLink)
 
 @(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
+
+@reviewStatus() = @{
+  val totalPages = review.pages.length
+  val incompletePages = review.pages.count(p => p.status == PageReviewStatus.NotStarted)
+  incompletePages match {
+    case 0 => "Review Complete - all pages checked"
+    case _ => s"Review Incomplete - ${totalPages - incompletePages} of $totalPages pages checked"
+  }
+}
 
 @layout(s"${review.title} - ${messages("factCheck.heading")}") {
 
@@ -32,45 +40,34 @@
     <h1 class="govuk-heading-xl">@review.title</h1>
   </header>
 
-  <ol class="app-task-list">
-    <li>
+  <h2 class="app-task-list__section">
+    @messages("factCheck.reviewPagesHeading")
+  </h2>
+  <p>
+    @reviewStatus()
+  </p>
 
-      <h2 class="app-task-list__section">
-        <span class="app-task-list__section-number">1. </span>@messages("factCheck.reviewPagesHeading")
-      </h2>
+  <ul class="app-task-list__items">
+    @for((page, index) <- review.pages.zipWithIndex) {
+      <li class="app-task-list__item">
+        <span class="app-task-list__task-name">
+          <a id="fact-check-page-link-@index" href="@{routes.FactCheckPageReviewController.onPageLoad(review.ocelotId, page.url.drop(1)).toString}" aria-describedby="page-@index">
+              <span class="govuk-visually-hidden">@messages("factCheck.visuallyHiddenPage")</span>@page.title
+          </a>
+        </span>
+        <span class="hmrc-status-tag" id="page-@index">@messages(s"factCheck.pageReviewStatus.${page.status.toString}")</span>
+      </li>
+    }
+  </ul>
 
-      <ul class="app-task-list__items">        
-        @for((page, index) <- review.pages.zipWithIndex) {
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a id="fact-check-page-link-@index" href="@{routes.FactCheckPageReviewController.onPageLoad(review.ocelotId, page.title.drop(1)).toString}" aria-describedby="page-@index">
-                  <span class="govuk-visually-hidden">@messages("factCheck.visuallyHiddenPage")</span>@page.title
-              </a>
-            </span>
-            <span class="hmrc-status-tag" id="page-@index">@messages(s"factCheck.pageReviewStatus.${page.status.toString}")</span>
-          </li>
-        }
-      </ul>
+  <form method="get" action="@{routes.FactCheckConfirmController.onConfirm(review.ocelotId).toString}">
+    <span class="govuk-body">@messages("factCheck.sendConfirmationComment")</span>
+    <br><br>
+    <button class="govuk-button" data-module="govuk-button" data-prevent-double-click="true">
+    @messages("factCheck.sendConfirmation")
+    </button>
+  </form>
 
-    </li>
-
-    <li>
-
-      <h2 class="app-task-list__section">
-        <span class="app-task-list__section-number">2. </span>@messages("factCheck.pagesReviewedConfirmationHeading")
-          <br>
-          <span class="govuk-body">@messages("factCheck.sendConfirmationComment")</span>
-      </h2>
-
-      <ul class="app-task-list__items">
-        <li class="app-task-list__item">
-          <span class="app-task-list__task-name"><a href="@{routes.FactCheckConfirmController.onConfirm(review.ocelotId).toString}">@messages("factCheck.sendConfirmation")</a></span>
-        </li>
-      </ul>
-
-    </li>
-
-  </ol>
 
 }
 @{
