@@ -25,7 +25,7 @@
   val totalPages = review.pages.length
   val completePages = review.pages.count(p => p.status == PageReviewStatus.Complete)
   completePages match {
-    case totalPages => "Review Complete - all pages checked"
+    case x if x == totalPages => s"Review Complete - all pages checked"
     case _ => s"Review Incomplete - $completePages of $totalPages pages checked"
   }
 }
