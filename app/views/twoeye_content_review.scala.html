@@ -64,11 +64,7 @@
     }
   </ul>
 
-  <form method="get" action="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).toString}">
-    <button id="confirm" class="govuk-button" data-module="govuk-button" data-prevent-double-click="true">
-      @messages("2iReview.sendConfirmation")
-    </button>
-  </form>
+  <a id="confirm" href="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).toString}" role="button" class="govuk-button" data-module="govuk-button">@messages("2iReview.sendConfirmation")</a>
 
 }
 @{

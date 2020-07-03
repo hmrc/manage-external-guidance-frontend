@@ -60,14 +60,9 @@
     }
   </ul>
 
-  <form method="get" action="@{routes.FactCheckConfirmController.onConfirm(review.ocelotId).toString}">
-    <span class="govuk-body">@messages("factCheck.sendConfirmationComment")</span>
-    <br><br>
-    <button id="confirm" class="govuk-button" data-module="govuk-button" data-prevent-double-click="true">
-      @messages("factCheck.sendConfirmation")
-    </button>
-  </form>
-
+  <span class="govuk-body">@messages("factCheck.sendConfirmationComment")</span>
+  <br><br>
+  <a id="confirm" href="@{routes.FactCheckConfirmController.onConfirm(review.ocelotId).toString}" role="button" class="govuk-button" data-module="govuk-button">@messages("2iReview.sendConfirmation")</a>
 
 }
 @{
