@@ -52,6 +52,8 @@ class TwoEyeConfirmErrorViewSpec extends ViewSpecBase {
 
     "display the back to 2i review button" in new Test {
       checkTextOnElementById(doc, "2i-error-link", "2iReviewError.back")
+      checkAttributeOnElementById(doc, "2i-error-link", "role", "button")
+      checkAttributeOnElementById(doc, "2i-error-link", "data-module", "govuk-button")
     }
   }
 

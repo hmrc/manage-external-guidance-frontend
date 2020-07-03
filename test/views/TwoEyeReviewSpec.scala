@@ -58,6 +58,20 @@ class TwoEyeReviewSpec extends ViewSpecBase {
       }
     }
 
+    "Render header with caption paragraph" in new Test {
+
+      Option(doc.getElementsByTag("main").first).fold(fail("Unable to locate main element in view")) { main =>
+        Option(main.getElementsByTag("header").first).fold(fail("Unable to locate header in main element")) { header =>
+          header.children.size shouldBe 2
+
+          header.child(0).tagName shouldBe "h1"
+
+          header.child(1).tagName shouldBe "p"
+          header.child(1).text shouldBe messages("2iReview.heading")
+        }
+      }
+    }
+
     "Render a page containing two sections, one of pages and another with a send confirmation" in new Test {
 
 //      Option(doc.getElementsByTag("ul").first).fold(fail("Missing unordered list elem (ul)")) { ol =>

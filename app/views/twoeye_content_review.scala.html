@@ -36,9 +36,9 @@
   @govukBackLink(BackLink(href = routes.AdminController.approvalSummaries.toString, 
                           content = Text(messages("backlink.label"))))
 
-  <header class="page-heading">
-    <span class="govuk-caption-xl">@messages("2iReview.heading")</span>
-    <h1 class="govuk-heading-xl">@review.title</h1>
+  <header class="hmrc-page-heading">
+      <h1 class="govuk-heading-xl">@review.title</h1>
+      <p class="govuk-caption-xl hmrc-caption-xl">@messages("2iReview.heading")</p>
   </header>
 
   <p>

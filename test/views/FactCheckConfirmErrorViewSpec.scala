@@ -52,6 +52,8 @@ class FactCheckConfirmErrorViewSpec extends ViewSpecBase {
 
     "display the back to fact check button" in new Test {
       checkTextOnElementById(doc, "fact-check-error-link", "factCheckError.back")
+      checkAttributeOnElementById(doc, "fact-check-error-link", "role", "button")
+      checkAttributeOnElementById(doc, "fact-check-error-link", "data-module", "govuk-button")
     }
   }
 

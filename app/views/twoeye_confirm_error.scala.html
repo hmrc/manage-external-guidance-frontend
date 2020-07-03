@@ -27,7 +27,7 @@
 
     <h1 id="2i-error-heading" class="govuk-heading-xl">@messages("2iReviewError.heading")</h1>
     <p id="2i-error-info" class="govuk-body">@messages("2iReviewError.info")</p>
-    <a id="2i-error-link" href="@{routes.TwoEyeReviewController.approval(processId).toString}" class="govuk-button" data-module="govuk-button">@messages("2iReviewError.back")</a>
+    <a id="2i-error-link" href="@{routes.TwoEyeReviewController.approval(processId).toString}" role="button" class="govuk-button" data-module="govuk-button">@messages("2iReviewError.back")</a>
 }
 @{
  //$COVERAGE-OFF$
