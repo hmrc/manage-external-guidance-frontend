@@ -18,18 +18,18 @@ package controllers
 
 import config.ErrorHandler
 import controllers.actions.FactCheckerIdentifierAction
+import forms.FactCheckPageReviewFormProvider
 import javax.inject.{Inject, Singleton}
-import models.errors.{NotFoundError, StaleDataError}
-import models.forms.FactCheckPageReview
 import models.PageReviewDetail
 import models.PageReviewStatus._
+import models.errors.{NotFoundError, StaleDataError}
+import models.forms.FactCheckPageReview
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ReviewService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import forms.FactCheckPageReviewFormProvider
 import views.html.fact_check_page_review
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -69,7 +69,7 @@ class FactCheckPageReviewController @Inject() (
       .fold(
         (formWithErrors: Form[FactCheckPageReview]) => { Future.successful(BadRequest(view(processId, s"/$page", formWithErrors))) },
         result => {
-          val reviewDetail = PageReviewDetail(processId, s"/$page", Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
+          val reviewDetail = PageReviewDetail(processId, s"/$page", "", Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
           reviewService.factCheckPageComplete(processId, s"/$page", reviewDetail).map {
             case Right(_) => Redirect(routes.FactCheckController.approval(processId))
             case Left(NotFoundError) =>

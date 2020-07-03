@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class PageReview(id: String, title: String, status: PageReviewStatus)
+case class PageReview(id: String, url: String, title: String, status: PageReviewStatus)
 
 object PageReview {
   implicit val formats: OFormat[PageReview] = Json.format[PageReview]

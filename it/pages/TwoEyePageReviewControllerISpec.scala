@@ -29,7 +29,7 @@ class TwoEyePageReviewControllerISpec extends IntegrationSpec {
     "user is authorised" should {
 
       "return OK (200)" in {
-        val dataReturned = PageReviewDetail("oct90005", "pageUrl", Some(YesNoAnswer.Yes), PageReviewStatus.NotStarted)
+        val dataReturned = PageReviewDetail("oct90005", "pageUrl", "title", Some(YesNoAnswer.Yes), PageReviewStatus.NotStarted)
 
         ExternalGuidanceStub.approval2iPageReview(Status.OK, Json.toJson(dataReturned))
 

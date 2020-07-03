@@ -27,7 +27,7 @@
 
     <h1 id="fact-check-error-heading" class="govuk-heading-xl">@messages("factCheckError.heading")</h1>
     <p id="fact-check-error-info" class="govuk-body">@messages("factCheckError.info")</p>
-    <a id="fact-check-error-link" href="@{routes.FactCheckController.approval(processId).toString}" class="govuk-button" data-module="govuk-button">@messages("factCheckError.back")</a>
+    <a id="fact-check-error-link" role="button" href="@{routes.FactCheckController.approval(processId).toString}" class="govuk-button" data-module="govuk-button">@messages("factCheckError.back")</a>
 }
 @{
  //$COVERAGE-OFF$

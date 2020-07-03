@@ -33,37 +33,44 @@ class FactCheckControllerISpec extends IntegrationSpec {
       |  "pages":[
       |    {
       |      "id":"id1",
+      |      "url":"how-did-you-earn-extra-income",
       |      "title":"how-did-you-earn-extra-income",
       |      "status":"NotStarted"
       |    },
       |    {
       |      "id":"id2",
       |      "title":"sold-goods-or-services/did-you-only-sell-personal-possessions",
+      |      "url":"sold-goods-or-services/did-you-only-sell-personal-possessions",
       |      "status":"NotStarted"
       |    },
       |    {
       |      "id":"id3",
       |      "title":"sold-goods-or-services/have-you-made-a-profit-of-6000-or-more",
+      |      "url":"sold-goods-or-services/have-you-made-a-profit-of-6000-or-more",
       |      "status":"NotStarted"
       |    },
       |    {
       |      "id":"id4",
       |      "title":"sold-goods-or-services/have-you-made-1000-or-more",
+      |      "url":"sold-goods-or-services/have-you-made-1000-or-more",
       |      "status":"NotStarted"
       |    },
       |    {
       |      "id":"id5",
       |      "title":"sold-goods-or-services/you-do-not-need-to-tell-hmrc",
+      |      "url":"sold-goods-or-services/you-do-not-need-to-tell-hmrc",
       |      "status":"NotStarted"}
       |    ,
       |    {
       |      "id":"id6",
       |      "title":"rent-a-property/do-you-receive-any-income",
+      |      "url":"rent-a-property/do-you-receive-any-income",
       |      "status":"NotStarted"
       |    },
       |    {
       |      "id":"id7",
       |      "title":"rent-a-property/have-you-rented-out-a-room",
+      |      "url":"rent-a-property/have-you-rented-out-a-room",
       |      "status":"NotStarted"
       |    }
       |  ]
