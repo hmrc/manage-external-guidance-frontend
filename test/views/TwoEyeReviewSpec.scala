@@ -72,23 +72,6 @@ class TwoEyeReviewSpec extends ViewSpecBase {
       }
     }
 
-    "Render a page containing two sections, one of pages and another with a send confirmation" in new Test {
-
-//      Option(doc.getElementsByTag("ul").first).fold(fail("Missing unordered list elem (ul)")) { ol =>
-//        val h2s = ol.getElementsByTag("h2").asScala.toList
-//        h2s.size shouldBe 2
-//        h2s(0).text shouldBe s"1. ${messages("2iReview.reviewPagesHeading")}"
-//        h2s(1).text shouldBe s"2. ${messages("2iReview.pagesReviewedConfirmationHeading")}"
-//
-//        val uls = ol.getElementsByTag("ul").asScala.toList
-//        uls.size shouldBe 2
-//
-//        Option(uls(1).getElementsByTag("a").first).fold(fail("Missing Send confirmation link")) { a =>
-//          a.text shouldBe messages("2iReview.sendConfirmation")
-//        }
-//      }
-    }
-
     "Include a back link" in new Test {
 
       Option(doc.getElementsByTag("main").first).fold(fail("Missing main tag")) { main =>
