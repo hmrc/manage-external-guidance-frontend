@@ -41,13 +41,13 @@ class FactCheckReviewSpec extends ViewSpecBase {
       "Telling HMRC about extra income",
       LocalDate.of(year, month, day),
       List(
-        PageReview("id1", "how-did-you-earn-extra-income", Complete),
-        PageReview("id2", "sold-goods-or-services/did-you-only-sell-personal-possessions", NotStarted),
-        PageReview("id3", "sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", NotStarted),
-        PageReview("id4", "sold-goods-or-services/have-you-made-1000-or-more", NotStarted),
-        PageReview("id5", "sold-goods-or-services/you-do-not-need-to-tell-hmrc", NotStarted),
-        PageReview("id6", "rent-a-property/do-you-receive-any-income", NotStarted),
-        PageReview("id7", "rent-a-property/have-you-rented-out-a-room", NotStarted)
+        PageReview("id1", "how-did-you-earn-extra-income", "Title1", Complete),
+        PageReview("id2", "sold-goods-or-services/did-you-only-sell-personal-possessions", "Title2", NotStarted),
+        PageReview("id3", "sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", "Title3", NotStarted),
+        PageReview("id4", "sold-goods-or-services/have-you-made-1000-or-more", "Title4", NotStarted),
+        PageReview("id5", "sold-goods-or-services/you-do-not-need-to-tell-hmrc", "Title5", NotStarted),
+        PageReview("id6", "rent-a-property/do-you-receive-any-income", "Title6", NotStarted),
+        PageReview("id7", "rent-a-property/have-you-rented-out-a-room", "Title7", NotStarted)
       )
     )
 
@@ -58,12 +58,10 @@ class FactCheckReviewSpec extends ViewSpecBase {
 
     "Render a page should display process title as the heading" in new Test {
 
-      doc.getElementsByTag("h1").asScala.filter(elementAttrs(_).get("class") == Some("govuk-heading-xl")).toList match {
-        case Nil => fail("Missing H1 heading of the correct class")
-        case x :: xs if x.text == approvalProcessReview.title => succeed
-        case _ => fail("Heading does not match the title of the process under approval")
+      Option(doc.getElementsByTag("h1").first).fold(fail("Missing H1 heading of the correct class")){h1 =>
+        elementAttrs(h1)("class") should include("govuk-heading-xl")
+        h1.text shouldBe  approvalProcessReview.title
       }
-
     }
 
     "Render header with caption paragraph" in new Test {

@@ -116,7 +116,7 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
 
   "The ReviewHttpParser.getReviewPageDetailsHttpReads" when {
     val pageUrl = "pageUrl"
-    val pageReviewDetail = PageReviewDetail(id, pageUrl, None, PageReviewStatus.NotStarted)
+    val pageReviewDetail = PageReviewDetail(id, pageUrl, "Title", None, PageReviewStatus.NotStarted)
 
     class GetReviewPageDetailsSetup(status: Int, optJson: Option[JsValue] = None) {
       private val httpMethod = "GET"

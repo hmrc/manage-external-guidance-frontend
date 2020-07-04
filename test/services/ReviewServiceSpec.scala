@@ -124,7 +124,7 @@ class ReviewServiceSpec extends BaseSpec {
       "Return an instance of the class ApprovalProcessReview after a successful call to the review connector" in new Test {
 
         val pageUrl: String = "pageUrl"
-        val pageReviewDetail: PageReviewDetail = PageReviewDetail(id, pageUrl, None, PageReviewStatus.NotStarted)
+        val pageReviewDetail: PageReviewDetail = PageReviewDetail(id, pageUrl, "Title", None, PageReviewStatus.NotStarted)
         MockReviewConnector
           .approval2iReviewPageInfo(id, "pageUrl")
           .returns(Future.successful(Right(pageReviewDetail)))
@@ -146,7 +146,7 @@ class ReviewServiceSpec extends BaseSpec {
       "Return no content after a successful call to the review connector" in new Test {
 
         val pageUrl: String = "pageUrl"
-        val info: PageReviewDetail = PageReviewDetail(id, pageUrl, None, PageReviewStatus.NotStarted)
+        val info: PageReviewDetail = PageReviewDetail(id, pageUrl, "title", None, PageReviewStatus.NotStarted)
         MockReviewConnector
           .approval2iReviewPageComplete(id, pageUrl, info)
           .returns(Future.successful(Right(())))
@@ -247,7 +247,7 @@ class ReviewServiceSpec extends BaseSpec {
       "Return an instance of the class ApprovalProcessReview after a successful call to the review connector" in new Test {
 
         val pageUrl = "pageUrl"
-        val pageReviewDetail: PageReviewDetail = PageReviewDetail(id, pageUrl, None, PageReviewStatus.NotStarted)
+        val pageReviewDetail: PageReviewDetail = PageReviewDetail(id, pageUrl, "title", None, PageReviewStatus.NotStarted)
         MockReviewConnector
           .factCheckPageInfo(id, "pageUrl")
           .returns(Future.successful(Right(pageReviewDetail)))
@@ -269,7 +269,7 @@ class ReviewServiceSpec extends BaseSpec {
       "Return no content after a successful call to the review connector" in new Test {
 
         val pageUrl: String = "pageUrl"
-        val info: PageReviewDetail = PageReviewDetail(id, pageUrl, None, PageReviewStatus.NotStarted)
+        val info: PageReviewDetail = PageReviewDetail(id, pageUrl, "title", None, PageReviewStatus.NotStarted)
         MockReviewConnector
           .factCheckPageComplete(id, pageUrl, info)
           .returns(Future.successful(Right(())))

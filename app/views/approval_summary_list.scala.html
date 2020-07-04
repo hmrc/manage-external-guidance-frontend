@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
+@import java.time.format.DateTimeFormatter
+
 @import config.AppConfig
 @import models.ApprovalProcessSummary
 @import models.ApprovalStatus._
-@import java.time.LocalDate
-@import java.time.format.DateTimeFormatter
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(layout: main_layout, govukTable : GovukTable, appConfig: AppConfig)
@@ -27,15 +27,15 @@
 
 @processReviewTitle(summary: ApprovalProcessSummary) = @{
   summary.status match {
-    case SubmittedForFactCheck => HtmlContent(s"""<a href="${routes.FactCheckController.approval(summary.id).toString}">${summary.title}</a>""")
-    case SubmittedFor2iReview => HtmlContent(s"""<a href="${routes.TwoEyeReviewController.approval(summary.id).toString}">${summary.title}</a>""")
+    case SubmittedForFactCheck => HtmlContent(s"""<a id="${summary.id}" href="${routes.FactCheckController.approval(summary.id).toString}">${summary.title}</a>""")
+    case SubmittedFor2iReview => HtmlContent(s"""<a id="${summary.id}" href="${routes.TwoEyeReviewController.approval(summary.id).toString}">${summary.title}</a>""")
     case _ => Text(summary.title)
   }
 }
 
 @layout(messages("approvals.tableTitle")) {
 
-<h1 class="govuk-heading-xl">@messages("approvals.tableTitle")</h1>
+<h1 class="govuk-heading-xl govuk-!-margin-0 govuk-!-margin-bottom-5">@messages("approvals.tableTitle")</h1>
 
 <p class="govuk-body">
  <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.commentsAndFeedbackUrl">@messages("approvals.commentsAndFeedback")</a>

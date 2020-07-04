@@ -16,64 +16,55 @@
 
 @import config.AppConfig
 @import models.ApprovalProcessReview
-
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(layout: main_layout, govukTable : GovukTable, govukBackLink : GovukBackLink, appConfig: AppConfig)
 
 @(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
 
+@reviewStatus() = @{
+  val totalPages = review.pages.length
+  val completePages = review.pages.count(p => p.status == PageReviewStatus.Complete)
+  completePages match {
+    case x if x == totalPages => s"Review Complete - all pages reviewed"
+    case _ => s"Review Incomplete - $completePages of $totalPages pages reviewed"
+  }
+}
+
 @layout(s"${review.title} - ${messages("2iReview.heading")}") {
 
   @govukBackLink(BackLink(href = routes.AdminController.approvalSummaries.toString, 
                           content = Text(messages("backlink.label"))))
 
-  <header class="hmrc-page-heading">
-      <h1 class="govuk-heading-xl">@review.title</h1>
-      <p class="govuk-caption-xl hmrc-caption-xl">@messages("2iReview.heading")</p>
+  <header class="hmrc-page-heading govuk-!-margin-0 govuk-!-margin-bottom-5">
+    <h1 class="govuk-heading-xl govuk-!-margin-0 govuk-!-margin-bottom-5">@review.title</h1>
+    <p class="govuk-caption-xl hmrc-caption-xl">@messages("2iReview.heading")</p>
   </header>
 
   <p>
     <a class="govuk-link" target="_blank" rel="noopener noreferrer" href = "@appConfig.viewApprovalUrl/@review.ocelotId">@messages("2iReview.viewGuidance")</a>
   </p>
 
-  <ol class="app-task-list">
-    <li>
+  <h2 class="app-task-list__section">
+    @messages("2iReview.reviewPagesHeading")
+  </h2>
+  <p>
+    @reviewStatus()
+  </p>
+  <ul class="app-task-list__items app-task-list__items-no-number">
+    @for((page, index) <- review.pages.zipWithIndex) {
+      <li class="app-task-list__item">
+        <span class="app-task-list__task-name">
+          <a id="2i-review-page-link-@index" href="@{routes.TwoEyePageReviewController.onPageLoad(review.ocelotId, page.url.drop(1)).toString}" aria-describedby="page-@index">
+              <span class="govuk-visually-hidden">@messages("2iReview.visuallyHiddenPage")</span>@page.title
+          </a>
+        </span>
+        <span class="hmrc-status-tag" id="page-@index">@messages(s"pageReviewStatus.${page.status.toString}")</span>
+      </li>
+    }
+  </ul>
 
-      <h2 class="app-task-list__section">
-        <span class="app-task-list__section-number">1. </span>@messages("2iReview.reviewPagesHeading")
-      </h2>
-
-      <ul class="app-task-list__items">        
-        @for((page, index) <- review.pages.zipWithIndex) {
-          <li class="app-task-list__item">
-            <span class="app-task-list__task-name">
-              <a id="2i-review-page-link-@index" href="@{routes.TwoEyePageReviewController.onPageLoad(review.ocelotId, page.title.drop(1)).toString}" aria-describedby="page-@index">
-                  <span class="govuk-visually-hidden">@messages("2iReview.visuallyHiddenPage")</span>@page.title
-              </a>
-            </span>
-            <span class="hmrc-status-tag" id="page-@index">@messages(s"pageReviewStatus.${page.status.toString}")</span>
-          </li>
-        }
-      </ul>
-
-    </li>
-
-    <li>
-
-      <h2 class="app-task-list__section">
-        <span class="app-task-list__section-number">2. </span>@messages("2iReview.pagesReviewedConfirmationHeading")
-      </h2>
-
-      <ul class="app-task-list__items">
-        <li class="app-task-list__item">
-          <span class="app-task-list__task-name"><a href="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).toString}">@messages("2iReview.sendConfirmation")</a></span>
-        </li>
-      </ul>
-
-    </li>
-
-  </ol>
+  <a id="confirm" href="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).toString}" role="button" class="govuk-button" data-module="govuk-button">@messages("2iReview.sendConfirmation")</a>
 
 }
 @{

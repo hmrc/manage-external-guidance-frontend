@@ -16,10 +16,11 @@
 
 package models
 
-import java.time.{LocalDateTime, LocalDate}
+import java.time.{LocalDate, LocalDateTime}
 import java.util.UUID
-import models.YesNoAnswer._
+
 import models.PageReviewStatus._
+import models.YesNoAnswer._
 
 trait ReviewData {
 
@@ -31,19 +32,20 @@ trait ReviewData {
     "Telling HMRC about extra income",
     LocalDate.of(2020, 5, 10),
     List(
-      PageReview("id1", "/how-did-you-earn-extra-income", NotStarted),
-      PageReview("id2", "/sold-goods-or-services/did-you-only-sell-personal-possessions", NotStarted),
-      PageReview("id3", "/sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", NotStarted),
-      PageReview("id4", "/sold-goods-or-services/have-you-made-1000-or-more", NotStarted),
-      PageReview("id5", "/sold-goods-or-services/you-do-not-need-to-tell-hmrc", NotStarted),
-      PageReview("id6", "/rent-a-property/do-you-receive-any-income", NotStarted),
-      PageReview("id7", "/rent-a-property/have-you-rented-out-a-room", NotStarted)
+      PageReview("id1", "/how-did-you-earn-extra-income", "title1", NotStarted),
+      PageReview("id2", "/sold-goods-or-services/did-you-only-sell-personal-possessions", "title2", NotStarted),
+      PageReview("id3", "/sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", "title3", NotStarted),
+      PageReview("id4", "/sold-goods-or-services/have-you-made-1000-or-more", "title4", NotStarted),
+      PageReview("id5", "/sold-goods-or-services/you-do-not-need-to-tell-hmrc", "title5", NotStarted),
+      PageReview("id6", "/rent-a-property/do-you-receive-any-income", "title6", NotStarted),
+      PageReview("id7", "/rent-a-property/have-you-rented-out-a-room", "title7", NotStarted)
     )
   )
 
   val reviewDetail: PageReviewDetail = PageReviewDetail(
     id,
     "/sold-goods-or-services/did-you-only-sell-personal-possessions",
+    "title",
     None,
     NotStarted,
     None,

@@ -50,8 +50,8 @@
   <div class="govuk-form-group @if(!errors.isEmpty) {govuk-form-group--error}">
     <fieldset class="govuk-fieldset" @optionalAria(fieldName)>
         <legend class="govuk-fieldset__legend hmrc-page-heading govuk-!-margin-0 govuk-!-margin-bottom-5">
-            <h1 class="govuk-heading-xl govuk-!-margin-0">@messages(heading)</h1>
-            <span class="govuk-caption-xl hmrc-caption-xl">@page</span>
+          <span class="govuk-caption-xl hmrc-caption-xl">@page</span>
+          <h1 class="govuk-heading-xl govuk-!-margin-0">@messages(heading)</h1>
       </legend>
       <span id="@fieldName-hint" class="govuk-hint">
         @viewLink(linkText, processId, page)

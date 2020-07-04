@@ -16,21 +16,18 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
-
-import scala.concurrent.ExecutionContext.Implicits.global
-
-import play.api.mvc._
-import play.api.i18n.I18nSupport
-import play.api.Logger
-
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-
 import config.ErrorHandler
 import controllers.actions.TwoEyeReviewerIdentifierAction
+import javax.inject.{Inject, Singleton}
 import models.errors.{MalformedResponseError, NotFoundError, StaleDataError}
+import play.api.Logger
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import services.ReviewService
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.twoeye_content_review
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class TwoEyeReviewController @Inject() (
@@ -46,19 +43,17 @@ class TwoEyeReviewController @Inject() (
 
   def approval(id: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
     reviewService.approval2iReview(id).map {
-      case Right(approvalProcessReview) => Ok(view(approvalProcessReview))
-      case Left(NotFoundError) => {
+      case Right(approvalProcessReview) =>
+        Ok(view(approvalProcessReview))
+      case Left(NotFoundError) =>
         logger.error(s"Unable to retrieve approval 2i review for process $id")
         NotFound(errorHandler.notFoundTemplate)
-      }
-      case Left(StaleDataError) => {
+      case Left(StaleDataError) =>
         logger.warn(s"The requested approval 2i review for process $id can no longer be found")
         NotFound(errorHandler.notFoundTemplate)
-      }
-      case Left(MalformedResponseError) => {
+      case Left(MalformedResponseError) =>
         logger.error(s"A malformed response was returned for the approval 2i process review for process $id")
         InternalServerError(errorHandler.internalServerErrorTemplate)
-      }
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval 2i review process for process $id returned error $err")

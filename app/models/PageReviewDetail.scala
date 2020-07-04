@@ -23,6 +23,7 @@ import play.api.libs.json.{Json, OFormat}
 case class PageReviewDetail(
     id: String,
     pageUrl: String,
+    pageTitle: String,
     result: Option[YesNoAnswer] = None,
     status: PageReviewStatus,
     comment: Option[String] = None,

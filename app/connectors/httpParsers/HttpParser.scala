@@ -38,11 +38,13 @@ trait HttpParser {
       }
     }
 
-    private def parseResult[T](json: JsValue)(implicit reads: Reads[T]): Option[T] = json.validate[T] match {
-      case JsSuccess(value, _) => Some(value)
-      case JsError(error) =>
-        logger.error(s"Unable to parse JSON in response: $error")
-        None
+    private def parseResult[T](json: JsValue)(implicit reads: Reads[T]): Option[T] = {
+      json.validate[T] match {
+        case JsSuccess(value, _) => Some(value)
+        case JsError(error) =>
+          logger.error(s"Unable to parse JSON in response: $error")
+          None
+      }
     }
 
     def checkErrorResponse: Error = {

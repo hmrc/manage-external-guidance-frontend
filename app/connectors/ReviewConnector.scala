@@ -67,7 +67,6 @@ class ReviewConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] = {
 
     val reviewEndPoint: String = s"${appConfig.externalGuidanceBaseUrl}/external-guidance/approval/$id/2i-page-review$pageUrl"
-
     httpClient.POST[PageReviewDetail, RequestOutcome[Unit]](reviewEndPoint, info)
   }
 
