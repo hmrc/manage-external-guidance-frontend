@@ -50,11 +50,9 @@ class TwoEyeReviewSpec extends ViewSpecBase {
 
   "2i Review page" should {
     "Render a page should display process title as the heading" in new Test {
-
-      doc.getElementsByTag("h1").asScala.filter(elementAttrs(_).get("class") == Some("govuk-heading-xl")).toList match {
-        case Nil => fail("Missing H1 heading of the correct class")
-        case x :: xs if x.text == approvalProcessReview.title => succeed
-        case _ => fail("Heading does not match the title of the process under approval")
+      Option(doc.getElementsByTag("h1").first).fold(fail("Missing H1 heading of the correct class")){h1 =>
+        elementAttrs(h1)("class") should include("govuk-heading-xl")
+        h1.text shouldBe  approvalProcessReview.title
       }
     }
 
