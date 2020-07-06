@@ -23,6 +23,7 @@
         phaseBanner : GovukPhaseBanner,
         govUkHeader: GovukHeader,
         footerLinks: FooterLinks,
+        siteHeader: components.siteHeader,
         appConfig: AppConfig)
 
 
@@ -75,7 +76,7 @@
 @layout(
     pageTitle = Some(s"$pageTitle - ${messages("service.name")} - ${messages("service.govuk")}"),
     headBlock = Some(head),
-    headerBlock = Some(headerBlock),
+    headerBlock = Some(siteHeader(true)),
     beforeContentBlock = Some(beforeContentBlock),
     footerItems = footerLinks.items,
     bodyEndBlock = Some(scripts))(content)

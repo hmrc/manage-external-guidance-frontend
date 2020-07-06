@@ -8,7 +8,9 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.8.0",
     "uk.gov.hmrc"             %% "play-frontend-govuk"      % "0.45.0-play-26",
     "uk.gov.hmrc"             %% "play-frontend-hmrc"       % "0.15.0-play-26",
-    "com.typesafe.play"       %% "play-json-joda"           % "2.6.13"
+    "com.typesafe.play"       %% "play-json-joda"           % "2.6.13",
+    "org.webjars.npm" % "hmrc-frontend" % "1.8.0",
+    "org.webjars.npm" % "govuk-frontend" % "3.6.0"    
   )
 
   val test = Seq(

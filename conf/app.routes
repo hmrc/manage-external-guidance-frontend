@@ -38,3 +38,4 @@ POST       /process/approval/fact-check               controllers.apis.ApprovalC
 OPTIONS    /process/approval/fact-check               controllers.apis.ApprovalController.options
 
 ->         /govuk-frontend          govuk.Routes
+->         /hmrc-frontend           hmrcfrontend.Routes
