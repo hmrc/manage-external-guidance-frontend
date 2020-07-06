@@ -68,18 +68,23 @@ class FactCheckPageReviewController @Inject() (
       .fold(
         (formWithErrors: Form[FactCheckPageReview]) => { Future.successful(BadRequest(view(processId, s"/$pageUrl", pageTitle, formWithErrors))) },
         result => {
-          val reviewDetail = PageReviewDetail(processId, s"/$pageUrl", pageTitle, Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
+          val reviewDetail = PageReviewDetail(processId,
+                                              s"/$pageUrl",
+                                              pageTitle,
+                                              Some(result.answer),
+                                              Complete,
+                                              updateUser = Some(s"${request.credId}:${request.name}"))
           reviewService.factCheckPageComplete(processId, s"/$pageUrl", reviewDetail).map {
             case Right(_) => Redirect(routes.FactCheckController.approval(processId))
             case Left(NotFoundError) =>
-              logger.error(s"Unable to retrieve approval fact check page review for process $processId")
+              logger.error(s"Unable to retrieve approval fact check page review for process $processId, url $pageUrl")
               NotFound(errorHandler.notFoundTemplate)
             case Left(StaleDataError) =>
-              logger.warn(s"The requested approval fact check review for process $processId can no longer be found")
+              logger.warn(s"The requested approval fact check review for process $processId, url $pageUrl can no longer be found")
               NotFound(errorHandler.notFoundTemplate)
             case Left(err) =>
               // Handle internal server and any unexpected errors
-              logger.error(s"Request for approval fact check review process for process $processId returned error $err")
+              logger.error(s"Request for approval fact check review process for process $processId, url $pageUrl returned error $err")
               InternalServerError(errorHandler.internalServerErrorTemplate)
           }
         }

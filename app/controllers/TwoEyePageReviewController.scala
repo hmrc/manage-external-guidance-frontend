@@ -63,24 +63,29 @@ class TwoEyePageReviewController @Inject() (
     }
   }
 
-  def onSubmit(processId: String, pageUrl: String, pageTitle: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request => 
+  def onSubmit(processId: String, pageUrl: String, pageTitle: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
     formProvider()
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[TwoEyePageReview]) => { Future.successful(BadRequest(view(processId, s"/$pageUrl", pageTitle, formWithErrors))) },
         result => {
-          val reviewDetail = PageReviewDetail(processId, s"/$pageUrl", pageTitle, Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
+          val reviewDetail = PageReviewDetail(processId,
+                                              s"/$pageUrl",
+                                              pageTitle,
+                                              Some(result.answer),
+                                              Complete,
+                                              updateUser = Some(s"${request.credId}:${request.name}"))
           reviewService.approval2iPageReviewComplete(processId, s"/$pageUrl", reviewDetail).map {
             case Right(_) => Redirect(routes.TwoEyeReviewController.approval(processId))
             case Left(NotFoundError) =>
-              logger.error(s"Unable to retrieve approval 2i page review for process $processId")
+              logger.error(s"Unable to retrieve approval 2i page review for process $processId, url $pageUrl")
               NotFound(errorHandler.notFoundTemplate)
             case Left(StaleDataError) =>
-              logger.warn(s"The requested approval 2i review for process $processId can no longer be found")
+              logger.warn(s"The requested approval 2i review for process $processId, url $pageUrl can no longer be found")
               NotFound(errorHandler.notFoundTemplate)
             case Left(err) =>
               // Handle internal server and any unexpected errors
-              logger.error(s"Request for approval 2i review process for process $processId returned error $err")
+              logger.error(s"Request for approval 2i review process for process $processId, url $pageUrl returned error $err")
               InternalServerError(errorHandler.internalServerErrorTemplate)
           }
         }

@@ -91,7 +91,7 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
         .factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Right(())))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), "title")(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       status(result) shouldBe Status.SEE_OTHER
     }
@@ -102,7 +102,7 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
         .factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Right(())))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), "title")(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       contentType(result) shouldBe None
     }
@@ -113,7 +113,7 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
         .factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(NotFoundError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), "title")(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       status(result) shouldBe Status.NOT_FOUND
     }
@@ -124,7 +124,7 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
         .factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(NotFoundError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), "title")(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
@@ -135,7 +135,7 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
         .factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(MalformedResponseError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), "title")(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
@@ -146,7 +146,7 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
         .factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(MalformedResponseError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), "title")(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
@@ -157,7 +157,7 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
         .factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(StaleDataError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), "title")(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       status(result) shouldBe Status.NOT_FOUND
     }
@@ -168,7 +168,7 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
         .factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(StaleDataError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), "title")(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
@@ -179,7 +179,7 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
         .factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), "title")(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
@@ -190,7 +190,7 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
         .factCheckPageComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), "title")(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
