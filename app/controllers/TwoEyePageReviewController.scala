@@ -48,40 +48,44 @@ class TwoEyePageReviewController @Inject() (
 
   val logger: Logger = Logger(getClass)
 
-  def onPageLoad(processId: String, page: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
-    reviewService.approval2iPageReview(processId, s"/$page") map {
-      case Right(data) =>
-        val form: Form[TwoEyePageReview] = data.result.fold(formProvider()) { answer =>
+  def onPageLoad(processId: String, pageUrl: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
+    reviewService.approval2iPageReview(processId, s"/$pageUrl") map {
+      case Right(pageReviewDetail) =>
+        val form: Form[TwoEyePageReview] = pageReviewDetail.result.fold(formProvider()) { answer =>
           formProvider().bind(Map("answer" -> answer.toString))
         }
-        Ok(view(processId, s"/$page", form))
+        Ok(view(processId, s"/$pageUrl", pageReviewDetail.pageTitle, form))
 
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
-        logger.error(s"Request for approval 2i page review for process $processId and page /$page returned error $err")
+        logger.error(s"Request for approval 2i page review for process $processId and pageUrl /$pageUrl returned error $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
 
-  def onSubmit(processId: String, page: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
-    val form: Form[TwoEyePageReview] = formProvider()
-    form
+  def onSubmit(processId: String, pageUrl: String, pageTitle: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
+    formProvider()
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[TwoEyePageReview]) => { Future.successful(BadRequest(view(processId, s"/$page", formWithErrors))) },
+        (formWithErrors: Form[TwoEyePageReview]) => { Future.successful(BadRequest(view(processId, s"/$pageUrl", pageTitle, formWithErrors))) },
         result => {
-          val reviewDetail = PageReviewDetail(processId, s"/$page", "", Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
-          reviewService.approval2iPageReviewComplete(processId, s"/$page", reviewDetail).map {
+          val reviewDetail = PageReviewDetail(processId,
+                                              s"/$pageUrl",
+                                              pageTitle,
+                                              Some(result.answer),
+                                              Complete,
+                                              updateUser = Some(s"${request.credId}:${request.name}"))
+          reviewService.approval2iPageReviewComplete(processId, s"/$pageUrl", reviewDetail).map {
             case Right(_) => Redirect(routes.TwoEyeReviewController.approval(processId))
             case Left(NotFoundError) =>
-              logger.error(s"Unable to retrieve approval 2i page review for process $processId")
+              logger.error(s"Unable to retrieve approval 2i page review for process $processId, url $pageUrl")
               NotFound(errorHandler.notFoundTemplate)
             case Left(StaleDataError) =>
-              logger.warn(s"The requested approval 2i review for process $processId can no longer be found")
+              logger.warn(s"The requested approval 2i review for process $processId, url $pageUrl can no longer be found")
               NotFound(errorHandler.notFoundTemplate)
             case Left(err) =>
               // Handle internal server and any unexpected errors
-              logger.error(s"Request for approval 2i review process for process $processId returned error $err")
+              logger.error(s"Request for approval 2i review process for process $processId, url $pageUrl returned error $err")
               InternalServerError(errorHandler.internalServerErrorTemplate)
           }
         }

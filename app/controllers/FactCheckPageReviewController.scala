@@ -48,39 +48,43 @@ class FactCheckPageReviewController @Inject() (
 
   val logger: Logger = Logger(getClass)
 
-  def onPageLoad(processId: String, page: String): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
-    reviewService.factCheckPageInfo(processId, s"/$page") map {
-      case Right(data) =>
-        val form: Form[FactCheckPageReview] = data.result.fold(formProvider()) { answer =>
+  def onPageLoad(processId: String, pageUrl: String): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
+    reviewService.factCheckPageInfo(processId, s"/$pageUrl") map {
+      case Right(pageReviewDetail) =>
+        val form: Form[FactCheckPageReview] = pageReviewDetail.result.fold(formProvider()) { answer =>
           formProvider().bind(Map("answer" -> answer.toString))
         }
-        Ok(view(processId, s"/$page", form))
+        Ok(view(processId, s"/$pageUrl", pageReviewDetail.pageTitle, form))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
-        logger.error(s"Request for approval fact check page review for process $processId and page $page returned error $err")
+        logger.error(s"Request for approval fact check page review for process $processId and pageUrl $pageUrl returned error $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
 
-  def onSubmit(processId: String, page: String): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
-    val form: Form[FactCheckPageReview] = formProvider()
-    form
+  def onSubmit(processId: String, pageUrl: String, pageTitle: String): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
+    formProvider()
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[FactCheckPageReview]) => { Future.successful(BadRequest(view(processId, s"/$page", formWithErrors))) },
+        (formWithErrors: Form[FactCheckPageReview]) => { Future.successful(BadRequest(view(processId, s"/$pageUrl", pageTitle, formWithErrors))) },
         result => {
-          val reviewDetail = PageReviewDetail(processId, s"/$page", "", Some(result.answer), Complete, updateUser = Some(s"${request.credId}:${request.name}"))
-          reviewService.factCheckPageComplete(processId, s"/$page", reviewDetail).map {
+          val reviewDetail = PageReviewDetail(processId,
+                                              s"/$pageUrl",
+                                              pageTitle,
+                                              Some(result.answer),
+                                              Complete,
+                                              updateUser = Some(s"${request.credId}:${request.name}"))
+          reviewService.factCheckPageComplete(processId, s"/$pageUrl", reviewDetail).map {
             case Right(_) => Redirect(routes.FactCheckController.approval(processId))
             case Left(NotFoundError) =>
-              logger.error(s"Unable to retrieve approval fact check page review for process $processId")
+              logger.error(s"Unable to retrieve approval fact check page review for process $processId, url $pageUrl")
               NotFound(errorHandler.notFoundTemplate)
             case Left(StaleDataError) =>
-              logger.warn(s"The requested approval fact check review for process $processId can no longer be found")
+              logger.warn(s"The requested approval fact check review for process $processId, url $pageUrl can no longer be found")
               NotFound(errorHandler.notFoundTemplate)
             case Left(err) =>
               // Handle internal server and any unexpected errors
-              logger.error(s"Request for approval fact check review process for process $processId returned error $err")
+              logger.error(s"Request for approval fact check review process for process $processId, url $pageUrl returned error $err")
               InternalServerError(errorHandler.internalServerErrorTemplate)
           }
         }
