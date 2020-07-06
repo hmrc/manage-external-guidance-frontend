@@ -31,7 +31,7 @@
   govukButton: GovukButton
 )
 
-@(processId: String, page: String, form: Form[_])(implicit request: Request[_], messages: Messages)
+@(processId: String, reviewUrl: String, reviewTitle: String, form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @pageTitle(errs: Seq[FormError]) = @{
   val title = s"${messages("2iPageReview.title")} - ${messages("2iReview.heading")}"
@@ -43,13 +43,14 @@
   @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).toString,
     content = Text(messages("backlink.label"))))
 
-  @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, page.drop(1))) {
+  @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, reviewUrl.drop(1), reviewTitle)) {
 
     @errorSummary(form.errors)
     
     @radiosWithSubHeading(form("answer").value,
-                form.errors, 
-                page, 
+                form.errors,
+                reviewUrl, 
+                reviewTitle, 
                 processId, 
                 "answer", 
                 "2iPageReview.heading", 

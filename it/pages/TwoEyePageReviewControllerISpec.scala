@@ -60,7 +60,7 @@ class TwoEyePageReviewControllerISpec extends IntegrationSpec {
     }
   }
 
-  "POST /2i-page-review/id/pageUrl" when {
+  "POST /2i-page-review/id/pageUrl?title=Title" when {
 
     "user is authorised" when {
 
@@ -73,8 +73,8 @@ class TwoEyePageReviewControllerISpec extends IntegrationSpec {
 
           ExternalGuidanceStub.approval2iPageReviewComplete(Status.NO_CONTENT, Json.parse("{}"))
 
-          val request: WSRequest = buildRequest("/2i-page-review/oct90005/pageUrl")
-          val response: WSResponse = await(request.post(Json.obj("answer" -> YesNoAnswer.Yes.toString)))
+          val request: WSRequest = buildRequest("/2i-page-review/oct90005/pageUrl?title=Title")
+          val response: WSResponse = await(request.post(Json.obj("answer" -> YesNoAnswer.Yes.toString, "title" -> "Title")))
           response.status shouldBe Status.SEE_OTHER
         }
       }
@@ -101,8 +101,8 @@ class TwoEyePageReviewControllerISpec extends IntegrationSpec {
         AuditStub.audit()
         AuthStub.unauthorised()
 
-        val request: WSRequest = buildRequest("/2i-page-review/oct90005/pageUrl")
-        val response: WSResponse = await(request.post(Json.obj("answer" -> YesNoAnswer.Yes.toString)))
+        val request: WSRequest = buildRequest("/2i-page-review/oct90005/pageUrl?title=Title")
+        val response: WSResponse = await(request.post(Json.obj("answer" -> YesNoAnswer.Yes.toString, "title" -> "Title")))
         response.status shouldBe Status.UNAUTHORIZED
 
       }

@@ -80,14 +80,14 @@ class PageTitleSpec extends ViewSpecBase {
     "Render correct fact_check_page_review title" in {
       val view = injector.instanceOf[fact_check_page_review]
       val formProvider = new FactCheckPageReviewFormProvider()
-      checkTitle(asDocument(view("","", formProvider())(FakeRequest("GET", "/blah"), messages)), Some(messages("factCheck.heading")))
+      checkTitle(asDocument(view("", "", "", formProvider())(FakeRequest("GET", "/blah"), messages)), Some(messages("factCheck.heading")))
     }
 
     "Render correct fact_check_page_review title when error has occurred" in {
       val view = injector.instanceOf[fact_check_page_review]
       val formProvider = new FactCheckPageReviewFormProvider()
       val form = formProvider().copy( errors = formErrors)
-      checkTitleWithError(asDocument(view("","", form)(FakeRequest("GET", "/blah"), messages)), Some(messages("factCheck.heading")))
+      checkTitleWithError(asDocument(view("","", "", form)(FakeRequest("GET", "/blah"), messages)), Some(messages("factCheck.heading")))
     }
 
     "Render correct twoeye_confirm_error title" in {
@@ -103,14 +103,14 @@ class PageTitleSpec extends ViewSpecBase {
     "Render correct twoeye_page_review title" in {
       val view = injector.instanceOf[twoeye_page_review]
       val formProvider = new TwoEyePageReviewFormProvider()
-      checkTitle(asDocument(view("","", formProvider())(FakeRequest("GET", "/blah"), messages)), Some(messages("2iReview.heading")))
+      checkTitle(asDocument(view("","", "", formProvider())(FakeRequest("GET", "/blah"), messages)), Some(messages("2iReview.heading")))
     }
 
     "Render correct twoeye_page_review title when error has occurred" in {
       val view = injector.instanceOf[twoeye_page_review]
       val formProvider = new TwoEyePageReviewFormProvider()
       val form = formProvider().copy( errors = formErrors)
-      checkTitleWithError(asDocument(view("","", form)(FakeRequest("GET", "/blah"), messages)), Some(messages("2iReview.heading")))
+      checkTitleWithError(asDocument(view("","", "", form)(FakeRequest("GET", "/blah"), messages)), Some(messages("2iReview.heading")))
     }
 
     "Render correct twoeye_review_result title" in {

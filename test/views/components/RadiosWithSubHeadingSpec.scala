@@ -30,7 +30,8 @@ import views.ViewSpecBase
 
 class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
 
-  val page = "/url"
+  val pageUrl = "/url"
+  val pageTitle = "Some Page Title"
   val processId = "ext90087"
   val fieldName = "field"
   val heading = "Some Heading"
@@ -51,7 +52,8 @@ class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
     def radios: radiosWithSubHeading = injector.instanceOf[radiosWithSubHeading]
     val html: Html = radios(None,
                             Seq.empty,
-                            page,
+                            pageUrl,
+                            pageTitle,
                             processId,
                             fieldName,
                             heading,
@@ -79,7 +81,8 @@ class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
     def radios: radiosWithSubHeading = injector.instanceOf[radiosWithSubHeading]
     val html: Html = radios(None,
                             Seq(FormError("Key", "Error message")),
-                            page,
+                            pageUrl,
+                            pageTitle,
                             processId,
                             fieldName,
                             heading,
