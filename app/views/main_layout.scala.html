@@ -46,7 +46,7 @@
 
 @headerBlock = {
     @govUkHeader(Header(
-        serviceUrl = Some(controllers.routes.AdminController.approvalSummaries.toString),
+        serviceUrl = Some(controllers.routes.AdminController.approvalSummaries.url),
         serviceName = Some(messages("service.name"))
     ))
 }
@@ -76,7 +76,7 @@
 @layout(
     pageTitle = Some(s"$pageTitle - ${messages("service.name")} - ${messages("service.govuk")}"),
     headBlock = Some(head),
-    headerBlock = Some(siteHeader(true)),
+    headerBlock = Some(siteHeader()),
     beforeContentBlock = Some(beforeContentBlock),
     footerItems = footerLinks.items,
     bodyEndBlock = Some(scripts))(content)

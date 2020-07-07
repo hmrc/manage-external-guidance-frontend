@@ -47,7 +47,7 @@ class ApprovalsListSpec extends ViewSpecBase {
 
     "Render header with service name link" in new Test {
 
-      val headers = doc.getElementsByClass("govuk-header__content")
+      val headers = doc.getElementsByTag("header")
 
       headers.size() shouldBe 1
 
@@ -119,8 +119,8 @@ class ApprovalsListSpec extends ViewSpecBase {
                 Option(cellData.head.getElementsByTag("a").first).fold(fail("Missing link from page url cell")) { a =>
                   elementAttrs(a).get("href").fold(fail("Missing href attribute within anchor")) { href =>
                     s.status match {
-                      case SubmittedFor2iReview => href shouldBe routes.TwoEyeReviewController.approval(s.id).toString
-                      case SubmittedForFactCheck => href shouldBe routes.FactCheckController.approval(s.id).toString
+                      case SubmittedFor2iReview => href shouldBe routes.TwoEyeReviewController.approval(s.id).url
+                      case SubmittedForFactCheck => href shouldBe routes.FactCheckController.approval(s.id).url
                     }
                   }
                 }

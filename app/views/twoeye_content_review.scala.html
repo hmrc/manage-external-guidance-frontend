@@ -33,7 +33,7 @@
 
 @layout(s"${review.title} - ${messages("2iReview.heading")}") {
 
-  @govukBackLink(BackLink(href = routes.AdminController.approvalSummaries.toString, 
+  @govukBackLink(BackLink(href = routes.AdminController.approvalSummaries.url, 
                           content = Text(messages("backlink.label"))))
 
   <header class="hmrc-page-heading govuk-!-margin-0 govuk-!-margin-bottom-5">
@@ -55,7 +55,7 @@
     @for((page, index) <- review.pages.zipWithIndex) {
       <li class="app-task-list__item">
         <span class="app-task-list__task-name">
-          <a id="2i-review-page-link-@index" href="@{routes.TwoEyePageReviewController.onPageLoad(review.ocelotId, page.url.drop(1)).toString}" aria-describedby="page-@index">
+          <a id="2i-review-page-link-@index" href="@{routes.TwoEyePageReviewController.onPageLoad(review.ocelotId, page.url.drop(1)).url}" aria-describedby="page-@index">
               <span class="govuk-visually-hidden">@messages("2iReview.visuallyHiddenPage")</span>@page.title
           </a>
         </span>
@@ -64,7 +64,7 @@
     }
   </ul>
 
-  <a id="confirm" href="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).toString}" role="button" class="govuk-button" data-module="govuk-button">@messages("2iReview.sendConfirmation")</a>
+  <a id="confirm" href="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).url}" role="button" class="govuk-button" data-module="govuk-button">@messages("2iReview.sendConfirmation")</a>
 
 }
 @{

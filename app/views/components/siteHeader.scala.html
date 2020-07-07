@@ -16,14 +16,14 @@
 
 @this(internalHeader: hmrcComponents.hmrcInternalHeader)
 
-@(showSignOut: Boolean = true)(implicit messages: Messages)
+@()(implicit messages: Messages)
 
 <div class="govuk-body">
     <header role="banner" class="hmrc-internal-header">
         <div class="govuk-width-container">
         <div class="hmrc-internal-header__logo">
             <span class="hmrc-internal-header__logo-link">
-                HM Revenue &amp; Customs
+                @messages("header.hmrcLogoTitle")
             </span>
         </div>
 

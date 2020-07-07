@@ -27,8 +27,8 @@
 
 @processReviewTitle(summary: ApprovalProcessSummary) = @{
   summary.status match {
-    case SubmittedForFactCheck => HtmlContent(s"""<a id="${summary.id}" href="${routes.FactCheckController.approval(summary.id).toString}">${summary.title}</a>""")
-    case SubmittedFor2iReview => HtmlContent(s"""<a id="${summary.id}" href="${routes.TwoEyeReviewController.approval(summary.id).toString}">${summary.title}</a>""")
+    case SubmittedForFactCheck => HtmlContent(s"""<a id="${summary.id}" href="${routes.FactCheckController.approval(summary.id).url}">${summary.title}</a>""")
+    case SubmittedFor2iReview => HtmlContent(s"""<a id="${summary.id}" href="${routes.TwoEyeReviewController.approval(summary.id).url}">${summary.title}</a>""")
     case _ => Text(summary.title)
   }
 }
