@@ -73,8 +73,8 @@ class FactCheckPageReviewControllerISpec extends IntegrationSpec {
 
           ExternalGuidanceStub.factCheckPageReviewComplete(Status.NO_CONTENT, Json.parse("{}"))
 
-          val request: WSRequest = buildRequest("/fact-check-page-review/oct90005/pageUrl")
-          val response: WSResponse = await(request.post(Json.obj("answer" -> YesNoAnswer.Yes.toString)))
+          val request: WSRequest = buildRequest("/fact-check-page-review/oct90005/pageUrl?title=Title")
+          val response: WSResponse = await(request.post(Json.obj("answer" -> YesNoAnswer.Yes.toString, "title" -> "Title")))
           response.status shouldBe Status.SEE_OTHER
         }
       }
@@ -101,8 +101,8 @@ class FactCheckPageReviewControllerISpec extends IntegrationSpec {
         AuditStub.audit()
         AuthStub.unauthorised()
 
-        val request: WSRequest = buildRequest("/fact-check-page-review/oct90005/pageUrl")
-        val response: WSResponse = await(request.post(Json.obj("answer" -> YesNoAnswer.Yes.toString)))
+        val request: WSRequest = buildRequest("/fact-check-page-review/oct90005/pageUrl?title=Title")
+        val response: WSResponse = await(request.post(Json.obj("answer" -> YesNoAnswer.Yes.toString, "title" -> "Title")))
         response.status shouldBe Status.UNAUTHORIZED
 
       }
