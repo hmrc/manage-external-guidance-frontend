@@ -16,12 +16,10 @@
 
 @import config.AppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 @import views.components.FooterLinks
 
 @this(layout: GovukLayout,
         phaseBanner : GovukPhaseBanner,
-        govUkHeader: GovukHeader,
         footerLinks: FooterLinks,
         siteHeader: components.siteHeader,
         appConfig: AppConfig)
@@ -32,7 +30,7 @@
 @beforeContentBlock = {
     @phaseBanner(PhaseBanner(
         tag = Some(Tag(
-            content = Text("beta")
+            content = Text(messages("service.phaseName"))
         )),
         content = HtmlContent(s"""${messages("feedback.before")} <a id="beta-feedback-link" class="govuk-link" href="${appConfig.contactFrontendFeedbackUrl}">${messages("feedback.linkLabel")}</a> ${messages("feedback.after")}""")
     ))
@@ -42,13 +40,6 @@
     <script src='@controllers.routes.Assets.versioned("javascripts/gtm.js")'></script>
     <!--[if lte IE 8]><link href='@controllers.routes.Assets.versioned("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
     <!--[if gt IE 8]><!--><link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" /><!--<![endif]-->
-}
-
-@headerBlock = {
-    @govUkHeader(Header(
-        serviceUrl = Some(controllers.routes.AdminController.approvalSummaries.url),
-        serviceName = Some(messages("service.name"))
-    ))
 }
 
 @content = {
