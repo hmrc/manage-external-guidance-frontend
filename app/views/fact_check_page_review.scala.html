@@ -38,7 +38,7 @@
 
 @layout(pageTitle(form.errors)){
 
-  @govukBackLink(BackLink(href = routes.FactCheckController.approval(processId).toString,
+  @govukBackLink(BackLink(href = routes.FactCheckController.approval(processId).url,
     content = Text(messages("backlink.label"))))
 
   @formWithCSRF(action = routes.FactCheckPageReviewController.onSubmit(processId, reviewUrl.drop(1), reviewTitle)) {

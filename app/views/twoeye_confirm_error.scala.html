@@ -22,12 +22,12 @@
 
 @layout(s"${messages("2iReviewError.title")} - ${messages("2iReview.heading")}") {
 
-  @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).toString,
+  @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).url,
     content = Text(messages("backlink.label")), attributes = Map("id" -> "back-link")))
 
     <h1 id="2i-error-heading" class="govuk-heading-xl">@messages("2iReviewError.heading")</h1>
     <p id="2i-error-info" class="govuk-body">@messages("2iReviewError.info")</p>
-    <a id="2i-error-link" href="@{routes.TwoEyeReviewController.approval(processId).toString}" role="button" class="govuk-button" data-module="govuk-button">@messages("2iReviewError.back")</a>
+    <a id="2i-error-link" href="@{routes.TwoEyeReviewController.approval(processId).url}" role="button" class="govuk-button" data-module="govuk-button">@messages("2iReviewError.back")</a>
 }
 @{
  //$COVERAGE-OFF$

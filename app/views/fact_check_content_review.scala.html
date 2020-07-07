@@ -32,7 +32,7 @@
 
 @layout(s"${review.title} - ${messages("factCheck.heading")}") {
 
-  @govukBackLink(BackLink(href = routes.AdminController.approvalSummaries.toString, 
+  @govukBackLink(BackLink(href = routes.AdminController.approvalSummaries.url, 
                           content = Text(messages("backlink.label"))))
 
   <header class="hmrc-page-heading govuk-!-margin-0 govuk-!-margin-bottom-5">
@@ -51,7 +51,7 @@
     @for((page, index) <- review.pages.zipWithIndex) {
       <li class="app-task-list__item">
         <span class="app-task-list__task-name">
-          <a id="fact-check-page-link-@index" href="@{routes.FactCheckPageReviewController.onPageLoad(review.ocelotId, page.url.drop(1)).toString}" aria-describedby="page-@index">
+          <a id="fact-check-page-link-@index" href="@{routes.FactCheckPageReviewController.onPageLoad(review.ocelotId, page.url.drop(1)).url}" aria-describedby="page-@index">
               <span class="govuk-visually-hidden">@messages("factCheck.visuallyHiddenPage")</span>@page.title
           </a>
         </span>
@@ -62,7 +62,7 @@
 
   <span class="govuk-body">@messages("factCheck.sendConfirmationComment")</span>
   <br><br>
-  <a id="confirm" href="@{routes.FactCheckConfirmController.onConfirm(review.ocelotId).toString}" role="button" class="govuk-button" data-module="govuk-button">@messages("2iReview.sendConfirmation")</a>
+  <a id="confirm" href="@{routes.FactCheckConfirmController.onConfirm(review.ocelotId).url}" role="button" class="govuk-button" data-module="govuk-button">@messages("2iReview.sendConfirmation")</a>
 
 }
 @{
