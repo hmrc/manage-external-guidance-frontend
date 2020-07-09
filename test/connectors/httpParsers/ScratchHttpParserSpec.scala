@@ -16,19 +16,15 @@
 
 package connectors.httpParsers
 
-import connectors.httpParsers.ScratchHttpParser.saveScratchProcessHttpReads
-
 import java.util.UUID.randomUUID
 
-import play.api.http.{HttpVerbs, Status}
-import play.api.libs.json.{Json, JsValue}
-
-import uk.gov.hmrc.http.HttpResponse
-
-import models.{RequestOutcome, ScratchResponse}
-import models.errors.{InvalidProcessError, InternalServerError}
-
 import base.BaseSpec
+import connectors.httpParsers.ScratchHttpParser.saveScratchProcessHttpReads
+import models.errors.{InternalServerError, InvalidProcessError}
+import models.{RequestOutcome, ScratchResponse}
+import play.api.http.{HttpVerbs, Status}
+import play.api.libs.json.{JsNull, JsValue, Json}
+import uk.gov.hmrc.http.HttpResponse
 
 class ScratchHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
@@ -47,7 +43,7 @@ class ScratchHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
     "return a valid scratch response" in new Test {
 
-      private val httpResponse = HttpResponse(CREATED, Some(validResponse))
+      private val httpResponse = HttpResponse(CREATED, validResponse, Map.empty[String, Seq[String]])
       private val result = saveScratchProcessHttpReads.read(POST, url, httpResponse)
       result shouldBe Right(ScratchResponse(id))
     }
@@ -57,7 +53,7 @@ class ScratchHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
     "return an invalid process error for a bad request" in new Test {
 
-      val httpResponse: HttpResponse = HttpResponse(BAD_REQUEST)
+      val httpResponse: HttpResponse = HttpResponse(BAD_REQUEST, JsNull, Map.empty[String, Seq[String]])
 
       val result: RequestOutcome[ScratchResponse] =
         saveScratchProcessHttpReads.read(POST, url, httpResponse)
@@ -67,7 +63,7 @@ class ScratchHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
     "return an internal server error for an invalid response" in new Test {
 
-      val httpResponse: HttpResponse = HttpResponse(CREATED, Some(invalidResponse))
+      val httpResponse: HttpResponse = HttpResponse(CREATED, invalidResponse, Map.empty[String, Seq[String]])
 
       val result: RequestOutcome[ScratchResponse] =
         saveScratchProcessHttpReads.read(POST, url, httpResponse)
@@ -77,7 +73,7 @@ class ScratchHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
     "return an internal server error when an error distinct from invalid process occurs" in new Test {
 
-      val httpResponse: HttpResponse = HttpResponse(SERVICE_UNAVAILABLE)
+      private val httpResponse = HttpResponse(SERVICE_UNAVAILABLE, JsNull, Map.empty[String, Seq[String]])
 
       val result: RequestOutcome[ScratchResponse] =
         saveScratchProcessHttpReads.read(POST, url, httpResponse)

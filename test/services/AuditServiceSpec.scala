@@ -16,12 +16,12 @@
 
 package services
 
+import java.time.Instant
 import java.util.UUID
 
 import base.BaseSpec
 import mocks.{MockAppConfig, MockAuditConnector}
 import models.audit.{TwoEyeReviewCompleteEvent, _}
-import org.joda.time.DateTime
 import play.api.libs.json._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
@@ -40,7 +40,7 @@ class AuditServiceSpec extends BaseSpec {
     val ocelotVersion: Int = 3
     val ocelotLastUpdate: Long = 10000000
     val ocelotAuthor: String = "12345"
-    val submissionTime: DateTime = new DateTime(2020, 4, 23, 13, 0, 0)
+    val submissionTime: Instant = Instant.now()
     val eventUUID: String = UUID.randomUUID().toString
 
     def tagsData(name: String, path: Option[String] = None): Map[String, String] =
