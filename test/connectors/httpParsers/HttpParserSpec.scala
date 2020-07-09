@@ -19,7 +19,7 @@ package connectors.httpParsers
 import base.BaseSpec
 import models.errors.{InternalServerError, InvalidProcessError}
 import play.api.http.{HttpVerbs, Status}
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{JsNull, Json, OFormat}
 import uk.gov.hmrc.http.HttpResponse
 
 class HttpParserSpec extends BaseSpec with HttpVerbs with Status with HttpParser {
@@ -34,22 +34,21 @@ class HttpParserSpec extends BaseSpec with HttpVerbs with Status with HttpParser
     "return the model associated with the JSON" in {
       val model = Person("Bob", 1)
       val json = Json.toJson(model)
-      val response = HttpResponse(OK, Some(json))
+      val response = HttpResponse(OK, json, Map.empty[String, Seq[String]])
       response.validateJson[Person] shouldBe Some(model)
     }
   }
 
   "Calling validateJson with no response" should {
     "return None" in {
-      val response = HttpResponse(OK)
+      val response = HttpResponse(OK, JsNull, Map.empty[String, Seq[String]])
       response.validateJson[Person] shouldBe None
     }
   }
 
   "Calling validateJson with an invalid JSON response" should {
     "return None" in {
-      val json = Json.obj()
-      val response = HttpResponse(OK, Some(json))
+      val response = HttpResponse(OK, JsNull, Map.empty[String, Seq[String]])
       response.validateJson[Person] shouldBe None
     }
   }
@@ -57,7 +56,7 @@ class HttpParserSpec extends BaseSpec with HttpVerbs with Status with HttpParser
   "Calling checkErrorResponse with a valid JSON response" should {
     "return InvalidProcessError" in {
       val json = Json.obj("code" -> "BAD_REQUEST", "message" -> "")
-      val response = HttpResponse(BAD_REQUEST, Some(json))
+      val response = HttpResponse(BAD_REQUEST, json, Map.empty[String, Seq[String]])
       response.checkErrorResponse shouldBe InvalidProcessError
     }
   }
@@ -65,7 +64,7 @@ class HttpParserSpec extends BaseSpec with HttpVerbs with Status with HttpParser
   "Calling checkErrorResponse with empty JSON response" should {
     "return InternalServerError" in {
       val json = Json.obj()
-      val response = HttpResponse(BAD_REQUEST, Some(json))
+      val response = HttpResponse(BAD_REQUEST, json, Map.empty[String, Seq[String]])
       response.checkErrorResponse shouldBe InternalServerError
     }
   }

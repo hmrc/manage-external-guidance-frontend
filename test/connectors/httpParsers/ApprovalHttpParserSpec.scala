@@ -23,7 +23,7 @@ import connectors.httpParsers.ApprovalHttpParser._
 import models.errors.{InternalServerError, InvalidProcessError}
 import models.{ApprovalProcessSummary, ApprovalResponse, ApprovalStatus, RequestOutcome}
 import play.api.http.{HttpVerbs, Status}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsNull, JsValue, Json}
 import uk.gov.hmrc.http.HttpResponse
 
 class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
@@ -43,7 +43,7 @@ class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
     "return a valid approval response" in new Test {
 
-      private val httpResponse = HttpResponse(CREATED, Some(validResponse))
+      private val httpResponse = HttpResponse(CREATED, validResponse,  Map.empty[String, Seq[String]])
       private val result = saveApprovalHttpReads.read(POST, url, httpResponse)
       result shouldBe Right(ApprovalResponse(id))
     }
@@ -53,7 +53,7 @@ class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
     "return an invalid process error for a bad request" in new Test {
 
-      val httpResponse: HttpResponse = HttpResponse(BAD_REQUEST)
+      private val httpResponse = HttpResponse(BAD_REQUEST, JsNull, Map.empty[String, Seq[String]])
 
       val result: RequestOutcome[ApprovalResponse] =
         saveApprovalHttpReads.read(POST, url, httpResponse)
@@ -63,7 +63,7 @@ class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
     "return an internal server error for an invalid response" in new Test {
 
-      val httpResponse: HttpResponse = HttpResponse(CREATED, Some(invalidResponse))
+      private val httpResponse = HttpResponse(CREATED, invalidResponse,  Map.empty[String, Seq[String]])
 
       val result: RequestOutcome[ApprovalResponse] =
         saveApprovalHttpReads.read(POST, url, httpResponse)
@@ -73,7 +73,7 @@ class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
     "return an internal server error when an error distinct from invalid process occurs" in new Test {
 
-      val httpResponse: HttpResponse = HttpResponse(SERVICE_UNAVAILABLE)
+      private val httpResponse = HttpResponse(SERVICE_UNAVAILABLE, JsNull, Map.empty[String, Seq[String]])
 
       val result: RequestOutcome[ApprovalResponse] =
         saveApprovalHttpReads.read(POST, url, httpResponse)
@@ -106,7 +106,7 @@ class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
     "return a valid approval response" in new SummaryTest {
 
-      private val httpResponse = HttpResponse(OK, Some(summaryListJson))
+      private val httpResponse = HttpResponse(OK, summaryListJson, Map.empty[String, Seq[String]])
       private val result = getApprovalSummaryListHttpReads.read(GET, url, httpResponse)
       result shouldBe Right(expectedResponse)
     }
@@ -116,21 +116,21 @@ class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
     "return an invalid process error for an internal_server_response" in new SummaryTest {
 
-      val httpResponse: HttpResponse = HttpResponse(INTERNAL_SERVER_ERROR)
+      private val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, JsNull, Map.empty[String, Seq[String]])
       private val result = getApprovalSummaryListHttpReads.read(GET, url, httpResponse)
       result shouldBe Left(InternalServerError)
     }
 
     "return an internal server error for an invalid response" in new Test {
 
-      val httpResponse: HttpResponse = HttpResponse(OK, Some(invalidResponse))
+      private val httpResponse = HttpResponse(OK, invalidResponse,  Map.empty[String, Seq[String]])
       private val result = getApprovalSummaryListHttpReads.read(GET, url, httpResponse)
       result shouldBe Left(InternalServerError)
     }
 
     "return an internal server error when an error distinct from invalid process occurs" in new Test {
 
-      val httpResponse: HttpResponse = HttpResponse(SERVICE_UNAVAILABLE)
+      private val httpResponse = HttpResponse(SERVICE_UNAVAILABLE, JsNull, Map.empty[String, Seq[String]])
       private val result = getApprovalSummaryListHttpReads.read(GET, url, httpResponse)
       result shouldBe Left(InternalServerError)
     }

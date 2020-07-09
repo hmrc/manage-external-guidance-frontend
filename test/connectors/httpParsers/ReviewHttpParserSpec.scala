@@ -20,7 +20,7 @@ import models._
 import models.audit.AuditInfo
 import models.errors._
 import org.scalatest.{Matchers, WordSpec}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsNull, JsValue, Json}
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpResponse
 
@@ -28,10 +28,10 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
 
   import connectors.httpParsers.ReviewHttpParser._
 
-  class GetReviewDetailsSetup(status: Int, optJson: Option[JsValue] = None) {
+  class GetReviewDetailsSetup(status: Int, json: JsValue) {
     private val httpMethod = "GET"
     private val url = "/"
-    val httpResponse: AnyRef with HttpResponse = HttpResponse(status, optJson, Map())
+    private val httpResponse = HttpResponse(status, json, Map.empty[String, Seq[String]])
 
     def readResponse: RequestOutcome[ApprovalProcessReview] =
       getReviewDetailsHttpReads.read(httpMethod, url, httpResponse)
@@ -40,42 +40,42 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
   "The ReviewHttpParser.getReviewDetailsHttpReads" when {
     "the response is OK" when {
       "the json successfully deserializes to the model" should {
-        "Return ApprovalProcessReview" in new GetReviewDetailsSetup(OK, Some(Json.toJson(reviewInfo))) {
+        "Return ApprovalProcessReview" in new GetReviewDetailsSetup(OK, Json.toJson(reviewInfo)) {
           readResponse shouldBe Right(reviewInfo)
         }
       }
       "the json is malformed" should {
-        "return MalformedResponseError" in new GetReviewDetailsSetup(OK, Some(Json.obj())) {
+        "return MalformedResponseError" in new GetReviewDetailsSetup(OK, JsNull) {
           readResponse shouldBe Left(MalformedResponseError)
         }
       }
     }
     "the response is NOT_FOUND with a code of NOT_FOUND_ERROR" should {
-      "return NotFoundError" in new GetReviewDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR", "message" -> ""))) {
+      "return NotFoundError" in new GetReviewDetailsSetup(NOT_FOUND, Json.obj("code" -> "NOT_FOUND_ERROR", "message" -> "")) {
         readResponse shouldBe Left(NotFoundError)
       }
     }
     "the response is NOT_FOUND with a code of STALE_DATA_ERROR" should {
-      "return StaleDataError" in new GetReviewDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "STALE_DATA_ERROR", "message" -> ""))) {
+      "return StaleDataError" in new GetReviewDetailsSetup(NOT_FOUND, Json.obj("code" -> "STALE_DATA_ERROR", "message" -> "")) {
         readResponse shouldBe Left(StaleDataError)
       }
     }
     "the response is NOT_FOUND and has malformed error json" should {
-      "return InternalServerError" in new GetReviewDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
+      "return InternalServerError" in new GetReviewDetailsSetup(NOT_FOUND, Json.obj("code" -> "NOT_FOUND_ERROR")) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
     "the response is anything else" should {
-      "return InternalServerError" in new GetReviewDetailsSetup(INTERNAL_SERVER_ERROR, Some(Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> ""))) {
+      "return InternalServerError" in new GetReviewDetailsSetup(INTERNAL_SERVER_ERROR, Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> "")) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
   }
 
-  class PostReviewCompleteSetup(status: Int, optJson: Option[JsValue] = None) {
+  class PostReviewCompleteSetup(status: Int, json: JsValue) {
     private val httpMethod = "GET"
     private val url = "/"
-    val httpResponse: AnyRef with HttpResponse = HttpResponse(status, optJson, Map())
+    private val httpResponse = HttpResponse(status, json, Map.empty[String, Seq[String]])
 
     def readResponse: RequestOutcome[Unit] =
       postReviewCompleteHttpReads.read(httpMethod, url, httpResponse)
@@ -83,32 +83,32 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
 
   "The ReviewHttpParser.postReviewCompleteHttpReads" when {
     "the response is NO_CONTENT" should {
-      "Return Unit" in new PostReviewCompleteSetup(NO_CONTENT) {
+      "Return Unit" in new PostReviewCompleteSetup(NO_CONTENT, JsNull) {
         readResponse shouldBe Right(())
       }
     }
     "the response is NOT_FOUND with a code of NOT_FOUND_ERROR" should {
-      "return NotFoundError" in new PostReviewCompleteSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR", "message" -> ""))) {
+      "return NotFoundError" in new PostReviewCompleteSetup(NOT_FOUND, Json.obj("code" -> "NOT_FOUND_ERROR", "message" -> "")) {
         readResponse shouldBe Left(NotFoundError)
       }
     }
     "the response is INCOMPLETE_DATA_ERROR" should {
-      "return IncompleteDataError" in new PostReviewCompleteSetup(BAD_REQUEST, Some(Json.obj("code" -> "INCOMPLETE_DATA_ERROR", "message" -> ""))) {
+      "return IncompleteDataError" in new PostReviewCompleteSetup(BAD_REQUEST, Json.obj("code" -> "INCOMPLETE_DATA_ERROR", "message" -> "")) {
         readResponse shouldBe Left(IncompleteDataError)
       }
     }
     "the response is NOT_FOUND with a code of STALE_DATA_ERROR" should {
-      "return StaleDataError" in new PostReviewCompleteSetup(NOT_FOUND, Some(Json.obj("code" -> "STALE_DATA_ERROR", "message" -> ""))) {
+      "return StaleDataError" in new PostReviewCompleteSetup(NOT_FOUND, Json.obj("code" -> "STALE_DATA_ERROR", "message" -> "")) {
         readResponse shouldBe Left(StaleDataError)
       }
     }
     "the response is NOT_FOUND and has malformed error json" should {
-      "return InternalServerError" in new PostReviewCompleteSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
+      "return InternalServerError" in new PostReviewCompleteSetup(NOT_FOUND, Json.obj("code" -> "NOT_FOUND_ERROR")) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
     "the response is anything else" should {
-      "return InternalServerError" in new PostReviewCompleteSetup(INTERNAL_SERVER_ERROR, Some(Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> ""))) {
+      "return InternalServerError" in new PostReviewCompleteSetup(INTERNAL_SERVER_ERROR, Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> "")) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
@@ -118,10 +118,10 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
     val pageUrl = "pageUrl"
     val pageReviewDetail = PageReviewDetail(id, pageUrl, "Title", None, PageReviewStatus.NotStarted)
 
-    class GetReviewPageDetailsSetup(status: Int, optJson: Option[JsValue] = None) {
+    class GetReviewPageDetailsSetup(status: Int, json: JsValue) {
       private val httpMethod = "GET"
       private val url = "/"
-      val httpResponse: AnyRef with HttpResponse = HttpResponse(status, optJson, Map())
+      private val httpResponse = HttpResponse(status, json, Map.empty[String, Seq[String]])
 
       def readResponse: RequestOutcome[PageReviewDetail] =
         getReviewPageDetailsHttpReads.read(httpMethod, url, httpResponse)
@@ -129,33 +129,33 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
 
     "the response is OK" when {
       "the json successfully deserializes to the model" should {
-        "Return ApprovalProcessReview" in new GetReviewPageDetailsSetup(OK, Some(Json.toJson(pageReviewDetail))) {
+        "Return ApprovalProcessReview" in new GetReviewPageDetailsSetup(OK, Json.toJson(pageReviewDetail)) {
           readResponse shouldBe Right(pageReviewDetail)
         }
       }
       "the json is malformed" should {
-        "return MalformedResponseError" in new GetReviewPageDetailsSetup(OK, Some(Json.obj())) {
+        "return MalformedResponseError" in new GetReviewPageDetailsSetup(OK, JsNull) {
           readResponse shouldBe Left(MalformedResponseError)
         }
       }
     }
     "the response is NOT_FOUND with a code of NOT_FOUND_ERROR" should {
-      "return NotFoundError" in new GetReviewPageDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR", "message" -> ""))) {
+      "return NotFoundError" in new GetReviewPageDetailsSetup(NOT_FOUND, Json.obj("code" -> "NOT_FOUND_ERROR", "message" -> "")) {
         readResponse shouldBe Left(NotFoundError)
       }
     }
     "the response is NOT_FOUND with a code of STALE_DATA_ERROR" should {
-      "return StaleDataError" in new GetReviewPageDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "STALE_DATA_ERROR", "message" -> ""))) {
+      "return StaleDataError" in new GetReviewPageDetailsSetup(NOT_FOUND, Json.obj("code" -> "STALE_DATA_ERROR", "message" -> "")) {
         readResponse shouldBe Left(StaleDataError)
       }
     }
     "the response is NOT_FOUND and has malformed error json" should {
-      "return InternalServerError" in new GetReviewPageDetailsSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
+      "return InternalServerError" in new GetReviewPageDetailsSetup(NOT_FOUND, Json.obj("code" -> "NOT_FOUND_ERROR")) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
     "the response is anything else" should {
-      "return InternalServerError" in new GetReviewPageDetailsSetup(INTERNAL_SERVER_ERROR, Some(Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> ""))) {
+      "return InternalServerError" in new GetReviewPageDetailsSetup(INTERNAL_SERVER_ERROR, Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> "")) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
@@ -165,10 +165,10 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
     val ocelotLastUpdate: Long = 12345678
     val auditInfo: AuditInfo = AuditInfo("pid", id, "title", 1, "author", ocelotLastUpdate, 2)
 
-    class TestSetup(status: Int, optJson: Option[JsValue] = None) {
+    class TestSetup(status: Int, json: JsValue) {
       private val httpMethod = "GET"
       private val url = "/"
-      val httpResponse: AnyRef with HttpResponse = HttpResponse(status, optJson, Map())
+      private val httpResponse = HttpResponse(status, json, Map.empty[String, Seq[String]])
 
       def readResponse: RequestOutcome[AuditInfo] =
         getAuditInfoHttpReads.read(httpMethod, url, httpResponse)
@@ -176,38 +176,38 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
 
     "the response is OK" when {
       "the json successfully deserializes to the model" should {
-        "Return AuditInfo" in new TestSetup(OK, Some(Json.toJson(auditInfo))) {
+        "Return AuditInfo" in new TestSetup(OK, Json.toJson(auditInfo)) {
           readResponse shouldBe Right(auditInfo)
         }
       }
       "the json is malformed" should {
-        "return MalformedResponseError" in new TestSetup(OK, Some(Json.obj())) {
+        "return MalformedResponseError" in new TestSetup(OK, JsNull) {
           readResponse shouldBe Left(MalformedResponseError)
         }
       }
     }
     "the response is BAD_REQUEST" should {
-      "return BadRequestError" in new TestSetup(BAD_REQUEST, Some(Json.toJson(BadRequestError))) {
+      "return BadRequestError" in new TestSetup(BAD_REQUEST, Json.toJson(BadRequestError)) {
         readResponse shouldBe Left(BadRequestError)
       }
     }
     "the response is NOT_FOUND with a code of NOT_FOUND_ERROR" should {
-      "return NotFoundError" in new TestSetup(NOT_FOUND, Some(Json.toJson(NotFoundError))) {
+      "return NotFoundError" in new TestSetup(NOT_FOUND, Json.toJson(NotFoundError)) {
         readResponse shouldBe Left(NotFoundError)
       }
     }
     "the response is NOT_FOUND with a code of STALE_DATA_ERROR" should {
-      "return StaleDataError" in new TestSetup(NOT_FOUND, Some(Json.toJson(StaleDataError))) {
+      "return StaleDataError" in new TestSetup(NOT_FOUND, Json.toJson(StaleDataError)) {
         readResponse shouldBe Left(StaleDataError)
       }
     }
     "the response is NOT_FOUND and has malformed error json" should {
-      "return InternalServerError" in new TestSetup(NOT_FOUND, Some(Json.obj("code" -> "NOT_FOUND_ERROR"))) {
+      "return InternalServerError" in new TestSetup(NOT_FOUND, Json.obj("code" -> "NOT_FOUND_ERROR")) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
     "the response is anything else" should {
-      "return InternalServerError" in new TestSetup(INTERNAL_SERVER_ERROR, Some(Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> ""))) {
+      "return InternalServerError" in new TestSetup(INTERNAL_SERVER_ERROR, Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> "")) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
