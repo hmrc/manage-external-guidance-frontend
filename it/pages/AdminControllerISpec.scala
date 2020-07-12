@@ -24,7 +24,8 @@ import support.IntegrationSpec
 
 class AdminControllerISpec extends IntegrationSpec {
 
-  private val endPoint = "/process/approval"
+//  private val endPoint = "/process/approval"
+  private val endPoint = ""
 
   "calling the approvalSummaries route" should {
 
