@@ -32,7 +32,8 @@
 
 @layout(s"${messages("2iReviewResult.title")} - ${messages("2iReview.heading")}"){
 
-  @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).url,
+  @govukBackLink(BackLink(classes = "govuk-!-margin-bottom-5",
+                          href = routes.TwoEyeReviewController.approval(processId).url,
                           content = Text(messages("backlink.label"))))
 
   @formWithCSRF(action = routes.TwoEyeReviewResultController.onSubmit(processId)) {
