@@ -98,15 +98,8 @@ class TwoEyeReviewSpec extends ViewSpecBase {
         listItems.foreach { li =>
           val a = li.getElementsByTag("a").first
           elementAttrs(a).get("aria-describedby").fold(fail("Missing aria-describedby on file link")) { statusId =>
-            Option(a.getElementsByTag("span").first).fold(fail("Missing span element in href")) { hiddenSpan =>
-              // The visually hidden text and link text are combined in the anchor text
-              val url = a.text.drop(hiddenSpan.text.length)
-
-              a.text.dropRight(url.length) shouldBe messages("2iReview.visuallyHiddenPage")
-
-              approvalProcessReview.pages.find(_.title == url).fold(fail(s"Missing page with url $url")) { page =>
-                messages(s"pageReviewStatus.${page.status.toString}") shouldBe li.getElementById(statusId).text
-              }
+            approvalProcessReview.pages.find(_.title == a.text).fold(fail(s"Missing page with title ${a.text}")) { page =>
+              messages(s"pageReviewStatus.${page.status.toString}") shouldBe li.getElementById(statusId).text
             }
           }
         }
