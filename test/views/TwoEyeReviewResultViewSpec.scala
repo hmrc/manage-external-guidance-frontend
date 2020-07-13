@@ -62,7 +62,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
           link.text shouldBe messages("backlink.label")
           val attrs = elementAttrs(link)
           attrs.get("class").fold(fail("Missing class attribute on back link")) { clss =>
-            clss shouldBe "govuk-back-link"
+            clss should include("govuk-back-link")
           }
           attrs.get("href").fold(fail("Missing href attribute on back link")) { href =>
             href shouldBe s"/external-guidance/2i-review/$processId"
