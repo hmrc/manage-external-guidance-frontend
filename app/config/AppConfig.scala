@@ -34,7 +34,6 @@ trait AppConfig {
   val designerRole: String
   val twoEyeReviewerRole: String
   val factCheckerRole: String
-  val publisherRole: String
   val gtmContainer: String
   val viewApprovalUrl: String
   val commentsAndFeedbackUrl: String
@@ -63,7 +62,6 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val designerRole: String = servicesConfig.getString("strideAuth.roles.designer")
   lazy val twoEyeReviewerRole: String = servicesConfig.getString("strideAuth.roles.twoEyeReviewer")
   lazy val factCheckerRole: String = servicesConfig.getString("strideAuth.roles.factChecker")
-  lazy val publisherRole: String = servicesConfig.getString("strideAuth.roles.publisher")
   lazy val gtmContainer: String = config.get[String]("gtm.container")
   lazy val viewApprovalUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.approvalUrl")}"
 

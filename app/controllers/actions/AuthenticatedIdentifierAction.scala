@@ -66,8 +66,7 @@ class AuthenticatedIdentifierAction @Inject() (
       (
         Enrolment(appConfig.designerRole) or
           Enrolment(appConfig.twoEyeReviewerRole) or
-          Enrolment(appConfig.factCheckerRole) or
-          Enrolment(appConfig.publisherRole)
+          Enrolment(appConfig.factCheckerRole)
       )
 
     // Allow access for all roles
