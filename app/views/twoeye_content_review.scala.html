@@ -45,12 +45,9 @@
     <a class="govuk-link" target="_blank" rel="noopener noreferrer" href = "@appConfig.viewApprovalUrl/@review.ocelotId">@messages("2iReview.viewGuidance")</a>
   </p>
 
-  <h2 class="app-task-list__section">
-    @messages("2iReview.reviewPagesHeading")
-  </h2>
-  <p>
-    @reviewStatus()
-  </p>
+  <p class="govuk-body-l govuk-!-font-weight-bold">@messages("2iReview.reviewPagesHeading")</p>
+  <p>@reviewStatus()</p>
+  
   <ul class="app-task-list__items app-task-list__items-no-number">
     @for((page, index) <- review.pages.zipWithIndex) {
       <li class="app-task-list__item">
