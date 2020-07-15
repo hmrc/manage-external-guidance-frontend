@@ -55,7 +55,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
         .approval2iPageReview(id, reviewDetail.pageUrl)
         .returns(Future.successful(Right(reviewDetail)))
 
-      val result: Future[Result] = reviewController.onPageLoad(id, updatedReviewDetail.pageUrl.drop(1))(fakeRequest)
+      val result: Future[Result] = reviewController.onPageLoad(id, updatedReviewDetail.pageUrl.drop(1), 1)(fakeRequest)
 
       status(result) shouldBe Status.OK
     }
@@ -66,7 +66,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
         .approval2iPageReview(id, reviewDetail.pageUrl)
         .returns(Future.successful(Left(StaleDataError)))
 
-      val result: Future[Result] = reviewController.onPageLoad(id, updatedReviewDetail.pageUrl.drop(1))(fakeRequest)
+      val result: Future[Result] = reviewController.onPageLoad(id, updatedReviewDetail.pageUrl.drop(1), 1)(fakeRequest)
 
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
@@ -80,7 +80,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
         .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Right(())))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle, 1)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       status(result) shouldBe Status.SEE_OTHER
     }
@@ -91,7 +91,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
         .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Right(())))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle, 1)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       contentType(result) shouldBe None
     }
@@ -102,7 +102,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
         .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(NotFoundError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle, 1)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       status(result) shouldBe Status.NOT_FOUND
     }
@@ -113,7 +113,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
         .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(NotFoundError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle, 1)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
@@ -124,7 +124,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
         .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(MalformedResponseError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle, 1)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
@@ -135,7 +135,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
         .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(MalformedResponseError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle, 1)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
@@ -146,7 +146,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
         .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(StaleDataError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle, 1)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       status(result) shouldBe Status.NOT_FOUND
     }
@@ -157,7 +157,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
         .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(StaleDataError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle, 1)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
@@ -168,7 +168,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
         .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle, 1)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
@@ -179,7 +179,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
         .approval2iPageReviewComplete(id, updatedReviewDetail.pageUrl, updatedReviewDetail)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle, 1)(fakeRequest.withFormUrlEncodedBody(("answer", "Yes")))
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
