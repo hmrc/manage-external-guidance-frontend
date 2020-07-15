@@ -19,11 +19,12 @@ package views
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+import controllers.routes
 import models.ApprovalStatus._
 import models._
-import views.html._
-import controllers.routes
 import play.api.test.FakeRequest
+import views.html._
+
 import scala.collection.JavaConverters._
 
 class ApprovalsListSpec extends ViewSpecBase {
@@ -38,7 +39,7 @@ class ApprovalsListSpec extends ViewSpecBase {
       ApprovalProcessSummary("oct9008", "Find a lost user ID and password", LocalDate.of(2020, 4, 2), SubmittedForFactCheck)
     )
 
-    implicit val fakeRequest = FakeRequest("GET", "/process/approval")
+    implicit val fakeRequest = FakeRequest("GET", "/")
 
     val doc = asDocument(approvalsListView(summaries)(fakeRequest, messages))
   }
@@ -112,7 +113,7 @@ class ApprovalsListSpec extends ViewSpecBase {
 
             s.status match {
 
-              case SubmittedForFactCheck | SubmittedFor2iReview => {
+              case SubmittedForFactCheck | SubmittedFor2iReview =>
 
                 cellData.head.text shouldBe s.title
 
@@ -124,7 +125,6 @@ class ApprovalsListSpec extends ViewSpecBase {
                     }
                   }
                 }
-              }
               case _ => cellData.head.text shouldBe s.title
             }
 

@@ -16,6 +16,8 @@
 
 package controllers
 
+import controllers.actions.FakeIdentifierAction
+import mocks.MockApprovalService
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
@@ -24,8 +26,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.approval_summary_list
-import controllers.actions.FakeIdentifierAction
-import mocks.MockApprovalService
+
 import scala.concurrent.Future
 
 class AdminControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockApprovalService {
@@ -40,7 +41,7 @@ class AdminControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuit
 
   }
 
-  "GET /process/approval" should {
+  "GET /" should {
 
     "return 200" in new Test {
 
