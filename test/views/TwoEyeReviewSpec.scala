@@ -80,7 +80,7 @@ class TwoEyeReviewSpec extends ViewSpecBase {
             clss shouldBe "govuk-back-link"
           }
           attrs.get("href").fold(fail("Missing href attribute on back link")) { href =>
-            href shouldBe "/external-guidance/process/approval"
+            href shouldBe "/external-guidance"
           }
         }
       }
