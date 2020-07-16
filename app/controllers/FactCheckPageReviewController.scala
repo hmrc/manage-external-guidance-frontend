@@ -48,13 +48,13 @@ class FactCheckPageReviewController @Inject() (
 
   val logger: Logger = Logger(getClass)
 
-  def onPageLoad(processId: String, pageUrl: String): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
+  def onPageLoad(processId: String, pageUrl: String, index: Int): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
     reviewService.factCheckPageInfo(processId, s"/$pageUrl") map {
       case Right(pageReviewDetail) =>
         val form: Form[FactCheckPageReview] = pageReviewDetail.result.fold(formProvider()) { answer =>
           formProvider().bind(Map("answer" -> answer.toString))
         }
-        Ok(view(processId, s"/$pageUrl", pageReviewDetail.pageTitle, form))
+        Ok(view(processId, s"/$pageUrl", pageReviewDetail.pageTitle, form, index))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval fact check page review for process $processId and pageUrl $pageUrl returned error $err")
@@ -62,11 +62,14 @@ class FactCheckPageReviewController @Inject() (
     }
   }
 
-  def onSubmit(processId: String, pageUrl: String, pageTitle: String): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
+  def onSubmit(processId: String,
+               pageUrl: String,
+               pageTitle: String,
+               index: Int): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
     formProvider()
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[FactCheckPageReview]) => { Future.successful(BadRequest(view(processId, s"/$pageUrl", pageTitle, formWithErrors))) },
+        (formWithErrors: Form[FactCheckPageReview]) => { Future.successful(BadRequest(view(processId, s"/$pageUrl", pageTitle, formWithErrors, index))) },
         result => {
           val reviewDetail = PageReviewDetail(processId,
                                               s"/$pageUrl",
@@ -75,7 +78,7 @@ class FactCheckPageReviewController @Inject() (
                                               Complete,
                                               updateUser = Some(s"${request.credId}:${request.name}"))
           reviewService.factCheckPageComplete(processId, s"/$pageUrl", reviewDetail).map {
-            case Right(_) => Redirect(routes.FactCheckController.approval(processId))
+            case Right(_) => Redirect(routes.FactCheckController.approval(processId).withFragment(s"page-link-$index"))
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval fact check page review for process $processId, url $pageUrl")
               NotFound(errorHandler.notFoundTemplate)

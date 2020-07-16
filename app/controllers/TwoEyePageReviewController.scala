@@ -48,13 +48,13 @@ class TwoEyePageReviewController @Inject() (
 
   val logger: Logger = Logger(getClass)
 
-  def onPageLoad(processId: String, pageUrl: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
+  def onPageLoad(processId: String, pageUrl: String, index: Int): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
     reviewService.approval2iPageReview(processId, s"/$pageUrl") map {
       case Right(pageReviewDetail) =>
         val form: Form[TwoEyePageReview] = pageReviewDetail.result.fold(formProvider()) { answer =>
           formProvider().bind(Map("answer" -> answer.toString))
         }
-        Ok(view(processId, s"/$pageUrl", pageReviewDetail.pageTitle, form))
+        Ok(view(processId, s"/$pageUrl", pageReviewDetail.pageTitle, form, index))
 
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
@@ -63,11 +63,14 @@ class TwoEyePageReviewController @Inject() (
     }
   }
 
-  def onSubmit(processId: String, pageUrl: String, pageTitle: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
+  def onSubmit(processId: String,
+               pageUrl: String,
+               pageTitle: String,
+               index: Int): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
     formProvider()
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[TwoEyePageReview]) => { Future.successful(BadRequest(view(processId, s"/$pageUrl", pageTitle, formWithErrors))) },
+        (formWithErrors: Form[TwoEyePageReview]) => { Future.successful(BadRequest(view(processId, s"/$pageUrl", pageTitle, formWithErrors, index))) },
         result => {
           val reviewDetail = PageReviewDetail(processId,
                                               s"/$pageUrl",
@@ -76,7 +79,7 @@ class TwoEyePageReviewController @Inject() (
                                               Complete,
                                               updateUser = Some(s"${request.credId}:${request.name}"))
           reviewService.approval2iPageReviewComplete(processId, s"/$pageUrl", reviewDetail).map {
-            case Right(_) => Redirect(routes.TwoEyeReviewController.approval(processId))
+            case Right(_) => Redirect(routes.TwoEyeReviewController.approval(processId).withFragment(s"page-link-$index"))
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval 2i page review for process $processId, url $pageUrl")
               NotFound(errorHandler.notFoundTemplate)

@@ -14,13 +14,7 @@
  * limitations under the License.
  *@
 
-@import controllers.routes._
-@import models.YesNoAnswer._
-
-@import config.AppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.helpers._
 
 @this(layout: main_layout,
   govukBackLink: GovukBackLink,
@@ -31,19 +25,19 @@
   govukButton: GovukButton
 )
 
-@(processId: String, reviewUrl: String, reviewTitle: String, form: Form[_])(implicit request: Request[_], messages: Messages)
+@(processId: String, reviewUrl: String, reviewTitle: String, form: Form[_], index: Int)(implicit request: Request[_], messages: Messages)
 
 @pageTitle(errs: Seq[FormError]) = @{
   val title = s"${messages("2iPageReview.title")} - ${messages("2iReview.heading")}"
-  errs.headOption.fold(title)(_ => s"${messages("error.prefix")} ${title}")
+  errs.headOption.fold(title)(_ => s"${messages("error.prefix")} $title")
 }
 
 @layout(pageTitle(form.errors)){
 
-  @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).url,
+  @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).withFragment(s"page-link-$index").toString,
     content = Text(messages("backlink.label"))))
 
-  @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, reviewUrl.drop(1), reviewTitle)) {
+  @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, reviewUrl.drop(1), reviewTitle, index)) {
 
     @errorSummary(form.errors)
     

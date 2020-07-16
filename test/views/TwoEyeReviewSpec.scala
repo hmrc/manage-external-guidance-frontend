@@ -95,12 +95,10 @@ class TwoEyeReviewSpec extends ViewSpecBase {
           .filter(elementAttrs(_).get("class") == Some("app-task-list__item"))
           .toList
 
-        listItems.foreach { li =>
-          val a = li.getElementsByTag("a").first
-          elementAttrs(a).get("aria-describedby").fold(fail("Missing aria-describedby on file link")) { statusId =>
-            approvalProcessReview.pages.find(_.title == a.text).fold(fail(s"Missing page with title ${a.text}")) { page =>
-              messages(s"pageReviewStatus.${page.status.toString}") shouldBe li.getElementById(statusId).text
-            }
+        listItems.zipWithIndex.foreach { case (_, index) =>
+          val a = doc.getElementById(s"page-link-$index")
+          approvalProcessReview.pages.find(_.title == a.text).fold(fail(s"Missing page with title ${a.text}")) { page =>
+            messages(s"pageReviewStatus.${page.status.toString}") shouldBe doc.getElementById(s"page-$index").text
           }
         }
       }
