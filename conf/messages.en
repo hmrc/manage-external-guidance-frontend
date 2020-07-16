@@ -77,7 +77,7 @@ factCheck.reviewPagesHeading = Check all pages for factual accuracy
 factCheck.visuallyHiddenPage = Fact check page with the URL
 factCheck.pagesReviewedConfirmationHeading = Confirm you''ve fact checked all pages
 factCheck.sendConfirmation = Confirm you have fact checked all pages
-factCheck.sendConfirmationComment = This will send your fact check responses to the designer
+factCheck.sendConfirmationComment = Confirming you have fact checked all pages will send your responses to the designer
 
 factCheckPageReview.answer.error.required = You must confirm if the page is factually accurate
 factCheckPageReview.comment.error.required = No comment supplied
