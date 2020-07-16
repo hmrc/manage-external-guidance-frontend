@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import config.{AppConfig, ErrorHandler}
+import config.{AppConfig, UnauthorizedReviewErrorHandler}
 import javax.inject.Inject
 import models.requests.IdentifierRequest
 import play.api.mvc.Results._
@@ -40,7 +40,7 @@ class TwoEyeReviewerAuthenticatedIdentifierAction @Inject() (
     val parser: BodyParsers.Default,
     val config: Configuration,
     val env: Environment,
-    errorHandler: ErrorHandler
+    unauthorizedReviewErrorHandler: UnauthorizedReviewErrorHandler
 )(
     implicit val executionContext: ExecutionContext
 ) extends TwoEyeReviewerIdentifierAction
@@ -54,7 +54,7 @@ class TwoEyeReviewerAuthenticatedIdentifierAction @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     val unauthorizedResult = Unauthorized(
-      errorHandler.standardErrorTemplate(
+      unauthorizedReviewErrorHandler.standardErrorTemplate(
         "error.unauthorized401.pageTitle.page",
         "error.unauthorized401.heading.page",
         "error.unauthorized401.message"
