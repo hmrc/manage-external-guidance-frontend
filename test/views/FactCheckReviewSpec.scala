@@ -79,6 +79,24 @@ class FactCheckReviewSpec extends ViewSpecBase {
 
     }
 
+    "Render a page containing a list of all pages and their status" in new Test {
+
+      Option(doc.getElementsByTag("ul").first).fold(fail("Missing ul element")) { ul =>
+        val listItems = ul
+          .getElementsByTag("li")
+          .asScala
+          .filter(elementAttrs(_).get("class") == Some("app-task-list__item"))
+          .toList
+
+        listItems.zipWithIndex.foreach { case (_, index) =>
+          val a = doc.getElementById(s"page-link-$index")
+          approvalProcessReview.pages.find(_.title == a.text).fold(fail(s"Missing page with title ${a.text}")) { page =>
+            messages(s"factCheck.pageReviewStatus.${page.status.toString}") shouldBe doc.getElementById(s"page-$index").text
+          }
+        }
+      }
+    }
+
   }
 
 }
