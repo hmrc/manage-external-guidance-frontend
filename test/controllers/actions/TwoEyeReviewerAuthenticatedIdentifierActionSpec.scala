@@ -17,7 +17,7 @@
 package controllers.actions
 
 import base.ControllerBaseSpec
-import config.ErrorHandler
+import config.UnauthorizedReviewErrorHandler
 import mocks.{MockAppConfig, MockAuthConnector}
 import play.api.http.Status
 import play.api.mvc._
@@ -48,8 +48,8 @@ class TwoEyeReviewerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
-    lazy val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
-    (mockErrorHandler
+    lazy val mockUnauthorizedReviewErrorHandler: UnauthorizedReviewErrorHandler = mock[UnauthorizedReviewErrorHandler]
+    (mockUnauthorizedReviewErrorHandler
       .standardErrorTemplate(_: String, _: String, _: String)(_: Request[_]))
       .stubs(*, *, *, *)
       .returns(Html(""))
@@ -60,7 +60,7 @@ class TwoEyeReviewerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec
       bodyParser,
       config,
       env,
-      mockErrorHandler
+      mockUnauthorizedReviewErrorHandler
     )
 
     lazy val target = new Harness(twoEyeReviewerAuthAction)
