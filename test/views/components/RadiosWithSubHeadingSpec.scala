@@ -50,27 +50,20 @@ class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
   "radiosWithSubHeading generated Html" must {
 
     def radios: radiosWithSubHeading = injector.instanceOf[radiosWithSubHeading]
-    val html: Html = radios(None,
-                            Seq.empty,
-                            pageUrl,
-                            pageTitle,
-                            processId,
-                            fieldName,
-                            heading,
-                            linkText)
+    val html: Html = radios(None, Seq.empty, pageTitle, fieldName)
     val doc = asDocument(html)
     val fieldset: Element = doc.getElementsByTag("fieldset").first
     val inputs: List[Element] = doc.getElementsByTag("input").asScala.toList
 
     "contain fieldset with appropriate aria-describedby" in new Test {
-      Option(fieldset).fold(fail("No fieldset found")){ fs =>
+      Option(fieldset).fold(fail("No fieldset found")) { fs =>
         elementAttrs(fs)("aria-describedby").contains(s"${fieldName}-hint") shouldBe true
       }
     }
 
     "contains fieldset two radio inputs" in new Test {
       inputs.size shouldBe 2
-      inputs.map{ inp =>
+      inputs.map { inp =>
         elementAttrs(inp)("type") shouldBe "radio"
       }
     }
@@ -79,25 +72,18 @@ class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
   "radiosWithSubHeading generated Html when error has occurred" must {
 
     def radios: radiosWithSubHeading = injector.instanceOf[radiosWithSubHeading]
-    val html: Html = radios(None,
-                            Seq(FormError("Key", "Error message")),
-                            pageUrl,
-                            pageTitle,
-                            processId,
-                            fieldName,
-                            heading,
-                            linkText)
+    val html: Html = radios(None, Seq(FormError("Key", "Error message")), pageTitle, fieldName)
     val doc = asDocument(html)
     val fieldset: Element = doc.getElementsByTag("fieldset").first
 
     "contain fieldset with appropriate aria-describedby link to error msg span" in new Test {
-      Option(fieldset).fold(fail("No fieldset found")){ fs =>
+      Option(fieldset).fold(fail("No fieldset found")) { fs =>
         elementAttrs(fs)("aria-describedby").contains(s"${fieldName}-error") shouldBe true
       }
     }
 
     "contain a span containing the error message and prefix" in new Test {
-      Option(doc.getElementById(s"${fieldName}-error")).fold(fail("Missing error message")){span =>
+      Option(doc.getElementById(s"${fieldName}-error")).fold(fail("Missing error message")) { span =>
         span.text shouldBe "Error: Error message"
       }
     }
