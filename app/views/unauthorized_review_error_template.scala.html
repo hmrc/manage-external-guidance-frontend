@@ -14,14 +14,23 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-@this(layout: main_layout)
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@layout("Hello World!") {
-    <h1>Hello from manage-external-guidance-frontend !</h1>
+@this(layout: main_layout, govukBackLink : GovukBackLink)
+
+@(pageTitleKey: String, headingKey: String, messageKey: String, backUrl: Option[String] = None)(implicit request: Request[_], messages: Messages)
+
+@layout( messages(pageTitleKey) ) {
+
+    @govukBackLink(BackLink(href = routes.AdminController.approvalSummaries.url,
+                            content = Text(messages("unauthorizedReview.backLink"))))
+
+    <h1 class="govuk-heading-xl">@messages(headingKey)</h1>
+
+    <p>@messages(messageKey)</p>
+
 }
 
 @{
- //$COVERAGE-OFF$
+//$COVERAGE-OFF$
 }

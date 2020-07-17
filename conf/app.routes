@@ -1,32 +1,27 @@
 # microservice specific routes
 GET        /assets/*file                              controllers.Assets.versioned(path="/public", file: Asset)
 
-GET        /process/approval                          controllers.AdminController.approvalSummaries
+GET        /                                          controllers.AdminController.approvalSummaries
+#GET        /process/approval                          controllers.AdminController.approvalSummaries
+
 GET        /2i-review/:id                             controllers.TwoEyeReviewController.approval(id)
 
-GET        /2i-page-review/:id/*url                   controllers.TwoEyePageReviewController.onPageLoad(id: String, url: String)
-POST       /2i-page-review/:id/*url                   controllers.TwoEyePageReviewController.onSubmit(id: String, url: String, title: String )
-
+GET        /2i-page-review/:id/*url                   controllers.TwoEyePageReviewController.onPageLoad(id: String, url: String, index: Int)
+POST       /2i-page-review/:id/*url                   controllers.TwoEyePageReviewController.onSubmit(id: String, url: String, title: String, index: Int)
 
 GET        /2i-result/:id                             controllers.TwoEyeReviewResultController.onPageLoad(id)
 POST       /2i-result/:id                             controllers.TwoEyeReviewResultController.onSubmit(id)
 
-GET        /fact-check-page-review/:id/*url           controllers.FactCheckPageReviewController.onPageLoad(id: String, url: String)
-POST       /fact-check-page-review/:id/*url           controllers.FactCheckPageReviewController.onSubmit(id: String, url: String, title: String)
+GET        /fact-check-page-review/:id/*url           controllers.FactCheckPageReviewController.onPageLoad(id: String, url: String, index: Int)
+POST       /fact-check-page-review/:id/*url           controllers.FactCheckPageReviewController.onSubmit(id: String, url: String, title: String, index: Int)
 
 GET        /fact-check/:id                            controllers.FactCheckController.approval(id)
 GET        /fact-check-result/:id                     controllers.FactCheckConfirmController.onConfirm(id)
 
 GET        /accessibility                             controllers.AccessibilityStatementController.getPage
 
-GET        /hello-world                               controllers.HelloWorldController.helloWorld
-GET        /bye-world                                 controllers.HelloWorldController.byeWorld
-
 POST       /process/scratch                           controllers.apis.ScratchController.submitScratchProcess
 OPTIONS    /process/scratch                           controllers.apis.ScratchController.scratchProcessOptions
-
-POST       /process/approval                          controllers.apis.ApprovalController.submitFor2iReview
-OPTIONS    /process/approval                          controllers.apis.ApprovalController.options
 
 POST       /process/approval/2i-review                controllers.apis.ApprovalController.submitFor2iReview
 OPTIONS    /process/approval/2i-review                controllers.apis.ApprovalController.options

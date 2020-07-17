@@ -17,25 +17,21 @@
 package views
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import play.api.data.{Mapping, Form, FormError}
-import forms.{FactCheckPageReviewFormProvider, TwoEyePageReviewFormProvider,TwoEyeReviewResultFormProvider}
+
+import forms.{FactCheckPageReviewFormProvider, TwoEyePageReviewFormProvider, TwoEyeReviewResultFormProvider}
 import models.ApprovalProcessReview
-import models.ApprovalStatus._
-import views.html._
-import controllers.routes
-import play.api.test.FakeRequest
-import scala.collection.JavaConverters._
-import mocks.MockAppConfig
 import org.jsoup.nodes.Document
+import play.api.data.FormError
+import play.api.test.FakeRequest
+import views.html._
 
 class PageTitleSpec extends ViewSpecBase {
 
   val formErrors = Seq(FormError("id", "Err"))
 
   def expectedTitleText(h1Text: String, section: Option[String] = None): String =
-    section.fold(s"${h1Text} - ${messages("service.name")} - ${messages("service.govuk")}"){s =>
-      s"${h1Text} - ${s}${titleSuffix()}"
+    section.fold(s"$h1Text - ${messages("service.name")} - ${messages("service.govuk")}"){s =>
+      s"$h1Text - $s${titleSuffix()}"
     }
 
   def checkTitle(doc: Document, section: Option[String] = None, prefix: Option[String] = None): Unit =
@@ -80,14 +76,14 @@ class PageTitleSpec extends ViewSpecBase {
     "Render correct fact_check_page_review title" in {
       val view = injector.instanceOf[fact_check_page_review]
       val formProvider = new FactCheckPageReviewFormProvider()
-      checkTitle(asDocument(view("", "", "", formProvider())(FakeRequest("GET", "/blah"), messages)), Some(messages("factCheck.heading")))
+      checkTitle(asDocument(view("", "", "", formProvider(), 1)(FakeRequest("GET", "/blah"), messages)), Some(messages("factCheck.heading")))
     }
 
     "Render correct fact_check_page_review title when error has occurred" in {
       val view = injector.instanceOf[fact_check_page_review]
       val formProvider = new FactCheckPageReviewFormProvider()
       val form = formProvider().copy( errors = formErrors)
-      checkTitleWithError(asDocument(view("","", "", form)(FakeRequest("GET", "/blah"), messages)), Some(messages("factCheck.heading")))
+      checkTitleWithError(asDocument(view("","", "", form, 1)(FakeRequest("GET", "/blah"), messages)), Some(messages("factCheck.heading")))
     }
 
     "Render correct twoeye_confirm_error title" in {
@@ -103,14 +99,14 @@ class PageTitleSpec extends ViewSpecBase {
     "Render correct twoeye_page_review title" in {
       val view = injector.instanceOf[twoeye_page_review]
       val formProvider = new TwoEyePageReviewFormProvider()
-      checkTitle(asDocument(view("","", "", formProvider())(FakeRequest("GET", "/blah"), messages)), Some(messages("2iReview.heading")))
+      checkTitle(asDocument(view("","", "", formProvider(), 1)(FakeRequest("GET", "/blah"), messages)), Some(messages("2iReview.heading")))
     }
 
     "Render correct twoeye_page_review title when error has occurred" in {
       val view = injector.instanceOf[twoeye_page_review]
       val formProvider = new TwoEyePageReviewFormProvider()
       val form = formProvider().copy( errors = formErrors)
-      checkTitleWithError(asDocument(view("","", "", form)(FakeRequest("GET", "/blah"), messages)), Some(messages("2iReview.heading")))
+      checkTitleWithError(asDocument(view("","", "", form, 1)(FakeRequest("GET", "/blah"), messages)), Some(messages("2iReview.heading")))
     }
 
     "Render correct twoeye_review_result title" in {
