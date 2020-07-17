@@ -17,20 +17,15 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.helpers._
-@import config.AppConfig
 @import models.YesNoAnswer._
 @import play.api.data.FormError
 
-@this(appConfig: AppConfig)
+@this()
 
 @(answer: Option[String],
   errors: Seq[FormError],
-  reviewUrl: String,
   reviewTitle: String,
-  processId: String,
-  fieldName: String,
-  heading: String,
-  linkText: String
+  fieldName: String
 )(implicit messages: Messages)
 
   @ariaDescribedBy(s: String) = { aria-describedby="@s" }
@@ -42,21 +37,11 @@
     }
   }
 
-  @viewLink(linkText: String, id: String, url: String) = {
-    <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url">@messages(linkText)</a>
-  }
-
   @checked(answer: Option[String], value: String) = {@if(answer.contains(value)) {checked}}
 
   <div class="govuk-form-group @if(!errors.isEmpty) {govuk-form-group--error}">
     <fieldset class="govuk-fieldset" @optionalAria(fieldName)>
-        <legend class="govuk-fieldset__legend hmrc-page-heading govuk-!-margin-0 govuk-!-margin-bottom-5">
-          <span class="govuk-caption-xl hmrc-caption-xl">@reviewTitle</span>
-          <h1 class="govuk-heading-xl govuk-!-margin-0">@messages(heading)</h1>
-      </legend>
-      <span id="@fieldName-hint" class="govuk-hint">
-        @viewLink(linkText, processId, reviewUrl)
-      </span>
+        <legend class="govuk-visually-hidden">@messages("does.the.page") @reviewTitle @messages("meet.govuk.standards")</legend>
 
       @for(err <- errors) {
       <span id="@fieldName-error" class="govuk-error-message">

@@ -9,6 +9,9 @@ error.prefix = Error:
 radio.item.yes = Yes
 radio.item.no = No
 unauthorizedReview.backLink = Go back to all guidance
+opens.new.tab = (opens in new tab)
+does.the.page = Does
+meet.govuk.standards = meet GOV.UK standards?
 
 feedback.before = This is a new service – your
 feedback.linkLabel = feedback

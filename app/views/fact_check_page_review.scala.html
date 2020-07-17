@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.AppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(layout: main_layout,
@@ -22,7 +23,8 @@
   errorSummary: components.errorSummary,
   radiosWithSubHeading: components.radiosWithSubHeading,
   govukTextarea: GovukTextarea,
-  govukButton: GovukButton
+  govukButton: GovukButton,
+  appConfig: AppConfig
 )
 
 @(processId: String, reviewUrl: String, reviewTitle: String, form: Form[_], index: Int)(implicit request: Request[_], messages: Messages)
@@ -32,10 +34,20 @@
   errs.headOption.fold(title)(_ => s"${messages("error.prefix")} $title")
 }
 
+@viewLink(reviewTitle: String, id: String, url: String) = {
+<a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url">@reviewTitle @messages("opens.new.tab")</a>
+}
+
 @layout(pageTitle(form.errors)){
 
   @govukBackLink(BackLink(href = routes.FactCheckController.approval(processId).withFragment(s"page-link-$index").toString,
     content = Text(messages("backlink.label"))))
+
+  <h1 class="govuk-heading-xl">@messages("factCheckPageReview.heading")</h1>
+
+  <p class="govuk-body">
+    @viewLink(reviewTitle, processId, reviewUrl)
+  </p>
 
   @formWithCSRF(action = routes.FactCheckPageReviewController.onSubmit(processId, reviewUrl.drop(1), reviewTitle, index)) {
 
@@ -43,12 +55,8 @@
 
     @radiosWithSubHeading(form("answer").value,
                 form.errors,
-                reviewUrl,
                 reviewTitle,
-                processId, 
-                "answer", 
-                "factCheckPageReview.heading", 
-                "factCheckPageReview.viewGuidancePage")    
+                "answer")
 
     @govukButton( Button( content = Text( messages( "factCheckPageReview.saveReview" ) ) ) )
   }
