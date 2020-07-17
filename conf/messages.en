@@ -96,7 +96,7 @@ factCheckPageReview.viewGuidancePage = View the page (opens in new tab).
 factCheckComplete.title = Your responses have been sent to the designer
 factCheckComplete.heading = Your responses have been sent to the designer
 factCheckComplete.info = If you need to amend or add to the fact check, contact the designer.
-factCheckComplete.close = Close
+factCheckComplete.close = Go back to all interactive guidance
 
 factCheckError.title = Some pages have not been fact checked
 factCheckError.heading = Some pages have not been fact checked
