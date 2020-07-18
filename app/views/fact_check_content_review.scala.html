@@ -22,11 +22,10 @@
 @(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
 
 @reviewStatus() = @{
-  val totalPages = review.pages.length
-  val completePages = review.pages.count(p => p.status == PageReviewStatus.Complete)
-  completePages match {
-    case x if x == totalPages => s"Review Complete - all pages checked"
-    case _ => s"Review Incomplete - $completePages of $totalPages pages checked"
+  val completePages = review.pages.count(_.status == PageReviewStatus.Complete)
+  (review.pages.length - completePages) match {
+    case 0 => messages("processReviewStatus.complete")
+    case _ => messages("processReviewStatus.incomplete", completePages, review.pages.length)
   }
 }
 
@@ -41,7 +40,7 @@
   </header>
 
   <p class="govuk-body-l govuk-!-font-weight-bold">@messages("factCheck.reviewPagesHeading")</p>
-  <p>@reviewStatus()</p>
+  <p id="review-status">@reviewStatus()</p>
 
   <ul class="app-task-list__items app-task-list__items-no-number">
     @for((page, index) <- review.pages.zipWithIndex) {
@@ -57,7 +56,7 @@
   </ul>
 
   <p class="govuk-body">@messages("factCheck.sendConfirmationComment")</p>
-  <a id="confirm" href="@{routes.FactCheckConfirmController.onConfirm(review.ocelotId).url}" role="button" class="govuk-button" data-module="govuk-button">@messages("factCheck.sendConfirmation")</a>
+  <a id="confirm" href="@{routes.FactCheckConfirmController.onConfirm(review.ocelotId).url}" role="button" class="govuk-button" data-module="govuk-button" aria-describedby="review-status">@messages("factCheck.sendConfirmation")</a>
 
 }
 @{
