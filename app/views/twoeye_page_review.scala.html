@@ -43,6 +43,8 @@
   @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).withFragment(s"page-link-$index").toString,
     content = Text(messages("backlink.label"))))
 
+  @errorSummary(form.errors)
+
   <h1 class="govuk-heading-xl">@messages("2iPageReview.heading")</h1>
 
   <p class="govuk-body">
@@ -50,8 +52,6 @@
   </p>
 
   @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, reviewUrl.drop(1), reviewTitle, index)) {
-
-    @errorSummary(form.errors)
     
     @radiosWithSubHeading(form("answer").value,
                 form.errors,
