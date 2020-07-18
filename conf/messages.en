@@ -37,6 +37,9 @@ approvalsStatus.Published = Published
 pageReviewStatus.NotStarted = Not reviewed
 pageReviewStatus.Complete = Reviewed
 
+processReviewStatus.complete = Review Complete - all pages reviewed
+processReviewStatus.incomplete = Review Incomplete - {0} of {1} pages reviewed
+
 2iReview.heading = 2i content review
 2iReview.viewGuidance = View the complete guidance (opens in new tab)
 2iReview.reviewPagesHeading = Review all pages
