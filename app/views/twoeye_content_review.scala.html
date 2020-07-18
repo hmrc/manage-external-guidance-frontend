@@ -23,11 +23,10 @@
 @(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
 
 @reviewStatus() = @{
-  val totalPages = review.pages.length
-  val completePages = review.pages.count(p => p.status == PageReviewStatus.Complete)
-  completePages match {
-    case x if x == totalPages => s"Review Complete - all pages reviewed"
-    case _ => s"Review Incomplete - $completePages of $totalPages pages reviewed"
+  val completePages = review.pages.count(_.status == PageReviewStatus.Complete)
+  (review.pages.length - completePages) match {
+    case 0 => messages("processReviewStatus.complete")
+    case _ => messages("processReviewStatus.incomplete", completePages, review.pages.length)
   }
 }
 
@@ -46,7 +45,7 @@
   </p>
 
   <p class="govuk-body-l govuk-!-font-weight-bold">@messages("2iReview.reviewPagesHeading")</p>
-  <p>@reviewStatus()</p>
+  <p id="review-status">@reviewStatus()</p>
   
   <ul class="app-task-list__items app-task-list__items-no-number">
     @for((page, index) <- review.pages.zipWithIndex) {
@@ -61,7 +60,7 @@
     }
   </ul>
 
-  <a id="confirm" href="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).url}" role="button" class="govuk-button" data-module="govuk-button">@messages("2iReview.sendConfirmation")</a>
+  <a id="confirm" href="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).url}" role="button" class="govuk-button" data-module="govuk-button" aria-describedby="review-status">@messages("2iReview.sendConfirmation")</a>
 
 }
 @{
