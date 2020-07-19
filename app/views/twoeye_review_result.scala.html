@@ -14,11 +14,8 @@
  * limitations under the License.
  *@
 
-@import controllers.routes._
 @import models.ApprovalStatus._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.helpers._
 
 @this(layout: main_layout,
   govukBackLink: GovukBackLink,
@@ -46,9 +43,9 @@
       legend = "2iReviewResult.heading",
       items = Seq(
         RadioItem(
-          value = Some(WithDesignerForUpdate.toString),
-          content = Text(messages(s"2iReviewResult.${WithDesignerForUpdate.toString}")),
-          checked = form("value").value.contains(WithDesignerForUpdate.toString)        
+          value = Some(Complete.toString),
+          content = Text(messages(s"2iReviewResult.${Complete.toString}")),
+          checked = form("value").value.contains(Complete.toString)
         ),
         RadioItem(
           value = Some(Published.toString),

@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import base.BaseSpec
 import connectors.httpParsers.ApprovalHttpParser._
+import models.ReviewType.ReviewType2i
 import models.errors.{InternalServerError, InvalidProcessError}
 import models.{ApprovalProcessSummary, ApprovalResponse, ApprovalStatus, RequestOutcome}
 import play.api.http.{HttpVerbs, Status}
@@ -92,12 +93,13 @@ class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
         |[{
         |  "id" : "oct90001",
         |  "title" : "This is the title",
-        |  "status" : "SubmittedFor2iReview",
-        |  "lastUpdated" : "2017-07-17"
+        |  "status" : "Submitted",
+        |  "lastUpdated" : "2017-07-17",
+        |  "reviewType" : "2i-review"
         |}]
       """.stripMargin)
 
-    val expectedResponse = List(ApprovalProcessSummary("oct90001", "This is the title", LocalDate.of(2017, 7, 17), ApprovalStatus.SubmittedFor2iReview))
+    val expectedResponse = List(ApprovalProcessSummary("oct90001", "This is the title", LocalDate.of(2017, 7, 17), ApprovalStatus.Submitted, ReviewType2i))
 
     val invalidResponse: JsValue = Json.obj() // no "id" property
   }

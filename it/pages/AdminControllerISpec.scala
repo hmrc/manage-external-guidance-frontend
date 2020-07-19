@@ -41,7 +41,8 @@ class AdminControllerISpec extends IntegrationSpec {
             |    "id": "oct09092",
             |    "title": "This is the title",
             |    "lastUpdated": "2017-07-17",
-            |    "status": "SubmittedFor2iReview"
+            |    "status": "Submitted",
+            |    "reviewType" : "2i-review"
             |  }
             |]
           """.stripMargin

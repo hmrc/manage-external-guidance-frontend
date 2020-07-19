@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter
 
 import controllers.routes
 import models.ApprovalStatus._
+import models.ReviewType.{ReviewType2i, ReviewTypeFactCheck}
 import models._
 import play.api.test.FakeRequest
 import views.html._
@@ -33,10 +34,10 @@ class ApprovalsListSpec extends ViewSpecBase {
     def approvalsListView: approval_summary_list = injector.instanceOf[approval_summary_list]
 
     val summaries = Seq(
-      ApprovalProcessSummary("oct9005", "EU exit guidance", LocalDate.of(2020, 5, 4), WithDesignerForUpdate),
-      ApprovalProcessSummary("oct9006", "Customer wants to make a cup of tea", LocalDate.of(2020, 5, 4), SubmittedFor2iReview),
-      ApprovalProcessSummary("oct9007", "Telling HMRC about extra income", LocalDate.of(2020, 4, 1), WithDesignerForUpdate),
-      ApprovalProcessSummary("oct9008", "Find a lost user ID and password", LocalDate.of(2020, 4, 2), SubmittedForFactCheck)
+      ApprovalProcessSummary("oct9005", "EU exit guidance", LocalDate.of(2020, 5, 4), Complete, ReviewType2i),
+      ApprovalProcessSummary("oct9006", "Customer wants to make a cup of tea", LocalDate.of(2020, 5, 4), Submitted, ReviewType2i),
+      ApprovalProcessSummary("oct9007", "Telling HMRC about extra income", LocalDate.of(2020, 4, 1), Complete, ReviewType2i),
+      ApprovalProcessSummary("oct9008", "Find a lost user ID and password", LocalDate.of(2020, 4, 2), Submitted, ReviewTypeFactCheck)
     )
 
     implicit val fakeRequest = FakeRequest("GET", "/")
@@ -113,15 +114,15 @@ class ApprovalsListSpec extends ViewSpecBase {
 
             s.status match {
 
-              case SubmittedForFactCheck | SubmittedFor2iReview =>
+              case Submitted | InProgress =>
 
                 cellData.head.text shouldBe s.title
 
                 Option(cellData.head.getElementsByTag("a").first).fold(fail("Missing link from page url cell")) { a =>
                   elementAttrs(a).get("href").fold(fail("Missing href attribute within anchor")) { href =>
-                    s.status match {
-                      case SubmittedFor2iReview => href shouldBe routes.TwoEyeReviewController.approval(s.id).url
-                      case SubmittedForFactCheck => href shouldBe routes.FactCheckController.approval(s.id).url
+                    s.reviewType match {
+                      case ReviewType2i  if List(InProgress, Submitted).contains(s.status) => href shouldBe routes.TwoEyeReviewController.approval(s.id).url
+                      case ReviewTypeFactCheck  if List(InProgress, Submitted).contains(s.status) => href shouldBe routes.FactCheckController.approval(s.id).url
                     }
                   }
                 }
@@ -129,7 +130,7 @@ class ApprovalsListSpec extends ViewSpecBase {
             }
 
             cellData(1).text shouldBe s.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-            cellData(2).text shouldBe messages(s"approvalsStatus.${s.status.toString}")
+            cellData(2).text shouldBe messages(s"approvalsStatus.${s.reviewType.toString}.${s.status.toString}")
         }
       }
     }

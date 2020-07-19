@@ -22,13 +22,14 @@ sealed trait ApprovalStatus extends ProcessStatus
 
 object ApprovalStatus extends Enumerable.Implicits {
 
-  case object SubmittedFor2iReview extends WithName("SubmittedFor2iReview") with ApprovalStatus
-  case object SubmittedForFactCheck extends WithName("SubmittedForFactCheck") with ApprovalStatus
-  case object WithDesignerForUpdate extends WithName("WithDesignerForUpdate") with ApprovalStatus
-  case object ApprovedForPublishing extends WithName("ApprovedForPublishing") with ApprovalStatus
+  case object Submitted extends WithName("Submitted") with ApprovalStatus
+  case object InProgress extends WithName("InProgress") with ApprovalStatus
+  case object Complete extends WithName("Complete") with ApprovalStatus
   case object Published extends WithName("Published") with ApprovalStatus
 
-  val values: Seq[ApprovalStatus] = Seq(SubmittedFor2iReview, SubmittedForFactCheck, WithDesignerForUpdate, ApprovedForPublishing, Published)
+  val values: Seq[ApprovalStatus] = Seq(Submitted, InProgress, Complete, Published)
+
+  val inProgress: Seq[ApprovalStatus] = Seq(Submitted, InProgress)
 
   implicit val enumerable: Enumerable[ApprovalStatus] = Enumerable(values.map(v => v.toString -> v): _*)
 
