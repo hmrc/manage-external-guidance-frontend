@@ -35,7 +35,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.{twoeye_confirm_error, twoeye_review_result}
+import views.html.{twoeye_complete, twoeye_confirm_error, twoeye_review_result}
 
 import scala.concurrent.Future
 
@@ -47,6 +47,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
 
     val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
     val view: twoeye_review_result = injector.instanceOf[twoeye_review_result]
+    val confirmationView: twoeye_complete = injector.instanceOf[twoeye_complete]
     val errorView: twoeye_confirm_error = injector.instanceOf[twoeye_confirm_error]
     val formProvider: TwoEyeReviewResultFormProvider = new TwoEyeReviewResultFormProvider()
     val form: Form[ApprovalStatus] = formProvider()
@@ -61,6 +62,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
       FakeTwoEyeReviewerIdentifierAction,
       formProvider,
       view,
+      confirmationView,
       errorView,
       mockReviewService,
       mockAuditService,
@@ -73,7 +75,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
 
   "The two eye review controller" should {
 
-    "Return SEE_OTHER for a successful post of the review completion for a process" in new Test {
+    "Return the confirmation view for a successful post of the review completion for a process" in new Test {
 
       MockAuditService.audit(event)
       MockReviewService
@@ -81,8 +83,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
         .returns(Future.successful(Right(auditInfo)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
-
-      status(result) shouldBe Status.SEE_OTHER
+      contentAsString(result) shouldBe confirmationView("complete")(fakeGetRequest, messages).toString
     }
 
     "Return an Html document displaying the details of the review result" in new Test {
@@ -94,7 +95,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
-      contentType(result) shouldBe None
+      contentType(result) shouldBe Some("text/html")
     }
 
     "Return the Http status Not found when the process review does not exist" in new Test {
