@@ -16,17 +16,15 @@
 
 package forms.mappings
 
-import models.ApprovalStatus
-
-import play.api.data.validation.{Invalid, Valid}
-
 import base.BaseSpec
+import models.ApprovalStatus
+import play.api.data.validation.{Invalid, Valid}
 
 class ConstraintsSpec extends BaseSpec with Constraints {
 
   private trait Test {
 
-    val allowedStatuses: Seq[ApprovalStatus] = Seq(ApprovalStatus.WithDesignerForUpdate, ApprovalStatus.WithDesignerForUpdate)
+    val allowedStatuses: Seq[ApprovalStatus] = Seq(ApprovalStatus.Complete, ApprovalStatus.InProgress)
 
     lazy val containsConstraint = contains(allowedStatuses, "error")
   }
@@ -35,12 +33,12 @@ class ConstraintsSpec extends BaseSpec with Constraints {
 
     "Validate a process status is in the list of allowed statuses for a specific task" in new Test {
 
-      containsConstraint(ApprovalStatus.WithDesignerForUpdate) shouldBe Valid
+      containsConstraint(ApprovalStatus.Complete) shouldBe Valid
     }
 
     "Mark a status as invalid when the current status is not appropriate for the task" in new Test {
 
-      containsConstraint(ApprovalStatus.SubmittedFor2iReview) shouldBe Invalid("error")
+      containsConstraint(ApprovalStatus.Submitted) shouldBe Invalid("error")
     }
   }
 }

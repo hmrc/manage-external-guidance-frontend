@@ -16,18 +16,16 @@
 
 package forms
 
-import javax.inject.Inject
-
-import play.api.data.Form
-
 import forms.mappings.{Constraints, Mappings}
+import javax.inject.Inject
 import models.ApprovalStatus
+import play.api.data.Form
 
 class TwoEyeReviewResultFormProvider @Inject() extends Mappings with Constraints {
 
   def apply(): Form[ApprovalStatus] =
     Form(
       "value" -> enumerable[ApprovalStatus]("2iReviewResult.error.required")
-        .verifying(contains[ApprovalStatus](Seq(ApprovalStatus.WithDesignerForUpdate, ApprovalStatus.Published), "2iReviewResult.error.required"))
+        .verifying(contains[ApprovalStatus](Seq(ApprovalStatus.Complete, ApprovalStatus.Published), "2iReviewResult.error.required"))
     )
 }

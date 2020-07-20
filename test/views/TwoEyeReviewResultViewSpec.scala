@@ -18,10 +18,9 @@ package views
 
 import forms.TwoEyeReviewResultFormProvider
 import models.ApprovalStatus
-import views.html.twoeye_review_result
-
 import play.api.data.{Form, FormError}
 import play.twirl.api.HtmlFormat
+import views.html.twoeye_review_result
 
 import scala.collection.JavaConverters._
 
@@ -90,7 +89,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
       }
 
       elementAttrs(radios.head).get("value").fold(fail("Missing value on first radio button ")) { value =>
-        value shouldBe ApprovalStatus.WithDesignerForUpdate.toString
+        value shouldBe ApprovalStatus.Complete.toString
       }
 
       elementAttrs(radios.last).get("class").fold(fail("Missing class attribute on second radio button")) { clss =>
@@ -111,7 +110,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       radioLabels.size shouldBe 2
 
-      radioLabels.head.text shouldBe messages(s"2iReviewResult.${ApprovalStatus.WithDesignerForUpdate.toString}")
+      radioLabels.head.text shouldBe messages(s"2iReviewResult.${ApprovalStatus.Complete.toString}")
       radioLabels.last.text shouldBe messages(s"2iReviewResult.${ApprovalStatus.Published.toString}")
     }
 
@@ -190,7 +189,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
     "display an error summary" in new Test {
 
-      val boundForm: Form[ApprovalStatus] = form.bind(Map(fieldName -> ApprovalStatus.SubmittedFor2iReview.toString))
+      val boundForm: Form[ApprovalStatus] = form.bind(Map(fieldName -> ApprovalStatus.Submitted.toString))
 
       val doc = asDocument(createView(processId, boundForm))
 
@@ -217,7 +216,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
     "display an error message" in new Test {
 
-      val boundForm: Form[ApprovalStatus] = form.bind(Map(fieldName -> ApprovalStatus.SubmittedFor2iReview.toString))
+      val boundForm: Form[ApprovalStatus] = form.bind(Map(fieldName -> ApprovalStatus.Submitted.toString))
 
       val doc = asDocument(createView(processId, boundForm))
 

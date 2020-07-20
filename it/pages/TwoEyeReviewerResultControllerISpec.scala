@@ -70,7 +70,7 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
           ExternalGuidanceStub.approval2iReviewComplete(Status.OK, Json.toJsObject(auditInfo))
 
           val request: WSRequest = buildRequest("/2i-result/oct90005")
-          val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.WithDesignerForUpdate.toString)))
+          val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.Complete.toString)))
           response.status shouldBe Status.SEE_OTHER
         }
       }
@@ -97,7 +97,7 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
           ExternalGuidanceStub.approval2iReviewComplete(Status.NO_CONTENT, Json.parse("{}"))
 
           val request: WSRequest = buildRequest("/2i-result/oct90005")
-          val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.SubmittedFor2iReview.toString)))
+          val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.Submitted.toString)))
           response.status shouldBe Status.BAD_REQUEST
         }
       }
@@ -110,7 +110,7 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
         AuthStub.unauthorised()
 
         val request: WSRequest = buildRequest("/2i-result/oct90005")
-        val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.WithDesignerForUpdate.toString)))
+        val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.Complete.toString)))
         response.status shouldBe Status.UNAUTHORIZED
 
       }

@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import base.BaseSpec
 import mocks.MockReviewConnector
+import models.ReviewType.ReviewType2i
 import models._
 import models.audit.AuditInfo
 import models.errors.InternalServerError
@@ -34,7 +35,7 @@ class ReviewServiceSpec extends BaseSpec {
   private trait Test extends MockReviewConnector with ReviewData {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published)
+    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published, ReviewType2i)
     val auditInfo: AuditInfo = AuditInfo("credential", id, "title", 1, "author", 2, 2)
 
     lazy val reviewService = new ReviewService(mockReviewConnector)
@@ -82,13 +83,13 @@ class ReviewServiceSpec extends BaseSpec {
     "calling the approval2iReviewComplete method" should {
       "Return no content after a successful call to the review connector" in new Test {
 
-        val info: ApprovalProcessStatusChange = ApprovalProcessStatusChange("userPid", "userName", ApprovalStatus.ApprovedForPublishing)
+        val info: ApprovalProcessStatusChange = ApprovalProcessStatusChange("userPid", "userName", ApprovalStatus.Published)
         MockReviewConnector
           .approval2iReviewComplete(id, info)
           .returns(Future.successful(Right(auditInfo)))
 
         val result: Future[RequestOutcome[AuditInfo]] =
-          reviewService.approval2iReviewComplete(id, "userPid", "userName", ApprovalStatus.ApprovedForPublishing)
+          reviewService.approval2iReviewComplete(id, "userPid", "userName", ApprovalStatus.Published)
 
         result.onComplete {
           case Success(response) =>
@@ -102,7 +103,7 @@ class ReviewServiceSpec extends BaseSpec {
 
       "Return an error following an unsuccessful call to the connector" in new Test {
 
-        val info: ApprovalProcessStatusChange = ApprovalProcessStatusChange("userPid", "userName", ApprovalStatus.ApprovedForPublishing)
+        val info: ApprovalProcessStatusChange = ApprovalProcessStatusChange("userPid", "userName", ApprovalStatus.Published)
         MockReviewConnector
           .approval2iReviewComplete(id, info)
           .returns(Future.successful(Left(InternalServerError)))
@@ -205,13 +206,13 @@ class ReviewServiceSpec extends BaseSpec {
     "calling the approvalFactCheckComplete method" should {
       "Return no content after a successful call to the review connector" in new Test {
 
-        val info: ApprovalProcessStatusChange = ApprovalProcessStatusChange("userPid", "userName", ApprovalStatus.WithDesignerForUpdate)
+        val info: ApprovalProcessStatusChange = ApprovalProcessStatusChange("userPid", "userName", ApprovalStatus.Complete)
         MockReviewConnector
           .approvalFactCheckComplete(id, info)
           .returns(Future.successful(Right(auditInfo)))
 
         val result: Future[RequestOutcome[AuditInfo]] =
-          reviewService.approvalFactCheckComplete(id, "userPid", "userName", ApprovalStatus.WithDesignerForUpdate)
+          reviewService.approvalFactCheckComplete(id, "userPid", "userName", ApprovalStatus.Complete)
 
         result.onComplete {
           case Success(response) =>
@@ -225,7 +226,7 @@ class ReviewServiceSpec extends BaseSpec {
 
       "Return an error following an unsuccessful call to the connector" in new Test {
 
-        val info: ApprovalProcessStatusChange = ApprovalProcessStatusChange("userPid", "userName", ApprovalStatus.ApprovedForPublishing)
+        val info: ApprovalProcessStatusChange = ApprovalProcessStatusChange("userPid", "userName", ApprovalStatus.Published)
         MockReviewConnector
           .approvalFactCheckComplete(id, info)
           .returns(Future.successful(Left(InternalServerError)))

@@ -19,7 +19,7 @@ package controllers
 import config.ErrorHandler
 import controllers.actions.FactCheckerIdentifierAction
 import javax.inject.{Inject, Singleton}
-import models.ApprovalStatus.WithDesignerForUpdate
+import models.ApprovalStatus.Complete
 import models.audit.FactCheckCompleteEvent
 import models.errors.{IncompleteDataError, NotFoundError, StaleDataError}
 import play.api.Logger
@@ -46,7 +46,7 @@ class FactCheckConfirmController @Inject()(
   val logger: Logger = Logger(getClass)
 
   def onConfirm(processId: String): Action[AnyContent] = factCheckIdentifierAction.async { implicit request =>
-    reviewService.approvalFactCheckComplete(processId, request.credId, request.name, WithDesignerForUpdate).map {
+    reviewService.approvalFactCheckComplete(processId, request.credId, request.name, Complete).map {
       case Right(auditInfo) =>
         auditService.audit(FactCheckCompleteEvent(auditInfo))
         Ok(view())

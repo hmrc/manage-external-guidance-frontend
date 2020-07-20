@@ -35,7 +35,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     val connector: ReviewConnector = new ReviewConnector(mockHttpClient, MockAppConfig)
 
-    val reviewStatusChange: ApprovalProcessStatusChange = ApprovalProcessStatusChange("user", "email", ApprovalStatus.ApprovedForPublishing)
+    val reviewStatusChange: ApprovalProcessStatusChange = ApprovalProcessStatusChange("user", "email", ApprovalStatus.Published)
     val auditInfo: AuditInfo = AuditInfo("pid", "id", "title", 1, "author", 2, 2)
 
   }

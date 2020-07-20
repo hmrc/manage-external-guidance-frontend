@@ -69,7 +69,7 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
       MockAuditService.audit(event)
 
       MockReviewService
-        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Right(auditInfo)))
 
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
@@ -81,7 +81,7 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     "display the error view when the process is not in a state to be completed" in new Test {
 
       MockReviewService
-        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(IncompleteDataError)))
 
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
@@ -94,7 +94,7 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     "Return the Http status Not found when the process review does not exist" in new Test {
 
       MockReviewService
-        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(NotFoundError)))
 
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
@@ -105,7 +105,7 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     "Return an Html error page when the process review does not exist" in new Test {
 
       MockReviewService
-        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(NotFoundError)))
 
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
@@ -116,7 +116,7 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     "Return the Http status internal server error when the process review data returned to the application is malformed" in new Test {
 
       MockReviewService
-        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(MalformedResponseError)))
 
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
@@ -127,7 +127,7 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     "Return an Html error page when the process review data returned to the application is malformed" in new Test {
 
       MockReviewService
-        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(MalformedResponseError)))
 
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
@@ -138,7 +138,7 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     "Return the Http status not found when the process review data requested is out of date in some way" in new Test {
 
       MockReviewService
-        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(StaleDataError)))
 
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
@@ -149,7 +149,7 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     "Return an Html error page when the process review data requested is out of date in some way" in new Test {
 
       MockReviewService
-        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(StaleDataError)))
 
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
@@ -160,7 +160,7 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     "Return the Http status internal server error when an unexpected error occurs" in new Test {
 
       MockReviewService
-        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(InternalServerError)))
 
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)
@@ -171,7 +171,7 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
     "Return an Html error page when an unexpected error occurs" in new Test {
 
       MockReviewService
-        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approvalFactCheckComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(InternalServerError)))
 
       val result: Future[Result] = reviewController.onConfirm(id)(fakeRequest)

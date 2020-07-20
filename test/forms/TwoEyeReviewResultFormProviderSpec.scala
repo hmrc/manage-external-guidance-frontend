@@ -16,11 +16,9 @@
 
 package forms
 
-import models.ApprovalStatus
-
-import play.api.data.{Form, FormError}
-
 import base.BaseSpec
+import models.ApprovalStatus
+import play.api.data.{Form, FormError}
 
 class TwoEyeReviewResultFormProviderSpec extends BaseSpec {
 
@@ -48,7 +46,7 @@ class TwoEyeReviewResultFormProviderSpec extends BaseSpec {
 
     "bind all valid values" in new Test {
 
-      val values: Seq[ApprovalStatus] = Seq(ApprovalStatus.WithDesignerForUpdate, ApprovalStatus.Published)
+      val values: Seq[ApprovalStatus] = Seq(ApprovalStatus.Complete, ApprovalStatus.Published)
 
       for (value <- values) {
 

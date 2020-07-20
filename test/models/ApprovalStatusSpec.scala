@@ -16,9 +16,9 @@
 
 package models
 
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import play.api.libs.json.{JsError, Json, JsString, JsObject, JsNull}
 import models.ApprovalStatus._
+import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import play.api.libs.json._
 
 class ApprovalStatusSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
@@ -26,13 +26,13 @@ class ApprovalStatusSpec extends WordSpec with MustMatchers with OptionValues wi
 
     "deserialise valid values" in {
 
-      JsString(SubmittedFor2iReview.toString).validate[ApprovalStatus].asOpt.value mustEqual SubmittedFor2iReview
+      JsString(Submitted.toString).validate[ApprovalStatus].asOpt.value mustEqual Submitted
 
-      JsString(SubmittedForFactCheck.toString).validate[ApprovalStatus].asOpt.value mustEqual SubmittedForFactCheck
+      JsString(InProgress.toString).validate[ApprovalStatus].asOpt.value mustEqual InProgress
 
-      JsString(WithDesignerForUpdate.toString).validate[ApprovalStatus].asOpt.value mustEqual WithDesignerForUpdate
+      JsString(Complete.toString).validate[ApprovalStatus].asOpt.value mustEqual Complete
 
-      JsString(ApprovedForPublishing.toString).validate[ApprovalStatus].asOpt.value mustEqual ApprovedForPublishing
+      JsString(Published.toString).validate[ApprovalStatus].asOpt.value mustEqual Published
     }
 
     "fail to deserialise invalid values" in {

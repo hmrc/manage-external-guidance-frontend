@@ -16,12 +16,15 @@
 
 package models
 
-import java.time.LocalDate
+sealed trait ReviewType
 
-import play.api.libs.json.{Json, OFormat}
+object ReviewType extends Enumerable.Implicits {
 
-case class ApprovalProcessSummary(id: String, title: String, lastUpdated: LocalDate, status: ApprovalStatus, reviewType: ReviewType)
+  case object ReviewType2i extends WithName("2i-review") with ReviewType
+  case object ReviewTypeFactCheck extends WithName("fact-check") with ReviewType
 
-object ApprovalProcessSummary {
-  implicit val formats: OFormat[ApprovalProcessSummary] = Json.format[ApprovalProcessSummary]
+  val values: Seq[ReviewType] = Seq(ReviewType2i, ReviewTypeFactCheck)
+
+  implicit val enumerable: Enumerable[ReviewType] = Enumerable(values.map(v => v.toString -> v): _*)
+
 }

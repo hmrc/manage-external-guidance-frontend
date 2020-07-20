@@ -23,6 +23,7 @@ import config.ErrorHandler
 import controllers.actions.FakeTwoEyeReviewerIdentifierAction
 import forms.TwoEyeReviewResultFormProvider
 import mocks.{MockAuditService, MockReviewService}
+import models.ReviewType.ReviewType2i
 import models.audit.{AuditInfo, TwoEyeReviewCompleteEvent}
 import models.errors._
 import models.{ApprovalProcessSummary, ApprovalStatus, ReviewData}
@@ -50,7 +51,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     val formProvider: TwoEyeReviewResultFormProvider = new TwoEyeReviewResultFormProvider()
     val form: Form[ApprovalStatus] = formProvider()
 
-    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published)
+    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published, ReviewType2i)
     val auditInfo: AuditInfo = AuditInfo(credential, id, "title", 1, "author", 2, 2)
     val event: TwoEyeReviewCompleteEvent = TwoEyeReviewCompleteEvent(auditInfo)
     def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
@@ -66,7 +67,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
       messagesControllerComponents)
     implicit val messages: Messages = messagesApi.preferred(FakeRequest("GET", "/"))
 
-    val fakePostRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest("POST", "/").withFormUrlEncodedBody(("value", ApprovalStatus.WithDesignerForUpdate.toString))
+    val fakePostRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest("POST", "/").withFormUrlEncodedBody(("value", ApprovalStatus.Complete.toString))
     val fakeGetRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
   }
 
@@ -76,7 +77,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
 
       MockAuditService.audit(event)
       MockReviewService
-        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Right(auditInfo)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
@@ -88,7 +89,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
 
       MockAuditService.audit(event)
       MockReviewService
-        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Right(auditInfo)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
@@ -99,7 +100,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return the Http status Not found when the process review does not exist" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(NotFoundError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
@@ -110,7 +111,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return an Html error page when the process review does not exist" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(NotFoundError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
@@ -121,7 +122,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return the Http status internal server error when the process review data returned to the application is malformed" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(MalformedResponseError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
@@ -132,7 +133,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return an Html error page when the process review data returned to the application is malformed" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(MalformedResponseError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
@@ -143,7 +144,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return the Http status not found when the process review data requested is out of date in some way" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(StaleDataError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
@@ -154,7 +155,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return an Html error page when the process review data requested is out of date in some way" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(StaleDataError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
@@ -165,7 +166,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return the Http status internal server error when an unexpected error occurs" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(InternalServerError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
@@ -176,7 +177,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     "Return an Html error page when an unexpected error occurs" in new Test {
 
       MockReviewService
-        .approval2iReviewComplete(id, credential, name, ApprovalStatus.WithDesignerForUpdate)
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.Complete)
         .returns(Future.successful(Left(InternalServerError)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
