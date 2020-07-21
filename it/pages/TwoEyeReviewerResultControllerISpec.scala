@@ -63,7 +63,7 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
 
     "user is authorised" when {
       "user selects to send guidance to designer" should {
-        "receive a redirect" in {
+        "receive a confirmation page" in {
           AuditStub.audit()
           AuthStub.authorise()
           val auditInfo: AuditInfo = AuditInfo("pid", "oct90005", "title", 1, "author", 2, 2)
@@ -71,11 +71,11 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
 
           val request: WSRequest = buildRequest("/2i-result/oct90005")
           val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.Complete.toString)))
-          response.status shouldBe Status.SEE_OTHER
+          response.status shouldBe Status.OK
         }
       }
       "user selects to publish guidance" should {
-        "receive a redirect" in {
+        "receive a confirmation page" in {
           AuditStub.audit()
           AuthStub.authorise()
           val auditInfo: AuditInfo = AuditInfo("pid", "oct90005", "title", 1, "author", 2, 2)
@@ -83,7 +83,7 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
 
           val request: WSRequest = buildRequest("/2i-result/oct90005")
           val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.Published.toString)))
-          response.status shouldBe Status.SEE_OTHER
+          response.status shouldBe Status.OK
         }
       }
 

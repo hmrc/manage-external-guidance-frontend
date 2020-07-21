@@ -30,7 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{AuditService, ReviewService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.{twoeye_confirm_error, twoeye_review_result}
+import views.html.{twoeye_complete, twoeye_confirm_error, twoeye_review_result}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,6 +41,7 @@ class TwoEyeReviewResultController @Inject() (
     twoEyeReviewerIdentifierAction: TwoEyeReviewerIdentifierAction,
     formProvider: TwoEyeReviewResultFormProvider,
     view: twoeye_review_result,
+    confirmation_view: twoeye_complete,
     errorView: twoeye_confirm_error,
     reviewService: ReviewService,
     auditService: AuditService,
@@ -85,7 +86,7 @@ class TwoEyeReviewResultController @Inject() (
               if (status == ApprovalStatus.Published) {
                 auditService.audit(PublishedEvent(auditInfo))
               }
-              Redirect(routes.AdminController.approvalSummaries())
+              Ok(confirmation_view(status))
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval 2i review for process $processId")
               NotFound(errorHandler.notFoundTemplate)
