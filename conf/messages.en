@@ -69,7 +69,7 @@ processReviewStatus.incomplete = Review Incomplete - {0} of {1} pages reviewed
 2iPageReview.textarea.label = Comments
 2iPageReview.textarea.hint = Add a hint here
 2iPageReview.saveReview = Save review
-2iPageReview.viewGuidancePage = View the page (opens in new tab)
+2iPageReview.viewGuidancePage = View the page (opens in new tab).
 
 2iReviewError.title = Some pages have not been reviewed
 2iReviewError.heading = Some pages have not been reviewed
@@ -104,7 +104,7 @@ factCheckPageReview.heading = Is the page factually accurate?
 factCheckPageReview.textarea.label = Comments
 factCheckPageReview.textarea.hint = Add a hint here
 factCheckPageReview.saveReview = Save review
-factCheckPageReview.viewGuidancePage = View the page (opens in new tab)
+factCheckPageReview.viewGuidancePage = View the page (opens in new tab).
 
 factCheckComplete.title = Your responses have been sent to the designer
 factCheckComplete.heading = Your responses have been sent to the designer
