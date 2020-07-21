@@ -49,9 +49,7 @@ class TwoEyePageReviewViewSpec extends ViewSpecBase {
 
         elementAttrs(linksList(1))("href") should endWith(s"/guidance-review/approval/$processId$reviewUrl")
 
-        val textComponents: Seq[String] = Seq(reviewTitle, messages("opens.new.tab"))
-
-        linksList(1).text shouldBe textComponents.mkString(" ")
+        linksList(1).text shouldBe messages("2iPageReview.viewGuidancePage")
       }
     }
 

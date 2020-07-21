@@ -104,7 +104,7 @@ factCheckPageReview.heading = Is the page factually accurate?
 factCheckPageReview.textarea.label = Comments
 factCheckPageReview.textarea.hint = Add a hint here
 factCheckPageReview.saveReview = Save review
-factCheckPageReview.viewGuidancePage = View the page (opens in new tab).
+factCheckPageReview.viewGuidancePage = View the page (opens in new tab)
 
 factCheckComplete.title = Your responses have been sent to the designer
 factCheckComplete.heading = Your responses have been sent to the designer
