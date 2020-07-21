@@ -48,7 +48,7 @@ approvalsStatus.2i-review.Published = Published
 
 pageReviewStatus.NotStarted = Not reviewed
 pageReviewStatus.Complete = Reviewed
-
+pageReview.guidancePageTitle.prefix = Page title:
 processReviewStatus.complete = Review Complete - all pages reviewed
 processReviewStatus.incomplete = Review Incomplete - {0} of {1} pages reviewed
 
@@ -69,7 +69,7 @@ processReviewStatus.incomplete = Review Incomplete - {0} of {1} pages reviewed
 2iPageReview.textarea.label = Comments
 2iPageReview.textarea.hint = Add a hint here
 2iPageReview.saveReview = Save review
-2iPageReview.viewGuidancePage = View the page (opens in new tab).
+2iPageReview.viewGuidancePage = View the page (opens in new tab)
 
 2iReviewError.title = Some pages have not been reviewed
 2iReviewError.heading = Some pages have not been reviewed
