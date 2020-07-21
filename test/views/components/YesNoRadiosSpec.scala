@@ -22,7 +22,7 @@ import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.Injector
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.FormError
-import views.html.components.radiosWithSubHeading
+import views.html.components.yesno_radios
 import play.twirl.api.Html
 import org.jsoup.nodes.{Document, Element}
 import scala.collection.JavaConverters._
@@ -47,9 +47,9 @@ class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
     implicit override def messages: Messages = messagesApi.preferred(Seq(Lang("cy")))
   }
 
-  "radiosWithSubHeading generated Html" must {
+  "yesno_radios generated Html" must {
 
-    def radios: radiosWithSubHeading = injector.instanceOf[radiosWithSubHeading]
+    def radios: yesno_radios = injector.instanceOf[yesno_radios]
     val html: Html = radios(None, Seq.empty, pageTitle, fieldName)
     val doc = asDocument(html)
     val fieldset: Element = doc.getElementsByTag("fieldset").first
@@ -69,9 +69,9 @@ class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
     }
   }
 
-  "radiosWithSubHeading generated Html when error has occurred" must {
+  "yesno_radios generated Html when error has occurred" must {
 
-    def radios: radiosWithSubHeading = injector.instanceOf[radiosWithSubHeading]
+    def radios: yesno_radios = injector.instanceOf[yesno_radios]
     val html: Html = radios(None, Seq(FormError("Key", "Error message")), pageTitle, fieldName)
     val doc = asDocument(html)
     val fieldset: Element = doc.getElementsByTag("fieldset").first

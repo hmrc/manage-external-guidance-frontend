@@ -21,7 +21,7 @@
   govukBackLink: GovukBackLink,
   formWithCSRF: FormWithCSRF,
   errorSummary: components.errorSummary,
-  radiosWithSubHeading: components.radiosWithSubHeading,
+  yesnoRadios: components.yesno_radios,
   govukTextarea: GovukTextarea,
   govukButton: GovukButton,
   appConfig: AppConfig
@@ -35,7 +35,7 @@
 }
 
 @viewLink(reviewTitle: String, id: String, url: String) = {
-  <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url">@reviewTitle @messages("opens.new.tab")</a>
+  <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url">@messages("2iPageReview.viewGuidancePage")</a>
 }
 
 @layout(pageTitle(form.errors)){
@@ -45,7 +45,10 @@
 
   @errorSummary(form.errors)
 
-  <h1 class="govuk-heading-xl">@messages("2iPageReview.heading")</h1>
+  <header class="hmrc-page-heading govuk-!-margin-0 govuk-!-margin-bottom-5">
+      <h1 class="govuk-heading-xl govuk-!-margin-0">@messages("2iPageReview.heading")</h1>
+      <p class="govuk-caption-xl hmrc-caption-xl">@messages("pageReview.guidancePageTitle.prefix") @reviewTitle</p>
+  </header>
 
   <p class="govuk-body">
     @viewLink(reviewTitle, processId, reviewUrl)
@@ -53,7 +56,7 @@
 
   @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, reviewUrl.drop(1), reviewTitle, index)) {
     
-    @radiosWithSubHeading(form("answer").value,
+    @yesnoRadios(form("answer").value,
                 form.errors,
                 reviewTitle,
                 "answer")
