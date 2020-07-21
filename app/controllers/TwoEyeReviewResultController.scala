@@ -86,7 +86,7 @@ class TwoEyeReviewResultController @Inject() (
               if (status == ApprovalStatus.Published) {
                 auditService.audit(PublishedEvent(auditInfo))
               }
-              Ok(confirmation_view(status.toString))
+              Ok(confirmation_view(status))
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval 2i review for process $processId")
               NotFound(errorHandler.notFoundTemplate)

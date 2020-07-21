@@ -23,6 +23,7 @@ import config.ErrorHandler
 import controllers.actions.FakeTwoEyeReviewerIdentifierAction
 import forms.TwoEyeReviewResultFormProvider
 import mocks.{MockAuditService, MockReviewService}
+import models.ApprovalStatus.Complete
 import models.ReviewType.ReviewType2i
 import models.audit.{AuditInfo, TwoEyeReviewCompleteEvent}
 import models.errors._
@@ -83,7 +84,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
         .returns(Future.successful(Right(auditInfo)))
 
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
-      contentAsString(result) shouldBe confirmationView("complete")(fakeGetRequest, messages).toString
+      contentAsString(result) shouldBe confirmationView(Complete)(fakeGetRequest, messages).toString
     }
 
     "Return an Html document displaying the details of the review result" in new Test {
