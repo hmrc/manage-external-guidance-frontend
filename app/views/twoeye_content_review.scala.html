@@ -46,20 +46,18 @@
 
   <p class="govuk-body-l govuk-!-font-weight-bold">@messages("2iReview.reviewPagesHeading")</p>
   <p id="review-status">@reviewStatus()</p>
-  
-  <ul class="app-task-list__items app-task-list__items-no-number">
-    @for((page, index) <- review.pages.zipWithIndex) {
-      <li class="app-task-list__item">
-        <span class="app-task-list__task-name">
-          <a id="page-link-@index" href="@{routes.TwoEyePageReviewController.onPageLoad(review.ocelotId, page.url.drop(1), index).url}">
-            @page.title
-          </a>
-        </span>
-        <span class="hmrc-status-tag" id="page-@index">@messages(s"pageReviewStatus.${page.status.toString}")</span>
-      </li>
-    }
-  </ul>
 
+  <dl class="govuk-summary-list">
+    @for((page, index) <- review.pages.zipWithIndex) {
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__value">
+          <a id="page-link-@index" href="@{routes.TwoEyePageReviewController.onPageLoad(review.ocelotId, page.url.drop(1), index).url}">@page.title</a>
+        </dt>
+        <dd class="govuk-summary-list__actions" id="page-@index">@messages(s"pageReviewStatus.${page.status.toString}")</dd>
+      </div>
+    }
+  </dl>
+  
   <a id="confirm" href="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).url}" role="button" class="govuk-button" data-module="govuk-button" aria-describedby="review-status">@messages("2iReview.sendConfirmation")</a>
 
 }
