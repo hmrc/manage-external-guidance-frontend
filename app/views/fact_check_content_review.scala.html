@@ -42,18 +42,16 @@
   <p class="govuk-body-l govuk-!-font-weight-bold">@messages("factCheck.reviewPagesHeading")</p>
   <p id="review-status">@reviewStatus()</p>
 
-  <ul class="app-task-list__items app-task-list__items-no-number">
+  <dl class="govuk-summary-list">
     @for((page, index) <- review.pages.zipWithIndex) {
-      <li class="app-task-list__item">
-        <span class="app-task-list__task-name">
-          <a id="page-link-@index" href="@{routes.FactCheckPageReviewController.onPageLoad(review.ocelotId, page.url.drop(1), index).url}">
-            @page.title
-          </a>
-        </span>
-        <span class="hmrc-status-tag" id="page-@index">@messages(s"factCheck.pageReviewStatus.${page.status.toString}")</span>
-      </li>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__value">
+          <a id="page-link-@index" href="@{routes.FactCheckPageReviewController.onPageLoad(review.ocelotId, page.url.drop(1), index).url}">@page.title</a>
+        </dt>
+        <dd class="govuk-summary-list__actions" id="page-@index">@messages(s"factCheck.pageReviewStatus.${page.status.toString}")</dd>
+      </div>
     }
-  </ul>
+  </dl>
 
   <p class="govuk-body">@messages("factCheck.sendConfirmationComment")</p>
   <a id="confirm" href="@{routes.FactCheckConfirmController.onConfirm(review.ocelotId).url}" role="button" class="govuk-button" data-module="govuk-button" aria-describedby="review-status">@messages("factCheck.sendConfirmation")</a>
