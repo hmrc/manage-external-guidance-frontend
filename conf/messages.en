@@ -85,6 +85,15 @@ processReviewStatus.incomplete = Review Incomplete - {0} of {1} pages reviewed
 2iReviewResult.Published = Approve guidance for publishing
 2iReviewResult.error.required = You must confirm what you would like to do
 
+2iReviewComplete.title.Published = The guidance has been successfully published
+2iReviewComplete.heading.Published = The guidance has been successfully published
+
+2iReviewComplete.title.Complete = Your responses have been sent to the designer
+2iReviewComplete.heading.Complete = Your responses have been sent to the designer
+2iReviewComplete.info = If you need to amend or add to the 2i review, contact the designer.
+
+2iReviewComplete.close = Go back to all interactive guidance
+
 factCheck.pageReviewStatus.NotStarted = Not checked
 factCheck.pageReviewStatus.Complete = Checked
 
