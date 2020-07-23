@@ -16,15 +16,17 @@
 
 package controllers
 
-import config.ErrorHandler
+import config.{AppConfig, ErrorHandler}
+import controllers.actions.IdentifierAction
 import javax.inject.{Inject, Singleton}
+import models.SummaryListCriteria
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ApprovalService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import play.api.Logger
-import controllers.actions.IdentifierAction
 import views.html.approval_summary_list
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
@@ -33,13 +35,19 @@ class AdminController @Inject() (
     errorHandler: ErrorHandler,
     view: approval_summary_list,
     approvalService: ApprovalService,
-    mcc: MessagesControllerComponents
+    mcc: MessagesControllerComponents,
+    appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
 
   val logger = Logger(getClass)
 
   def approvalSummaries: Action[AnyContent] = identify.async { implicit request =>
+    val roles = request.roles
+    val hasTwoEyeRole: Boolean = roles.contains(appConfig.twoEyeReviewerRole)
+    val hasFactCheckRole: Boolean = roles.contains(appConfig.factCheckerRole)
+    val criteria = SummaryListCriteria(hasTwoEyeRole, hasFactCheckRole)
+
     approvalService.approvalSummaries.map {
       case Right(processList) => Ok(view(processList))
       case Left(err) =>

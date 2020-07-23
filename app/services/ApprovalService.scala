@@ -18,10 +18,10 @@ package services
 
 import connectors.ApprovalConnector
 import javax.inject.{Inject, Singleton}
-import models.{ApprovalResponse, RequestOutcome, ApprovalProcessSummary}
+import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome}
+import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
-import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
 

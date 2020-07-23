@@ -21,60 +21,33 @@ import javax.inject.Inject
 import models.requests.IdentifierRequest
 import play.api.mvc.Results._
 import play.api.mvc._
-import play.api.{Configuration, Environment, Logger}
-import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
+import uk.gov.hmrc.auth.core.authorise.Predicate
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 trait TwoEyeReviewerIdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 
 class TwoEyeReviewerAuthenticatedIdentifierAction @Inject() (
     override val authConnector: AuthConnector,
     appConfig: AppConfig,
-    val parser: BodyParsers.Default,
-    val config: Configuration,
-    val env: Environment,
+    override val parser: BodyParsers.Default,
+    override val config: Configuration,
+    override val env: Environment,
     unauthorizedReviewErrorHandler: UnauthorizedReviewErrorHandler
 )(
-    implicit val executionContext: ExecutionContext
-) extends TwoEyeReviewerIdentifierAction
-    with AuthorisedFunctions
-    with AuthRedirects {
+    override implicit val executionContext: ExecutionContext
+) extends AuthenticatedIdentifierBaseAction (authConnector, appConfig, parser, config, env) with TwoEyeReviewerIdentifierAction {
 
-  val logger: Logger = Logger(getClass)
+  override def accessRestrictions(): Predicate = Enrolment(appConfig.twoEyeReviewerRole)
 
-  override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
+  override def unauthorisedResult(request: Request[_]) : Result = Unauthorized(
+    unauthorizedReviewErrorHandler.standardErrorTemplate(
+      "error.unauthorized401.pageTitle.page",
+      "error.unauthorized401.heading.page",
+      "error.unauthorized401.message"
+    )(request)
+  )
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-
-    val unauthorizedResult = Unauthorized(
-      unauthorizedReviewErrorHandler.standardErrorTemplate(
-        "error.unauthorized401.pageTitle.page",
-        "error.unauthorized401.heading.page",
-        "error.unauthorized401.message"
-      )(request)
-    )
-
-    // Restrict access to users with 2i reviewer role
-    authorised(Enrolment(appConfig.twoEyeReviewerRole) and AuthProviders(PrivilegedApplication))
-      .retrieve(Retrievals.credentials and Retrievals.name and Retrievals.email) {
-        case Some(Credentials(providerId, _)) ~ Some(Name(Some(name), _)) ~ Some(email) =>
-          block(IdentifierRequest(request, providerId, name, email))
-        case _ =>
-          logger.warn("Identifier action could not retrieve required user details in method invokeBlock")
-          Future.successful(unauthorizedResult)
-      } recover {
-      case _: NoActiveSession =>
-        Redirect(appConfig.loginUrl, Map("successURL" -> Seq(appConfig.continueUrl)))
-      case authEx: AuthorisationException =>
-        logger.warn(s"Method invokeBlock of identifier action received an authorization exception with the message ${authEx.getMessage}")
-        unauthorizedResult
-    }
-  }
 }
