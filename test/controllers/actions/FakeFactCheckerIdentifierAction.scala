@@ -29,5 +29,5 @@ object FakeFactCheckerIdentifierAction extends ControllerBaseSpec with FactCheck
   override def parser: BodyParser[AnyContent] = messagesControllerComponents.parsers.defaultBodyParser
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
-    block(IdentifierRequest(request, credential, name, email))
+    block(IdentifierRequest(request, credential, name, email, List("FactChecker")))
 }

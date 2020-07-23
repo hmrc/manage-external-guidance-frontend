@@ -19,7 +19,6 @@ package stubs
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 import play.api.libs.json.Json
-
 import support.WireMockMethods
 
 object AuthStub extends WireMockMethods {
@@ -45,10 +44,11 @@ object AuthStub extends WireMockMethods {
             "name" -> name,
             "lastName" -> lastName
           ),
-          "email" -> email
+          "email" -> email,
+          "authorisedEnrolments" -> Json.arr(Json.obj("key" -> "FactChecker", "state" -> "activated"))
         )
       )
-
+//[{"enrolment":"2iReviewer","identifiers":[],"state":"activated"},{"enrolment":"FactChecker","identifiers":[],"state":"activated"}]
   def incompleteAuthorisation(): StubMapping =
     when(method = POST, uri = authoriseUri)
       .thenReturn(
@@ -59,7 +59,8 @@ object AuthStub extends WireMockMethods {
             "providerId" -> credId,
             "providerType" -> "PrivilegedApplication"
           ),
-          "email" -> email
+          "email" -> email,
+          "authorisedEnrolments" -> Json.arr(Json.obj("key" -> "FactChecker", "state" -> "activated"))
         )
       )
 

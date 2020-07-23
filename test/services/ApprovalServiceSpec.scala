@@ -17,16 +17,15 @@
 package services
 
 import base.BaseSpec
-import mocks.MockApprovalConnector
+import mocks.{MockAppConfig, MockApprovalConnector}
 import models.errors.InternalServerError
-import models.{ApprovalResponse, RequestOutcome}
+import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome, SummaryListCriteria}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
-import models.ApprovalProcessSummary
 
 class ApprovalServiceSpec extends BaseSpec {
 
@@ -34,7 +33,7 @@ class ApprovalServiceSpec extends BaseSpec {
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-    lazy val service: ApprovalService = new ApprovalService(mockApprovalConnector)
+    lazy val service: ApprovalService = new ApprovalService(mockApprovalConnector, MockAppConfig)
 
     val processId: String = "abc12345"
     val dummyProcess: JsValue = Json.obj("meta" -> Json.obj("id" -> processId))
@@ -118,10 +117,11 @@ class ApprovalServiceSpec extends BaseSpec {
 
     "Return a list of Processes after an successful call to the summaries connector" in new Test {
 
-      MockApprovalConnector.approvalSummaries
+
+      MockApprovalConnector.approvalSummaries(SummaryListCriteria(twoEyeAllowed = false, factCheckAllowed = true))
         .returns(Future.successful(Right(List())))
 
-      val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries
+      val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries(List("FactChecker"))
 
       result.onComplete {
         case Success(response) =>
@@ -135,10 +135,10 @@ class ApprovalServiceSpec extends BaseSpec {
 
     "Return an error after an unsuccessful call to the connector by approvalSummaries" in new Test {
 
-      MockApprovalConnector.approvalSummaries
+      MockApprovalConnector.approvalSummaries(SummaryListCriteria(twoEyeAllowed = false, factCheckAllowed = true))
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries
+      val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries(List("2iReviewer"))
 
       result.onComplete {
         case Success(response) =>

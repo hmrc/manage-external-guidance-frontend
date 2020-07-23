@@ -107,6 +107,20 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
       contentType(result) shouldBe None
     }
 
+    "Return to the view when the form is not populated" in new Test {
+
+      val result: Future[Result] =
+        reviewController.onSubmit(
+          id,
+          updatedReviewDetail.pageUrl.drop(1),
+          updatedReviewDetail.pageTitle,
+          1)(fakeRequest.withFormUrlEncodedBody(("answer", "")))
+
+      status(result) shouldBe BAD_REQUEST
+      contentType(result) shouldBe Some("text/html")
+    }
+
+
     "Return the Http status Not found when the process review does not exist" in new Test {
 
       MockReviewService

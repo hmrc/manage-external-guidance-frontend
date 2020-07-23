@@ -36,16 +36,16 @@ class AdminControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuit
     private val view = app.injector.instanceOf[approval_summary_list]
     lazy val errorHandler = app.injector.instanceOf[config.ErrorHandler]
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val fakeRequest = FakeRequest("GET", "/")
+    val fakeRequest = FakeRequest("POST", "/")
     val controller = new AdminController(FakeIdentifierAction, errorHandler, view, mockApprovalService, stubMessagesControllerComponents())
 
   }
 
-  "GET /" should {
+  "POST /" should {
 
     "return 200" in new Test {
 
-      MockApprovalService.approvalSummaries.returns(Future.successful(Right(List())))
+      MockApprovalService.approvalSummaries(List("2iReviewer")).returns(Future.successful(Right(List())))
 
       val result = controller.approvalSummaries(fakeRequest)
       status(result) shouldBe Status.OK
@@ -53,7 +53,7 @@ class AdminControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuit
 
     "return HTML" in new Test {
 
-      MockApprovalService.approvalSummaries.returns(Future.successful(Right(List())))
+      MockApprovalService.approvalSummaries(List("2iReviewer")).returns(Future.successful(Right(List())))
 
       val result = controller.approvalSummaries(fakeRequest)
       contentType(result) shouldBe Some("text/html")

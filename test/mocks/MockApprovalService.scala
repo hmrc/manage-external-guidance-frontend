@@ -16,13 +16,13 @@
 
 package mocks
 
-import models.{RequestOutcome, ApprovalResponse}
+import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
 import services.ApprovalService
 import uk.gov.hmrc.http.HeaderCarrier
-import models.ApprovalProcessSummary
+
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockApprovalService extends MockFactory {
@@ -31,10 +31,10 @@ trait MockApprovalService extends MockFactory {
 
   object MockApprovalService {
 
-    def approvalSummaries: CallHandler[Future[RequestOutcome[List[ApprovalProcessSummary]]]] =
+    def approvalSummaries(roles: List[String]): CallHandler[Future[RequestOutcome[List[ApprovalProcessSummary]]]] =
       (mockApprovalService
-        .approvalSummaries(_: ExecutionContext, _: HeaderCarrier))
-        .expects(*, *)
+        .approvalSummaries(_: List[String])(_: ExecutionContext, _: HeaderCarrier))
+        .expects(*, *, *)
 
     def submitFor2iReview(process: JsValue): CallHandler[Future[RequestOutcome[ApprovalResponse]]] = {
 

@@ -18,22 +18,24 @@ package connectors
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome}
+import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome, SummaryListCriteria}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApprovalConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
 
-  def approvalSummaries(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ApprovalProcessSummary]]] = {
+  def approvalSummaries(criteria: SummaryListCriteria)
+                       (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ApprovalProcessSummary]]] = {
 
     import connectors.httpParsers.ApprovalHttpParser.getApprovalSummaryListHttpReads
 
     val summaryEndPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/approval"
 
-    httpClient.GET[RequestOutcome[List[ApprovalProcessSummary]]](summaryEndPoint, Seq.empty, Seq.empty)
+    httpClient.POST[SummaryListCriteria, RequestOutcome[List[ApprovalProcessSummary]]](summaryEndPoint, criteria, Seq.empty)
   }
 
   def submitFor2iReview(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {

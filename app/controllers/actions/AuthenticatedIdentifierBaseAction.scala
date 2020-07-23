@@ -19,6 +19,7 @@ package controllers.actions
 import config.AppConfig
 import javax.inject.Inject
 import models.requests.IdentifierRequest
+import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
@@ -58,6 +59,8 @@ abstract class AuthenticatedIdentifierBaseAction @Inject()(
     authorised(accessPredicate)
       .retrieve(Retrievals.credentials and Retrievals.name and Retrievals.email and Retrievals.authorisedEnrolments) {
         case Some(Credentials(providerId, _)) ~ Some(Name(Some(name), _)) ~ Some(email) ~ authEnrolments =>
+          println(s"********* $authEnrolments")
+          println(s"********* ${Json.toJson(authEnrolments.enrolments)}")
           block(IdentifierRequest(request, providerId, name, email, authEnrolments.enrolments.map(_.key).toList))
         case _ =>
           logger.warn("Identifier action could not retrieve required user details in method invokeBlock")
