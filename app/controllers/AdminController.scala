@@ -41,9 +41,7 @@ class AdminController @Inject() (
   val logger = Logger(getClass)
 
   def approvalSummaries: Action[AnyContent] = identify.async { implicit request =>
-    val roles: List[String] = request.roles
-
-    approvalService.approvalSummaries(roles).map {
+    approvalService.approvalSummaries.map {
       case Right(processList) => Ok(view(processList))
       case Left(err) =>
         logger.warn(s"Unable to retrieve list of approval process summaries, err = $err")

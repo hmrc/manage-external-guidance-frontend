@@ -17,7 +17,7 @@
 package mocks
 
 import connectors.ApprovalConnector
-import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome, SummaryListCriteria}
+import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
@@ -31,10 +31,10 @@ trait MockApprovalConnector extends MockFactory {
 
   object MockApprovalConnector {
 
-    def approvalSummaries(criteria: SummaryListCriteria): CallHandler[Future[RequestOutcome[List[ApprovalProcessSummary]]]] =
+    def approvalSummaries: CallHandler[Future[RequestOutcome[List[ApprovalProcessSummary]]]] =
       (mockApprovalConnector
-        .approvalSummaries(_: SummaryListCriteria)(_: ExecutionContext, _: HeaderCarrier))
-        .expects(*, *, *)
+        .approvalSummaries(_: ExecutionContext, _: HeaderCarrier))
+        .expects(*, *)
 
     def submitFor2iReview(process: JsValue): CallHandler[Future[RequestOutcome[ApprovalResponse]]] = {
 

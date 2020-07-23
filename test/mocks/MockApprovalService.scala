@@ -31,10 +31,10 @@ trait MockApprovalService extends MockFactory {
 
   object MockApprovalService {
 
-    def approvalSummaries(roles: List[String]): CallHandler[Future[RequestOutcome[List[ApprovalProcessSummary]]]] =
+    def approvalSummaries(): CallHandler[Future[RequestOutcome[List[ApprovalProcessSummary]]]] =
       (mockApprovalService
-        .approvalSummaries(_: List[String])(_: ExecutionContext, _: HeaderCarrier))
-        .expects(*, *, *)
+        .approvalSummaries(_: ExecutionContext, _: HeaderCarrier))
+        .expects(*, *)
 
     def submitFor2iReview(process: JsValue): CallHandler[Future[RequestOutcome[ApprovalResponse]]] = {
 

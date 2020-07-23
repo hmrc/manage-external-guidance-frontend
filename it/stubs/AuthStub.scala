@@ -48,7 +48,7 @@ object AuthStub extends WireMockMethods {
           "authorisedEnrolments" -> Json.arr(Json.obj("key" -> "FactChecker", "state" -> "activated"))
         )
       )
-//[{"enrolment":"2iReviewer","identifiers":[],"state":"activated"},{"enrolment":"FactChecker","identifiers":[],"state":"activated"}]
+
   def incompleteAuthorisation(): StubMapping =
     when(method = POST, uri = authoriseUri)
       .thenReturn(

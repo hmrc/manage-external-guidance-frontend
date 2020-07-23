@@ -19,7 +19,7 @@ package services
 import config.AppConfig
 import connectors.ApprovalConnector
 import javax.inject.{Inject, Singleton}
-import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome, SummaryListCriteria}
+import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome}
 import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
@@ -30,14 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ApprovalService @Inject() (connector: ApprovalConnector, appConfig: AppConfig) {
   val logger = Logger(getClass)
 
-  def approvalSummaries(roles: List[String])
-                       (implicit context: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ApprovalProcessSummary]]] = {
-    val hasTwoEyeRole: Boolean = roles.contains(appConfig.twoEyeReviewerRole)
-    val hasFactCheckRole: Boolean = roles.contains(appConfig.factCheckerRole)
-    val hasDesignerRole: Boolean = roles.contains(appConfig.designerRole)
-    val criteria = SummaryListCriteria(hasTwoEyeRole || hasDesignerRole, hasFactCheckRole || hasDesignerRole)
-
-    connector.approvalSummaries(criteria)
+  def approvalSummaries(implicit context: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ApprovalProcessSummary]]] = {
+    connector.approvalSummaries
   }
 
   def submitFor2iReview(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {

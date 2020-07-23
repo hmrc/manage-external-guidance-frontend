@@ -19,7 +19,7 @@ package services
 import base.BaseSpec
 import mocks.{MockAppConfig, MockApprovalConnector}
 import models.errors.InternalServerError
-import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome, SummaryListCriteria}
+import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -117,11 +117,10 @@ class ApprovalServiceSpec extends BaseSpec {
 
     "Return a list of Processes after an successful call to the summaries connector" in new Test {
 
-
-      MockApprovalConnector.approvalSummaries(SummaryListCriteria(twoEyeAllowed = false, factCheckAllowed = true))
+      MockApprovalConnector.approvalSummaries
         .returns(Future.successful(Right(List())))
 
-      val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries(List("FactChecker"))
+      val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries
 
       result.onComplete {
         case Success(response) =>
@@ -135,10 +134,10 @@ class ApprovalServiceSpec extends BaseSpec {
 
     "Return an error after an unsuccessful call to the connector by approvalSummaries" in new Test {
 
-      MockApprovalConnector.approvalSummaries(SummaryListCriteria(twoEyeAllowed = false, factCheckAllowed = true))
+      MockApprovalConnector.approvalSummaries
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries(List("2iReviewer"))
+      val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries
 
       result.onComplete {
         case Success(response) =>
