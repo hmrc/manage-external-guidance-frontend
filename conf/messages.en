@@ -31,17 +31,13 @@ approvals.processTitle = Title
 approvals.dateProcessUpdatedTitle = Last updated
 approvals.processStatusTitle = Status
 
-approvalsStatus.SubmittedFor2iReview = Sent to 2i
-approvalsStatus.SubmittedForFactCheck = Sent to fact check
-approvalsStatus.WithDesignerForUpdate = Review complete
-approvalsStatus.ApprovedForPublishing = Approved for publishing
 approvalsStatus.Published = Published
 
-approvalsStatus.fact-check.Submitted = Sent to fact check
+approvalsStatus.fact-check.Submitted = Fact check needed
 approvalsStatus.fact-check.InProgress = Fact check in progress
 approvalsStatus.fact-check.Complete = Fact check complete
 
-approvalsStatus.2i-review.Submitted = Sent to 2i
+approvalsStatus.2i-review.Submitted = 2i review needed
 approvalsStatus.2i-review.InProgress = 2i review in progress
 approvalsStatus.2i-review.Complete = 2i review complete
 approvalsStatus.2i-review.Published = Published
