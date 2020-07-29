@@ -58,9 +58,7 @@ class FactCheckPageReviewViewSpec extends ViewSpecBase {
       Option(doc.getElementsByTag("legend").first).fold(fail("Unable to locate legend element")) { legend =>
         elementAttrs(legend)("class") shouldBe "govuk-visually-hidden"
 
-        val textComponents: Seq[String] = Seq(messages("does.the.page"), reviewTitle, messages("meet.govuk.standards"))
-
-        legend.text shouldBe textComponents.mkString(" ")
+        legend.text shouldBe messages("factCheckPageReview.heading")
       }
     }
   }

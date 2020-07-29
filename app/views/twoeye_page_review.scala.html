@@ -58,7 +58,7 @@
     
     @yesnoRadios(form("answer").value,
                 form.errors,
-                reviewTitle,
+                messages("2iPageReview.heading"),
                 "answer")
 
     @govukButton( Button( content = Text( messages( "2iPageReview.saveReview" ) ) ) )
