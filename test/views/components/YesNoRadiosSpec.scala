@@ -55,12 +55,6 @@ class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
     val fieldset: Element = doc.getElementsByTag("fieldset").first
     val inputs: List[Element] = doc.getElementsByTag("input").asScala.toList
 
-    "contain fieldset with appropriate aria-describedby" in new Test {
-      Option(fieldset).fold(fail("No fieldset found")) { fs =>
-        elementAttrs(fs)("aria-describedby").contains(s"${fieldName}-hint") shouldBe true
-      }
-    }
-
     "contains fieldset two radio inputs" in new Test {
       inputs.size shouldBe 2
       inputs.map { inp =>
