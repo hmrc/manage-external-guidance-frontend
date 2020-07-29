@@ -25,13 +25,14 @@
 @(answer: Option[String],
   errors: Seq[FormError],
   reviewTitle: String,
-  fieldName: String
+  fieldName: String,
+  hintId: Option[String] = None
 )(implicit messages: Messages)
 
   @ariaDescribedBy(s: String) = { aria-describedby="@s" }
 
   @optionalAria(name: String) = @{
-    Seq(Some(name+"-hint"), errors.headOption.map(err => name+"-error")).flatten match {
+    Seq(hintId, errors.headOption.map(err => name+"-error")).flatten match {
       case Nil => ""
       case l => ariaDescribedBy(l.mkString(" "))
     }
