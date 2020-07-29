@@ -24,7 +24,7 @@
 
 @(answer: Option[String],
   errors: Seq[FormError],
-  reviewTitle: String,
+  h1Text: String,
   fieldName: String,
   hintId: Option[String] = None
 )(implicit messages: Messages)
@@ -42,7 +42,7 @@
 
   <div class="govuk-form-group @if(!errors.isEmpty) {govuk-form-group--error}">
     <fieldset class="govuk-fieldset" @optionalAria(fieldName)>
-        <legend class="govuk-visually-hidden">@messages("does.the.page") @reviewTitle @messages("meet.govuk.standards")</legend>
+        <legend class="govuk-visually-hidden">@h1Text</legend>
 
       @for(err <- errors) {
       <span id="@fieldName-error" class="govuk-error-message">

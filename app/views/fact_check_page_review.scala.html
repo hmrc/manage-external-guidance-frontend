@@ -60,7 +60,7 @@
 
     @yesnoRadios(form("answer").value,
                 form.errors,
-                reviewTitle,
+                messages("factCheckPageReview.heading"),
                 "answer")
 
     @govukButton( Button( content = Text( messages( "factCheckPageReview.saveReview" ) ) ) )
