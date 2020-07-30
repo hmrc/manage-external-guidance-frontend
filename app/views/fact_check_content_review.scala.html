@@ -22,11 +22,7 @@
 @(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
 
 @reviewStatus() = @{
-  val completePages = review.pages.count(_.status == PageReviewStatus.Complete)
-  (review.pages.length - completePages) match {
-    case 0 => messages("processReviewStatus.complete")
-    case _ => messages("processReviewStatus.incomplete", completePages, review.pages.length)
-  }
+  messages("processReview.status", review.pages.count(_.status == PageReviewStatus.Complete), review.pages.length)
 }
 
 @layout(s"${review.title} - ${messages("factCheck.heading")}") {
@@ -39,7 +35,6 @@
       <p class="govuk-caption-xl hmrc-caption-xl govuk-!-margin-0 govuk-!-margin-bottom-5">@messages("factCheck.heading")</p>
   </header>
 
-  <p class="govuk-body-l govuk-!-font-weight-bold">@messages("factCheck.reviewPagesHeading")</p>
   <p id="review-status">@reviewStatus()</p>
 
   <dl class="govuk-summary-list">

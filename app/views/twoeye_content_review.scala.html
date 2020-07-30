@@ -23,11 +23,7 @@
 @(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
 
 @reviewStatus() = @{
-  val completePages = review.pages.count(_.status == PageReviewStatus.Complete)
-  (review.pages.length - completePages) match {
-    case 0 => messages("processReviewStatus.complete")
-    case _ => messages("processReviewStatus.incomplete", completePages, review.pages.length)
-  }
+  messages("processReview.status", review.pages.count(_.status == PageReviewStatus.Complete), review.pages.length)
 }
 
 @layout(s"${review.title} - ${messages("2iReview.heading")}") {
@@ -44,7 +40,6 @@
     <a class="govuk-link" target="_blank" rel="noopener noreferrer" href = "@appConfig.viewApprovalUrl/@review.ocelotId">@messages("2iReview.viewGuidance")</a>
   </p>
 
-  <p class="govuk-body-l govuk-!-font-weight-bold">@messages("2iReview.reviewPagesHeading")</p>
   <p id="review-status">@reviewStatus()</p>
 
   <dl class="govuk-summary-list">
