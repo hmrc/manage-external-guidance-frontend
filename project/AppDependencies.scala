@@ -4,14 +4,13 @@ import sbt._
 object AppDependencies {
   val compile = Seq(
     "uk.gov.hmrc"             %% "play-language"            % "4.3.0-play-26",
-    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.13.0",
+    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.14.0",
     "uk.gov.hmrc"             %% "play-frontend-govuk"      % "0.49.0-play-26",
-    "uk.gov.hmrc"             %% "play-frontend-hmrc"       % "0.16.0-play-26",
-    "com.typesafe.play"       %% "play-json-joda"           % "2.6.13"
+    "uk.gov.hmrc"             %% "play-frontend-hmrc"       % "0.17.0-play-26"
   )
 
   val test = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.8.0" % Test classifier "tests",
+    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.14.0" % Test classifier "tests",
     "org.scalamock"           %% "scalamock"                % "4.4.0"                 % "test",
     "org.scalatest"           %% "scalatest"                % "3.0.8"                 % "test",
     "org.jsoup"               %  "jsoup"                    % "1.10.2"                % "test",
