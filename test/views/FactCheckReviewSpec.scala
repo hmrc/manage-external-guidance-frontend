@@ -41,13 +41,13 @@ class FactCheckReviewSpec extends ViewSpecBase {
       "Telling HMRC about extra income",
       LocalDate.of(year, month, day),
       List(
-        PageReview("id1", "how-did-you-earn-extra-income", "Title1", Complete),
-        PageReview("id2", "sold-goods-or-services/did-you-only-sell-personal-possessions", "Title2", NotStarted),
-        PageReview("id3", "sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", "Title3", NotStarted),
-        PageReview("id4", "sold-goods-or-services/have-you-made-1000-or-more", "Title4", NotStarted),
-        PageReview("id5", "sold-goods-or-services/you-do-not-need-to-tell-hmrc", "Title5", NotStarted),
-        PageReview("id6", "rent-a-property/do-you-receive-any-income", "Title6", NotStarted),
-        PageReview("id7", "rent-a-property/have-you-rented-out-a-room", "Title7", NotStarted)
+        PageReview("id1", "how-did-you-earn-extra-income", "Title1", Complete, Some("Yes")),
+        PageReview("id2", "sold-goods-or-services/did-you-only-sell-personal-possessions", "Title2", NotStarted, None),
+        PageReview("id3", "sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", "Title3", NotStarted, None),
+        PageReview("id4", "sold-goods-or-services/have-you-made-1000-or-more", "Title4", NotStarted, None),
+        PageReview("id5", "sold-goods-or-services/you-do-not-need-to-tell-hmrc", "Title5", NotStarted, None),
+        PageReview("id6", "rent-a-property/do-you-receive-any-income", "Title6", NotStarted, None),
+        PageReview("id7", "rent-a-property/have-you-rented-out-a-room", "Title7", NotStarted, None)
       )
     )
 
@@ -91,7 +91,7 @@ class FactCheckReviewSpec extends ViewSpecBase {
         listItems.zipWithIndex.foreach { case (_, index) =>
           val a = doc.getElementById(s"page-link-$index")
           approvalProcessReview.pages.find(_.title == a.text).fold(fail(s"Missing page with title ${a.text}")) { page =>
-            messages(s"factCheck.pageReviewStatus.${page.status.toString}") shouldBe doc.getElementById(s"page-$index").text
+            messages(s"factCheck.pageReviewStatus.${page.status.toString}${page.result.toString}") shouldBe doc.getElementById(s"page-$index").text
           }
         }
       }

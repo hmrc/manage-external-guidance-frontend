@@ -15,8 +15,8 @@
  *@
 
 @import config.AppConfig
-@import models.ApprovalProcessReview
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+import models.ApprovalProcessReview
+import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(layout: main_layout, govukTable : GovukTable, govukBackLink : GovukBackLink, appConfig: AppConfig)
 
@@ -48,7 +48,9 @@
         <dt class="govuk-summary-list__value">
           <a id="page-link-@index" href="@{routes.TwoEyePageReviewController.onPageLoad(review.ocelotId, page.url.drop(1), index).url}">@page.title</a>
         </dt>
-        <dd class="govuk-summary-list__actions" id="page-@index">@messages(s"pageReviewStatus.${page.status.toString}")</dd>
+        <dd class="govuk-summary-list__actions" id="page-@index">
+          @messages(s"2i.pageReviewStatus.${page.status.toString}${page.result.getOrElse("")}")
+        </dd>
       </div>
     }
   </dl>
