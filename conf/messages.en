@@ -42,8 +42,10 @@ approvalsStatus.2i-review.InProgress = 2i review in progress
 approvalsStatus.2i-review.Complete = 2i review complete
 approvalsStatus.2i-review.Published = Published
 
-pageReviewStatus.NotStarted = Not reviewed
-pageReviewStatus.Complete = Reviewed
+2i.pageReviewStatus.NotStarted = Not reviewed
+2i.pageReviewStatus.CompleteYes = Reviewed: approved
+2i.pageReviewStatus.CompleteNo = Reviewed: not approved
+
 pageReview.guidancePageTitle.prefix = Page title:
 processReview.status = {0} of {1} pages reviewed
 
@@ -90,7 +92,8 @@ processReview.status = {0} of {1} pages reviewed
 2iReviewComplete.close = Go back to all interactive guidance
 
 factCheck.pageReviewStatus.NotStarted = Not checked
-factCheck.pageReviewStatus.Complete = Checked
+factCheck.pageReviewStatus.CompleteYes = Checked: factually accurate
+factCheck.pageReviewStatus.CompleteNo = Checked: not factually accurate
 
 factCheck.heading = Fact Check
 factCheck.reviewPagesHeading = Check all pages for factual accuracy
