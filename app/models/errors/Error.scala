@@ -18,28 +18,37 @@ package models.errors
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Error(code: String, message: String)
+case class ProcessError(message: String, stanzaId: String)
+
+object ProcessError {
+  implicit val formats: OFormat[ProcessError] = Json.format[ProcessError]
+}
+
+case class Error(code: String, message: Option[String], messages: Option[List[ProcessError]])
 
 object Error {
+  def apply(code: String, message: String): Error = Error(code, Some(message), None)
+  def apply(messages: List[ProcessError] ): Error = Error("UNSUPPORTABLE_ENTITY", None, Some(messages))
 
   implicit val formats: OFormat[Error] = Json.format[Error]
 
 }
 
-object InvalidProcessError extends Error("BAD_REQUEST", "The input process is invalid")
+object InvalidProcessError extends Error("BAD_REQUEST", Some("The input process is invalid"), None)
 
-object InternalServerError extends Error("INTERNAL_SERVER_ERROR", "An unexpected error has occurred")
+object InternalServerError extends Error("INTERNAL_SERVER_ERROR", Some("An unexpected error has occurred"), None)
 
-object NotFoundError extends Error("NOT_FOUND_ERROR", "The resource requested could not be found.")
+object NotFoundError extends Error("NOT_FOUND_ERROR", Some("The resource requested could not be found."), None)
 
-object StaleDataError extends Error("STALE_DATA_ERROR", "The resource requested has been changed elsewhere.")
+object StaleDataError extends Error("STALE_DATA_ERROR", Some("The resource requested has been changed elsewhere."), None)
 
-object MalformedResponseError extends Error("BAD_REQUEST", "The response received could not be parsed")
+object MalformedResponseError extends Error("BAD_REQUEST", Some("The response received could not be parsed"), None)
 
-object BadRequestError extends Error("BAD_REQUEST_ERROR", "The request is invalid.")
+object BadRequestError extends Error("BAD_REQUEST_ERROR", Some("The request is invalid."), None)
 
 object IncompleteDataError
   extends Error(
     "INCOMPLETE_DATA_ERROR",
-    "Data is not in the required state for the requested action."
+    Some("Data is not in the required state for the requested action."), 
+    None
   )

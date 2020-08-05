@@ -22,21 +22,31 @@ import models.{ApprovalResponse, RequestOutcome, ApprovalProcessSummary}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import play.api.Logger
-
+import models.ocelot.Process
+import models.errors._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ApprovalService @Inject() (connector: ApprovalConnector) {
+class ApprovalService @Inject() (connector: ApprovalConnector, pageBuilder: PageBuilder) {
   val logger = Logger(getClass)
 
   def approvalSummaries(implicit context: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ApprovalProcessSummary]]] =
     connector.approvalSummaries
 
-  def submitFor2iReview(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
-    connector.submitFor2iReview(process)
-  }
+  def submitFor2iReview(json: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] =
+    json.validate[Process].fold(err => {
+      logger.error(s"Validation of process for 2i-review has failed with error $err")
+      Future.successful(Left(BadRequestError))
+      }, process => 
+      pageBuilder.pages(process).fold(err => Future.successful(Left(toError(List(err)))), _ => connector.submitFor2iReview(json))
+    )
 
-  def submitForFactCheck(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
-    connector.submitForFactCheck(process)
-  }
+  def submitForFactCheck(json: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] =
+    json.validate[Process].fold(err => {
+      logger.error(s"Validation of process for fact-check has failed with error $err")
+      Future.successful(Left(BadRequestError))
+      }, process => 
+      pageBuilder.pages(process).fold(err => Future.successful(Left(toError(List(err)))), _ => connector.submitForFactCheck(json))
+    )
+
 }
