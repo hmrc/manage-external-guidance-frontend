@@ -21,21 +21,14 @@ import javax.inject.{Inject, Singleton}
 import models.{RequestOutcome, ScratchResponse}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
-import models.ocelot.Process
-import models.errors._
-import play.api.Logger
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ScratchService @Inject() (scratchConnector: ScratchConnector, pageBuilder: PageBuilder) {
-  val logger = Logger(getClass)
+class ScratchService @Inject() (scratchConnector: ScratchConnector) {
 
-  def submitScratchProcess(json: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ScratchResponse]] = 
-    json.validate[Process].fold(err => {
-      logger.error(s"Scratch process validation has failed with error $err")
-      Future.successful(Left(BadRequestError))
-      }, process => 
-      pageBuilder.pages(process).fold(err => Future.successful(Left(toError(List(err)))), _ => scratchConnector.submitScratchProcess(json))
-    )
+  def submitScratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ScratchResponse]] = {
+    scratchConnector.submitScratchProcess(process)
+  }
 
 }

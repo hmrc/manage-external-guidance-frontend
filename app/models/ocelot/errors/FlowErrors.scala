@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package models.ocelot
+package models.ocelot.errors
 
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
+import models.ocelot.stanzas.Stanza
 
-case class Meta(id: String, title: String, ocelot: Int, lastAuthor: String, lastUpdate: Long, version: Int, fileName: String)
+trait FlowError
 
-object Meta {
-
-  implicit val metaReads: Reads[Meta] = (
-    (__ \ "id").read[String] and
-      (__ \ "title").read[String] and
-      (__ \ "ocelot").read[Int] and
-      (__ \ "lastAuthor").read[String] and
-      (__ \ "lastUpdate").read[Long] and
-      (__ \ "version").read[Int] and
-      (__ \ "filename").read[String]
-  )(Meta.apply _)
-}
+case class UnknownStanzaType(unknown: Stanza) extends FlowError
+case class StanzaNotFound(id: String) extends FlowError
+case class PageStanzaMissing(id: String) extends FlowError
+case class PageUrlEmptyOrInvalid(id: String) extends FlowError
+case class PhraseNotFound(index: Int) extends FlowError
+case class LinkNotFound(index: Int) extends FlowError
+case class DuplicatePageUrl(id: String, url: String) extends FlowError
+case class MissingWelshText(index: String, english: String) extends FlowError

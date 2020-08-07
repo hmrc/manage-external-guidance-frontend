@@ -34,7 +34,7 @@ class ApprovalServiceSpec extends BaseSpec {
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-    lazy val service: ApprovalService = new ApprovalService(mockApprovalConnector, new PageBuilder())
+    lazy val service: ApprovalService = new ApprovalService(mockApprovalConnector)
 
     val processId: String = "abc12345"
     val dummyProcess: JsValue = Json.obj("meta" -> Json.obj("id" -> processId))

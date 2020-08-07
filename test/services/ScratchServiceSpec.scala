@@ -35,7 +35,7 @@ class ScratchServiceSpec extends BaseSpec {
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-    lazy val scratchService: ScratchService = new ScratchService(mockScratchConnector, new PageBuilder())
+    lazy val scratchService: ScratchService = new ScratchService(mockScratchConnector)
 
     val dummyProcess: JsValue = Json.parse(
       """|{
