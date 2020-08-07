@@ -39,5 +39,4 @@ class ApprovalService @Inject() (connector: ApprovalConnector) {
   def submitForFactCheck(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ApprovalResponse]] = {
     connector.submitForFactCheck(process)
   }
-
 }
