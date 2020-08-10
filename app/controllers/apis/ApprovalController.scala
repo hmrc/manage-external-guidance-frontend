@@ -19,7 +19,7 @@ package controllers.apis
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import models.{ApprovalResponse, RequestOutcome}
-import models.errors.InvalidProcessError
+import models.errors.{Error, InvalidProcessError}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import services.ApprovalService
@@ -50,6 +50,7 @@ class ApprovalController @Inject() (appConfig: AppConfig, approvalService: Appro
   private def checkSubmissionReturn(result: Future[RequestOutcome[ApprovalResponse]]): Future[Result] = {
     result.map {
       case Right(approvalResponse) => Created(Json.toJson(approvalResponse)).withHeaders(corsHeaders: _*)
+      case Left(err @ Error(Error.UnprocessableEntity, _, _)) => UnprocessableEntity(Json.toJson(err)).withHeaders(corsHeaders: _*)
       case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError)).withHeaders(corsHeaders: _*)
       case Left(error) => InternalServerError(Json.toJson(error)).withHeaders(corsHeaders: _*)
     }
