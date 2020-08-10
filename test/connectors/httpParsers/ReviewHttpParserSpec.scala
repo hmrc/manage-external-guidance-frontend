@@ -61,7 +61,7 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
       }
     }
     "the response is NOT_FOUND and has malformed error json" should {
-      "return InternalServerError" in new GetReviewDetailsSetup(NOT_FOUND, Json.obj("code" -> "NOT_FOUND_ERROR")) {
+      "return InternalServerError" in new GetReviewDetailsSetup(NOT_FOUND, Json.obj("message" -> "NOT_FOUND_ERROR")) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
@@ -103,7 +103,7 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
       }
     }
     "the response is NOT_FOUND and has malformed error json" should {
-      "return InternalServerError" in new PostReviewCompleteSetup(NOT_FOUND, Json.obj("code" -> "NOT_FOUND_ERROR")) {
+      "return InternalServerError" in new PostReviewCompleteSetup(NOT_FOUND, Json.obj("message" -> "NOT_FOUND_ERROR")) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
@@ -150,7 +150,7 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
       }
     }
     "the response is NOT_FOUND and has malformed error json" should {
-      "return InternalServerError" in new GetReviewPageDetailsSetup(NOT_FOUND, Json.obj("code" -> "NOT_FOUND_ERROR")) {
+      "return InternalServerError" in new GetReviewPageDetailsSetup(NOT_FOUND, Json.obj("message" -> "NOT_FOUND_ERROR")) {
         readResponse shouldBe Left(InternalServerError)
       }
     }
@@ -202,7 +202,7 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
       }
     }
     "the response is NOT_FOUND and has malformed error json" should {
-      "return InternalServerError" in new TestSetup(NOT_FOUND, Json.obj("code" -> "NOT_FOUND_ERROR")) {
+      "return InternalServerError" in new TestSetup(NOT_FOUND, Json.obj("message" -> "NOT_FOUND_ERROR")) {
         readResponse shouldBe Left(InternalServerError)
       }
     }

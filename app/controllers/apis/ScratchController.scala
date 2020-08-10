@@ -23,7 +23,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import services.ScratchService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-
+import models.errors.Error
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -43,15 +43,10 @@ class ScratchController @Inject() (appConfig: AppConfig, scratchService: Scratch
     scratchService.submitScratchProcess(request.body).map {
       case Right(submissionResponse) =>
         val location: String = s"/guidance-review/scratch/${submissionResponse.id}"
-        Created(Json.toJson(submissionResponse))
-          .withHeaders("location" -> location)
-          .withHeaders(corsHeaders: _*)
-      case Left(InvalidProcessError) =>
-        BadRequest(Json.toJson(InvalidProcessError))
-          .withHeaders(corsHeaders: _*)
-      case Left(error) =>
-        InternalServerError(Json.toJson(error))
-          .withHeaders(corsHeaders: _*)
+        Created(Json.toJson(submissionResponse)).withHeaders("location" -> location).withHeaders(corsHeaders: _*)
+      case Left(err @ Error(Error.UnprocessableEntity, _, _)) => UnprocessableEntity(Json.toJson(err)).withHeaders(corsHeaders: _*)
+      case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError)).withHeaders(corsHeaders: _*)
+      case Left(error) => InternalServerError(Json.toJson(error)).withHeaders(corsHeaders: _*)
     }
   }
 

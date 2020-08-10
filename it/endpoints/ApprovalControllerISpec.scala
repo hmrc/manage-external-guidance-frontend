@@ -27,7 +27,6 @@ class ApprovalControllerISpec extends IntegrationSpec {
 
   private val endPoint2iReview = "/process/approval/2i-review"
   private val endPointFactCheck = "/process/approval/fact-check"
-  private val invalidRequestContent: JsObject = Json.obj("message" -> "hi")
 
   "calling the approval 2i Review POST endpoint" should {
     "return an CREATED response" in {
@@ -38,11 +37,11 @@ class ApprovalControllerISpec extends IntegrationSpec {
       ExternalGuidanceStub.save2iReview(Status.CREATED, responsePayload)
 
       val request = buildRequest(endPoint2iReview)
-      val response: WSResponse = await(request.post(invalidRequestContent))
+      val response: WSResponse = await(request.post(validOnePageJson))
       response.status shouldBe Status.CREATED
     }
 
-    "return a BAD_REQUEST response when the external guidance microservice rejects an invalid process" in {
+    "return a BAD_REQUEST response when the external guidance microservice returns a BadRequest" in {
 
       AuditStub.audit()
 
@@ -50,7 +49,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
       ExternalGuidanceStub.save2iReview(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest(endPoint2iReview)
-      val response: WSResponse = await(request.post(invalidRequestContent))
+      val response: WSResponse = await(request.post(validOnePageJson))
       response.status shouldBe Status.BAD_REQUEST
     }
 
@@ -62,7 +61,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
       ExternalGuidanceStub.save2iReview(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
       val request = buildRequest(endPoint2iReview)
-      val response: WSResponse = await(request.post(invalidRequestContent))
+      val response: WSResponse = await(request.post(validOnePageJson))
       response.status shouldBe Status.INTERNAL_SERVER_ERROR
     }
   }
@@ -76,11 +75,11 @@ class ApprovalControllerISpec extends IntegrationSpec {
       ExternalGuidanceStub.saveFactCheck(Status.CREATED, responsePayload)
 
       val request = buildRequest(endPointFactCheck)
-      val response: WSResponse = await(request.post(invalidRequestContent))
+      val response: WSResponse = await(request.post(validOnePageJson))
       response.status shouldBe Status.CREATED
     }
 
-    "return a BAD_REQUEST response when the external guidance microservice rejects an invalid process" in {
+    "return a BAD_REQUEST response when the external guidance microservice returns a BadRequest" in {
 
       AuditStub.audit()
 
@@ -88,7 +87,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
       ExternalGuidanceStub.saveFactCheck(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest(endPointFactCheck)
-      val response: WSResponse = await(request.post(invalidRequestContent))
+      val response: WSResponse = await(request.post(validOnePageJson))
       response.status shouldBe Status.BAD_REQUEST
     }
 
@@ -100,7 +99,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
       ExternalGuidanceStub.saveFactCheck(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
       val request = buildRequest(endPointFactCheck)
-      val response: WSResponse = await(request.post(invalidRequestContent))
+      val response: WSResponse = await(request.post(validOnePageJson))
       response.status shouldBe Status.INTERNAL_SERVER_ERROR
     }
   }

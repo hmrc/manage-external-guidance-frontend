@@ -20,10 +20,10 @@ import java.util.UUID.randomUUID
 
 import base.BaseSpec
 import connectors.httpParsers.ScratchHttpParser.saveScratchProcessHttpReads
-import models.errors.{InternalServerError, InvalidProcessError}
+import models.errors.{Error, InternalServerError, InvalidProcessError, ProcessError}
 import models.{RequestOutcome, ScratchResponse}
 import play.api.http.{HttpVerbs, Status}
-import play.api.libs.json.{JsNull, JsValue, Json}
+import play.api.libs.json.{JsNull, JsValue, Json, JsObject}
 import uk.gov.hmrc.http.HttpResponse
 
 class ScratchHttpParserSpec extends BaseSpec with HttpVerbs with Status {
@@ -59,6 +59,20 @@ class ScratchHttpParserSpec extends BaseSpec with HttpVerbs with Status {
         saveScratchProcessHttpReads.read(POST, url, httpResponse)
 
       result shouldBe Left(InvalidProcessError)
+    }
+
+    "return an UNPROCESSABLE_ENTITY error for similar" in new Test {
+      val processError = Error(List(ProcessError("Duplicate page url /example-page-3 found on stanza id = 22", "22")))
+      val jsObject = Json.parse("""{"code":"UNPROCESSABLE_ENTITY","messages":[{"message":"Duplicate page url /example-page-3 found on stanza id = 22","stanza":"22"}]}""").as[JsObject]
+      val httpResponse: HttpResponse = HttpResponse(UNPROCESSABLE_ENTITY, jsObject, Map.empty[String, Seq[String]])
+
+      val result: RequestOutcome[ScratchResponse] =
+        saveScratchProcessHttpReads.read(POST, url, httpResponse)
+
+      result match {
+        case Left(err) if err == processError => succeed
+        case err => fail
+      }
     }
 
     "return an internal server error for an invalid response" in new Test {
