@@ -55,6 +55,7 @@ trait HttpParser {
           case IncompleteDataError.code => IncompleteDataError
           case BadRequestError.code => BadRequestError
           case InvalidProcessError.code => InvalidProcessError
+          case Error.UnprocessableEntity => expectedError
           case _ => InternalServerError
         }
         case None =>

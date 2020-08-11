@@ -21,7 +21,7 @@ import java.util.UUID.randomUUID
 import base.BaseSpec
 import mocks.{MockAppConfig, MockScratchService}
 import models.ScratchResponse
-import models.errors.{Error, InternalServerError, InvalidProcessError}
+import models.errors.{Error, ProcessError, InternalServerError, InvalidProcessError}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
@@ -118,6 +118,26 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
       actualError.code shouldBe InvalidProcessError.code
       actualError.message shouldBe InvalidProcessError.message
     }
+
+    "Handle an error raised owing to a valid process but invalid guidance being submitted" in {
+
+      val processErrors = List(ProcessError("An invalid stanza", "start"))
+      MockScratchService
+        .scratchProcess(dummyProcess)
+        .returns(Future.successful(Left(Error(Error.UnprocessableEntity, processErrors))))
+
+      val result = controller.submitScratchProcess()(fakeRequestWithBody)
+
+      status(result) shouldBe Status.UNPROCESSABLE_ENTITY
+
+      val jsValue: JsValue = Json.parse(contentAsString(result))
+
+      val actualError: Error = jsValue.as[Error]
+
+      actualError.code shouldBe Error.UnprocessableEntity
+      actualError.messages shouldBe Some(processErrors)
+    }
+
 
     "Handle an internal server error" in {
 
