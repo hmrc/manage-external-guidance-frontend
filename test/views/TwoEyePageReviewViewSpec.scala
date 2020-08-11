@@ -16,7 +16,12 @@
 
 package views
 
+import org.jsoup.nodes.Document
+
+import play.api.data.Form
+
 import forms.TwoEyePageReviewFormProvider
+import models.forms.TwoEyePageReview
 
 import views.html.twoeye_page_review
 
@@ -26,19 +31,27 @@ class TwoEyePageReviewViewSpec extends ViewSpecBase {
 
   trait Test {
 
-    val processId = "ext00001"
-    val reviewUrl = "/example"
-    val reviewTitle = "Example page"
+    val processId: String = "ext00001"
+    val reviewUrl: String = "/example"
+    val reviewTitle: String = "Example page"
+    val index: Int = 2
 
     val formProvider: TwoEyePageReviewFormProvider = new TwoEyePageReviewFormProvider()
-    val form = formProvider()
+    val form: Form[TwoEyePageReview] = formProvider()
 
-    val two_eye_page_review = app.injector.instanceOf[twoeye_page_review]
+    val two_eye_page_review: twoeye_page_review = app.injector.instanceOf[twoeye_page_review]
 
-    val doc = asDocument(two_eye_page_review(processId, reviewUrl, reviewTitle, form, 0))
+    val doc: Document = asDocument(two_eye_page_review(processId, reviewUrl, reviewTitle, form, index))
   }
 
   "The rendered two eye page review" should {
+
+    "render a back link" in new Test {
+
+      checkTextOnElementById(doc, "back-link", "backlink.label")
+      checkAttributeOnElementById(doc, "back-link", "class", "govuk-back-link")
+      checkAttributeOnElementById(doc, "back-link", "href", s"/external-guidance/2i-review/ext00001#page-link-$index")
+    }
 
     "contain a link to the page under review" in new Test {
 
@@ -47,9 +60,9 @@ class TwoEyePageReviewViewSpec extends ViewSpecBase {
 
         linksList.size shouldBe >(1)
 
-        elementAttrs(linksList(1))("href") should endWith(s"/guidance-review/approval/$processId$reviewUrl")
+        elementAttrs(linksList.head)("href") should endWith(s"/guidance-review/approval/$processId$reviewUrl")
 
-        linksList(1).text shouldBe messages("2iPageReview.viewGuidancePage")
+        linksList.head.text shouldBe messages("2iPageReview.viewGuidancePage")
       }
     }
 

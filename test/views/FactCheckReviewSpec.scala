@@ -58,10 +58,17 @@ class FactCheckReviewSpec extends ViewSpecBase {
 
     "Render a page should display process title as the heading" in new Test {
 
-      Option(doc.getElementsByTag("h1").first).fold(fail("Missing H1 heading of the correct class")){h1 =>
+      Option(doc.getElementsByTag("h1").first).fold(fail("Missing H1 heading of the correct class")) { h1 =>
         elementAttrs(h1)("class") should include("govuk-heading-xl")
-        h1.text shouldBe  approvalProcessReview.title
+        h1.text shouldBe approvalProcessReview.title
       }
+    }
+
+    "Render a back link" in new Test {
+
+      checkTextOnElementById(doc, "back-link", "backlink.label")
+      checkAttributeOnElementById(doc, "back-link", "class", "govuk-back-link")
+      checkAttributeOnElementById(doc, "back-link", "href", "/external-guidance")
     }
 
     "Render header with caption paragraph" in new Test {
@@ -88,11 +95,12 @@ class FactCheckReviewSpec extends ViewSpecBase {
           .filter(elementAttrs(_).get("class") == Some("app-task-list__item"))
           .toList
 
-        listItems.zipWithIndex.foreach { case (_, index) =>
-          val a = doc.getElementById(s"page-link-$index")
-          approvalProcessReview.pages.find(_.title == a.text).fold(fail(s"Missing page with title ${a.text}")) { page =>
-            messages(s"factCheck.pageReviewStatus.${page.status.toString}${page.result.toString}") shouldBe doc.getElementById(s"page-$index").text
-          }
+        listItems.zipWithIndex.foreach {
+          case (_, index) =>
+            val a = doc.getElementById(s"page-link-$index")
+            approvalProcessReview.pages.find(_.title == a.text).fold(fail(s"Missing page with title ${a.text}")) { page =>
+              messages(s"factCheck.pageReviewStatus.${page.status.toString}${page.result.toString}") shouldBe doc.getElementById(s"page-$index").text
+            }
         }
       }
     }

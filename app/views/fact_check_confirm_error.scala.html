@@ -14,16 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-
-@this(layout: main_layout, govukBackLink : GovukBackLink)
+@this(layout: main_layout)
 
 @(processId: String)(implicit request: Request[_], messages: Messages)
 
-@layout(s"${messages("factCheckError.title")} - ${messages("factCheck.heading")}") {
-
-  @govukBackLink(BackLink(href = routes.FactCheckController.approval(processId).url,
-    content = Text(messages("backlink.label")), attributes = Map("id" -> "back-link")))
+@layout(s"${messages("factCheckError.title")} - ${messages("factCheck.heading")}",
+        Some((routes.FactCheckController.approval(processId).url,"backlink.label"))) {
 
     <h1 id="fact-check-error-heading" class="govuk-heading-xl">@messages("factCheckError.heading")</h1>
     <p id="fact-check-error-info" class="govuk-body">@messages("factCheckError.info")</p>

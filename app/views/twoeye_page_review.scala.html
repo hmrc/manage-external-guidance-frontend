@@ -18,11 +18,9 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(layout: main_layout,
-  govukBackLink: GovukBackLink,
   formWithCSRF: FormWithCSRF,
   errorSummary: components.errorSummary,
   yesnoRadios: components.yesno_radios,
-  govukTextarea: GovukTextarea,
   govukButton: GovukButton,
   appConfig: AppConfig
 )
@@ -38,10 +36,9 @@
   <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url">@messages("2iPageReview.viewGuidancePage")</a>
 }
 
-@layout(pageTitle(form.errors)){
-
-  @govukBackLink(BackLink(href = routes.TwoEyeReviewController.approval(processId).withFragment(s"page-link-$index").toString,
-    content = Text(messages("backlink.label"))))
+@layout(pageTitle(form.errors),
+        Some((routes.TwoEyeReviewController.approval(processId).withFragment(s"page-link-$index").toString,
+              "backlink.label"))){
 
   @errorSummary(form.errors)
 

@@ -18,7 +18,7 @@
 @import models.ApprovalProcessReview
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(layout: main_layout, govukTable : GovukTable, govukBackLink : GovukBackLink, appConfig: AppConfig)
+@this(layout: main_layout, govukTable : GovukTable, appConfig: AppConfig)
 
 @(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
 
@@ -26,10 +26,8 @@
   messages("processReview.status", review.pages.count(_.status == PageReviewStatus.Complete), review.pages.length)
 }
 
-@layout(s"${review.title} - ${messages("2iReview.heading")}") {
-
-  @govukBackLink(BackLink(href = routes.AdminController.approvalSummaries.url, 
-                          content = Text(messages("backlink.label"))))
+@layout(s"${review.title} - ${messages("2iReview.heading")}",
+        Some((routes.AdminController.approvalSummaries.url, "backlink.label"))) {
 
   <header class="hmrc-page-heading govuk-!-margin-0 govuk-!-margin-bottom-5">
     <h1 class="govuk-heading-xl govuk-!-margin-0 govuk-!-margin-bottom-5">@review.title</h1>
