@@ -56,18 +56,9 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       val doc = asDocument(createView(processId, form))
 
-      Option(doc.getElementsByTag("main").first).fold(fail("Missing main tag")) { main =>
-        Option(main.getElementsByTag("a").first).fold(fail("No links in main")) { link =>
-          link.text shouldBe messages("backlink.label")
-          val attrs = elementAttrs(link)
-          attrs.get("class").fold(fail("Missing class attribute on back link")) { clss =>
-            clss should include("govuk-back-link")
-          }
-          attrs.get("href").fold(fail("Missing href attribute on back link")) { href =>
-            href shouldBe s"/external-guidance/2i-review/$processId"
-          }
-        }
-      }
+      checkTextOnElementById(doc, "back-link", "backlink.label")
+      checkAttributeOnElementById(doc, "back-link", "class", "govuk-back-link")
+      checkAttributeOnElementById(doc, "back-link", "href", s"/external-guidance/2i-review/$processId")
     }
 
     "display the appropriate radio buttons" in new Test {

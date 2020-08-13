@@ -14,16 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+@this(layout: main_layout)
 
-@this(layout: main_layout, govukBackLink : GovukBackLink)
+@(pageTitleKey: String, headingKey: String, messageKey: String)(implicit request: Request[_], messages: Messages)
 
-@(pageTitleKey: String, headingKey: String, messageKey: String, backUrl: Option[String] = None)(implicit request: Request[_], messages: Messages)
-
-@layout( messages(pageTitleKey) ) {
-
-    @govukBackLink(BackLink(href = routes.AdminController.approvalSummaries.url,
-                            content = Text(messages("unauthorizedReview.backLink"))))
+@layout(messages(pageTitleKey),
+        Some((routes.AdminController.approvalSummaries.url, "unauthorizedReview.backLink"))) {
 
     <h1 class="govuk-heading-xl">@messages(headingKey)</h1>
 
