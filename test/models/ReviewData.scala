@@ -16,7 +16,7 @@
 
 package models
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{LocalDate, ZonedDateTime, ZoneId}
 import java.util.UUID
 
 import models.PageReviewStatus._
@@ -49,13 +49,13 @@ trait ReviewData {
     None,
     NotStarted,
     None,
-    LocalDateTime.of(2020, 5, 10, 0, 0, 0),
+    ZonedDateTime.of(2020, 5, 10, 0, 0, 0, 0, ZoneId.of("Europe/London")),
     None
   )
 
   val updatedReviewDetail: PageReviewDetail =
     reviewDetail.copy(result = Some(Yes),
       status = Complete,
-      updateDate = LocalDateTime.of(2020, 5, 10, 0, 0, 0),
+      updateDate = ZonedDateTime.of(2020, 5, 10, 0, 0, 0, 0, ZoneId.of("Europe/London")),
       updateUser = Some("7010010:George Hudson"))
 }

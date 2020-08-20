@@ -19,7 +19,7 @@ package services
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import models.audit.AuditEvent
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import play.api.Logger
 import play.api.http.HeaderNames
@@ -56,7 +56,7 @@ class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnect
 }
 
 object AuditService {
-  implicit val dateTimeWriter: Writes[LocalDateTime] = new Writes[LocalDateTime] {
-    def writes(d: LocalDateTime): JsValue = JsString(d.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")))
-  } 
+  implicit val dateTimeWriter: Writes[ZonedDateTime] = new Writes[ZonedDateTime] {
+    def writes(d: ZonedDateTime): JsValue = JsString(d.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")))
+  }
 }
