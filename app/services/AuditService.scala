@@ -19,8 +19,8 @@ package services
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import models.audit.AuditEvent
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+// import java.time.{ZoneId, ZonedDateTime}
+// import java.time.format.DateTimeFormatter
 import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.libs.json._
@@ -37,6 +37,9 @@ class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnect
   private val logger = Logger(getClass)
   private val referrer: HeaderCarrier => String = _.headers.find(_._1 == HeaderNames.REFERER).map(_._2).getOrElse("-")
 
+  // implicit val dateTimeWriter: Writes[ZonedDateTime] = new Writes[ZonedDateTime] {
+  //   def writes(d: ZonedDateTime): JsValue = JsString(d.withZoneSameInstant(ZoneId.of("UTC")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")))
+  // }
   implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
 
   private def toExtendedDataEvent(event: AuditEvent, path: Option[String])(implicit hc: HeaderCarrier): ExtendedDataEvent =
@@ -53,10 +56,4 @@ class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnect
       case Failure(err, _) => logger.warn(s"Audit failed with error $err")
       case Disabled => logger.info("Auditing Disabled")
     }
-}
-
-object AuditService {
-  implicit val dateTimeWriter: Writes[ZonedDateTime] = new Writes[ZonedDateTime] {
-    def writes(d: ZonedDateTime): JsValue = JsString(d.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")))
-  }
 }
