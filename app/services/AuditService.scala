@@ -37,9 +37,6 @@ class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnect
   private val logger = Logger(getClass)
   private val referrer: HeaderCarrier => String = _.headers.find(_._1 == HeaderNames.REFERER).map(_._2).getOrElse("-")
 
-  // implicit val dateTimeWriter: Writes[ZonedDateTime] = new Writes[ZonedDateTime] {
-  //   def writes(d: ZonedDateTime): JsValue = JsString(d.withZoneSameInstant(ZoneId.of("UTC")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")))
-  // }
   implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
 
   private def toExtendedDataEvent(event: AuditEvent, path: Option[String])(implicit hc: HeaderCarrier): ExtendedDataEvent =
