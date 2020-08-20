@@ -20,12 +20,26 @@
 
 @this(layout: GovukLayout,
         phaseBanner : GovukPhaseBanner,
+        govukBackLink: GovukBackLink,
         footerLinks: FooterLinks,
         siteHeader: components.siteHeader,
         appConfig: AppConfig)
 
 
-@(pageTitle: String)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, backLinkDetails: Option[(String, String)] = None)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+
+@renderBackLink(backLinkDetails: Option[(String, String)]) = @{
+    backLinkDetails match {
+      case Some((backLinkUrl, backLinkMessageKey)) => govukBackLink(createBackLink((backLinkUrl, backLinkMessageKey)))
+      case None => ""
+    }
+}
+
+@createBackLink(backLinkDetails: (String, String)) = @{
+    BackLink(href = backLinkDetails._1,
+             content = Text(messages(backLinkDetails._2)),
+             attributes = Map( "id" -> "back-link" ))
+}
 
 @beforeContentBlock = {
     @phaseBanner(PhaseBanner(
@@ -34,6 +48,8 @@
         )),
         content = HtmlContent(s"""${messages("feedback.before")} <a id="beta-feedback-link" class="govuk-link" href="${appConfig.contactFrontendFeedbackUrl}">${messages("feedback.linkLabel")}</a> ${messages("feedback.after")}""")
     ))
+
+    @renderBackLink(backLinkDetails)
 }
 
 @head = {
@@ -47,7 +63,7 @@
     @contentBlock
 </div>
 
-<div class="govuk-body">
+<div class="govuk-body app-get-help-link">
     <a id="getpagehelp-link" lang="en" hreflang="en" class="govuk-link " target="_blank" href="@{appConfig.reportAProblemNonJSUrl}">
         @messages("getPageHelp.linkText")
     </a>

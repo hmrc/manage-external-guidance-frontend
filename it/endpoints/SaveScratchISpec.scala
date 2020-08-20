@@ -36,11 +36,11 @@ class SaveScratchISpec extends IntegrationSpec {
       ExternalGuidanceStub.saveScratch(Status.CREATED, responsePayload)
 
       val request = buildRequest("/process/scratch")
-      val response: WSResponse = await(request.post(Json.obj("message" -> "hi")))
+      val response: WSResponse = await(request.post(validOnePageJson))
       response.status shouldBe Status.CREATED
     }
 
-    "return a BAD_REQUEST response when the external guidance microservice rejects an invalid process" in {
+    "return a BAD_REQUEST response when the external guidance microservice rejects with BadRequest" in {
 
       AuditStub.audit()
 
@@ -48,7 +48,7 @@ class SaveScratchISpec extends IntegrationSpec {
       ExternalGuidanceStub.saveScratch(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest("/process/scratch")
-      val response: WSResponse = await(request.post(Json.obj("message" -> "hi")))
+      val response: WSResponse = await(request.post(validOnePageJson))
       response.status shouldBe Status.BAD_REQUEST
     }
 

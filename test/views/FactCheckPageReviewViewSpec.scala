@@ -29,16 +29,24 @@ class FactCheckPageReviewViewSpec extends ViewSpecBase {
     val processId = "ext00001"
     val reviewUrl = "/example"
     val reviewTitle = "Example page"
+    val index = 0
 
     val formProvider: FactCheckPageReviewFormProvider = new FactCheckPageReviewFormProvider()
     val form = formProvider()
 
     val fact_check_page_review = app.injector.instanceOf[fact_check_page_review]
 
-    val doc = asDocument(fact_check_page_review(processId, reviewUrl, reviewTitle, form, 0))
+    val doc = asDocument(fact_check_page_review(processId, reviewUrl, reviewTitle, form, index))
   }
 
   "The rendered fact check page review" should {
+
+    "Render a back link" in new Test {
+
+      checkTextOnElementById(doc, "back-link", "backlink.label")
+      checkAttributeOnElementById(doc, "back-link", "class", "govuk-back-link")
+      checkAttributeOnElementById(doc, "back-link", "href", s"/external-guidance/fact-check/ext00001#page-link-$index")
+    }
 
     "contain a link to the page under review" in new Test {
 
@@ -47,9 +55,9 @@ class FactCheckPageReviewViewSpec extends ViewSpecBase {
 
         linksList.size shouldBe >(1)
 
-        elementAttrs(linksList(1))("href") should endWith(s"/guidance-review/approval/$processId$reviewUrl")
+        elementAttrs(linksList(0))("href") should endWith(s"/guidance-review/approval/$processId$reviewUrl")
 
-        linksList(1).text shouldBe messages("factCheckPageReview.viewGuidancePage")
+        linksList(0).text shouldBe messages("factCheckPageReview.viewGuidancePage")
       }
     }
 

@@ -36,13 +36,13 @@ class TwoEyeReviewSpec extends ViewSpecBase {
       "Telling HMRC about extra income",
       LocalDate.of(2020, 5, 10),
       List(
-        PageReview("id1", "/how-did-you-earn-extra-income", "title1", Complete),
-        PageReview("id2", "/sold-goods-or-services/did-you-only-sell-personal-possessions", "title2", NotStarted),
-        PageReview("id3", "/sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", "title3", NotStarted),
-        PageReview("id4", "/sold-goods-or-services/have-you-made-1000-or-more", "title4", NotStarted),
-        PageReview("id5", "/sold-goods-or-services/you-do-not-need-to-tell-hmrc", "title5", NotStarted),
-        PageReview("id6", "/rent-a-property/do-you-receive-any-income", "title6", NotStarted),
-        PageReview("id7", "/rent-a-property/have-you-rented-out-a-room", "title7", NotStarted)
+        PageReview("id1", "/how-did-you-earn-extra-income", "title1", Complete, Some("Yes")),
+        PageReview("id2", "/sold-goods-or-services/did-you-only-sell-personal-possessions", "title2", NotStarted, None),
+        PageReview("id3", "/sold-goods-or-services/have-you-made-a-profit-of-6000-or-more", "title3", NotStarted, None),
+        PageReview("id4", "/sold-goods-or-services/have-you-made-1000-or-more", "title4", NotStarted, None),
+        PageReview("id5", "/sold-goods-or-services/you-do-not-need-to-tell-hmrc", "title5", NotStarted, None),
+        PageReview("id6", "/rent-a-property/do-you-receive-any-income", "title6", NotStarted, None),
+        PageReview("id7", "/rent-a-property/have-you-rented-out-a-room", "title7", NotStarted, None)
       )
     )
     val doc = asDocument(twoEyeReview(approvalProcessReview))
@@ -50,9 +50,9 @@ class TwoEyeReviewSpec extends ViewSpecBase {
 
   "2i Review page" should {
     "Render a page should display process title as the heading" in new Test {
-      Option(doc.getElementsByTag("h1").first).fold(fail("Missing H1 heading of the correct class")){h1 =>
+      Option(doc.getElementsByTag("h1").first).fold(fail("Missing H1 heading of the correct class")) { h1 =>
         elementAttrs(h1)("class") should include("govuk-heading-xl")
-        h1.text shouldBe  approvalProcessReview.title
+        h1.text shouldBe approvalProcessReview.title
       }
     }
 
@@ -72,18 +72,9 @@ class TwoEyeReviewSpec extends ViewSpecBase {
 
     "Include a back link" in new Test {
 
-      Option(doc.getElementsByTag("main").first).fold(fail("Missing main tag")) { main =>
-        Option(main.getElementsByTag("a").first).fold(fail("No links in main")) { link =>
-          link.text shouldBe messages("backlink.label")
-          val attrs = elementAttrs(link)
-          attrs.get("class").fold(fail("Missing class attribute on back link")) { clss =>
-            clss shouldBe "govuk-back-link"
-          }
-          attrs.get("href").fold(fail("Missing href attribute on back link")) { href =>
-            href shouldBe "/external-guidance"
-          }
-        }
-      }
+      checkTextOnElementById(doc, "back-link", "backlink.label")
+      checkAttributeOnElementById(doc, "back-link", "class", "govuk-back-link")
+      checkAttributeOnElementById(doc, "back-link", "href", "/external-guidance")
     }
 
     "Render a page containing all listing all of files and their status" in new Test {
@@ -95,11 +86,12 @@ class TwoEyeReviewSpec extends ViewSpecBase {
           .filter(elementAttrs(_).get("class") == Some("app-task-list__item"))
           .toList
 
-        listItems.zipWithIndex.foreach { case (_, index) =>
-          val a = doc.getElementById(s"page-link-$index")
-          approvalProcessReview.pages.find(_.title == a.text).fold(fail(s"Missing page with title ${a.text}")) { page =>
-            messages(s"pageReviewStatus.${page.status.toString}") shouldBe doc.getElementById(s"page-$index").text
-          }
+        listItems.zipWithIndex.foreach {
+          case (_, index) =>
+            val a = doc.getElementById(s"page-link-$index")
+            approvalProcessReview.pages.find(_.title == a.text).fold(fail(s"Missing page with title ${a.text}")) { page =>
+              messages(s"2i.pageReviewStatus.${page.status.toString}${page.result.toString}") shouldBe doc.getElementById(s"page-$index").text
+            }
         }
       }
     }

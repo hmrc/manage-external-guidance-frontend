@@ -15,9 +15,8 @@
  *@
 
 @import models.ApprovalProcessReview
-@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(layout: main_layout, govukTable : GovukTable, govukBackLink : GovukBackLink)
+@this(layout: main_layout)
 
 @(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
 
@@ -25,10 +24,8 @@
   messages("processReview.status", review.pages.count(_.status == PageReviewStatus.Complete), review.pages.length)
 }
 
-@layout(s"${review.title} - ${messages("factCheck.heading")}") {
-
-  @govukBackLink(BackLink(href = routes.AdminController.approvalSummaries.url, 
-                          content = Text(messages("backlink.label"))))
+@layout(s"${review.title} - ${messages("factCheck.heading")}",
+        Some((routes.AdminController.approvalSummaries.url, "backlink.label"))) {
 
   <header class="hmrc-page-heading govuk-!-margin-0 govuk-!-margin-bottom-5">
       <h1 class="govuk-heading-xl govuk-!-margin-0 govuk-!-margin-bottom-5">@review.title</h1>
@@ -43,7 +40,9 @@
         <dt class="govuk-summary-list__value">
           <a id="page-link-@index" href="@{routes.FactCheckPageReviewController.onPageLoad(review.ocelotId, page.url.drop(1), index).url}">@page.title</a>
         </dt>
-        <dd class="govuk-summary-list__actions" id="page-@index">@messages(s"factCheck.pageReviewStatus.${page.status.toString}")</dd>
+        <dd class="govuk-summary-list__actions" id="page-@index">
+          @messages(s"factCheck.pageReviewStatus.${page.status.toString}${page.result.getOrElse("")}")
+        </dd>
       </div>
     }
   </dl>

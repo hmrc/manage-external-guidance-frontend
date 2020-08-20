@@ -18,7 +18,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(layout: main_layout,
-  govukBackLink: GovukBackLink,
   formWithCSRF: FormWithCSRF,
   errorSummary: components.errorSummary,
   inputRadio: components.radiosWithHeading,
@@ -27,11 +26,8 @@
 
 @(processId: String, form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@layout(s"${messages("2iReviewResult.title")} - ${messages("2iReview.heading")}"){
-
-  @govukBackLink(BackLink(classes = "govuk-!-margin-bottom-5",
-                          href = routes.TwoEyeReviewController.approval(processId).url,
-                          content = Text(messages("backlink.label"))))
+@layout(s"${messages("2iReviewResult.title")} - ${messages("2iReview.heading")}",
+        Some((routes.TwoEyeReviewController.approval(processId).url, "backlink.label" ))){
 
   @formWithCSRF(action = routes.TwoEyeReviewResultController.onSubmit(processId)) {
 

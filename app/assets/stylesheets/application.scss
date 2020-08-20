@@ -11,5 +11,10 @@ $govuk-global-styles: true;
   font-weight: bold;
 }
 
+.app-get-help-link {
+  padding-top: 30px;
+  font-size: 1rem;
+}
+
 @import "_task-list-mod";
 @import "_hmrc-internal-header";
