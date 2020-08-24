@@ -29,7 +29,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{AuditService, ReviewService}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{twoeye_complete, twoeye_confirm_error, twoeye_review_result}
 
 import scala.concurrent.ExecutionContext.Implicits.global

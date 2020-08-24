@@ -24,12 +24,14 @@ import uk.gov.hmrc.http.HttpReads
 
 object ApprovalHttpParser extends HttpParser {
 
+  val logger: Logger = Logger(getClass)
+
   implicit val saveApprovalHttpReads: HttpReads[RequestOutcome[ApprovalResponse]] = {
     case (_, _, response) if response.status == CREATED =>
       response.validateJson[ApprovalResponse] match {
         case Some(result) => Right(result)
         case None =>
-          Logger.error("Unable to parse successful response when saving an approval process.")
+          logger.error("Unable to parse successful response when saving an approval process.")
           Left(InternalServerError)
       }
     case (_, _, response) if response.status == BAD_REQUEST => Left(InvalidProcessError)
@@ -41,7 +43,7 @@ object ApprovalHttpParser extends HttpParser {
       response.validateJson[List[ApprovalProcessSummary]] match {
         case Some(result) => Right(result)
         case None =>
-          Logger.error("Unable to parse successful response when retrieving summary list")
+          logger.error("Unable to parse successful response when retrieving summary list")
           Left(InternalServerError)
       }
     case (_, _, response) => Left(response.checkErrorResponse)
