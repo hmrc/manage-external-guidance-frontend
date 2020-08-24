@@ -34,7 +34,7 @@ object ScratchHttpParser extends HttpParser {
           logger.error("Unable to parse successful response when saving a scratch process.")
           Left(InternalServerError)
       }
-    case (_, _, response) if response.status == BAD_REQUEST => Left(InvalidProcessError)      
+    case (_, _, response) if response.status == BAD_REQUEST => Left(InvalidProcessError)
     case (_, _, response) => Left(response.checkErrorResponse)
   }
 
