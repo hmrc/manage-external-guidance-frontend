@@ -19,8 +19,6 @@ package services
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import models.audit.AuditEvent
-// import java.time.{ZoneId, ZonedDateTime}
-// import java.time.format.DateTimeFormatter
 import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.libs.json._
