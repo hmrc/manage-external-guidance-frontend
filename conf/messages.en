@@ -9,7 +9,7 @@ error.prefix = Error:
 radio.item.yes = Yes
 radio.item.no = No
 unauthorizedReview.backLink = Go back to all guidance
-opens.new.tab = (opens in a new window or tab)
+opens.new.tab = (opens in new tab)
 does.the.page = Does
 meet.govuk.standards = meet GOV.UK standards?
 
@@ -17,7 +17,7 @@ feedback.before = This is a new service – your
 feedback.linkLabel = feedback
 feedback.after = will help us to improve it.
 
-getPageHelp.linkText = Get help with this page (opens in a new window or tab)
+getPageHelp.linkText = Get help with this page (opens in new tab)
 
 #Shutter/Service unavailable page
 serviceUnavailable.title = Sorry, the service is unavailable
@@ -26,7 +26,7 @@ serviceUnavailable.availableLater = You will be able to use the service later.
 serviceUnavailable.answersSaved = We saved your review.
 
 approvals.tableTitle = Interactive guidance
-approvals.commentsAndFeedback = View all interactive guidance comments and feedback (opens in a new window or tab)
+approvals.commentsAndFeedback = View all interactive guidance comments and feedback (opens in new tab)
 approvals.processTitle = Title
 approvals.dateProcessUpdatedTitle = Last updated
 approvals.processStatusTitle = Status
@@ -50,7 +50,7 @@ pageReview.guidancePageTitle.prefix = Page title:
 processReview.status = {0} of {1} pages reviewed
 
 2iReview.heading = 2i content review
-2iReview.viewGuidance = View the complete guidance (opens in a new window or tab)
+2iReview.viewGuidance = View the complete guidance (opens in new tab)
 2iReview.reviewPagesHeading = Review all pages
 2iReview.visuallyHiddenPage = 2i review page with the URL
 2iReview.pagesReviewedConfirmationHeading = Confirm you''ve 2i-reviewed all pages.
@@ -66,7 +66,7 @@ processReview.status = {0} of {1} pages reviewed
 2iPageReview.textarea.label = Comments
 2iPageReview.textarea.hint = Add a hint here
 2iPageReview.saveReview = Save review
-2iPageReview.viewGuidancePage = View the page (opens in a new window or tab).
+2iPageReview.viewGuidancePage = View the page (opens in new tab).
 
 2iReviewError.title = Some pages have not been reviewed
 2iReviewError.heading = Some pages have not been reviewed
@@ -111,7 +111,7 @@ factCheckPageReview.heading = Is the page factually accurate?
 factCheckPageReview.textarea.label = Comments
 factCheckPageReview.textarea.hint = Add a hint here
 factCheckPageReview.saveReview = Save review
-factCheckPageReview.viewGuidancePage = View the page (opens in a new window or tab).
+factCheckPageReview.viewGuidancePage = View the page (opens in new tab).
 
 factCheckComplete.title = Your responses have been sent to the designer
 factCheckComplete.heading = Your responses have been sent to the designer

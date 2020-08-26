@@ -33,7 +33,7 @@
 }
 
 @viewLink(reviewTitle: String, id: String, url: String) = {
-  <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url">@messages("2iPageReview.viewGuidancePage")</a>
+  <a id="viewGuidance-link" class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url">@messages("2iPageReview.viewGuidancePage")</a>
 }
 
 @layout(pageTitle(form.errors),
