@@ -16,7 +16,7 @@
 
 package models
 
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 import play.api.libs.json.{Json, OFormat}
 
@@ -27,7 +27,7 @@ case class PageReviewDetail(
     result: Option[YesNoAnswer] = None,
     status: PageReviewStatus,
     comment: Option[String] = None,
-    updateDate: LocalDateTime = LocalDateTime.now(),
+    updateDate: ZonedDateTime = ZonedDateTime.now(),
     updateUser: Option[String] = None
 )
 

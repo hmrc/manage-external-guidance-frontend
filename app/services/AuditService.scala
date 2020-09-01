@@ -19,10 +19,9 @@ package services
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import models.audit.AuditEvent
-import org.joda.time.DateTime
 import play.api.Logger
 import play.api.http.HeaderNames
-import play.api.libs.json.{JodaWrites, _}
+import play.api.libs.json._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -36,7 +35,6 @@ class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnect
   private val logger = Logger(getClass)
   private val referrer: HeaderCarrier => String = _.headers.find(_._1 == HeaderNames.REFERER).map(_._2).getOrElse("-")
 
-  implicit val dateTimeWriter: Writes[DateTime] = JodaWrites.jodaDateWrites("dd/MM/yyyy HH:mm:ss")
   implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
 
   private def toExtendedDataEvent(event: AuditEvent, path: Option[String])(implicit hc: HeaderCarrier): ExtendedDataEvent =
