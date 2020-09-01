@@ -20,18 +20,21 @@
 @import models.ApprovalProcessSummary
 @import models.ApprovalStatus._
 @import models.ReviewType.{ReviewType2i, ReviewTypeFactCheck}
-@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(layout: main_layout, govukTable : GovukTable, appConfig: AppConfig)
+@this(layout: main_layout, appConfig: AppConfig)
 
 @(summaries: Seq[ApprovalProcessSummary])(implicit request: Request[_], messages: Messages)
 
 @processReviewTitle(summary: ApprovalProcessSummary) = @{
-  summary.reviewType match {
-    case ReviewType2i if List(InProgress, Submitted).contains(summary.status) => HtmlContent(s"""<a id="${summary.id}" href="${routes.TwoEyeReviewController.approval(summary.id).url}">${summary.title}</a>""")
-    case ReviewTypeFactCheck if List(InProgress, Submitted).contains(summary.status) => HtmlContent(s"""<a id="${summary.id}" href="${routes.FactCheckController.approval(summary.id).url}">${summary.title}</a>""")
-    case _ => Text(summary.title)
-  }
+    summary.reviewType match {
+        case ReviewType2i if List(InProgress, Submitted).contains(summary.status) => viewLink(summary, routes.TwoEyeReviewController.approval(summary.id).url)
+        case ReviewTypeFactCheck if List(InProgress, Submitted).contains(summary.status) => viewLink(summary, routes.FactCheckController.approval(summary.id).url)
+        case _ => summary.title
+    }
+}
+
+@viewLink(summary: ApprovalProcessSummary, url: String) = {
+  <a id="@{summary.id}" href="@url">@{summary.title}</a>
 }
 
 @layout(messages("approvals.tableTitle")) {
@@ -42,20 +45,33 @@
  <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.commentsAndFeedbackUrl">@messages("approvals.commentsAndFeedback")</a>
 </p>
 
-@govukTable(Table(
-    for(summary <- summaries) yield {
-      Seq(
-        TableRow(content = processReviewTitle(summary)),
-        TableRow(content = Text(summary.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))), 
-        TableRow(content = Text(messages(s"approvalsStatus.${summary.reviewType.toString}.${summary.status.toString}")))
-      )
-    },
-    head = Some(List(
-      HeadCell(content = Text(messages("approvals.processTitle"))), 
-      HeadCell(content = Text(messages("approvals.dateProcessUpdatedTitle"))), 
-      HeadCell(content = Text(messages("approvals.processStatusTitle")))
-    ))
-  ))
+<table class="govuk-table hmrc-responsive-table" role="table">
+    <thead class="govuk-table__head" role="rowgroup">
+        <tr class="govuk-table__row" role="row">
+            <th scope="col" class="govuk-table__header" role="columnheader">@messages("approvals.processTitle")</th>
+            <th scope="col" class="govuk-table__header" role="columnheader">@messages("approvals.dateProcessUpdatedTitle")</th>
+            <th scope="col" class="govuk-table__header" role="columnheader">@messages("approvals.processStatusTitle")</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        @for(summary <- summaries) {
+        <tr class="govuk-table__row" role="row">
+            <td class="govuk-table__cell" role="cell">
+                <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("approvals.processTitle")</span>
+                @processReviewTitle(summary)
+            </td>
+            <td class="govuk-table__cell" role="cell">
+                <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("approvals.dateProcessUpdatedTitle")</span>
+                @summary.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+            </td>
+            <td class="govuk-table__cell" role="cell">
+                <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("approvals.processStatusTitle")</span>
+                @messages(s"approvalsStatus.${summary.reviewType.toString}.${summary.status.toString}")
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
 }
 @{
  //$COVERAGE-OFF$

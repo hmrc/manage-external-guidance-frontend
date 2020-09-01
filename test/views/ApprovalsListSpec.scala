@@ -63,7 +63,7 @@ class ApprovalsListSpec extends ViewSpecBase {
     }
 
     "Render with correct heading" in new Test {
-      Option(doc.getElementsByTag("h1").first).fold(fail("Missing H1 heading of the correct class")){h1 =>
+      Option(doc.getElementsByTag("h1").first).fold(fail("Missing H1 heading of the correct class")) { h1 =>
         elementAttrs(h1)("class") should include("govuk-heading-xl")
         h1.text shouldBe messages("approvals.tableTitle")
       }
@@ -115,22 +115,27 @@ class ApprovalsListSpec extends ViewSpecBase {
             s.status match {
 
               case Submitted | InProgress =>
-
-                cellData.head.text shouldBe s.title
+                cellData.head.text shouldBe Seq(messages("approvals.processTitle"), s.title).mkString(" ")
 
                 Option(cellData.head.getElementsByTag("a").first).fold(fail("Missing link from page url cell")) { a =>
                   elementAttrs(a).get("href").fold(fail("Missing href attribute within anchor")) { href =>
                     s.reviewType match {
-                      case ReviewType2i  if List(InProgress, Submitted).contains(s.status) => href shouldBe routes.TwoEyeReviewController.approval(s.id).url
-                      case ReviewTypeFactCheck  if List(InProgress, Submitted).contains(s.status) => href shouldBe routes.FactCheckController.approval(s.id).url
+                      case ReviewType2i if List(InProgress, Submitted).contains(s.status) => href shouldBe routes.TwoEyeReviewController.approval(s.id).url
+                      case ReviewTypeFactCheck if List(InProgress, Submitted).contains(s.status) => href shouldBe routes.FactCheckController.approval(s.id).url
                     }
                   }
                 }
-              case _ => cellData.head.text shouldBe s.title
+              case _ => {
+                // Cell data contains hidden column title plus actual process title
+                cellData.head.text shouldBe Seq(messages("approvals.processTitle"), s.title).mkString(" ")
+              }
             }
 
-            cellData(1).text shouldBe s.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-            cellData(2).text shouldBe messages(s"approvalsStatus.${s.reviewType.toString}.${s.status.toString}")
+            val lastUpdatedCellText: String = s.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+            cellData(1).text shouldBe Seq(messages("approvals.dateProcessUpdatedTitle"), lastUpdatedCellText).mkString(" ")
+
+            val statusCellText: String = messages(s"approvalsStatus.${s.reviewType.toString}.${s.status.toString}")
+            cellData(2).text shouldBe Seq(messages("approvals.processStatusTitle"), statusCellText).mkString(" ")
         }
       }
     }
@@ -156,6 +161,119 @@ class ApprovalsListSpec extends ViewSpecBase {
         }
       }
     }
-  }
 
+    "render list of processes for approval as a responsive table" in new Test {
+
+      val tables = doc.getElementsByTag("table").asScala.toList
+
+      tables.size shouldBe >(0)
+
+      // Check CSS classes on table element
+      elementAttrs(tables.head).get("class").fold(fail("Unable to find classes assigned to HTML table element")) { cls =>
+        cls shouldBe "govuk-table hmrc-responsive-table"
+      }
+
+      // Check role assigned to table element
+      elementAttrs(tables.head).get("role").fold(fail("Unable to find role assigned to HTML table element")) { role =>
+        role shouldBe "table"
+      }
+
+      val theads = tables.head.getElementsByTag("thead").asScala.toList
+
+      theads.size shouldBe 1
+
+      // Check CSS classes on thead element
+      elementAttrs(theads.head).get("class").fold(fail("Unable to find class assigned to HTML thead element")) { cls =>
+        cls shouldBe "govuk-table__head"
+      }
+
+      // Check role assigned to thead element
+      elementAttrs(theads.head).get("role").fold(fail("Unable to find role assigned to HTML thead element")) { role =>
+        role shouldBe "rowgroup"
+      }
+
+      val headerRows = theads.head.getElementsByTag("tr").asScala.toList
+
+      headerRows.size shouldBe 1
+
+      elementAttrs(headerRows.head).get("class").fold(fail("Unable to find class assigned to HTML table header row element")) { cls =>
+        cls shouldBe "govuk-table__row"
+      }
+
+      elementAttrs(headerRows.head).get("role").fold(fail("Unable to find role assigned to HTML table header row element")) { role =>
+        role shouldBe "row"
+      }
+
+      val headerCells = headerRows.head.getElementsByTag("th").asScala.toList
+
+      headerCells.size shouldBe 3
+
+      for (headerCell <- headerCells) {
+
+        elementAttrs(headerCell).get("scope").fold(fail("Unable to find scope assigned to HTML table header cell")) { scope =>
+          scope shouldBe "col"
+        }
+
+        elementAttrs(headerCell).get("class").fold(fail("Unable to find class assigned to HTML table header cell")) { cls =>
+          cls shouldBe "govuk-table__header"
+        }
+
+        elementAttrs(headerCell).get("role").fold(fail("Unable to find role assigned to HTML table header cell")) { role =>
+          role shouldBe "columnheader"
+        }
+      }
+
+      val tbodies = tables.head.getElementsByTag("tbody").asScala.toList
+
+      tbodies.size shouldBe 1
+
+      elementAttrs(tbodies.head).get("class").fold(fail("Unable to find class on HTML table body element")) { cls =>
+        cls shouldBe "govuk-table__body"
+      }
+
+      val bodyRows = tbodies.head.getElementsByTag("tr").asScala.toList
+
+      bodyRows.size shouldBe 4
+
+      for (bodyRow <- bodyRows) {
+
+        elementAttrs(bodyRow).get("class").fold(fail("Unable to find class assigned to HTML table body row")) { cls =>
+          cls shouldBe "govuk-table__row"
+        }
+
+        elementAttrs(bodyRow).get("role").fold(fail("Unable to find role assigned to HTML table body row")) { role =>
+          role shouldBe "row"
+        }
+
+        val dataCells = bodyRow.getElementsByTag("td").asScala.toList
+
+        dataCells.size shouldBe 3
+
+        for (dataCell <- dataCells) {
+
+          elementAttrs(dataCell).get("class").fold(fail("Unable to find class assigned to HTML table data cell")) { cls =>
+            cls shouldBe "govuk-table__cell"
+          }
+
+          elementAttrs(dataCell).get("role").fold(fail("Unable to find role assigned to HTML table data cell")) { role =>
+            role shouldBe "cell"
+          }
+
+          // Check span inside data cell
+          val spans = dataCell.getElementsByTag("span").asScala.toList
+
+          spans.size shouldBe 1
+
+          elementAttrs(spans.head).get("class").fold(fail("Unable to find class assigned to span within table data cell")) { cls =>
+            cls shouldBe "hmrc-responsive-table__heading"
+          }
+
+          elementAttrs(spans.head).get("aria-hidden").fold(fail("Unable to find artia-hidden attribute on HMTL data cell")) { attribute =>
+            attribute shouldBe "true"
+          }
+
+        }
+      }
+    }
+  }
 }
