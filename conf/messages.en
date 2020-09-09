@@ -25,8 +25,8 @@ serviceUnavailable.heading = Sorry, the service is unavailable
 serviceUnavailable.availableLater = You will be able to use the service later.
 serviceUnavailable.answersSaved = We saved your review.
 
-approvals.tableTitle = Interactive guidance
-approvals.commentsAndFeedback = View all interactive guidance comments and feedback (opens in new tab)
+approvals.tableTitle = Interactive guidance dashboard
+approvals.commentsAndFeedback = View all comments and feedback (opens in new tab)
 approvals.processTitle = Title
 approvals.dateProcessUpdatedTitle = Last updated
 approvals.processStatusTitle = Status
@@ -65,8 +65,9 @@ processReview.status = {0} of {1} pages reviewed
 2iPageReview.heading = Does the page meet GOV.UK standards?
 2iPageReview.textarea.label = Comments
 2iPageReview.textarea.hint = Add a hint here
-2iPageReview.saveReview = Save review
-2iPageReview.viewGuidancePage = View the page (opens in new tab).
+2iPageReview.saveReview = Continue
+2iPageReview.viewGuidancePage = Check this page (opens in new tab) meets GOV.UK standards.
+2iPageReview.comments = If you have any comments about the page, the content designer you''re working with will have told you how to share these.
 
 2iReviewError.title = Some pages have not been reviewed
 2iReviewError.heading = Some pages have not been reviewed
@@ -85,11 +86,12 @@ processReview.status = {0} of {1} pages reviewed
 2iReviewComplete.title.Published = The guidance has been successfully published
 2iReviewComplete.heading.Published = The guidance has been successfully published
 
-2iReviewComplete.title.Complete = Your responses have been sent to the designer
-2iReviewComplete.heading.Complete = Your responses have been sent to the designer
-2iReviewComplete.info = If you need to amend or add to the 2i review, contact the designer.
+2iReviewComplete.title.Complete = Your responses have been shared with the content team
+2iReviewComplete.heading.Complete = Your responses have been shared with the content team
+2iReviewComplete.reviewContent = The content team will review your responses and contact you if they have any questions.
+2iReviewComplete.info = If you need to amend or add to the 2i review, contact the designer you''ve been working with.
 
-2iReviewComplete.close = Go back to all interactive guidance
+2iReviewComplete.close = Return to dashboard
 
 factCheck.pageReviewStatus.NotStarted = Not checked
 factCheck.pageReviewStatus.CompleteYes = Checked: factually accurate
@@ -110,13 +112,16 @@ factCheckPageReview.title = Is the page factually accurate?
 factCheckPageReview.heading = Is the page factually accurate?
 factCheckPageReview.textarea.label = Comments
 factCheckPageReview.textarea.hint = Add a hint here
-factCheckPageReview.saveReview = Save review
-factCheckPageReview.viewGuidancePage = View the page (opens in new tab).
+factCheckPageReview.saveReview = Continue
+factCheckPageReview.viewGuidancePage = Check this page (opens in new tab) is factually accurate.
+factCheckPageReview.factualAccuracy = Factually accurate means the information on the page is correct and true. It does not include the style of the content or how it is presented.
+factCheckPageReview.comments = If you have any comments about the page, the content designer you''re working with will have told you how to share these.
 
-factCheckComplete.title = Your responses have been sent to the designer
-factCheckComplete.heading = Your responses have been sent to the designer
-factCheckComplete.info = If you need to amend or add to the fact check, contact the designer.
-factCheckComplete.close = Go back to all interactive guidance
+factCheckComplete.title = Your responses have been shared with the content team
+factCheckComplete.heading = Your responses have been shared with the content team
+factCheckComplete.review = The content team will review your responses and contact you if they have any questions.
+factCheckComplete.info = If you need to amend or add to the fact check, contact the designer you''ve been working with.
+factCheckComplete.close = Return to dashboard
 
 factCheckError.title = Some pages have not been fact checked
 factCheckError.heading = Some pages have not been fact checked
