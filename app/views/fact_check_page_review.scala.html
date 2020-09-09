@@ -53,8 +53,8 @@
     @viewLink(reviewTitle, processId, reviewUrl)
 
   </p>
-<p class="govuk-body">@messages("factCheckPageReview.factualAccuracy")</p>
-<p class="govuk-body">@messages("factCheckPageReview.comments")</p>
+  <p class="govuk-body">@messages("factCheckPageReview.factualAccuracy")</p>
+  <p class="govuk-body">@messages("factCheckPageReview.comments")</p>
 
   @formWithCSRF(action = routes.FactCheckPageReviewController.onSubmit(processId, reviewUrl.drop(1), reviewTitle, index)) {
 

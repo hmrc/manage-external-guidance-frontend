@@ -51,7 +51,7 @@
     @viewLink(reviewTitle, processId, reviewUrl)
   </p>
 
-<p class="govuk-body">@messages("2iPageReview.comments")</p>
+  <p class="govuk-body">@messages("2iPageReview.comments")</p>
 
   @formWithCSRF(action = routes.TwoEyePageReviewController.onSubmit(processId, reviewUrl.drop(1), reviewTitle, index)) {
     
