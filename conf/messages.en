@@ -26,7 +26,7 @@ serviceUnavailable.availableLater = You will be able to use the service later.
 serviceUnavailable.answersSaved = We saved your review.
 
 approvals.tableTitle = Interactive guidance dashboard
-approvals.commentsAndFeedback = View all comments and feedback (opens in a new tab)
+approvals.commentsAndFeedback = View all comments and feedback (opens in new tab)
 approvals.processTitle = Title
 approvals.dateProcessUpdatedTitle = Last updated
 approvals.processStatusTitle = Status
