@@ -65,6 +65,11 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
         readResponse shouldBe Left(InternalServerError)
       }
     }
+    "the response is BAD_REQUEST with a code of DUPLICATE_KEY_ERROR" should {
+      "return StaleDataError" in new GetReviewDetailsSetup(BAD_REQUEST, Json.obj("code" -> "DUPLICATE_KEY_ERROR", "message" -> "")) {
+        readResponse shouldBe Left(DuplicateKeyError)
+      }
+    }
     "the response is anything else" should {
       "return InternalServerError" in new GetReviewDetailsSetup(INTERNAL_SERVER_ERROR, Json.obj("code" -> "INTERNAL_SERVER_ERROR", "message" -> "")) {
         readResponse shouldBe Left(InternalServerError)

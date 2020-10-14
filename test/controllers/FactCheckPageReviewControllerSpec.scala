@@ -96,6 +96,13 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
       status(result) shouldBe Status.SEE_OTHER
     }
 
+    "Return BAD_REQUEST for a post of the review completion for a process without an answer" in new Test {
+
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle, 1)(fakeRequest)
+
+      status(result) shouldBe Status.BAD_REQUEST
+    }
+
     "Return an Html document displaying the details of the review result" in new Test {
 
       MockReviewService

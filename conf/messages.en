@@ -91,6 +91,11 @@ processReview.status = {0} of {1} pages reviewed
 2iReviewComplete.reviewContent = The content team will review your responses and contact you if they have any questions.
 2iReviewComplete.info = If you need to amend or add to the 2i review, contact the designer you''ve been working with.
 
+2iReviewCompleteError.title = Failed to publish guidance
+2iReviewCompleteError.heading = Failed to publish guidance
+2iReviewCompleteError.reviewContent = Another published guidance exists with the process code on this guidance - duplicates are not allowed.
+2iReviewCompleteError.info = Please contact the designer you''ve been working with to let them know there is a problem.
+
 2iReviewComplete.close = Return to dashboard
 
 factCheck.pageReviewStatus.NotStarted = Not checked

@@ -85,6 +85,14 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
       status(result) shouldBe Status.SEE_OTHER
     }
 
+    "Return bad request when no data submitted" in new Test {
+
+      val result: Future[Result] = reviewController.onSubmit(id, updatedReviewDetail.pageUrl.drop(1), updatedReviewDetail.pageTitle, 1)(fakeRequest)
+
+      status(result) shouldBe Status.BAD_REQUEST
+    }
+
+
     "Return an Html document displaying the details of the review result" in new Test {
 
       MockReviewService

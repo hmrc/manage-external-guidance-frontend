@@ -22,7 +22,7 @@ import forms.TwoEyeReviewResultFormProvider
 import javax.inject.{Inject, Singleton}
 import models.ApprovalStatus
 import models.audit.{PublishedEvent, TwoEyeReviewCompleteEvent}
-import models.errors.{IncompleteDataError, NotFoundError, StaleDataError}
+import models.errors.{DuplicateKeyError, IncompleteDataError, NotFoundError, StaleDataError}
 import models.requests.IdentifierRequest
 import play.api.Logger
 import play.api.data.Form
@@ -30,7 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{AuditService, ReviewService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.{twoeye_complete, twoeye_confirm_error, twoeye_review_result}
+import views.html.{twoeye_complete, twoeye_complete_error, twoeye_confirm_error, twoeye_review_result}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -43,6 +43,7 @@ class TwoEyeReviewResultController @Inject() (
     view: twoeye_review_result,
     confirmation_view: twoeye_complete,
     errorView: twoeye_confirm_error,
+    publish_error_view: twoeye_complete_error,
     reviewService: ReviewService,
     auditService: AuditService,
     mcc: MessagesControllerComponents
@@ -93,6 +94,9 @@ class TwoEyeReviewResultController @Inject() (
             case Left(StaleDataError) =>
               logger.warn(s"The requested approval 2i review for process $processId can no longer be found")
               NotFound(errorHandler.notFoundTemplate)
+            case Left(DuplicateKeyError) =>
+              logger.warn(s"Attempt to publish a duplicate process code for process $processId - publish failed")
+              BadRequest(publish_error_view())
             case Left(err) =>
               // Handle stale data, internal server and any unexpected errors
               logger.error(s"Request for approval 2i review process for process $processId returned error $err")
