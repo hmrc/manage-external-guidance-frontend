@@ -19,13 +19,13 @@ package controllers
 import config.ErrorHandler
 import controllers.actions.FactCheckerIdentifierAction
 import javax.inject.{Inject, Singleton}
-import models.errors.{MalformedResponseError, NotFoundError, StaleDataError}
+import models.errors.{DuplicateKeyError, MalformedResponseError, NotFoundError, StaleDataError}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ReviewService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.fact_check_content_review
+import views.html.{duplicate_process_code_error, fact_check_content_review}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -34,6 +34,7 @@ class FactCheckController @Inject() (
     errorHandler: ErrorHandler,
     factCheckIdentifierAction: FactCheckerIdentifierAction,
     view: fact_check_content_review,
+    duplicate_process_code_error: duplicate_process_code_error,
     reviewService: ReviewService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
@@ -47,6 +48,9 @@ class FactCheckController @Inject() (
       case Left(NotFoundError) =>
         logger.error(s"Unable to retrieve approval fact check for process $id")
         NotFound(errorHandler.notFoundTemplate)
+      case Left(DuplicateKeyError) =>
+        logger.warn(s"Duplicate process code found when attempting to fact check process $id")
+        BadRequest(duplicate_process_code_error())
       case Left(StaleDataError) =>
         logger.warn(s"The requested approval fact check for process $id can no longer be found")
         NotFound(errorHandler.notFoundTemplate)

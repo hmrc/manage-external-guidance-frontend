@@ -30,7 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{AuditService, ReviewService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.{twoeye_complete, twoeye_complete_error, twoeye_confirm_error, twoeye_review_result}
+import views.html.{duplicate_process_code_error, twoeye_complete, twoeye_confirm_error, twoeye_review_result}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -43,7 +43,7 @@ class TwoEyeReviewResultController @Inject() (
     view: twoeye_review_result,
     confirmation_view: twoeye_complete,
     errorView: twoeye_confirm_error,
-    publish_error_view: twoeye_complete_error,
+    publish_error_view: duplicate_process_code_error,
     reviewService: ReviewService,
     auditService: AuditService,
     mcc: MessagesControllerComponents

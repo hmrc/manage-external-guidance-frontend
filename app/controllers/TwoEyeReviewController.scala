@@ -19,13 +19,13 @@ package controllers
 import config.ErrorHandler
 import controllers.actions.TwoEyeReviewerIdentifierAction
 import javax.inject.{Inject, Singleton}
-import models.errors.{MalformedResponseError, NotFoundError, StaleDataError}
+import models.errors.{DuplicateKeyError, MalformedResponseError, NotFoundError, StaleDataError}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ReviewService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.twoeye_content_review
+import views.html.{duplicate_process_code_error, twoeye_content_review}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -34,6 +34,7 @@ class TwoEyeReviewController @Inject() (
     errorHandler: ErrorHandler,
     twoEyeReviewerIdentifierAction: TwoEyeReviewerIdentifierAction,
     view: twoeye_content_review,
+    duplicate_process_code_error: duplicate_process_code_error,
     reviewService: ReviewService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
@@ -51,6 +52,9 @@ class TwoEyeReviewController @Inject() (
       case Left(StaleDataError) =>
         logger.warn(s"The requested approval 2i review for process $id can no longer be found")
         NotFound(errorHandler.notFoundTemplate)
+      case Left(DuplicateKeyError) =>
+        logger.warn(s"Attempt to review a duplicate process code for process $id")
+        BadRequest(duplicate_process_code_error())
       case Left(MalformedResponseError) =>
         logger.error(s"A malformed response was returned for the approval 2i process review for process $id")
         InternalServerError(errorHandler.internalServerErrorTemplate)

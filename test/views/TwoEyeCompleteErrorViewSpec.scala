@@ -18,7 +18,7 @@ package views
 
 import org.jsoup.nodes.Document
 import play.twirl.api.HtmlFormat
-import views.html.twoeye_complete_error
+import views.html.duplicate_process_code_error
 
 class TwoEyeCompleteErrorViewSpec extends ViewSpecBase {
 
@@ -26,7 +26,7 @@ class TwoEyeCompleteErrorViewSpec extends ViewSpecBase {
 
     val processId = "ext90003"
 
-    val view: twoeye_complete_error = injector.instanceOf[twoeye_complete_error]
+    val view: duplicate_process_code_error = injector.instanceOf[duplicate_process_code_error]
 
     def createView: String => HtmlFormat.Appendable = _ => view()
 
@@ -35,16 +35,16 @@ class TwoEyeCompleteErrorViewSpec extends ViewSpecBase {
 
   "Following a duplicate error confirm error" should {
     "display the expected h1 tag" in new Test {
-      checkTextOnElementById(doc, "2i-error-heading", "2iReviewCompleteError.heading")
+      checkTextOnElementById(doc, "2i-error-heading", "duplicateProcessCodeError.heading")
     }
 
     "display the expected p tags" in new Test {
-      checkTextOnElementById(doc, "2i-error-content", "2iReviewCompleteError.reviewContent")
-      checkTextOnElementById(doc, "2i-error-info", "2iReviewCompleteError.info")
+      checkTextOnElementById(doc, "2i-error-content", "duplicateProcessCodeError.reviewContent")
+      checkTextOnElementById(doc, "2i-error-info", "duplicateProcessCodeError.info")
     }
 
     "display the back to dashboard button" in new Test {
-      checkTextOnElementById(doc, "2i-error-link", "2iReviewComplete.close")
+      checkTextOnElementById(doc, "2i-error-link", "duplicateProcessCodeError.close")
       checkAttributeOnElementById(doc, "2i-error-link", "role", "button")
       checkAttributeOnElementById(doc, "2i-error-link", "data-module", "govuk-button")
     }

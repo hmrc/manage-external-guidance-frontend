@@ -36,7 +36,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.{twoeye_complete, twoeye_complete_error, twoeye_confirm_error, twoeye_review_result}
+import views.html.{duplicate_process_code_error, twoeye_complete, twoeye_confirm_error, twoeye_review_result}
 
 import scala.concurrent.Future
 
@@ -50,7 +50,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
     val view: twoeye_review_result = injector.instanceOf[twoeye_review_result]
     val confirmationView: twoeye_complete = injector.instanceOf[twoeye_complete]
     val errorView: twoeye_confirm_error = injector.instanceOf[twoeye_confirm_error]
-    val duplicateErrorView: twoeye_complete_error = injector.instanceOf[twoeye_complete_error]
+    val duplicateErrorView: duplicate_process_code_error = injector.instanceOf[duplicate_process_code_error]
     val formProvider: TwoEyeReviewResultFormProvider = new TwoEyeReviewResultFormProvider()
     val form: Form[ApprovalStatus] = formProvider()
 
