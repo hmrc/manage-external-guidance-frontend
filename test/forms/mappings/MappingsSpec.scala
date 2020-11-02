@@ -64,6 +64,11 @@ class MappingsSpec extends BaseSpec with OptionValues with Mappings {
       val result = testForm.bind(Map.empty[String, String])
       result.errors should contain(FormError("value", "error.required"))
     }
+
+    "unbind a valid option" in {
+      val result = testForm.bind(Map("value" -> "B"))
+      result.get shouldEqual B
+    }
   }
 
 }

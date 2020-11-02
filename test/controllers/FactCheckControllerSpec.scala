@@ -21,14 +21,14 @@ import config.ErrorHandler
 import controllers.actions.FakeFactCheckerIdentifierAction
 import mocks.MockReviewService
 import models.ReviewData
-import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
+import models.errors.{DuplicateKeyError, InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{MimeTypes, Status}
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.fact_check_content_review
+import views.html.{duplicate_process_code_error, fact_check_content_review}
 
 import scala.concurrent.Future
 
@@ -41,8 +41,10 @@ class FactCheckControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
     val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
 
     val view: fact_check_content_review = injector.instanceOf[fact_check_content_review]
+    val duplicateView = injector.instanceOf[duplicate_process_code_error]
 
-    val reviewController = new FactCheckController(errorHandler, FakeFactCheckerIdentifierAction, view, mockReviewService, messagesControllerComponents)
+    val reviewController =
+      new FactCheckController(errorHandler, FakeFactCheckerIdentifierAction, view, duplicateView, mockReviewService, messagesControllerComponents)
 
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
   }
@@ -136,6 +138,15 @@ class FactCheckControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
 
       val result: Future[Result] = reviewController.approval(id)(fakeRequest)
 
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+    }
+    "Return the Http status BadRequest and display a view when the system identifies a duplicate" in new Test {
+
+      MockReviewService.approvalFactCheck(id).returns(Future.successful(Left(DuplicateKeyError)))
+
+      val result: Future[Result] = reviewController.approval(id)(fakeRequest)
+
+      status(result) shouldBe Status.BAD_REQUEST
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
 

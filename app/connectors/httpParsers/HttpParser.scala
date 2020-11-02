@@ -52,6 +52,7 @@ trait HttpParser {
         case Some(expectedError) => expectedError.code match {
           case NotFoundError.code => NotFoundError
           case StaleDataError.code => StaleDataError
+          case DuplicateKeyError.code => DuplicateKeyError
           case IncompleteDataError.code => IncompleteDataError
           case BadRequestError.code => BadRequestError
           case InvalidProcessError.code => InvalidProcessError

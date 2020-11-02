@@ -16,22 +16,21 @@
 
 package controllers
 
+import base.ControllerBaseSpec
 import config.ErrorHandler
 import controllers.actions.FakeTwoEyeReviewerIdentifierAction
-import play.api.http.MimeTypes
-import play.api.http.Status
-import play.api.mvc._
-import scala.concurrent.Future
-
-import base.ControllerBaseSpec
 import mocks.MockReviewService
 import models.ReviewData
-import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
-import views.html.twoeye_content_review
+import models.errors._
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.http.{MimeTypes, Status}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.{duplicate_process_code_error, twoeye_content_review}
+
+import scala.concurrent.Future
 
 class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuite with MockReviewService {
 
@@ -42,8 +41,10 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
     val errorHandler = injector.instanceOf[ErrorHandler]
 
     val view = injector.instanceOf[twoeye_content_review]
+    val duplicateView = injector.instanceOf[duplicate_process_code_error]
 
-    val reviewController = new TwoEyeReviewController(errorHandler, FakeTwoEyeReviewerIdentifierAction, view, mockReviewService, messagesControllerComponents)
+    val reviewController =
+      new TwoEyeReviewController(errorHandler, FakeTwoEyeReviewerIdentifierAction, view, duplicateView, mockReviewService, messagesControllerComponents)
 
     val fakeRequest = FakeRequest("GET", "/")
   }
@@ -61,7 +62,7 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
 
     "Return an Html document displaying the details of the review" in new Test {
 
-      MockReviewService.approval2iReview(id).returns(Future.successful((Right(reviewInfo))))
+      MockReviewService.approval2iReview(id).returns(Future.successful(Right(reviewInfo)))
 
       val result: Future[Result] = reviewController.approval(id)(fakeRequest)
 
@@ -139,6 +140,17 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
 
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
+
+    "Return the Http status BadRequest and display a view when the system identifies a duplicate" in new Test {
+
+      MockReviewService.approval2iReview(id).returns(Future.successful(Left(DuplicateKeyError)))
+
+      val result: Future[Result] = reviewController.approval(id)(fakeRequest)
+
+      status(result) shouldBe Status.BAD_REQUEST
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+    }
+
 
   }
 

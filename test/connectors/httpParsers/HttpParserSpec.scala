@@ -46,6 +46,13 @@ class HttpParserSpec extends BaseSpec with HttpVerbs with Status with HttpParser
     }
   }
 
+  "Calling validateJson with invalid body" should {
+    "return None" in {
+      val response = HttpResponse(OK, "", Map.empty[String, Seq[String]])
+      response.validateJson[Person] shouldBe None
+    }
+  }
+
   "Calling validateJson with an invalid JSON response" should {
     "return None" in {
       val response = HttpResponse(OK, JsNull, Map.empty[String, Seq[String]])
