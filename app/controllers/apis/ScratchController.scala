@@ -22,7 +22,7 @@ import models.errors.InvalidProcessError
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import services.ScratchService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import models.errors.Error
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

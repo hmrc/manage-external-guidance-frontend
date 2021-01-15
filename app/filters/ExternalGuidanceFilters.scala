@@ -18,7 +18,7 @@ package filters
 
 import javax.inject.{Inject, Singleton}
 import play.api.http.DefaultHttpFilters
-import uk.gov.hmrc.play.bootstrap.filters.FrontendFilters
+import uk.gov.hmrc.play.bootstrap.frontend.filters.FrontendFilters
 
 @Singleton
 class ExternalGuidanceFilters @Inject() (shutteringFilter: ShutterFilter, frontendFilters: FrontendFilters)

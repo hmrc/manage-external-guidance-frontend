@@ -21,7 +21,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.Request
 import play.twirl.api.Html
 import views.html.unauthorized_review_error_template
-import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 @Singleton
 class UnauthorizedReviewErrorHandler @Inject() (val messagesApi: MessagesApi, view: unauthorized_review_error_template, implicit val appConfig: AppConfig)
