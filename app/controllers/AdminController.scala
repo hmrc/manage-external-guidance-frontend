@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ApprovalService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.Logger
 import controllers.actions.IdentifierAction
 import views.html.approval_summary_list

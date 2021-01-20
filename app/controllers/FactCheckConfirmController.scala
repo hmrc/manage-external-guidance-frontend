@@ -26,7 +26,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{AuditService, ReviewService}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{fact_check_complete, fact_check_confirm_error}
 
 import scala.concurrent.ExecutionContext.Implicits.global

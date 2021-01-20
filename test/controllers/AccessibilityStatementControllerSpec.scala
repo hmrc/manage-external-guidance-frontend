@@ -23,7 +23,8 @@ import play.api.http.Status
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import play.api.test.Helpers.stubMessagesControllerComponents
+//import uk.gov.hmrc.play.bootstrap.frontend.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
