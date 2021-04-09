@@ -16,6 +16,7 @@
 
 package controllers
 
+import java.time.LocalDate
 import config.ErrorHandler
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
@@ -36,12 +37,12 @@ class AdminController @Inject() (
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
     with I18nSupport {
-
+  implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
   val logger = Logger(getClass)
 
   def approvalSummaries: Action[AnyContent] = identify.async { implicit request =>
     approvalService.approvalSummaries.map {
-      case Right(processList) => Ok(view(processList))
+      case Right(processList) => Ok(view(processList.sortBy(_.lastUpdated).reverse))
       case Left(err) =>
         logger.warn(s"Unable to retrieve list of approval process summaries, err = $err")
         BadRequest(errorHandler.notFoundTemplate)
