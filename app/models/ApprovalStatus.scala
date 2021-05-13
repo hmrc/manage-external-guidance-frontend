@@ -26,8 +26,9 @@ object ApprovalStatus extends Enumerable.Implicits {
   case object InProgress extends WithName("InProgress") with ApprovalStatus
   case object Complete extends WithName("Complete") with ApprovalStatus
   case object Published extends WithName("Published") with ApprovalStatus
+  case object Archived extends WithName("Archived") with ApprovalStatus
 
-  val values: Seq[ApprovalStatus] = Seq(Submitted, InProgress, Complete, Published)
+  val values: Seq[ApprovalStatus] = Seq(Submitted, InProgress, Complete, Published, Archived)
 
   val inProgress: Seq[ApprovalStatus] = Seq(Submitted, InProgress)
 

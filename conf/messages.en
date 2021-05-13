@@ -41,6 +41,7 @@ approvalsStatus.2i-review.Submitted = 2i review needed
 approvalsStatus.2i-review.InProgress = 2i review in progress
 approvalsStatus.2i-review.Complete = 2i review complete
 approvalsStatus.2i-review.Published = Published
+approvalsStatus.2i-review.Archived = Archived
 
 2i.pageReviewStatus.NotStarted = Not reviewed
 2i.pageReviewStatus.CompleteYes = Reviewed: approved
@@ -195,3 +196,14 @@ compliant.eight.p1=The service was last tested on 5 August 2020 and was checked 
 compliant.eight.p2.1=The full service was tested by HMRC and included disabled users.
 compliant.eight.p3=This page was prepared on 5 August 2020. It was last updated on 5 August 2020.
 
+# unpublish
+unpublish.title=Published Process
+unpublish.heading=This process is currently published
+unpublish.answer.error.required=You must choose an action
+unpublish.answer.yes=Unpublish (and delete) guidance
+unpublish.answer.no=Keep guidance published
+unpublish.hint=Guidance process code: {0}
+unpublish.confirm=Confirm action
+unpublished.heading=This process was successfully unpublished
+unpublished.confirmation=Process "<strong>{0}</strong>" has been deleted and is no longer in Production
+unpublished.continue=Continue

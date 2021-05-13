@@ -28,5 +28,8 @@ OPTIONS    /process/approval/2i-review                controllers.apis.ApprovalC
 POST       /process/approval/fact-check               controllers.apis.ApprovalController.submitForFactCheck
 OPTIONS    /process/approval/fact-check               controllers.apis.ApprovalController.options
 
+GET        /unpublish/:id/                            controllers.ArchiveController.unpublish(id)
+POST       /unpublish/:id/:code                       controllers.ArchiveController.archive(id, code)
+
 ->         /govuk-frontend          govuk.Routes
 ->         /hmrc-frontend           hmrcfrontend.Routes
