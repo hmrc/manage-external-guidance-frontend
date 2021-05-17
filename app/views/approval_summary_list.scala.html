@@ -29,6 +29,7 @@
     summary.reviewType match {
         case ReviewType2i if List(InProgress, Submitted).contains(summary.status) => viewLink(summary, routes.TwoEyeReviewController.approval(summary.id).url)
         case ReviewTypeFactCheck if List(InProgress, Submitted).contains(summary.status) => viewLink(summary, routes.FactCheckController.approval(summary.id).url)
+        case _ if summary.status == Published => viewLink(summary, routes.ArchiveController.unpublish(summary.id).url)
         case _ => summary.title
     }
 }
@@ -54,7 +55,7 @@
         </tr>
     </thead>
     <tbody class="govuk-table__body">
-        @for(summary <- summaries) {
+        @for(summary <- summaries.filterNot(_.status==Archived)) {
         <tr class="govuk-table__row" role="row">
             <td class="govuk-table__cell" role="cell">
                 <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("approvals.processTitle")</span>
