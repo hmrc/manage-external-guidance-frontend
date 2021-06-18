@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnector) {
   private val logger = Logger(getClass)
-  private val referrer: HeaderCarrier => String = _.headers.find(_._1 == HeaderNames.REFERER).map(_._2).getOrElse("-")
+  private val referrer: HeaderCarrier => String = _.headers(Seq(HeaderNames.REFERER)).headOption.fold("-")(_._2)
 
   implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
 
