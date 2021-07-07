@@ -49,10 +49,10 @@ class FactCheckController @Inject() (
         logger.error(s"Unable to retrieve approval fact check for process $id")
         NotFound(errorHandler.notFoundTemplate)
       case Left(DuplicateKeyError) =>
-        logger.warn(s"Duplicate process code found when attempting to fact check process $id")
+        logger.error(s"Duplicate process code found when attempting to fact check process $id")
         BadRequest(duplicate_process_code_error())
       case Left(StaleDataError) =>
-        logger.warn(s"The requested approval fact check for process $id can no longer be found")
+        logger.error(s"The requested approval fact check for process $id can no longer be found")
         NotFound(errorHandler.notFoundTemplate)
       case Left(MalformedResponseError) =>
         logger.error(s"A malformed response was returned for the approval fact check review for process $id")

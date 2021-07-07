@@ -63,7 +63,7 @@ class TwoEyeReviewResultController @Inject() (
         logger.error(s"Unable to check 2i review approval for process $processId not found")
         NotFound(errorHandler.notFoundTemplate)
       case Left(StaleDataError) =>
-        logger.warn(s"The requested 2i review approval check for process $processId failed - stale data")
+        logger.error(s"The requested 2i review approval check for process $processId failed - stale data")
         NotFound(errorHandler.notFoundTemplate)
       case Left(err) =>
         // Handle internal server and any unexpected errors
@@ -92,10 +92,10 @@ class TwoEyeReviewResultController @Inject() (
               logger.error(s"Unable to retrieve approval 2i review for process $processId")
               NotFound(errorHandler.notFoundTemplate)
             case Left(StaleDataError) =>
-              logger.warn(s"The requested approval 2i review for process $processId can no longer be found")
+              logger.error(s"The requested approval 2i review for process $processId can no longer be found")
               NotFound(errorHandler.notFoundTemplate)
             case Left(DuplicateKeyError) =>
-              logger.warn(s"Attempt to publish a duplicate process code for process $processId - publish failed")
+              logger.error(s"Attempt to publish a duplicate process code for process $processId - publish failed")
               BadRequest(publish_error_view())
             case Left(err) =>
               // Handle stale data, internal server and any unexpected errors

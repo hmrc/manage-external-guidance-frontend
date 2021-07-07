@@ -83,7 +83,7 @@ class FactCheckPageReviewController @Inject() (
               logger.error(s"Unable to retrieve approval fact check page review for process $processId, url $pageUrl")
               NotFound(errorHandler.notFoundTemplate)
             case Left(StaleDataError) =>
-              logger.warn(s"The requested approval fact check review for process $processId, url $pageUrl can no longer be found")
+              logger.error(s"The requested approval fact check review for process $processId, url $pageUrl can no longer be found")
               NotFound(errorHandler.notFoundTemplate)
             case Left(err) =>
               // Handle internal server and any unexpected errors

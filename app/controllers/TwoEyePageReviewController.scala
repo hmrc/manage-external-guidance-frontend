@@ -84,7 +84,7 @@ class TwoEyePageReviewController @Inject() (
               logger.error(s"Unable to retrieve approval 2i page review for process $processId, url $pageUrl")
               NotFound(errorHandler.notFoundTemplate)
             case Left(StaleDataError) =>
-              logger.warn(s"The requested approval 2i review for process $processId, url $pageUrl can no longer be found")
+              logger.error(s"The requested approval 2i review for process $processId, url $pageUrl can no longer be found")
               NotFound(errorHandler.notFoundTemplate)
             case Left(err) =>
               // Handle internal server and any unexpected errors
