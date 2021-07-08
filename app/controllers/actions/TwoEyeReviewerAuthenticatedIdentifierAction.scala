@@ -67,13 +67,13 @@ class TwoEyeReviewerAuthenticatedIdentifierAction @Inject() (
         case Some(Credentials(providerId, _)) ~ Some(Name(Some(name), _)) ~ Some(email) =>
           block(IdentifierRequest(request, providerId, name, email))
         case _ =>
-          logger.warn("Identifier action could not retrieve required user details in method invokeBlock")
+          logger.error("Identifier action could not retrieve required user details in method invokeBlock")
           Future.successful(unauthorizedResult)
       } recover {
       case _: NoActiveSession =>
         Redirect(appConfig.loginUrl, Map("successURL" -> Seq(appConfig.continueUrl)))
       case authEx: AuthorisationException =>
-        logger.warn(s"Method invokeBlock of identifier action received an authorization exception with the message ${authEx.getMessage}")
+        logger.error(s"Method invokeBlock of identifier action received an authorization exception with the message ${authEx.getMessage}")
         unauthorizedResult
     }
   }

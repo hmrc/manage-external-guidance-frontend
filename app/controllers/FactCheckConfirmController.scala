@@ -55,7 +55,7 @@ class FactCheckConfirmController @Inject()(
         logger.error(s"FactCheck confirmation: Unable to retrieve approval fact check for process $processId")
         NotFound(errorHandler.notFoundTemplate)
       case Left(StaleDataError) =>
-        logger.warn(s"The requested fact check for process $processId can no longer be found")
+        logger.error(s"The requested fact check for process $processId can no longer be found")
         NotFound(errorHandler.notFoundTemplate)
       case Left(err) =>
         // Handle internal server and any unexpected errors

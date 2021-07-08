@@ -50,10 +50,10 @@ class TwoEyeReviewController @Inject() (
         logger.error(s"Unable to retrieve approval 2i review for process $id")
         NotFound(errorHandler.notFoundTemplate)
       case Left(StaleDataError) =>
-        logger.warn(s"The requested approval 2i review for process $id can no longer be found")
+        logger.error(s"The requested approval 2i review for process $id can no longer be found")
         NotFound(errorHandler.notFoundTemplate)
       case Left(DuplicateKeyError) =>
-        logger.warn(s"Attempt to review a duplicate process code for process $id")
+        logger.error(s"Attempt to review a duplicate process code for process $id")
         BadRequest(duplicate_process_code_error())
       case Left(MalformedResponseError) =>
         logger.error(s"A malformed response was returned for the approval 2i process review for process $id")

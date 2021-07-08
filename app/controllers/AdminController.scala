@@ -44,7 +44,7 @@ class AdminController @Inject() (
     approvalService.approvalSummaries.map {
       case Right(processList) => Ok(view(processList.sortBy(_.lastUpdated).reverse))
       case Left(err) =>
-        logger.warn(s"Unable to retrieve list of approval process summaries, err = $err")
+        logger.error(s"Unable to retrieve list of approval process summaries, err = $err")
         BadRequest(errorHandler.notFoundTemplate)
     }
 
