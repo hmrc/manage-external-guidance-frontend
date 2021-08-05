@@ -22,6 +22,7 @@ import support.WireMockMethods
 
 object ExternalGuidanceStub extends WireMockMethods {
 
+  private val saveTimescalesUri: String = "/external-guidance/timescales"
   private val saveScratchUri: String = s"/external-guidance/scratch"
   private val saveFor2iReviewUri: String = s"/external-guidance/approval/2i-review"
   private val saveForFactCheckUri: String = s"/external-guidance/approval/fact-check"
@@ -31,6 +32,11 @@ object ExternalGuidanceStub extends WireMockMethods {
   private val approval2iPageReviewUri: String = "/external-guidance/approval/oct90005/2i-page-review/pageUrl"
   private val factCheckReviewUri: String = "/external-guidance/approval/oct90005/fact-check"
   private val factCheckPageReviewUri: String = "/external-guidance/approval/oct90005/fact-check-page-review/pageUrl"
+
+  def saveTimescales(status: Int, response: JsValue): StubMapping = {
+    when(method = POST, uri = saveTimescalesUri)
+      .thenReturn(status, response)
+  }
 
   def saveScratch(status: Int, response: JsValue): StubMapping = {
     when(method = POST, uri = saveScratchUri)
