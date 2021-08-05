@@ -19,6 +19,9 @@ GET        /fact-check-result/:id                     controllers.FactCheckConfi
 
 GET        /accessibility                             controllers.AccessibilityStatementController.getPage
 
+POST       /timescales                                controllers.apis.TimescalesController.submitTimescales
+OPTIONS    /timescales                                controllers.apis.TimescalesController.timescaleOptions
+
 POST       /process/scratch                           controllers.apis.ScratchController.submitScratchProcess
 OPTIONS    /process/scratch                           controllers.apis.ScratchController.scratchProcessOptions
 
