@@ -17,7 +17,7 @@
 package controllers
 
 import config.ErrorHandler
-import controllers.actions.FactCheckerIdentifierAction
+import controllers.actions.FactCheckerAction
 import javax.inject.{Inject, Singleton}
 import models.ApprovalStatus.Complete
 import models.audit.FactCheckCompleteEvent
@@ -34,7 +34,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class FactCheckConfirmController @Inject()(
     errorHandler: ErrorHandler,
-    factCheckIdentifierAction: FactCheckerIdentifierAction,
+    factCheckerAction: FactCheckerAction,
     view: fact_check_complete,
     errorView: fact_check_confirm_error,
     reviewService: ReviewService,
@@ -45,7 +45,7 @@ class FactCheckConfirmController @Inject()(
 
   val logger: Logger = Logger(getClass)
 
-  def onConfirm(processId: String): Action[AnyContent] = factCheckIdentifierAction.async { implicit request =>
+  def onConfirm(processId: String): Action[AnyContent] = factCheckerAction.async { implicit request =>
     reviewService.approvalFactCheckComplete(processId, request.credId, request.name, Complete).map {
       case Right(auditInfo) =>
         auditService.audit(FactCheckCompleteEvent(auditInfo))

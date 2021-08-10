@@ -16,64 +16,55 @@
 
 package controllers.actions
 
-import config.{AppConfig, UnauthorizedReviewErrorHandler}
-import javax.inject.Inject
 import models.requests.IdentifierRequest
 import play.api.mvc.Results._
 import play.api.mvc._
-import play.api.{Configuration, Environment, Logger}
-import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
+import play.api.Logger
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
-
 import scala.concurrent.{ExecutionContext, Future}
+import config.AppConfig
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
-trait FactCheckerIdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
+trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 
-class FactCheckerAuthenticatedIdentifierAction @Inject() (
-    override val authConnector: AuthConnector,
-    appConfig: AppConfig,
-    val parser: BodyParsers.Default,
-    val config: Configuration,
-    val env: Environment,
-    unauthorizedReviewErrorHandler: UnauthorizedReviewErrorHandler
-)(
-    implicit val executionContext: ExecutionContext
-) extends FactCheckerIdentifierAction
-    with AuthorisedFunctions
-    with AuthRedirects {
-
+trait PrivilegedAction extends AuthorisedFunctions with AuthRedirects {
+  val predicate: Predicate
+  implicit val executionContext: ExecutionContext
   val logger: Logger = Logger(getClass)
+  val appConfig: AppConfig
+  val errorHandler: FrontendErrorHandler
 
-  override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
+  def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     val unauthorizedResult = Unauthorized(
-      unauthorizedReviewErrorHandler.standardErrorTemplate(
+      errorHandler.standardErrorTemplate(
         "error.unauthorized401.pageTitle.page",
         "error.unauthorized401.heading.page",
         "error.unauthorized401.message"
       )(request)
     )
 
-    // Restrict access to users with fact checker role
-    authorised(Enrolment(appConfig.factCheckerRole) and AuthProviders(PrivilegedApplication))
+    authorised(predicate)
       .retrieve(Retrievals.credentials and Retrievals.name and Retrievals.email) {
         case Some(Credentials(providerId, _)) ~ Some(Name(Some(name), _)) ~ Some(email) =>
           block(IdentifierRequest(request, providerId, name, email))
         case _ =>
-          logger.error("Fact Checker Identifier action could not retrieve required user details in method invokeBlock")
+          logger.error(s"${getClass.getSimpleName()} action could not retrieve required user details in method invokeBlock")
           Future.successful(unauthorizedResult)
       } recover {
       case _: NoActiveSession =>
         Redirect(appConfig.loginUrl, Map("successURL" -> Seq(appConfig.continueUrl)))
       case authEx: AuthorisationException =>
-        logger.error(s"Method invokeBlock of factChecker identifier action received an authorization exception with the message ${authEx.getMessage}")
+        logger.error(s"Method invokeBlock of ${getClass.getSimpleName()} action received an authorization exception with the message ${authEx.getMessage}")
         unauthorizedResult
     }
   }

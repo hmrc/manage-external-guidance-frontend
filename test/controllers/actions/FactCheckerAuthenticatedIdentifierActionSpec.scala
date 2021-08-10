@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class FactCheckerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec with MockAuthConnector {
 
   // Define simple harness class to represent controller
-  class Harness(factCheckerAuthenticatedIdentifierAction: FactCheckerIdentifierAction) {
+  class Harness(factCheckerAuthenticatedIdentifierAction: FactCheckerAction) {
 
     def onPageLoad(): Action[AnyContent] = factCheckerAuthenticatedIdentifierAction { _ =>
       Results.Ok
@@ -54,7 +54,7 @@ class FactCheckerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec wi
       .stubs(*, *, *, *)
       .returns(Html(""))
 
-    lazy val factCheckerAuthAction = new FactCheckerAuthenticatedIdentifierAction(
+    lazy val factCheckerAuthAction = new FactCheckerAuthenticatedAction(
       mockAuthConnector,
       MockAppConfig,
       bodyParser,
@@ -66,7 +66,7 @@ class FactCheckerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec wi
     lazy val target = new Harness(factCheckerAuthAction)
   }
 
-  "FactCheckerAuthenticatedIdentifierAction" should {
+  "FactCheckerAuthenticatedAction" should {
 
     "grant access if authorisation is successful" in new AuthTestData {
 

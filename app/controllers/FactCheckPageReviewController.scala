@@ -17,7 +17,7 @@
 package controllers
 
 import config.ErrorHandler
-import controllers.actions.FactCheckerIdentifierAction
+import controllers.actions.FactCheckerAction
 import forms.FactCheckPageReviewFormProvider
 import javax.inject.{Inject, Singleton}
 import models.PageReviewDetail
@@ -38,7 +38,7 @@ import scala.concurrent.Future
 @Singleton
 class FactCheckPageReviewController @Inject() (
     errorHandler: ErrorHandler,
-    factCheckerReviewerIdentifierAction: FactCheckerIdentifierAction,
+    factCheckerAction: FactCheckerAction,
     formProvider: FactCheckPageReviewFormProvider,
     view: fact_check_page_review,
     reviewService: ReviewService,
@@ -48,7 +48,7 @@ class FactCheckPageReviewController @Inject() (
 
   val logger: Logger = Logger(getClass)
 
-  def onPageLoad(processId: String, pageUrl: String, index: Int): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
+  def onPageLoad(processId: String, pageUrl: String, index: Int): Action[AnyContent] = factCheckerAction.async { implicit request =>
     reviewService.factCheckPageInfo(processId, s"/$pageUrl") map {
       case Right(pageReviewDetail) =>
         val form: Form[FactCheckPageReview] = pageReviewDetail.result.fold(formProvider()) { answer =>
@@ -65,7 +65,7 @@ class FactCheckPageReviewController @Inject() (
   def onSubmit(processId: String,
                pageUrl: String,
                pageTitle: String,
-               index: Int): Action[AnyContent] = factCheckerReviewerIdentifierAction.async { implicit request =>
+               index: Int): Action[AnyContent] = factCheckerAction.async { implicit request =>
     formProvider()
       .bindFromRequest()
       .fold(

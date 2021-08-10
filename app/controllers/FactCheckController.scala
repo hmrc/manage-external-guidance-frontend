@@ -17,7 +17,7 @@
 package controllers
 
 import config.ErrorHandler
-import controllers.actions.FactCheckerIdentifierAction
+import controllers.actions.FactCheckerAction
 import javax.inject.{Inject, Singleton}
 import models.errors.{DuplicateKeyError, MalformedResponseError, NotFoundError, StaleDataError}
 import play.api.Logger
@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class FactCheckController @Inject() (
     errorHandler: ErrorHandler,
-    factCheckIdentifierAction: FactCheckerIdentifierAction,
+    factCheckerAction: FactCheckerAction,
     view: fact_check_content_review,
     duplicate_process_code_error: duplicate_process_code_error,
     reviewService: ReviewService,
@@ -42,7 +42,7 @@ class FactCheckController @Inject() (
 
   val logger: Logger = Logger(getClass)
 
-  def approval(id: String): Action[AnyContent] = factCheckIdentifierAction.async { implicit request =>
+  def approval(id: String): Action[AnyContent] = factCheckerAction.async { implicit request =>
     reviewService.approvalFactCheck(id).map {
       case Right(approvalProcessReview) => Ok(view(approvalProcessReview))
       case Left(NotFoundError) =>

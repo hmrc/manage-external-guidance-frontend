@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class TwoEyeReviewerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec with MockAuthConnector {
 
   // Define simple harness class to represent controller
-  class Harness(twoEyeReviewerAuthenticatedIdentifierAction: TwoEyeReviewerIdentifierAction) {
+  class Harness(twoEyeReviewerAuthenticatedIdentifierAction: TwoEyeReviewerAction) {
 
     def onPageLoad(): Action[AnyContent] = twoEyeReviewerAuthenticatedIdentifierAction { _ =>
       Results.Ok
@@ -54,7 +54,7 @@ class TwoEyeReviewerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec
       .stubs(*, *, *, *)
       .returns(Html(""))
 
-    lazy val twoEyeReviewerAuthAction = new TwoEyeReviewerAuthenticatedIdentifierAction(
+    lazy val twoEyeReviewerAuthAction = new TwoEyeReviewerAuthenticatedAction(
       mockAuthConnector,
       MockAppConfig,
       bodyParser,
@@ -66,7 +66,7 @@ class TwoEyeReviewerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec
     lazy val target = new Harness(twoEyeReviewerAuthAction)
   }
 
-  "TwoEyeReviewerAuthenticatedIdentifierAction" should {
+  "TwoEyeReviewerAuthenticatedAction" should {
 
     "grant access if authorisation is successful" in new AuthTestData {
 

@@ -17,7 +17,7 @@
 package controllers.apis
 
 import javax.inject.{Inject, Singleton}
-import models.errors.ValidationError
+import models.errors.{ForbiddenError, ValidationError}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import services.TimescalesService
@@ -43,6 +43,9 @@ class TimescalesController @Inject() (timescalesService: TimescalesService, mcc:
         NoContent.withHeaders("location" -> "/guidance-review/timescales").withHeaders(corsHeaders: _*)
       case Left(ValidationError) =>
         BadRequest(Json.toJson(ValidationError)).withHeaders(corsHeaders: _*)
+      case Left(ForbiddenError) =>
+        logger.error(s"ForbiddenError: Received timescale data without the required role")
+        BadRequest(Json.toJson(ForbiddenError)).withHeaders(corsHeaders: _*)
       case Left(error) =>
         InternalServerError(Json.toJson(error)).withHeaders(corsHeaders: _*)
     }

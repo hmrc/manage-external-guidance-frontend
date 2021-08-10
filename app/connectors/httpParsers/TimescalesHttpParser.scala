@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.errors.ValidationError
+import models.errors.{ForbiddenError, ValidationError}
 import models.RequestOutcome
 import play.api.Logger
 import play.api.http.Status._
@@ -29,6 +29,7 @@ object TimescalesHttpParser extends HttpParser {
   implicit val saveTimescalesHttpReads: HttpReads[RequestOutcome[Unit]] = {
     case (_, _, response) if response.status == NO_CONTENT => Right(())
     case (_, _, response) if response.status == BAD_REQUEST => Left(ValidationError)
+    case (_, _, response) if response.status == UNAUTHORIZED => Left(ForbiddenError)
     case (_, _, response) => Left(response.checkErrorResponse)
   }
 

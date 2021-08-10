@@ -17,7 +17,7 @@
 package controllers
 
 import config.ErrorHandler
-import controllers.actions.TwoEyeReviewerIdentifierAction
+import controllers.actions.TwoEyeReviewerAction
 import forms.TwoEyeReviewResultFormProvider
 import javax.inject.{Inject, Singleton}
 import models.ApprovalStatus
@@ -38,7 +38,7 @@ import scala.concurrent.Future
 @Singleton
 class TwoEyeReviewResultController @Inject() (
     errorHandler: ErrorHandler,
-    twoEyeReviewerIdentifierAction: TwoEyeReviewerIdentifierAction,
+    twoEyeReviewerAction: TwoEyeReviewerAction,
     formProvider: TwoEyeReviewResultFormProvider,
     view: twoeye_review_result,
     confirmation_view: twoeye_complete,
@@ -52,7 +52,7 @@ class TwoEyeReviewResultController @Inject() (
 
   val logger: Logger = Logger(getClass)
 
-  def onPageLoad(processId: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
+  def onPageLoad(processId: String): Action[AnyContent] = twoEyeReviewerAction.async { implicit request =>
 
     reviewService.approval2iReviewCheck(processId) map {
       case Right(()) =>
@@ -73,7 +73,7 @@ class TwoEyeReviewResultController @Inject() (
 
   }
 
-  def onSubmit(processId: String): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request: IdentifierRequest[_] =>
+  def onSubmit(processId: String): Action[AnyContent] = twoEyeReviewerAction.async { implicit request: IdentifierRequest[_] =>
     val form: Form[ApprovalStatus] = formProvider()
 
     form

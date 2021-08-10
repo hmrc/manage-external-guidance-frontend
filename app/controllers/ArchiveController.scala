@@ -18,7 +18,7 @@ package controllers
 
 import config.ErrorHandler
 import connectors.ArchiveConnector
-import controllers.actions.IdentifierAction
+import controllers.actions.AllRolesAction
 import forms.UnpublishConfirmationFormProvider
 import models.YesNoAnswer.{No, Yes}
 import models.forms.UnpublishConfirmation
@@ -36,7 +36,7 @@ import scala.concurrent.Future
 @Singleton
 class ArchiveController @Inject()(
     errorHandler: ErrorHandler,
-    identifierAction: IdentifierAction,
+    allRolesAction: AllRolesAction,
     archiveConnector: ArchiveConnector,
     unpublish_confirmation: unpublish_confirmation,
     unpublished: unpublished,
@@ -47,7 +47,7 @@ class ArchiveController @Inject()(
 
   val logger: Logger = Logger(getClass)
 
-  def unpublish(processId: String): Action[AnyContent] = identifierAction.async { implicit request =>
+  def unpublish(processId: String): Action[AnyContent] = allRolesAction.async { implicit request =>
     val form: Form[UnpublishConfirmation] = formProvider().bind(Map("value" -> No.toString))
 
     archiveConnector.getPublished(processId) map {
@@ -56,7 +56,7 @@ class ArchiveController @Inject()(
     }
   }
 
-  def archive(processId: String, processName: String): Action[AnyContent] = identifierAction.async { implicit request =>
+  def archive(processId: String, processName: String): Action[AnyContent] = allRolesAction.async { implicit request =>
     formProvider()
       .bindFromRequest()
       .fold(
