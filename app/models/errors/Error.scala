@@ -45,3 +45,4 @@ object MalformedResponseError extends Error("BAD_REQUEST", Some("The response re
 object BadRequestError extends Error("BAD_REQUEST_ERROR", Some("The request is invalid."), None)
 object IncompleteDataError extends Error("INCOMPLETE_DATA_ERROR", Some("Data is not in the required state for the requested action."), None)
 object DuplicateKeyError extends Error("DUPLICATE_KEY_ERROR", Some("An attempt was made to insert a duplicate key in the database."), None)
+object ForbiddenError extends Error("FORBIDDEN", Some("Access to the requested resource is not allowed in this context"), None)

@@ -17,7 +17,7 @@
 package controllers
 
 import config.ErrorHandler
-import controllers.actions.TwoEyeReviewerIdentifierAction
+import controllers.actions.TwoEyeReviewerAction
 import forms.TwoEyePageReviewFormProvider
 import javax.inject.{Inject, Singleton}
 import models.PageReviewDetail
@@ -38,7 +38,7 @@ import scala.concurrent.Future
 @Singleton
 class TwoEyePageReviewController @Inject() (
     errorHandler: ErrorHandler,
-    twoEyeReviewerIdentifierAction: TwoEyeReviewerIdentifierAction,
+    twoEyeReviewerAction: TwoEyeReviewerAction,
     formProvider: TwoEyePageReviewFormProvider,
     view: twoeye_page_review,
     reviewService: ReviewService,
@@ -48,7 +48,7 @@ class TwoEyePageReviewController @Inject() (
 
   val logger: Logger = Logger(getClass)
 
-  def onPageLoad(processId: String, pageUrl: String, index: Int): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
+  def onPageLoad(processId: String, pageUrl: String, index: Int): Action[AnyContent] = twoEyeReviewerAction.async { implicit request =>
     reviewService.approval2iPageReview(processId, s"/$pageUrl") map {
       case Right(pageReviewDetail) =>
         val form: Form[TwoEyePageReview] = pageReviewDetail.result.fold(formProvider()) { answer =>
@@ -66,7 +66,7 @@ class TwoEyePageReviewController @Inject() (
   def onSubmit(processId: String,
                pageUrl: String,
                pageTitle: String,
-               index: Int): Action[AnyContent] = twoEyeReviewerIdentifierAction.async { implicit request =>
+               index: Int): Action[AnyContent] = twoEyeReviewerAction.async { implicit request =>
     formProvider()
       .bindFromRequest()
       .fold(

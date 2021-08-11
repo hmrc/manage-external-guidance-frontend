@@ -18,7 +18,7 @@ package controllers
 
 import base.ControllerBaseSpec
 import config.ErrorHandler
-import controllers.actions.FakeFactCheckerIdentifierAction
+import controllers.actions.FakeFactCheckerAction
 import mocks.{MockAuditService, MockReviewService}
 import models.audit.{AuditInfo, FactCheckCompleteEvent}
 import models.errors._
@@ -52,7 +52,7 @@ class FactCheckConfirmControllerSpec extends ControllerBaseSpec with GuiceOneApp
 
     val reviewController = new FactCheckConfirmController(
       errorHandler,
-      FakeFactCheckerIdentifierAction,
+      FakeFactCheckerAction,
       view,
       errorView,
       mockReviewService,

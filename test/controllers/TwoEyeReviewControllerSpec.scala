@@ -18,7 +18,7 @@ package controllers
 
 import base.ControllerBaseSpec
 import config.ErrorHandler
-import controllers.actions.FakeTwoEyeReviewerIdentifierAction
+import controllers.actions.FakeTwoEyeReviewerAction
 import mocks.MockReviewService
 import models.ReviewData
 import models.errors._
@@ -44,7 +44,7 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
     val duplicateView = injector.instanceOf[duplicate_process_code_error]
 
     val reviewController =
-      new TwoEyeReviewController(errorHandler, FakeTwoEyeReviewerIdentifierAction, view, duplicateView, mockReviewService, messagesControllerComponents)
+      new TwoEyeReviewController(errorHandler, FakeTwoEyeReviewerAction, view, duplicateView, mockReviewService, messagesControllerComponents)
 
     val fakeRequest = FakeRequest("GET", "/")
   }

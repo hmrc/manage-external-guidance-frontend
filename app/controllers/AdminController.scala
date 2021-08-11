@@ -24,13 +24,13 @@ import play.api.mvc._
 import services.ApprovalService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.Logger
-import controllers.actions.IdentifierAction
+import controllers.actions.AllRolesAction
 import views.html.approval_summary_list
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class AdminController @Inject() (
-    identify: IdentifierAction,
+    identify: AllRolesAction,
     errorHandler: ErrorHandler,
     view: approval_summary_list,
     approvalService: ApprovalService,

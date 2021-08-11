@@ -18,7 +18,7 @@ package controllers
 
 import base.ControllerBaseSpec
 import config.ErrorHandler
-import controllers.actions.FakeTwoEyeReviewerIdentifierAction
+import controllers.actions.FakeTwoEyeReviewerAction
 import forms.TwoEyePageReviewFormProvider
 import mocks.MockReviewService
 import models.ReviewData
@@ -44,7 +44,7 @@ class TwoEyePageReviewControllerSpec extends ControllerBaseSpec with GuiceOneApp
     val formProvider = new TwoEyePageReviewFormProvider()
 
     val reviewController =
-      new TwoEyePageReviewController(errorHandler, FakeTwoEyeReviewerIdentifierAction, formProvider, view, mockReviewService, messagesControllerComponents)
+      new TwoEyePageReviewController(errorHandler, FakeTwoEyeReviewerAction, formProvider, view, mockReviewService, messagesControllerComponents)
 
     val fakeRequest = FakeRequest("POST", "/")
   }
