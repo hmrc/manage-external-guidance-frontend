@@ -30,12 +30,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TwoEyeReviewerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec with MockAuthConnector {
+class FactCheckerAuthenticatedActionSpec extends ControllerBaseSpec with MockAuthConnector {
 
   // Define simple harness class to represent controller
-  class Harness(twoEyeReviewerAuthenticatedIdentifierAction: TwoEyeReviewerAction) {
+  class Harness(factCheckerAuthenticatedIdentifierAction: FactCheckerAction) {
 
-    def onPageLoad(): Action[AnyContent] = twoEyeReviewerAuthenticatedIdentifierAction { _ =>
+    def onPageLoad(): Action[AnyContent] = factCheckerAuthenticatedIdentifierAction { _ =>
       Results.Ok
     }
   }
@@ -54,7 +54,7 @@ class TwoEyeReviewerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec
       .stubs(*, *, *, *)
       .returns(Html(""))
 
-    lazy val twoEyeReviewerAuthAction = new TwoEyeReviewerAuthenticatedAction(
+    lazy val factCheckerAuthAction = new FactCheckerAuthenticatedAction(
       mockAuthConnector,
       MockAppConfig,
       bodyParser,
@@ -63,10 +63,10 @@ class TwoEyeReviewerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec
       mockUnauthorizedReviewErrorHandler
     )
 
-    lazy val target = new Harness(twoEyeReviewerAuthAction)
+    lazy val target = new Harness(factCheckerAuthAction)
   }
 
-  "TwoEyeReviewerAuthenticatedAction" should {
+  "FactCheckerAuthenticatedAction" should {
 
     "grant access if authorisation is successful" in new AuthTestData {
 

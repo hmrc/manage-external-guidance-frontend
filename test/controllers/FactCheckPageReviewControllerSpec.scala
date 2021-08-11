@@ -18,7 +18,7 @@ package controllers
 
 import base.ControllerBaseSpec
 import config.ErrorHandler
-import controllers.actions.FakeFactCheckerIdentifierAction
+import controllers.actions.FakeFactCheckerAction
 import forms.FactCheckPageReviewFormProvider
 import mocks.MockReviewService
 import models.ReviewData
@@ -44,7 +44,7 @@ class FactCheckPageReviewControllerSpec extends ControllerBaseSpec with GuiceOne
     val formProvider = new FactCheckPageReviewFormProvider()
 
     val reviewController =
-      new FactCheckPageReviewController(errorHandler, FakeFactCheckerIdentifierAction, formProvider, view, mockReviewService, messagesControllerComponents)
+      new FactCheckPageReviewController(errorHandler, FakeFactCheckerAction, formProvider, view, mockReviewService, messagesControllerComponents)
 
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "/")
   }

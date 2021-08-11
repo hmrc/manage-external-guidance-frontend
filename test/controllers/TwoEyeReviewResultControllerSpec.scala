@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import base.ControllerBaseSpec
 import config.ErrorHandler
-import controllers.actions.FakeTwoEyeReviewerIdentifierAction
+import controllers.actions.FakeTwoEyeReviewerAction
 import forms.TwoEyeReviewResultFormProvider
 import mocks.{MockAuditService, MockReviewService}
 import models.ApprovalStatus.Complete
@@ -61,7 +61,7 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
 
     val reviewController = new TwoEyeReviewResultController(
       errorHandler,
-      FakeTwoEyeReviewerIdentifierAction,
+      FakeTwoEyeReviewerAction,
       formProvider,
       view,
       confirmationView,

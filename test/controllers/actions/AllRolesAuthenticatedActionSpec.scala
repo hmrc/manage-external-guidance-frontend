@@ -17,7 +17,7 @@
 package controllers.actions
 
 import base.ControllerBaseSpec
-import config.UnauthorizedReviewErrorHandler
+import config.ErrorHandler
 import mocks.{MockAppConfig, MockAuthConnector}
 import play.api.http.Status
 import play.api.mvc._
@@ -30,12 +30,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FactCheckerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec with MockAuthConnector {
+class AllRolesAuthenticatedActionSpec extends ControllerBaseSpec with MockAuthConnector {
 
   // Define simple harness class to represent controller
-  class Harness(factCheckerAuthenticatedIdentifierAction: FactCheckerAction) {
+  class Harness(authenticatedIdentifierAction: AllRolesAction) {
 
-    def onPageLoad(): Action[AnyContent] = factCheckerAuthenticatedIdentifierAction { _ =>
+    def onPageLoad(): Action[AnyContent] = authenticatedIdentifierAction { _ =>
       Results.Ok
     }
   }
@@ -48,25 +48,18 @@ class FactCheckerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec wi
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
-    lazy val mockUnauthorizedReviewErrorHandler: UnauthorizedReviewErrorHandler = mock[UnauthorizedReviewErrorHandler]
-    (mockUnauthorizedReviewErrorHandler
+    lazy val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
+    (mockErrorHandler
       .standardErrorTemplate(_: String, _: String, _: String)(_: Request[_]))
       .stubs(*, *, *, *)
       .returns(Html(""))
 
-    lazy val factCheckerAuthAction = new FactCheckerAuthenticatedAction(
-      mockAuthConnector,
-      MockAppConfig,
-      bodyParser,
-      config,
-      env,
-      mockUnauthorizedReviewErrorHandler
-    )
+    lazy val authAction = new AllRolesAuthenticatedAction(mockAuthConnector, MockAppConfig, bodyParser, config, env, mockErrorHandler)
 
-    lazy val target = new Harness(factCheckerAuthAction)
+    lazy val target = new Harness(authAction)
   }
 
-  "FactCheckerAuthenticatedAction" should {
+  "AllRolesAuthenticatedAction" should {
 
     "grant access if authorisation is successful" in new AuthTestData {
 
@@ -158,7 +151,5 @@ class FactCheckerAuthenticatedIdentifierActionSpec extends ControllerBaseSpec wi
 
       status(result) shouldBe UNAUTHORIZED
     }
-
   }
-
 }

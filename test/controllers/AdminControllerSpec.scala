@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.actions.FakeIdentifierAction
+import controllers.actions.FakeAllRolesAction
 import mocks.MockApprovalService
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -37,7 +37,7 @@ class AdminControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuit
     lazy val errorHandler = app.injector.instanceOf[config.ErrorHandler]
     implicit val hc: HeaderCarrier = HeaderCarrier()
     val fakeRequest = FakeRequest("GET", "/")
-    val controller = new AdminController(FakeIdentifierAction, errorHandler, view, mockApprovalService, stubMessagesControllerComponents())
+    val controller = new AdminController(FakeAllRolesAction, errorHandler, view, mockApprovalService, stubMessagesControllerComponents())
 
   }
 

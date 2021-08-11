@@ -18,7 +18,7 @@ package controllers
 
 import base.ControllerBaseSpec
 import config.ErrorHandler
-import controllers.actions.FakeFactCheckerIdentifierAction
+import controllers.actions.FakeFactCheckerAction
 import mocks.MockReviewService
 import models.ReviewData
 import models.errors.{DuplicateKeyError, InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
@@ -44,7 +44,7 @@ class FactCheckControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
     val duplicateView = injector.instanceOf[duplicate_process_code_error]
 
     val reviewController =
-      new FactCheckController(errorHandler, FakeFactCheckerIdentifierAction, view, duplicateView, mockReviewService, messagesControllerComponents)
+      new FactCheckController(errorHandler, FakeFactCheckerAction, view, duplicateView, mockReviewService, messagesControllerComponents)
 
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
   }

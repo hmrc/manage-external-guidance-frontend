@@ -17,7 +17,7 @@
 package controllers.actions
 
 import base.ControllerBaseSpec
-import config.ErrorHandler
+import config.UnauthorizedReviewErrorHandler
 import mocks.{MockAppConfig, MockAuthConnector}
 import play.api.http.Status
 import play.api.mvc._
@@ -30,12 +30,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthenticatedIdentifierActionSpec extends ControllerBaseSpec with MockAuthConnector {
+class TwoEyeReviewerAuthenticatedActionSpec extends ControllerBaseSpec with MockAuthConnector {
 
   // Define simple harness class to represent controller
-  class Harness(authenticatedIdentifierAction: AllRolesAction) {
+  class Harness(twoEyeReviewerAuthenticatedIdentifierAction: TwoEyeReviewerAction) {
 
-    def onPageLoad(): Action[AnyContent] = authenticatedIdentifierAction { _ =>
+    def onPageLoad(): Action[AnyContent] = twoEyeReviewerAuthenticatedIdentifierAction { _ =>
       Results.Ok
     }
   }
@@ -48,18 +48,25 @@ class AuthenticatedIdentifierActionSpec extends ControllerBaseSpec with MockAuth
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
-    lazy val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
-    (mockErrorHandler
+    lazy val mockUnauthorizedReviewErrorHandler: UnauthorizedReviewErrorHandler = mock[UnauthorizedReviewErrorHandler]
+    (mockUnauthorizedReviewErrorHandler
       .standardErrorTemplate(_: String, _: String, _: String)(_: Request[_]))
       .stubs(*, *, *, *)
       .returns(Html(""))
 
-    lazy val authAction = new AllRolesAuthenticatedAction(mockAuthConnector, MockAppConfig, bodyParser, config, env, mockErrorHandler)
+    lazy val twoEyeReviewerAuthAction = new TwoEyeReviewerAuthenticatedAction(
+      mockAuthConnector,
+      MockAppConfig,
+      bodyParser,
+      config,
+      env,
+      mockUnauthorizedReviewErrorHandler
+    )
 
-    lazy val target = new Harness(authAction)
+    lazy val target = new Harness(twoEyeReviewerAuthAction)
   }
 
-  "AllRolesAuthenticatedAction" should {
+  "TwoEyeReviewerAuthenticatedAction" should {
 
     "grant access if authorisation is successful" in new AuthTestData {
 
@@ -151,5 +158,7 @@ class AuthenticatedIdentifierActionSpec extends ControllerBaseSpec with MockAuth
 
       status(result) shouldBe UNAUTHORIZED
     }
+
   }
+
 }

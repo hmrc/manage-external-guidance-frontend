@@ -17,7 +17,7 @@
 package controllers
 
 import config.ErrorHandler
-import controllers.actions.FakeIdentifierAction
+import controllers.actions.FakeAllRolesAction
 import forms.UnpublishConfirmationFormProvider
 import mocks.MockArchiveConnector
 import models.PublishedProcess
@@ -46,7 +46,7 @@ class ArchiveControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSu
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
     val controller = new ArchiveController(
       errorHandler,
-      FakeIdentifierAction,
+      FakeAllRolesAction,
       mockArchiveConnector,
       view,
       confirmation,

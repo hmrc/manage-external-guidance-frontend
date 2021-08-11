@@ -22,7 +22,7 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeIdentifierAction extends ControllerBaseSpec with AllRolesAction {
+object FakeTwoEyeReviewerAction extends ControllerBaseSpec with TwoEyeReviewerAction {
 
   override implicit protected def executionContext: ExecutionContext = ExecutionContext.global
 
