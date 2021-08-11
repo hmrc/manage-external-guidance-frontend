@@ -40,7 +40,7 @@ class TwoEyeReviewController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  val logger = Logger(getClass)
+  val logger: Logger = Logger(getClass)
 
   def approval(id: String): Action[AnyContent] = twoEyeReviewerAction.async { implicit request =>
     reviewService.approval2iReview(id).map {
