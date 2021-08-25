@@ -99,6 +99,12 @@ duplicateProcessCodeError.reviewContent = The system has found guidance which ha
 duplicateProcessCodeError.info = Please contact the designer you''ve been working with to let them know there is a problem and that they will have to change the process code.
 duplicateProcessCodeError.close = Return to dashboard
 
+upgradeRequiredError.title = Service upgrade required
+upgradeRequiredError.heading = Service upgrade required
+upgradeRequiredError.reviewContent = Process {0} has not been published as it contains features currently not available to published processes.
+upgradeRequiredError.info = Features available in development and not available to published guidance are : Timescale definitions and the "date_add" placeholder.
+upgradeRequiredError.close = Return to dashboard
+
 factCheck.pageReviewStatus.NotStarted = Not checked
 factCheck.pageReviewStatus.CompleteYes = Checked: factually accurate
 factCheck.pageReviewStatus.CompleteNo = Checked: not factually accurate
