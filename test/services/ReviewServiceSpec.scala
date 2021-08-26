@@ -29,6 +29,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+import models.errors.UpgradeRequiredError
 
 class ReviewServiceSpec extends BaseSpec {
 
@@ -119,6 +120,26 @@ class ReviewServiceSpec extends BaseSpec {
           case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
         }
       }
+
+      "Return an Upgrade required error when returned by the connector" in new Test {
+
+        val info: ApprovalProcessStatusChange = ApprovalProcessStatusChange("userPid", "userName", ApprovalStatus.Published)
+        MockReviewConnector
+          .approval2iReviewComplete(id, info)
+          .returns(Future.successful(Left(UpgradeRequiredError)))
+
+        val result: Future[RequestOutcome[AuditInfo]] = reviewService.approval2iReviewComplete(id, "userPid", "userName", info.status)
+
+        result.onComplete {
+          case Success(response) =>
+            response match {
+              case Right(_) => fail("AuditInfo returned when error expected")
+              case Left(error) => error shouldBe UpgradeRequiredError
+            }
+          case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+        }
+      }
+
     }
 
     "calling the approval2iPageReview method" should {

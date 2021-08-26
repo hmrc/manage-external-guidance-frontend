@@ -203,7 +203,17 @@ class TwoEyeReviewResultControllerSpec extends ControllerBaseSpec with GuiceOneA
       contentType(result) shouldBe Some(MimeTypes.HTML)
     }
 
+    "Return a bad request and display an error page when upgrade required" in new Test {
 
+      MockReviewService
+        .approval2iReviewComplete(id, credential, name, ApprovalStatus.Complete)
+        .returns(Future.successful(Left(UpgradeRequiredError)))
+
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
+
+      status(result) shouldBe Status.BAD_REQUEST
+      contentType(result) shouldBe Some(MimeTypes.HTML)
+    }
   }
 
   "The two eye review controller onPageLoad method" should {
