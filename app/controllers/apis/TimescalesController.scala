@@ -31,7 +31,7 @@ class TimescalesController @Inject() (timescalesService: TimescalesService, mcc:
   val logger: Logger = Logger(getClass)
 
   val corsHeaders: Seq[(String, String)] = Seq(
-    "Access-Control-Allow-Origin" -> "https://*.hmrc.gov.uk",
+    "Access-Control-Allow-Origin" -> "https://cc-cdio.guidance.prod.dop.corp.hmrc.gov.uk",
     "Access-Control-Allow-Headers" -> "*",
     "Access-Control-Allow-Methods" -> "POST, OPTIONS",
     "Access-Control-Allow-Credentials" -> "true",
