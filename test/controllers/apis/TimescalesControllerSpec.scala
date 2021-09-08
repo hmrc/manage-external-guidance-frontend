@@ -110,9 +110,11 @@ class TimescalesControllerSpec extends BaseSpec with GuiceOneAppPerSuite with Mo
 
     "return CORS headers" in {
       val expectedHeaders = Map(
-        "Access-Control-Allow-Origin" -> "*",
+        "Access-Control-Allow-Origin" -> "https://*.hmrc.gov.uk",
         "Access-Control-Allow-Headers" -> "*",
-        "Access-Control-Allow-Methods" -> "POST, OPTIONS"
+        "Access-Control-Allow-Methods" -> "POST, OPTIONS",
+        "Access-Control-Allow-Credentials" -> "true",
+        "Access-Control-Expose-Headers" -> "*"
       )
       val result = controller.timescaleOptions()(fakeRequest)
       expectedHeaders.foreach { header =>
