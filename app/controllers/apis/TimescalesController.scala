@@ -31,10 +31,11 @@ class TimescalesController @Inject() (timescalesService: TimescalesService, mcc:
   val logger: Logger = Logger(getClass)
 
   val corsHeaders: Seq[(String, String)] = Seq(
-    "Access-Control-Allow-Origin" -> "*",
+    "Access-Control-Allow-Origin" -> "https://*.hmrc.gov.uk",
     "Access-Control-Allow-Headers" -> "*",
     "Access-Control-Allow-Methods" -> "POST, OPTIONS",
-    "Access-Control-Expose-Headers" -> "Location"
+    "Access-Control-Allow-Credentials" -> "true",
+    "Access-Control-Expose-Headers" -> "*"
   )
 
   def submitTimescales(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
