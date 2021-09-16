@@ -32,14 +32,14 @@ class TimescalesController @Inject() (timescalesService: TimescalesService, mcc:
 
   val corsHeaders: Seq[(String, String)] = Seq(
     "Access-Control-Allow-Origin" -> "https://scratch.guidance.prod.dop.corp.hmrc.gov.uk",
-    "Access-Control-Allow-Headers" -> "content-type, Authorization",
+    "Access-Control-Allow-Headers" -> "Authorization, Content-Type, Origin, Accept",
     "Access-Control-Allow-Methods" -> "POST, OPTIONS",
+    "Access-Control-Expose-Headers" -> "Authorization, Location",
     "Access-Control-Allow-Credentials" -> "true"
   )
 
   def submitTimescales(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
-    val headers: Map[String, String] = request.headers.headers.toMap
-    headers.get("http_referrer").map(refererrer => logger.warn(s"Timescale update received from $refererrer"))
+    logger.warn(s"Timescale headers: ${request.headers.headers.mkString(",")}")
     timescalesService.submitTimescales(request.body).map {
       case Right(()) =>
         NoContent.withHeaders("location" -> "/guidance-review/timescales").withHeaders(corsHeaders: _*)

@@ -24,12 +24,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
 import config.AppConfig
 import models.RequestOutcome
+import connectors.httpParsers.TimescalesHttpParser._
 
 @Singleton
 class TimescalesConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
 
   def submitTimescales(timescales: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] = {
-    import connectors.httpParsers.TimescalesHttpParser.saveTimescalesHttpReads
 
     val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/timescales"
     httpClient.POST[JsValue, RequestOutcome[Unit]](endpoint, timescales, Seq.empty)

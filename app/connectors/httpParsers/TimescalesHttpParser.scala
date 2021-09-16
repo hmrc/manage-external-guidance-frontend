@@ -26,7 +26,7 @@ object TimescalesHttpParser extends HttpParser {
 
   val logger: Logger = Logger(getClass)
 
-  implicit val saveTimescalesHttpReads: HttpReads[RequestOutcome[Unit]] = {
+  implicit val postTimescalesHttpReads: HttpReads[RequestOutcome[Unit]] = {
     case (_, _, response) if response.status == NO_CONTENT => Right(())
     case (_, _, response) if response.status == BAD_REQUEST => Left(ValidationError)
     case (_, _, response) if response.status == UNAUTHORIZED => Left(ForbiddenError)
