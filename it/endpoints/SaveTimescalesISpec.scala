@@ -20,7 +20,7 @@ import play.api.http.Status
 import play.api.libs.ws.WSResponse
 import play.api.libs.json._
 import models.errors.{InternalServerError, InvalidProcessError}
-import stubs.{AuditStub, ExternalGuidanceStub}
+import stubs.{AuditStub, AuthStub, ExternalGuidanceStub}
 import support.IntegrationSpec
 
 class SaveTimescalesISpec extends IntegrationSpec {
@@ -31,35 +31,50 @@ class SaveTimescalesISpec extends IntegrationSpec {
     "return an NO_CONTENT response" in {
 
       AuditStub.audit()
+      AuthStub.authorise()
 
       ExternalGuidanceStub.saveTimescales(Status.NO_CONTENT, JsNull)
 
       val request = buildRequest("/timescales")
-      val response: WSResponse = await(request.post(validTimescalesJson))
+      val response: WSResponse = {
+        AuditStub.audit()
+        AuthStub.authorise()
+        await(request.post(validTimescalesJson))
+      }
       response.status shouldBe Status.NO_CONTENT
     }
 
     "return a BAD_REQUEST response when the external guidance microservice rejects with BadRequest" in {
 
       AuditStub.audit()
+      AuthStub.authorise()
 
       val responsePayload: JsValue = Json.toJson(InvalidProcessError)
       ExternalGuidanceStub.saveTimescales(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest("/timescales")
-      val response: WSResponse = await(request.post(validTimescalesJson))
+      val response: WSResponse = {
+        AuditStub.audit()
+        AuthStub.authorise()
+        await(request.post(validTimescalesJson))
+      }
       response.status shouldBe Status.BAD_REQUEST
     }
 
     "return an INTERNAL_SERVER_ERROR response when the external guidance microservice returns an internal server error" in {
 
       AuditStub.audit()
+      AuthStub.authorise()
 
       val responsePayload: JsValue = Json.toJson(InternalServerError)
       ExternalGuidanceStub.saveTimescales(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
       val request = buildRequest("/timescales")
-      val response: WSResponse = await(request.post(Json.obj("message" -> "hi")))
+      val response: WSResponse = {
+        AuditStub.audit()
+        AuthStub.authorise()
+        await(request.post(Json.obj("message" -> "hi")))
+      }
       response.status shouldBe Status.INTERNAL_SERVER_ERROR
     }
   }

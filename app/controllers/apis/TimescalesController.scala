@@ -25,9 +25,12 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import play.api.Logger
+import controllers.actions.AllRolesAction
 
 @Singleton
-class TimescalesController @Inject() (timescalesService: TimescalesService, mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+class TimescalesController @Inject() (timescalesService: TimescalesService,
+                                      allRolesAction: AllRolesAction,
+                                      mcc: MessagesControllerComponents) extends FrontendController(mcc) {
   val logger: Logger = Logger(getClass)
 
   val corsHeaders: Seq[(String, String)] = Seq(
@@ -38,7 +41,7 @@ class TimescalesController @Inject() (timescalesService: TimescalesService, mcc:
     "Access-Control-Allow-Credentials" -> "true"
   )
 
-  def submitTimescales(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
+  def submitTimescales(): Action[JsValue] = allRolesAction.async(parse.json) { implicit request: Request[JsValue] =>
     logger.warn(s"Timescale headers: ${request.headers.headers.mkString(",")}")
     timescalesService.submitTimescales(request.body).map {
       case Right(()) =>
