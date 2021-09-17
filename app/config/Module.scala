@@ -25,6 +25,7 @@ class Module extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[AppConfig]).to(classOf[AppConfigImpl])
     bind(classOf[AllRolesAction]).to(classOf[AllRolesAuthenticatedAction])
+    bind(classOf[AllRolesWithCORSAction]).to(classOf[AllRolesWithCORSAuthenticatedAction])
     bind(classOf[TwoEyeReviewerAction]).to(classOf[TwoEyeReviewerAuthenticatedAction])
     bind(classOf[FactCheckerAction]).to(classOf[FactCheckerAuthenticatedAction])
   }
