@@ -20,7 +20,7 @@ import play.api.http.Status
 import play.api.libs.ws.WSResponse
 import play.api.libs.json._
 import models.errors.{InternalServerError, InvalidProcessError}
-import stubs.{AuditStub, AuthStub, ExternalGuidanceStub}
+import stubs.{AuditStub, ExternalGuidanceStub}
 import support.IntegrationSpec
 
 class SaveTimescalesISpec extends IntegrationSpec {
@@ -33,11 +33,8 @@ class SaveTimescalesISpec extends IntegrationSpec {
       ExternalGuidanceStub.saveTimescales(Status.NO_CONTENT, JsNull)
 
       val request = buildRequest("/timescales")
-      val response: WSResponse = {
-        AuditStub.audit()
-        AuthStub.authorise()
-        await(request.post(validTimescalesJson))
-      }
+      val response: WSResponse = await(request.post(validTimescalesJson))
+
       response.status shouldBe Status.NO_CONTENT
     }
 
@@ -47,12 +44,20 @@ class SaveTimescalesISpec extends IntegrationSpec {
       ExternalGuidanceStub.saveTimescales(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest("/timescales")
-      val response: WSResponse = {
-        AuditStub.audit()
-        AuthStub.authorise()
-        await(request.post(validTimescalesJson))
-      }
+      val response: WSResponse =await(request.post(validTimescalesJson))
+
       response.status shouldBe Status.BAD_REQUEST
+    }
+
+    "return a UNAUTHORIZED response when the external guidance microservice rejects with UNAUTHORIZED" in {
+
+      val responsePayload: JsValue = Json.toJson(InvalidProcessError)
+      ExternalGuidanceStub.saveTimescales(Status.UNAUTHORIZED, responsePayload)
+
+      val request = buildRequest("/timescales")
+      val response: WSResponse =await(request.post(validTimescalesJson))
+
+      response.status shouldBe Status.UNAUTHORIZED
     }
 
     "return an INTERNAL_SERVER_ERROR response when the external guidance microservice returns an internal server error" in {
@@ -61,11 +66,8 @@ class SaveTimescalesISpec extends IntegrationSpec {
       ExternalGuidanceStub.saveTimescales(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
       val request = buildRequest("/timescales")
-      val response: WSResponse = {
-        AuditStub.audit()
-        AuthStub.authorise()
-        await(request.post(Json.obj("message" -> "hi")))
-      }
+      val response: WSResponse = await(request.post(Json.obj("message" -> "hi")))
+
       response.status shouldBe Status.INTERNAL_SERVER_ERROR
     }
   }

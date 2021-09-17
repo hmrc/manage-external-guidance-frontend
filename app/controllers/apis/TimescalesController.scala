@@ -25,11 +25,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import play.api.Logger
-import controllers.actions.AllRolesWithCORSAction
 
 @Singleton
 class TimescalesController @Inject() (timescalesService: TimescalesService,
-                                      allRolesWithCorsAction: AllRolesWithCORSAction,
                                       mcc: MessagesControllerComponents) extends FrontendController(mcc) {
   val logger: Logger = Logger(getClass)
 
@@ -41,7 +39,7 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
     "Access-Control-Allow-Credentials" -> "true"
   )
 
-  def submitTimescales(): Action[JsValue] = allRolesWithCorsAction.async(parse.json) { implicit request: Request[JsValue] =>
+  def submitTimescales(): Action[JsValue] = Action.async(parse.json) { implicit request: Request[JsValue] =>
     logger.warn(s"Timescale headers: ${request.headers.headers.mkString(",")}")
     timescalesService.submitTimescales(request.body).map {
       case Right(()) =>
@@ -50,7 +48,7 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
         BadRequest(Json.toJson(ValidationError)).withHeaders(corsHeaders: _*)
       case Left(ForbiddenError) =>
         logger.error(s"ForbiddenError: Received timescale data without the required role")
-        BadRequest(Json.toJson(ForbiddenError)).withHeaders(corsHeaders: _*)
+        Unauthorized(Json.toJson(ForbiddenError)).withHeaders(corsHeaders: _*)
       case Left(error) =>
         InternalServerError(Json.toJson(error)).withHeaders(corsHeaders: _*)
     }
