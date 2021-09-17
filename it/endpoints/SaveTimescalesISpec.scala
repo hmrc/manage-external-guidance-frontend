@@ -30,8 +30,8 @@ class SaveTimescalesISpec extends IntegrationSpec {
   "calling the timescales POST endpoint" should {
     "return an NO_CONTENT response" in {
 
-      AuditStub.audit()
-      AuthStub.authorise()
+      // AuditStub.audit()
+      // AuthStub.authorise()
 
       ExternalGuidanceStub.saveTimescales(Status.NO_CONTENT, JsNull)
 
@@ -46,8 +46,8 @@ class SaveTimescalesISpec extends IntegrationSpec {
 
     "return a BAD_REQUEST response when the external guidance microservice rejects with BadRequest" in {
 
-      AuditStub.audit()
-      AuthStub.authorise()
+      // AuditStub.audit()
+      // AuthStub.authorise()
 
       val responsePayload: JsValue = Json.toJson(InvalidProcessError)
       ExternalGuidanceStub.saveTimescales(Status.BAD_REQUEST, responsePayload)
@@ -63,8 +63,8 @@ class SaveTimescalesISpec extends IntegrationSpec {
 
     "return an INTERNAL_SERVER_ERROR response when the external guidance microservice returns an internal server error" in {
 
-      AuditStub.audit()
-      AuthStub.authorise()
+      // AuditStub.audit()
+      // AuthStub.authorise()
 
       val responsePayload: JsValue = Json.toJson(InternalServerError)
       ExternalGuidanceStub.saveTimescales(Status.INTERNAL_SERVER_ERROR, responsePayload)

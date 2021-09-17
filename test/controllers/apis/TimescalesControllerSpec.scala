@@ -24,14 +24,14 @@ import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import controllers.actions.FakeAllRolesAction
+import controllers.actions.FakeAllRolesWithCORSAction
 import scala.concurrent.Future
 
 class TimescalesControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockTimescalesService {
 
   private val dummyTimescales: JsValue = Json.parse("""{"TimescaleID": 10}""")
   private val fakeRequest = FakeRequest("OPTIONS", "/")
-  private val controller = new TimescalesController(mockTimescalesService, FakeAllRolesAction, stubMessagesControllerComponents())
+  private val controller = new TimescalesController(mockTimescalesService, FakeAllRolesWithCORSAction, stubMessagesControllerComponents())
   private val fakeRequestWithBody: FakeRequest[JsValue] = FakeRequest("POST", "/").withBody(dummyTimescales)
   private val locationUrlPrefix: String = "/guidance-review/timescales"
 
