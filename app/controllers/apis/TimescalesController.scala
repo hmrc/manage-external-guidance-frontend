@@ -53,7 +53,8 @@ class TimescalesController @Inject() (timescalesService: TimescalesService, mcc:
     }
   }
 
-  val timescaleOptions: Action[AnyContent] = Action.async { _ =>
+  val timescaleOptions: Action[AnyContent] = Action.async { implicit request: Request[_] =>
+    logger.warn(s"Options headers: ${request.headers.headers.mkString(",")}")
     Future.successful(Ok("").withHeaders(corsHeaders: _*))
   }
 }
