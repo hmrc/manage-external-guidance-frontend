@@ -17,6 +17,7 @@
 package services
 
 import connectors.TimescalesConnector
+import models.TimescalesDetail
 import javax.inject.{Inject, Singleton}
 import models.RequestOutcome
 import play.api.libs.json.JsValue
@@ -26,6 +27,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TimescalesService @Inject() (timescalesConnector: TimescalesConnector) {
-  def submitTimescales(timescales: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] =
+  def submitTimescales(timescales: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[TimescalesDetail]] =
     timescalesConnector.submitTimescales(timescales)
+
+  def details()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[TimescalesDetail]] =
+    timescalesConnector.details()
+
 }

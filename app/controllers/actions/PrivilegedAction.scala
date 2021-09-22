@@ -39,7 +39,7 @@ trait PrivilegedAction extends AuthorisedFunctions with AuthRedirects {
   val logger: Logger = Logger(getClass)
   val appConfig: AppConfig
   val errorHandler: FrontendErrorHandler
-  val unauthorisedReplyHeaders: Seq[(String, String)] = Seq.empty
+  val continueUrl: String = appConfig.continueUrl
 
   def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
@@ -62,13 +62,10 @@ trait PrivilegedAction extends AuthorisedFunctions with AuthRedirects {
           Future.successful(unauthorizedResult)
       } recover {
       case _: NoActiveSession =>
-        Redirect(appConfig.loginUrl, Map("successURL" -> Seq(appConfig.continueUrl)))
-      case authEx: AuthorisationException if unauthorisedReplyHeaders.isEmpty =>
-        logger.error(s"Method invokeBlock of ${getClass.getSimpleName()} action received an authorization exception with the message ${authEx.getMessage}")
-        unauthorizedResult
+        Redirect(appConfig.loginUrl, Map("successURL" -> Seq(continueUrl)))
       case authEx: AuthorisationException =>
         logger.error(s"Method invokeBlock of ${getClass.getSimpleName()} action received an authorization exception with the message ${authEx.getMessage}")
-        unauthorizedResult.withHeaders(unauthorisedReplyHeaders: _*)
+        unauthorizedResult
     }
   }
 }

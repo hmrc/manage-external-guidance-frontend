@@ -16,7 +16,7 @@
 
 @this(internalHeader: hmrcComponents.hmrcInternalHeader)
 
-@()(implicit messages: Messages)
+@(headerUrl: Option[String] = None)(implicit messages: Messages)
 
 <div class="govuk-body">
     <header role="banner" class="hmrc-internal-header">
@@ -29,7 +29,7 @@
 
 
         <div class="hmrc-internal-header__service-name">
-            <a href="@{controllers.routes.AdminController.approvalSummaries.url}" class="hmrc-internal-header__link">
+            <a href="@headerUrl.getOrElse(controllers.routes.AdminController.approvalSummaries.url)" class="hmrc-internal-header__link">
                 @messages("service.name")
             </a>
         </div>

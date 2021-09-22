@@ -17,22 +17,26 @@
 package connectors
 
 import javax.inject.{Inject, Singleton}
-
+import models.TimescalesDetail
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
 import config.AppConfig
 import models.RequestOutcome
-import connectors.httpParsers.TimescalesHttpParser._
 
 @Singleton
 class TimescalesConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
+  import connectors.httpParsers.TimescalesHttpParser.timescalesHttpReads
 
-  def submitTimescales(timescales: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Unit]] = {
+  def details()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[TimescalesDetail]] = {
+    val endPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/timescales"
+    httpClient.GET[RequestOutcome[TimescalesDetail]](endPoint, Seq.empty, Seq.empty)
+  }
 
+  def submitTimescales(timescales: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[TimescalesDetail]] = {
     val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/timescales"
-    httpClient.POST[JsValue, RequestOutcome[Unit]](endpoint, timescales, Seq.empty)
+    httpClient.POST[JsValue, RequestOutcome[TimescalesDetail]](endpoint, timescales, Seq.empty)
   }
 
 }

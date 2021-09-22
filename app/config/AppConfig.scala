@@ -31,6 +31,7 @@ trait AppConfig {
   val externalGuidanceBaseUrl: String
   val loginUrl: String
   val continueUrl: String
+  val timescalesContinueUrl: String
   val designerRole: String
   val twoEyeReviewerRole: String
   val factCheckerRole: String
@@ -59,6 +60,7 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   val commentsAndFeedbackUrl = config.get[String]("appLinks.commentsAndFeedbackUrl")
   lazy val loginUrl: String = servicesConfig.getString("strideAuth.login.url")
   lazy val continueUrl: String = servicesConfig.getString("strideAuth.login.continueUrl")
+  lazy val timescalesContinueUrl: String = servicesConfig.getString("strideAuth.login.timescalesContinueUrl")
   lazy val designerRole: String = servicesConfig.getString("strideAuth.roles.designer")
   lazy val twoEyeReviewerRole: String = servicesConfig.getString("strideAuth.roles.twoEyeReviewer")
   lazy val factCheckerRole: String = servicesConfig.getString("strideAuth.roles.factChecker")
