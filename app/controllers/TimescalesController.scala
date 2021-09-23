@@ -44,28 +44,29 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
                                       mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
   val logger: Logger = Logger(getClass)
 
-  def timescales(): Action[AnyContent] = timescalesSecuredAction.async{implicit request => uploadPage()}
+  def timescales: Action[AnyContent] = timescalesSecuredAction.async{implicit request => uploadPage()}
 
-  def upload() = timescalesSecuredAction.async(parse.multipartFormData) { implicit request =>
-    request.body.file("timescales") match {
-      case Some(timescales) if timescales.contentType.fold(false)(_.contains("json")) =>
-        readJsonFile(timescales.ref.path) match {
-          case Success(json) =>
-            timescalesService.submitTimescales(json).flatMap {
-              case Right(details) =>
-                Future.successful(Ok(uploadCompleteView(details.count, details.lastUpdate.map(UpdateDisplayDetails(_)))))
-              case Left(err) =>
-                logger.error(s"Failed to submit timescales update, err = $err")
-                uploadPage(Some("timescales.error.invalid"))
-            }
-          case Failure(err) =>
-            logger.warn(s"Selected timescale update file is invalid, err = $err")
-            uploadPage(Some("timescales.error.invalid"))
-        }
-      case Some(_) => uploadPage(Some("timescales.error.notjson"))
-      case _ => uploadPage(Some("timescales.error.noselection"))
+  def upload: Action[play.api.mvc.MultipartFormData[play.api.libs.Files.TemporaryFile]] =
+    timescalesSecuredAction.async(parse.multipartFormData) { implicit request =>
+      request.body.file("timescales") match {
+        case Some(timescales) if timescales.contentType.fold(false)(_.contains("json")) =>
+          readJsonFile(timescales.ref.path) match {
+            case Success(json) =>
+              timescalesService.submitTimescales(json).flatMap {
+                case Right(details) =>
+                  Future.successful(Ok(uploadCompleteView(details.count, details.lastUpdate.map(UpdateDisplayDetails(_)))))
+                case Left(err) =>
+                  logger.error(s"Failed to submit timescales update, err = $err")
+                  uploadPage(Some("timescales.error.invalid"))
+              }
+            case Failure(err) =>
+              logger.warn(s"Selected timescale update file is invalid, err = $err")
+              uploadPage(Some("timescales.error.invalid"))
+          }
+        case Some(_) => uploadPage(Some("timescales.error.notjson"))
+        case _ => uploadPage(Some("timescales.error.noselection"))
+      }
     }
-  }
 
   private def uploadPage(error: Option[String] = None)(implicit request: Request[_]): Future[Result] =
     timescalesService.details().map {

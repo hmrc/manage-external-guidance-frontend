@@ -16,21 +16,7 @@
 
 package models
 
-import java.time.ZonedDateTime
-import play.api.libs.json._
 import java.time.format.{DateTimeFormatter, ResolverStyle}
-
-case class UpdateDetails(when: ZonedDateTime, credId: String, user: String, email: String)
-
-object UpdateDetails {
-  implicit val formats: OFormat[UpdateDetails] = Json.format[UpdateDetails]
-}
-
-case class TimescalesDetail(count: Int, lastUpdate: Option[UpdateDetails])
-
-object TimescalesDetail {
-  implicit val formats: OFormat[TimescalesDetail] = Json.format[TimescalesDetail]
-}
 
 case class UpdateDisplayDetails(time: String, date: String, credId: String, user: String, email: String)
 
