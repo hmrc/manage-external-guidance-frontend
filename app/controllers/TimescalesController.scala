@@ -31,7 +31,6 @@ import views.html.upload_timescales
 import views.html.timescales_upload_complete
 import models.UpdateDisplayDetails
 import scala.concurrent.Future
-import java.io.InputStream
 import java.nio.file._
 import scala.util.{Success, Failure, Try}
 
@@ -82,10 +81,10 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
         InternalServerError(Json.toJson(error))
     }
 
-  private def readJsonFile(uploadFile: Path): Try[JsValue] = {
-    val f: InputStream = Files.newInputStream(uploadFile, StandardOpenOption.READ)
-    val result = Try {Json.parse(f)}
-    f.close()
-    result
-  }
+  private def readJsonFile(uploadFile: Path): Try[JsValue] =
+    Try(Files.newInputStream(uploadFile, StandardOpenOption.READ)).flatMap{f =>
+      val result = Try(Json.parse(f))
+      f.close()
+      result
+    }
 }

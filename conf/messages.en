@@ -25,9 +25,9 @@ serviceUnavailable.heading = Sorry, the service is unavailable
 serviceUnavailable.availableLater = You will be able to use the service later.
 serviceUnavailable.answersSaved = We saved your review.
 
-timescales.title = Upload updated timescale definitions
-timescales.seed-definitions = No previous update received, seed definitions active
-timescales.status = Last updated at {0} on {1} by {2}
+timescales.title = Upload timescale definitions
+timescales.seed-definitions = No previous update received, seed defintions active
+timescales.status = Last update received from {2} at {0} on {1}
 timescales.prompt = Upload a timescales definition json file
 timescales.button = Upload
 timescales.error.noselection = Select a timescales definition json file to upload
