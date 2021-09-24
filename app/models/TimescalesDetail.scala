@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import com.google.inject.AbstractModule
+import java.time.ZonedDateTime
+import play.api.libs.json._
 
-import controllers.actions._
+case class UpdateDetails(when: ZonedDateTime, credId: String, user: String, email: String)
 
-class Module extends AbstractModule {
+object UpdateDetails {
+  implicit val formats: OFormat[UpdateDetails] = Json.format[UpdateDetails]
+}
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[AppConfigImpl])
-    bind(classOf[AllRolesAction]).to(classOf[AllRolesAuthenticatedAction])
-    bind(classOf[TwoEyeReviewerAction]).to(classOf[TwoEyeReviewerAuthenticatedAction])
-    bind(classOf[FactCheckerAction]).to(classOf[FactCheckerAuthenticatedAction])
-    bind(classOf[TimescalesAction]).to(classOf[TimescalesAuthenticatedAction])
-  }
+case class TimescalesDetail(count: Int, lastUpdate: Option[UpdateDetails])
+
+object TimescalesDetail {
+  implicit val formats: OFormat[TimescalesDetail] = Json.format[TimescalesDetail]
 }

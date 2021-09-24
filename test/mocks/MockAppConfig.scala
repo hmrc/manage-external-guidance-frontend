@@ -34,6 +34,7 @@ object MockAppConfig extends AppConfig {
   override lazy val gtmContainer: String = "someContainer"
   lazy val viewApprovalUrl: String = "http://localhost:9741/guidance/approval"
   lazy val commentsAndFeedbackUrl: String = "http://www.gov.uk"
+  lazy val timescalesContinueUrl: String = "http://localhost:9740/external-guidance/timescales"
 
   override def contactFrontendFeedbackUrl(implicit request: RequestHeader): String = "somefeedbackUrl"
 }

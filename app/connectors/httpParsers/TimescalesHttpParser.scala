@@ -16,18 +16,24 @@
 
 package connectors.httpParsers
 
-import models.errors.{ForbiddenError, ValidationError}
+import models.errors.{ForbiddenError, ValidationError, InternalServerError}
 import models.RequestOutcome
 import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads
+import models.TimescalesDetail
 
 object TimescalesHttpParser extends HttpParser {
-
   val logger: Logger = Logger(getClass)
 
-  implicit val postTimescalesHttpReads: HttpReads[RequestOutcome[Unit]] = {
-    case (_, _, response) if response.status == NO_CONTENT => Right(())
+  implicit val timescalesHttpReads: HttpReads[RequestOutcome[TimescalesDetail]] = {
+    case (_, _, response) if response.status == OK || response.status == ACCEPTED =>
+      response.validateJson[TimescalesDetail] match {
+        case Some(result) => Right(result)
+        case None =>
+          logger.error("Unable to parse successful response when POSTing timescales update")
+          Left(InternalServerError)
+      }
     case (_, _, response) if response.status == BAD_REQUEST => Left(ValidationError)
     case (_, _, response) if response.status == UNAUTHORIZED => Left(ForbiddenError)
     case (_, _, response) => Left(response.checkErrorResponse)

@@ -26,7 +26,7 @@
         appConfig: AppConfig)
 
 
-@(pageTitle: String, backLinkDetails: Option[(String, String)] = None)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, backLinkDetails: Option[(String, String)] = None, headerUrl: Option[String] = None)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
 @renderBackLink(backLinkDetails: Option[(String, String)]) = @{
     backLinkDetails match {
@@ -83,7 +83,7 @@
 @layout(
     pageTitle = Some(s"$pageTitle - ${messages("service.name")} - ${messages("service.govuk")}"),
     headBlock = Some(head),
-    headerBlock = Some(siteHeader()),
+    headerBlock = Some(siteHeader(headerUrl)),
     beforeContentBlock = Some(beforeContentBlock),
     footerItems = footerLinks.items,
     bodyEndBlock = Some(scripts))(content)

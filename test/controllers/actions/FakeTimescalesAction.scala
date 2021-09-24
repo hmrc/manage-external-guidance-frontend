@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package services
+package controllers.actions
 
-import connectors.TimescalesConnector
-import models.TimescalesDetail
-import javax.inject.{Inject, Singleton}
-import models.RequestOutcome
-import play.api.libs.json.JsValue
-import uk.gov.hmrc.http.HeaderCarrier
+import base.ControllerBaseSpec
+import models.requests.IdentifierRequest
+import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class TimescalesService @Inject() (timescalesConnector: TimescalesConnector) {
-  def submitTimescales(timescales: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[TimescalesDetail]] =
-    timescalesConnector.submitTimescales(timescales)
+object FakeTimescalesAction extends ControllerBaseSpec with TimescalesAction {
 
-  def details()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[TimescalesDetail]] =
-    timescalesConnector.details()
+  override implicit protected def executionContext: ExecutionContext = ExecutionContext.global
 
+  override def parser: BodyParser[AnyContent] = messagesControllerComponents.parsers.defaultBodyParser
+
+  override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
+    block(IdentifierRequest(request, credential, name, email))
 }

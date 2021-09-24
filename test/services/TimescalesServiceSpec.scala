@@ -20,11 +20,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
-import models.RequestOutcome
+import models.{TimescalesDetail, UpdateDetails, RequestOutcome}
 import models.errors.InternalServerError
 import base.BaseSpec
 import mocks.MockTimescalesConnector
-
+import java.time.ZonedDateTime
 import scala.util.{Failure, Success}
 
 class TimescalesServiceSpec extends BaseSpec {
@@ -33,24 +33,53 @@ class TimescalesServiceSpec extends BaseSpec {
     implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
     lazy val timescalesService: TimescalesService = new TimescalesService(mockTimescalesConnector)
     val dummyTimescales: JsValue = Json.parse("""{"TimescaleID": 10}""")
+    val lastUpdateTime: ZonedDateTime = ZonedDateTime.of(2020, 1, 1, 12, 0, 1, 0, ZonedDateTime.now.getZone)
+    val timescalesJson: JsValue = Json.parse("""{"First": 1, "Second": 2, "Third": 3}""")
+    val timescales: Map[String, Int] = Map("First" -> 1, "Second" -> 2, "Third" -> 3)
+    val credId: String = "234324234"
+    val user: String = "User Blah"
+    val email: String = "user@blah.com"
+    val updateDetail = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
+    val timescalesDetail = TimescalesDetail(timescales.size, Some(updateDetail))
   }
 
   "The Timescales service" should {
 
-    "Return a Unit response after a successful call by the connector" in new Test {
+    "Return details response after a successful timescales submission" in new Test {
 
       MockTimescalesConnector
         .submitTimescales(dummyTimescales)
-        .returns(Future.successful(Right(())))
+        .returns(Future.successful(Right(timescalesDetail)))
 
-      val result: Future[RequestOutcome[Unit]] = timescalesService.submitTimescales(dummyTimescales)
+      val result: Future[RequestOutcome[TimescalesDetail]] = timescalesService.submitTimescales(dummyTimescales)
 
       result.onComplete {
         case Success(response) =>
           response match {
-            case Right(()) =>  succeed
+            case Right(details) if details == timescalesDetail =>  succeed
             case Left(error) => fail(s"Unexpected error returned by timescales connector : ${error.toString}")
           }
+
+        case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+      }
+
+    }
+
+    "Return details response awhen requested" in new Test {
+
+      MockTimescalesConnector
+        .details()
+        .returns(Future.successful(Right(timescalesDetail)))
+
+      val result: Future[RequestOutcome[TimescalesDetail]] = timescalesService.details()
+
+      result.onComplete {
+        case Success(response) =>
+          response match {
+            case Right(details) if details == timescalesDetail =>  succeed
+            case Left(error) => fail(s"Unexpected error returned by timescales connector : ${error.toString}")
+          }
+
         case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
       }
 
@@ -62,12 +91,12 @@ class TimescalesServiceSpec extends BaseSpec {
         .submitTimescales(dummyTimescales)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[Unit]] = timescalesService.submitTimescales(dummyTimescales)
+      val result: Future[RequestOutcome[TimescalesDetail]] = timescalesService.submitTimescales(dummyTimescales)
 
       result.onComplete {
         case Success(response) =>
           response match {
-            case Right(()) => fail("Success response returned when an error was expected")
+            case Right(_) => fail("Success response returned when an error was expected")
             case Left(error) => error shouldBe InternalServerError
           }
 
