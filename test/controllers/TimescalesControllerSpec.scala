@@ -43,11 +43,8 @@ import models.errors.ForbiddenError
 class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuite with MockTimescalesService {
 
   private trait Test {
-
     implicit val hc: HeaderCarrier = HeaderCarrier()
-
     val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
-
     def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
     implicit val messages: Messages = messagesApi.preferred(FakeRequest("GET", "/"))
     val view = injector.instanceOf[upload_timescales]
@@ -66,6 +63,14 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
     val updateDetail = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
     val timescaleDetails = TimescalesDetail(timescales.size, Some(updateDetail))
 
+    def createTempJsonFile(content: String): (TemporaryFile, Int) = {
+      val tempFile = Files.SingletonTemporaryFileCreator.create("file", "tmp")
+      val writer = NioFiles.newBufferedWriter(tempFile.path, StandardOpenOption.CREATE)
+      writer.write(content, 0, content.length)
+      writer.close
+      (tempFile, content.length)
+    }
+
     def createMultipartFormData(fileContent: String, contentType: String): MultipartFormData[TemporaryFile] = {
       val (tempFile, fileLength) = createTempJsonFile(fileContent)
       val filePart = new MultipartFormData.FilePart[TemporaryFile](
@@ -76,30 +81,8 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
         fileSize = fileLength
       )
 
-      new MultipartFormData[TemporaryFile](
-        dataParts = Map(
-          "x-amz-algorithm"         -> Seq("AWS4-HMAC-SHA256"),
-          "x-amz-credential"        -> Seq("some-credentials"),
-          "x-amz-date"              -> Seq("20180517T113023Z"),
-          "policy"                  -> Seq(),
-          "x-amz-signature"         -> Seq("some-signature"),
-          "acl"                     -> Seq("private"),
-          "key"                     -> Seq("file-key"),
-          "x-amz-meta-callback-url" -> Seq("http://mylocalservice.com/callback")
-        ),
-        files    = Seq(filePart),
-        badParts = Nil
-      )
+      new MultipartFormData[TemporaryFile](Map(), Seq(filePart), Nil)
     }
-
-    def createTempJsonFile(content: String): (TemporaryFile, Int) = {
-      val tempFile = Files.SingletonTemporaryFileCreator.create("file", "tmp")
-      val writer = NioFiles.newBufferedWriter(tempFile.path, StandardOpenOption.CREATE)
-      writer.write(content, 0, content.length)
-      writer.close
-      (tempFile, content.length)
-    }
-
   }
 
   "GET /external-guidance/timescales" should {
