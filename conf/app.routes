@@ -34,5 +34,4 @@ OPTIONS    /process/approval/fact-check               controllers.apis.ApprovalC
 GET        /unpublish/:id/                            controllers.ArchiveController.unpublish(id)
 POST       /unpublish/:id/:code                       controllers.ArchiveController.archive(id, code)
 
-->         /govuk-frontend          govuk.Routes
 ->         /hmrc-frontend           hmrcfrontend.Routes
