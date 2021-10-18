@@ -21,7 +21,7 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
-import models.{TimescalesDetail, RequestOutcome}
+import models.{TimescalesResponse, RequestOutcome}
 import services.TimescalesService
 
 trait MockTimescalesService extends MockFactory {
@@ -29,12 +29,12 @@ trait MockTimescalesService extends MockFactory {
   val mockTimescalesService: TimescalesService = mock[TimescalesService]
 
   object MockTimescalesService {
-    def submitTimescales(timescales: JsValue): CallHandler[Future[RequestOutcome[TimescalesDetail]]] =
+    def submitTimescales(timescales: JsValue): CallHandler[Future[RequestOutcome[TimescalesResponse]]] =
       (mockTimescalesService
         .submitTimescales(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
         .expects(timescales, *, *)
 
-    def details(): CallHandler[Future[RequestOutcome[TimescalesDetail]]] =
+    def details(): CallHandler[Future[RequestOutcome[TimescalesResponse]]] =
       (mockTimescalesService
         .details()(_: ExecutionContext, _: HeaderCarrier))
         .expects(*, *)

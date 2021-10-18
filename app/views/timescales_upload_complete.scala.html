@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@this(layout: main_layout)
+@this(layout: main_layout, govukWarningText : GovukWarningText)
 
 @(count: Int, details: Option[UpdateDisplayDetails])(implicit request: Request[_], messages: Messages)
 
@@ -23,8 +23,18 @@
   <h1 class="govuk-heading-xl">@messages("timescales.complete.title")</h1>
 
   @details.map{update =>
-  <p class="govuk-body">@messages("timescales.complete.status1", count, update.time, update.date)</p>
-  <p class="govuk-body">@messages("timescales.complete.status2", update.user, update.credId, update.email)</p>
+    <p class="govuk-body">@messages("timescales.complete.status1", count, update.time, update.date)</p>
+    <p class="govuk-body">@messages("timescales.complete.status2", update.user, update.credId, update.email)</p>
+
+    @if(!update.retained.isEmpty) {
+      @govukWarningText(WarningText(
+      iconFallbackText = "Warning",
+      content = Text(messages("timescales.complete.retained0"))
+      ))
+
+      <p class="govuk-body">@messages("timescales.complete.retained1")<strong>@{update.retained.mkString(",")}</strong></p>
+      <p class="govuk-body">@messages("timescales.complete.retained2")</p>
+    }
   }
 
   <a href="@{routes.TimescalesController.timescales.url}" role="button" class="govuk-button" data-module="govuk-button">@messages("timescales.complete.close")</a>

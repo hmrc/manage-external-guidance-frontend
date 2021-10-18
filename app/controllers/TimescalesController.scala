@@ -52,8 +52,8 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
           readJsonFile(timescales.ref.path) match {
             case Success(json) =>
               timescalesService.submitTimescales(json).flatMap {
-                case Right(details) =>
-                  Future.successful(Ok(uploadCompleteView(details.count, details.lastUpdate.map(UpdateDisplayDetails(_)))))
+                case Right(response) =>
+                  Future.successful(Ok(uploadCompleteView(response.count, response.lastUpdate.map(UpdateDisplayDetails(_)))))
                 case Left(err) =>
                   logger.error(s"Failed to submit timescales update, err = $err")
                   uploadPage(Some("timescales.error.invalid"))
@@ -69,9 +69,9 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
 
   private def uploadPage(error: Option[String] = None)(implicit request: Request[_]): Future[Result] =
     timescalesService.details().map {
-      case Right(details) =>
-        val updateDisplayDetails: Option[UpdateDisplayDetails] = details.lastUpdate.map(UpdateDisplayDetails(_))
-        error.fold(Ok(view(details.count, updateDisplayDetails, None)))(_ => BadRequest(view(details.count, updateDisplayDetails, error)))
+      case Right(response) =>
+        val updateDisplayDetails: Option[UpdateDisplayDetails] = response.lastUpdate.map(UpdateDisplayDetails(_))
+        error.fold(Ok(view(response.count, updateDisplayDetails, None)))(_ => BadRequest(view(response.count, updateDisplayDetails, error)))
       case Left(ValidationError) =>
         BadRequest(Json.toJson(ValidationError))
       case Left(ForbiddenError) =>

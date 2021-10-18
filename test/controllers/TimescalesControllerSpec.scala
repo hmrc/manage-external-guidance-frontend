@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.upload_timescales
 import views.html.timescales_upload_complete
-import models.{TimescalesDetail, UpdateDetails}
+import models.{TimescalesResponse, UpdateDetails}
 import play.api.libs.json._
 import config.ErrorHandler
 import scala.concurrent.Future
@@ -61,7 +61,7 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
     val user: String = "User Blah"
     val email: String = "user@blah.com"
     val updateDetail = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
-    val timescaleDetails = TimescalesDetail(timescales.size, Some(updateDetail))
+    val timescaleDetails = TimescalesResponse(timescales.size, Some(updateDetail))
 
     def createTempJsonFile(content: String): (TemporaryFile, Int) = {
       val tempFile = Files.SingletonTemporaryFileCreator.create("file", "tmp")
@@ -87,7 +87,7 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
 
   "GET /external-guidance/timescales" should {
 
-    "return OK and last update details" in new Test {
+    "return OK and last update response" in new Test {
 
       MockTimescalesService.details.returns(Future.successful(Right(timescaleDetails)))
 
@@ -121,7 +121,7 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
   }
 
   "POST /external-guidance/timescales" should {
-    "Upload valid timescale defns return OK and last update details" in new Test {
+    "Upload valid timescale defns return OK and last update response" in new Test {
       val fakeUploadRequest = FakeRequest("POST", "/external-guidance/timescales").withBody(createMultipartFormData(timscalesJsonString, "application/json"))
 
       MockTimescalesService.submitTimescales(timescalesJson).returns(Future.successful(Right(timescaleDetails)))
@@ -133,7 +133,7 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
     }
 
 
-    "Upload valid timescale defns but submission fails, return BAD_REQUEST and last update details" in new Test {
+    "Upload valid timescale defns but submission fails, return BAD_REQUEST and last update response" in new Test {
       val fakeUploadRequest = FakeRequest("POST", "/external-guidance/timescales").withBody(createMultipartFormData(timscalesJsonString, "application/json"))
 
       MockTimescalesService.submitTimescales(timescalesJson).returns(Future.successful(Left(BadRequestError)))
@@ -145,7 +145,7 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
       charset(result) shouldBe Some("utf-8")
     }
 
-    "Upload invalid timescale defns return BadRequest and last update details" in new Test {
+    "Upload invalid timescale defns return BadRequest and last update response" in new Test {
       val fakeUploadRequest = FakeRequest("POST", "/external-guidance/timescales").withBody(createMultipartFormData("some text", "application/json"))
 
       MockTimescalesService.details.returns(Future.successful(Right(timescaleDetails)))
@@ -156,7 +156,7 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
       charset(result) shouldBe Some("utf-8")
     }
 
-    "Upload valid timescale defns with non json content-type should return BadRequest and last update details" in new Test {
+    "Upload valid timescale defns with non json content-type should return BadRequest and last update response" in new Test {
       val fakeUploadRequest = FakeRequest("POST", "/external-guidance/timescales").withBody(createMultipartFormData(timscalesJsonString, "application/txt"))
 
       MockTimescalesService.details.returns(Future.successful(Right(timescaleDetails)))

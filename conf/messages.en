@@ -33,9 +33,13 @@ timescales.button = Upload
 timescales.error.noselection = Select a timescales definition json file to upload
 timescales.error.notjson = The selected file is not a json file
 timescales.error.invalid = The selected file does not contain valid timescale definitions
-timescales.complete.title = Timescale definitions have been successfully updated
+
+timescales.complete.title = Timescale update completed successfully
 timescales.complete.status1 = {0} definitions uploaded at {1} on {2}
 timescales.complete.status2 = Upload carried out by {0} ({1}), email: {2}
+timescales.complete.retained0 = Read carefully the following sections
+timescales.complete.retained1 = This update retires the following defintion(s):
+timescales.complete.retained2 = As these timescales are currently used within published guidance or guidance under approval, they have been retained. Please make the guidance team aware of these retirements.
 timescales.complete.close = Return to timescales update dashboard
 
 approvals.tableTitle = Interactive guidance dashboard
