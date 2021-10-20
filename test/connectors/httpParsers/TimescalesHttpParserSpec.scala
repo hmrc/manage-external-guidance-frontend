@@ -20,7 +20,7 @@ import java.time.ZonedDateTime
 
 import base.BaseSpec
 import connectors.httpParsers.TimescalesHttpParser._
-import models.{TimescalesDetail, UpdateDetails}
+import models.{TimescalesResponse, UpdateDetails}
 import play.api.http.{HttpVerbs, Status}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpResponse
@@ -39,7 +39,7 @@ class TimescalesHttpParserSpec extends BaseSpec with HttpVerbs with Status {
     val user: String = "User Blah"
     val email: String = "user@blah.com"
     val updateDetail = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
-    val timescalesDetail = TimescalesDetail(timescales.size, Some(updateDetail))
+    val timescalesDetail = TimescalesResponse(timescales.size, Some(updateDetail))
 
     val url: String = "/test"
     val validResponse: JsValue = Json.toJson(timescalesDetail)

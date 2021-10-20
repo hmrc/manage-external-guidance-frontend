@@ -21,15 +21,15 @@ import models.RequestOutcome
 import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads
-import models.TimescalesDetail
+import models.TimescalesResponse
 
 object TimescalesHttpParser extends HttpParser {
   val logger: Logger = Logger(getClass)
 
-  implicit val timescalesHttpReads: HttpReads[RequestOutcome[TimescalesDetail]] = {
+  implicit val timescalesHttpReads: HttpReads[RequestOutcome[TimescalesResponse]] = {
     case (_, _, response) if response.status == OK || response.status == ACCEPTED =>
-      response.validateJson[TimescalesDetail] match {
-        case Some(result) => Right(result)
+      response.validateJson[TimescalesResponse] match {
+        case Some(response)  => Right(response)
         case None =>
           logger.error("Unable to parse successful response when POSTing timescales update")
           Left(InternalServerError)

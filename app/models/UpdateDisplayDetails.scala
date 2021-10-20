@@ -18,12 +18,12 @@ package models
 
 import java.time.format.{DateTimeFormatter, ResolverStyle}
 
-case class UpdateDisplayDetails(time: String, date: String, credId: String, user: String, email: String)
+case class UpdateDisplayDetails(time: String, date: String, credId: String, user: String, email: String, retained: List[String])
 
 object UpdateDisplayDetails {
   val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM uuuu", java.util.Locale.UK).withResolverStyle(ResolverStyle.STRICT)
   val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("h:mm a", java.util.Locale.UK).withResolverStyle(ResolverStyle.STRICT)
 
-  def apply(details: UpdateDetails): UpdateDisplayDetails =
-    UpdateDisplayDetails(details.when.format(timeFormatter), details.when.format(dateFormatter), details.credId, details.user, details.email)
+  def apply(d: UpdateDetails): UpdateDisplayDetails =
+    UpdateDisplayDetails(d.when.format(timeFormatter), d.when.format(dateFormatter), d.credId, d.user, d.email, d.retainedDeletions)
 }
