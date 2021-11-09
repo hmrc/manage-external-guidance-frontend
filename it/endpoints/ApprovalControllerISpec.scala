@@ -45,7 +45,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
 
       AuditStub.audit()
 
-      val responsePayload: JsValue = Json.toJson(InvalidProcessError)
+      val responsePayload: JsValue = Json.toJson(InvalidProcessError : models.errors.Error)
       ExternalGuidanceStub.save2iReview(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest(endPoint2iReview)
@@ -57,7 +57,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
 
       AuditStub.audit()
 
-      val responsePayload: JsValue = Json.toJson(InternalServerError)
+      val responsePayload: JsValue = Json.toJson(InternalServerError : models.errors.Error)
       ExternalGuidanceStub.save2iReview(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
       val request = buildRequest(endPoint2iReview)
@@ -83,7 +83,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
 
       AuditStub.audit()
 
-      val responsePayload: JsValue = Json.toJson(InvalidProcessError)
+      val responsePayload: JsValue = Json.toJson(InvalidProcessError : models.errors.Error)
       ExternalGuidanceStub.saveFactCheck(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest(endPointFactCheck)
@@ -95,7 +95,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
 
       AuditStub.audit()
 
-      val responsePayload: JsValue = Json.toJson(InternalServerError)
+      val responsePayload: JsValue = Json.toJson(InternalServerError : models.errors.Error)
       ExternalGuidanceStub.saveFactCheck(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
       val request = buildRequest(endPointFactCheck)

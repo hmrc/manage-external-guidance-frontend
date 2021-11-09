@@ -99,7 +99,7 @@ class TwoEyeReviewerControllerISpec extends IntegrationSpec {
       AuditStub.audit()
       AuthStub.authorise()
 
-      val responsePayload: JsValue = Json.toJson(NotFoundError)
+      val responsePayload: JsValue = Json.toJson(NotFoundError : models.errors.Error)
 
       ExternalGuidanceStub.approval2iReview(Status.NOT_FOUND, responsePayload)
 
@@ -115,7 +115,7 @@ class TwoEyeReviewerControllerISpec extends IntegrationSpec {
       AuditStub.audit()
       AuthStub.authorise()
 
-      val responsePayload: JsValue = Json.toJson(InternalServerError)
+      val responsePayload: JsValue = Json.toJson(InternalServerError : models.errors.Error)
 
       ExternalGuidanceStub.approval2iReview(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
@@ -131,7 +131,7 @@ class TwoEyeReviewerControllerISpec extends IntegrationSpec {
       AuditStub.audit()
       AuthStub.authorise()
 
-      val responsePayload: JsValue = Json.toJson(StaleDataError)
+      val responsePayload: JsValue = Json.toJson(StaleDataError : models.errors.Error)
 
       ExternalGuidanceStub.approval2iReview(Status.NOT_FOUND, responsePayload)
 
@@ -147,7 +147,7 @@ class TwoEyeReviewerControllerISpec extends IntegrationSpec {
       AuditStub.audit()
       AuthStub.authorise()
 
-      val responsePayload: JsValue = Json.toJson(BadRequestError)
+      val responsePayload: JsValue = Json.toJson(BadRequestError : models.errors.Error)
 
       ExternalGuidanceStub.approval2iReview(Status.BAD_REQUEST, responsePayload)
 

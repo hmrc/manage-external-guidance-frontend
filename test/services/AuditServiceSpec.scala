@@ -63,7 +63,7 @@ class AuditServiceSpec extends BaseSpec {
   "The Audit service" should {
 
     "Accept an TwoEyeReviewCompleteEvent object" in new Test {
-      val details: JsValue = Json.toJson(twoEyeReviewCompleteEvent)
+      val details: JsValue = Json.toJson(twoEyeReviewCompleteEvent : AuditEvent)
       val path: Option[String] = Some("/guidance/scratch")
       val extendedEvent: ExtendedDataEvent = ExtendedDataEvent(
         "manage-external-guidance-frontend",
@@ -80,7 +80,7 @@ class AuditServiceSpec extends BaseSpec {
     }
 
     "Accept a FactCheckCompleteEvent object" in new Test {
-      val details: JsValue = Json.toJson(factCheckCompleteEvent)
+      val details: JsValue = Json.toJson(factCheckCompleteEvent : AuditEvent)
       val path: Option[String] = Some("/guidance/approve")
       val extendedEvent: ExtendedDataEvent = ExtendedDataEvent(
         "manage-external-guidance-frontend",
@@ -97,7 +97,7 @@ class AuditServiceSpec extends BaseSpec {
     }
 
     "Accept an PublishedEvent object" in new Test {
-      val details: JsValue = Json.toJson(publishedEvent)
+      val details: JsValue = Json.toJson(publishedEvent : AuditEvent)
       val path: Option[String] = Some("/guidance/publish")
       val extendedEvent: ExtendedDataEvent =
         ExtendedDataEvent("manage-external-guidance-frontend", "published", eventUUID, tagsData("published", path), details, submissionTime)

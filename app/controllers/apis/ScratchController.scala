@@ -45,7 +45,7 @@ class ScratchController @Inject() (appConfig: AppConfig, scratchService: Scratch
         val location: String = s"/guidance-review/scratch/${submissionResponse.id}"
         Created(Json.toJson(submissionResponse)).withHeaders("location" -> location).withHeaders(corsHeaders: _*)
       case Left(err @ Error(Error.UnprocessableEntity, _, _)) => UnprocessableEntity(Json.toJson(err)).withHeaders(corsHeaders: _*)
-      case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError)).withHeaders(corsHeaders: _*)
+      case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError : models.errors.Error)).withHeaders(corsHeaders: _*)
       case Left(error) => InternalServerError(Json.toJson(error)).withHeaders(corsHeaders: _*)
     }
   }

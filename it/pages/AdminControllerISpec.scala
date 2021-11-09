@@ -72,7 +72,7 @@ class AdminControllerISpec extends IntegrationSpec {
       AuditStub.audit()
       AuthStub.authorise()
 
-      val responsePayload: JsValue = Json.toJson(InvalidProcessError)
+      val responsePayload: JsValue = Json.toJson(InvalidProcessError : models.errors.Error)
       ExternalGuidanceStub.approvalSummary(Status.OK, responsePayload)
 
       val request = buildRequest(endPoint)

@@ -73,9 +73,9 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
         val updateDisplayDetails: Option[UpdateDisplayDetails] = response.lastUpdate.map(UpdateDisplayDetails(_))
         error.fold(Ok(view(response.count, updateDisplayDetails, None)))(_ => BadRequest(view(response.count, updateDisplayDetails, error)))
       case Left(ValidationError) =>
-        BadRequest(Json.toJson(ValidationError))
+        BadRequest(Json.toJson(ValidationError : models.errors.Error))
       case Left(ForbiddenError) =>
-        Unauthorized(Json.toJson(ForbiddenError))
+        Unauthorized(Json.toJson(ForbiddenError : models.errors.Error))
       case Left(error) =>
         logger.error(s"Timescales service failure, err = $error")
         InternalServerError(Json.toJson(error))

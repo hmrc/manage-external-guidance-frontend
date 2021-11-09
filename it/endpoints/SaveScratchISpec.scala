@@ -44,7 +44,7 @@ class SaveScratchISpec extends IntegrationSpec {
 
       AuditStub.audit()
 
-      val responsePayload: JsValue = Json.toJson(InvalidProcessError)
+      val responsePayload: JsValue = Json.toJson(InvalidProcessError : models.errors.Error)
       ExternalGuidanceStub.saveScratch(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest("/process/scratch")
@@ -56,7 +56,7 @@ class SaveScratchISpec extends IntegrationSpec {
 
       AuditStub.audit()
 
-      val responsePayload: JsValue = Json.toJson(InternalServerError)
+      val responsePayload: JsValue = Json.toJson(InternalServerError : models.errors.Error)
       ExternalGuidanceStub.saveScratch(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
       val request = buildRequest("/process/scratch")

@@ -192,17 +192,17 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
       }
     }
     "the response is BAD_REQUEST" should {
-      "return BadRequestError" in new TestSetup(BAD_REQUEST, Json.toJson(BadRequestError)) {
+      "return BadRequestError" in new TestSetup(BAD_REQUEST, Json.toJson(BadRequestError : models.errors.Error)) {
         readResponse shouldBe Left(BadRequestError)
       }
     }
     "the response is NOT_FOUND with a code of NOT_FOUND_ERROR" should {
-      "return NotFoundError" in new TestSetup(NOT_FOUND, Json.toJson(NotFoundError)) {
+      "return NotFoundError" in new TestSetup(NOT_FOUND, Json.toJson(NotFoundError : models.errors.Error)) {
         readResponse shouldBe Left(NotFoundError)
       }
     }
     "the response is NOT_FOUND with a code of STALE_DATA_ERROR" should {
-      "return StaleDataError" in new TestSetup(NOT_FOUND, Json.toJson(StaleDataError)) {
+      "return StaleDataError" in new TestSetup(NOT_FOUND, Json.toJson(StaleDataError : models.errors.Error)) {
         readResponse shouldBe Left(StaleDataError)
       }
     }

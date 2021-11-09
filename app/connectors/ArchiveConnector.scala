@@ -19,14 +19,14 @@ package connectors
 import config.AppConfig
 import models.errors.BadRequestError
 import models.{PublishedProcess, RequestOutcome}
-import play.api.Logger.logger
+import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ArchiveConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
+class ArchiveConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) extends Logging {
 
   def archive(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Boolean]] = {
 
