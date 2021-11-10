@@ -51,7 +51,7 @@ class ApprovalController @Inject() (appConfig: AppConfig, approvalService: Appro
     result.map {
       case Right(approvalResponse) => Created(Json.toJson(approvalResponse)).withHeaders(corsHeaders: _*)
       case Left(err @ Error(Error.UnprocessableEntity, _, _)) => UnprocessableEntity(Json.toJson(err)).withHeaders(corsHeaders: _*)
-      case Left(InvalidProcessError) => BadRequest(Json.toJson(InvalidProcessError)).withHeaders(corsHeaders: _*)
+      case Left(InvalidProcessError) => BadRequest(Json.toJson[Error](InvalidProcessError)).withHeaders(corsHeaders: _*)
       case Left(error) => InternalServerError(Json.toJson(error)).withHeaders(corsHeaders: _*)
     }
   }

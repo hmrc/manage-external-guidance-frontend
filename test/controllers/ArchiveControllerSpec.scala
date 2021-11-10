@@ -22,7 +22,8 @@ import forms.UnpublishConfirmationFormProvider
 import mocks.MockArchiveConnector
 import models.PublishedProcess
 import models.errors.InternalServerError
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.libs.json.Json
@@ -35,7 +36,7 @@ import views.html.{unpublish_confirmation, unpublished}
 import java.time.ZonedDateTime
 import scala.concurrent.Future
 
-class ArchiveControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockArchiveConnector {
+class ArchiveControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockArchiveConnector {
 
   private trait Test {
     private val view = app.injector.instanceOf[unpublish_confirmation]

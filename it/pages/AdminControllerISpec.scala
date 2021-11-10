@@ -16,7 +16,7 @@
 
 package pages
 
-import models.errors.InvalidProcessError
+import models.errors.{Error, InvalidProcessError}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
@@ -72,7 +72,7 @@ class AdminControllerISpec extends IntegrationSpec {
       AuditStub.audit()
       AuthStub.authorise()
 
-      val responsePayload: JsValue = Json.toJson(InvalidProcessError)
+      val responsePayload: JsValue = Json.toJson[Error](InvalidProcessError)
       ExternalGuidanceStub.approvalSummary(Status.OK, responsePayload)
 
       val request = buildRequest(endPoint)

@@ -21,7 +21,7 @@ import java.util.UUID
 import play.api.http.Status
 import play.api.libs.ws.WSResponse
 import play.api.libs.json._
-import models.errors.{InternalServerError, InvalidProcessError}
+import models.errors.{Error, InternalServerError, InvalidProcessError}
 import stubs.{AuditStub, ExternalGuidanceStub}
 import support.IntegrationSpec
 
@@ -44,7 +44,7 @@ class SaveScratchISpec extends IntegrationSpec {
 
       AuditStub.audit()
 
-      val responsePayload: JsValue = Json.toJson(InvalidProcessError)
+      val responsePayload: JsValue = Json.toJson[Error](InvalidProcessError)
       ExternalGuidanceStub.saveScratch(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest("/process/scratch")
@@ -56,7 +56,7 @@ class SaveScratchISpec extends IntegrationSpec {
 
       AuditStub.audit()
 
-      val responsePayload: JsValue = Json.toJson(InternalServerError)
+      val responsePayload: JsValue = Json.toJson[Error](InternalServerError)
       ExternalGuidanceStub.saveScratch(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
       val request = buildRequest("/process/scratch")

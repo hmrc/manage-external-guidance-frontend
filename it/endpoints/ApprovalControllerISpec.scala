@@ -16,7 +16,7 @@
 
 package endpoints
 
-import models.errors.{InternalServerError, InvalidProcessError}
+import models.errors.{Error, InternalServerError, InvalidProcessError}
 import play.api.http.Status
 import play.api.libs.json._
 import play.api.libs.ws.WSResponse
@@ -45,7 +45,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
 
       AuditStub.audit()
 
-      val responsePayload: JsValue = Json.toJson(InvalidProcessError)
+      val responsePayload: JsValue = Json.toJson[Error](InvalidProcessError)
       ExternalGuidanceStub.save2iReview(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest(endPoint2iReview)
@@ -57,7 +57,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
 
       AuditStub.audit()
 
-      val responsePayload: JsValue = Json.toJson(InternalServerError)
+      val responsePayload: JsValue = Json.toJson[Error](InternalServerError)
       ExternalGuidanceStub.save2iReview(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
       val request = buildRequest(endPoint2iReview)
@@ -83,7 +83,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
 
       AuditStub.audit()
 
-      val responsePayload: JsValue = Json.toJson(InvalidProcessError)
+      val responsePayload: JsValue = Json.toJson[Error](InvalidProcessError)
       ExternalGuidanceStub.saveFactCheck(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest(endPointFactCheck)
@@ -95,7 +95,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
 
       AuditStub.audit()
 
-      val responsePayload: JsValue = Json.toJson(InternalServerError)
+      val responsePayload: JsValue = Json.toJson[Error](InternalServerError)
       ExternalGuidanceStub.saveFactCheck(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
       val request = buildRequest(endPointFactCheck)

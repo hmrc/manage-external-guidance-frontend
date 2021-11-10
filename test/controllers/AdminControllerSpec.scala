@@ -18,7 +18,8 @@ package controllers
 
 import controllers.actions.FakeAllRolesAction
 import mocks.MockApprovalService
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.test.FakeRequest
@@ -28,7 +29,7 @@ import views.html.approval_summary_list
 
 import scala.concurrent.Future
 
-class AdminControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockApprovalService {
+class AdminControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockApprovalService {
 
   private trait Test {
 

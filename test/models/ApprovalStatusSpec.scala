@@ -17,36 +17,38 @@
 package models
 
 import models.ApprovalStatus._
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.OptionValues
 import play.api.libs.json._
 
-class ApprovalStatusSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class ApprovalStatusSpec extends AnyWordSpec with Matchers with OptionValues with Enumerable.Implicits {
 
   "ApprovalStatus" must {
 
     "deserialise valid values" in {
 
-      JsString(Submitted.toString).validate[ApprovalStatus].asOpt.value mustEqual Submitted
+      JsString(Submitted.toString).validate[ApprovalStatus].asOpt.value shouldEqual Submitted
 
-      JsString(InProgress.toString).validate[ApprovalStatus].asOpt.value mustEqual InProgress
+      JsString(InProgress.toString).validate[ApprovalStatus].asOpt.value shouldEqual InProgress
 
-      JsString(Complete.toString).validate[ApprovalStatus].asOpt.value mustEqual Complete
+      JsString(Complete.toString).validate[ApprovalStatus].asOpt.value shouldEqual Complete
 
-      JsString(Published.toString).validate[ApprovalStatus].asOpt.value mustEqual Published
+      JsString(Published.toString).validate[ApprovalStatus].asOpt.value shouldEqual Published
     }
 
     "fail to deserialise invalid values" in {
 
-      JsString("invalidValue").validate[ApprovalStatus] mustEqual JsError("error.invalid")
+      JsString("invalidValue").validate[ApprovalStatus] shouldEqual JsError("error.invalid")
 
-      JsObject(Seq(("val", JsNull))).validate[ApprovalStatus] mustEqual JsError("error.invalid")
+      JsObject(Seq(("val", JsNull))).validate[ApprovalStatus] shouldEqual JsError("error.invalid")
     }
 
     "serialise" in {
 
       for {
         v <- ApprovalStatus.values
-      } yield Json.toJson(v) mustEqual JsString(v.toString)
+      } yield Json.toJson(v) shouldEqual JsString(v.toString)
 
     }
   }

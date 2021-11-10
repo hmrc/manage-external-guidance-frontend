@@ -68,7 +68,7 @@ class ArchiveController @Inject()(
             case Right(_) => Ok(unpublished(processName))
             case Left(_) => BadRequest(errorHandler.badRequestTemplate)
           }
-          case No  => Future(Redirect(routes.AdminController.approvalSummaries()))
+          case No  => Future(Redirect(routes.AdminController.approvalSummaries))
         }
       )
   }

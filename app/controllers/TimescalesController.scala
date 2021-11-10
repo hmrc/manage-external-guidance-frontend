@@ -17,7 +17,7 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import models.errors.{ForbiddenError, ValidationError}
+import models.errors.{Error, ForbiddenError, ValidationError}
 import config.ErrorHandler
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
@@ -73,9 +73,9 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
         val updateDisplayDetails: Option[UpdateDisplayDetails] = response.lastUpdate.map(UpdateDisplayDetails(_))
         error.fold(Ok(view(response.count, updateDisplayDetails, None)))(_ => BadRequest(view(response.count, updateDisplayDetails, error)))
       case Left(ValidationError) =>
-        BadRequest(Json.toJson(ValidationError))
+        BadRequest(Json.toJson[Error](ValidationError))
       case Left(ForbiddenError) =>
-        Unauthorized(Json.toJson(ForbiddenError))
+        Unauthorized(Json.toJson[Error](ForbiddenError))
       case Left(error) =>
         logger.error(s"Timescales service failure, err = $error")
         InternalServerError(Json.toJson(error))

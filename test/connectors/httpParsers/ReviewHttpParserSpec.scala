@@ -19,12 +19,13 @@ package connectors.httpParsers
 import models._
 import models.audit.AuditInfo
 import models.errors._
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsNull, JsValue, Json}
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpResponse
 
-class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
+class ReviewHttpParserSpec extends AnyWordSpec with Matchers with ReviewData {
 
   import connectors.httpParsers.ReviewHttpParser._
 
@@ -192,17 +193,17 @@ class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
       }
     }
     "the response is BAD_REQUEST" should {
-      "return BadRequestError" in new TestSetup(BAD_REQUEST, Json.toJson(BadRequestError)) {
+      "return BadRequestError" in new TestSetup(BAD_REQUEST, Json.toJson(BadRequestError : models.errors.Error)) {
         readResponse shouldBe Left(BadRequestError)
       }
     }
     "the response is NOT_FOUND with a code of NOT_FOUND_ERROR" should {
-      "return NotFoundError" in new TestSetup(NOT_FOUND, Json.toJson(NotFoundError)) {
+      "return NotFoundError" in new TestSetup(NOT_FOUND, Json.toJson(NotFoundError : models.errors.Error)) {
         readResponse shouldBe Left(NotFoundError)
       }
     }
     "the response is NOT_FOUND with a code of STALE_DATA_ERROR" should {
-      "return StaleDataError" in new TestSetup(NOT_FOUND, Json.toJson(StaleDataError)) {
+      "return StaleDataError" in new TestSetup(NOT_FOUND, Json.toJson(StaleDataError : models.errors.Error)) {
         readResponse shouldBe Left(StaleDataError)
       }
     }
