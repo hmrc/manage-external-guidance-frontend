@@ -57,7 +57,7 @@ class ApprovalsListSpec extends ViewSpecBase {
         a.text shouldBe messages("service.name")
 
         elementAttrs(a).get("href").fold(fail("Missing href attribute in anchor")) { href =>
-          href shouldBe routes.AdminController.approvalSummaries().url
+          href shouldBe routes.AdminController.approvalSummaries.url
         }
       }
     }

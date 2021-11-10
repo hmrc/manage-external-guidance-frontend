@@ -19,12 +19,13 @@ package connectors.httpParsers
 import models._
 import models.audit.AuditInfo
 import models.errors._
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsNull, JsValue, Json}
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpResponse
 
-class ReviewHttpParserSpec extends WordSpec with Matchers with ReviewData {
+class ReviewHttpParserSpec extends AnyWordSpec with Matchers with ReviewData {
 
   import connectors.httpParsers.ReviewHttpParser._
 

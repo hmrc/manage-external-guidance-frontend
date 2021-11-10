@@ -17,18 +17,18 @@
 package controllers
 
 import mocks.MockAppConfig
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.test.Helpers.stubMessagesControllerComponents
-//import uk.gov.hmrc.play.bootstrap.frontend.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-class AccessibilityStatementControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
+class AccessibilityStatementControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
   private trait Test {
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")

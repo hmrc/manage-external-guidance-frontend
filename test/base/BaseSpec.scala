@@ -16,6 +16,7 @@
 
 package base
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-trait BaseSpec extends WordSpec with Matchers
+trait BaseSpec extends AnyWordSpec with Matchers

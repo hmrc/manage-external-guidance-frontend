@@ -16,7 +16,7 @@
 
 package pages
 
-import models.errors.{BadRequestError, InternalServerError, NotFoundError, StaleDataError}
+import models.errors.{Error, BadRequestError, InternalServerError, NotFoundError, StaleDataError}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
@@ -99,7 +99,7 @@ class FactCheckControllerISpec extends IntegrationSpec {
       AuditStub.audit()
       AuthStub.authorise()
 
-      val responsePayload: JsValue = Json.toJson(NotFoundError : models.errors.Error)
+      val responsePayload: JsValue = Json.toJson[Error](NotFoundError)
 
       ExternalGuidanceStub.factCheck(Status.NOT_FOUND, responsePayload)
 
@@ -115,7 +115,7 @@ class FactCheckControllerISpec extends IntegrationSpec {
       AuditStub.audit()
       AuthStub.authorise()
 
-      val responsePayload: JsValue = Json.toJson(InternalServerError : models.errors.Error)
+      val responsePayload: JsValue = Json.toJson[Error](InternalServerError)
 
       ExternalGuidanceStub.factCheck(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
@@ -131,7 +131,7 @@ class FactCheckControllerISpec extends IntegrationSpec {
       AuditStub.audit()
       AuthStub.authorise()
 
-      val responsePayload: JsValue = Json.toJson(StaleDataError : models.errors.Error)
+      val responsePayload: JsValue = Json.toJson[Error](StaleDataError)
 
       ExternalGuidanceStub.factCheck(Status.NOT_FOUND, responsePayload)
 
@@ -147,7 +147,7 @@ class FactCheckControllerISpec extends IntegrationSpec {
       AuditStub.audit()
       AuthStub.authorise()
 
-      val responsePayload: JsValue = Json.toJson(BadRequestError : models.errors.Error)
+      val responsePayload: JsValue = Json.toJson[Error](BadRequestError)
 
       ExternalGuidanceStub.factCheck(Status.BAD_REQUEST, responsePayload)
 

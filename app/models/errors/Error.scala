@@ -31,7 +31,6 @@ object Error {
   def apply(code: String, msg: String): Error = Error(code, Some(msg), None)
   def apply(code: String, processErrors: List[ProcessError]): Error = Error(code, None, Some(processErrors))
   def apply(processErrors: List[ProcessError]): Error = Error(UnprocessableEntity, None, Some(processErrors))
-
   implicit val formats: OFormat[Error] = Json.format[Error]
 }
 
