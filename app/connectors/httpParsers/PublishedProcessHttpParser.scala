@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.HttpReads
 object PublishedProcessHttpParser extends HttpParser {
 
   val logger: Logger = Logger(getClass)
-  
+
   implicit val publishedProcessHttpReads: HttpReads[RequestOutcome[PublishedProcess]] = {
     case (_, _, response) if response.status == OK =>
       response.validateJson[PublishedProcess] match {
