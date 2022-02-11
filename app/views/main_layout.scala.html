@@ -19,7 +19,6 @@
 @import views.components.FooterLinks
 
 @this(layout: GovukLayout,
-        phaseBanner : GovukPhaseBanner,
         govukBackLink: GovukBackLink,
         footerLinks: FooterLinks,
         siteHeader: components.siteHeader,
@@ -41,16 +40,7 @@
              attributes = Map( "id" -> "back-link" ))
 }
 
-@beforeContentBlock = {
-    @phaseBanner(PhaseBanner(
-        tag = Some(Tag(
-            content = Text(messages("service.phaseName"))
-        )),
-        content = HtmlContent(s"""${messages("feedback.before")} <a id="beta-feedback-link" class="govuk-link" href="${appConfig.contactFrontendFeedbackUrl}">${messages("feedback.linkLabel")}</a> ${messages("feedback.after")}""")
-    ))
-
-    @renderBackLink(backLinkDetails)
-}
+@beforeContentBlock = { @renderBackLink(backLinkDetails) }
 
 @head = {
     <script src='@controllers.routes.Assets.versioned("javascripts/gtm.js")'></script>

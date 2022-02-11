@@ -140,17 +140,6 @@ class ApprovalsListSpec extends ViewSpecBase {
       }
     }
 
-    "Render link to contact frontend beta feedback page" in new Test {
-
-      Option(doc.getElementById("beta-feedback-link")).fold(fail("Test cannot locate beta feedback link")) { a =>
-        a.text shouldBe messages("feedback.linkLabel")
-
-        elementAttrs(a).get("href").fold(fail("Test cannot locate href attribute in beta feedback link")) { href =>
-          href shouldBe appConfig.contactFrontendFeedbackUrl
-        }
-      }
-    }
-
     "Render link to contact frontend page help" in new Test {
 
       Option(doc.getElementById("getpagehelp-link")).fold(fail("Test cannot locate contact frontend page help link")) { a =>
