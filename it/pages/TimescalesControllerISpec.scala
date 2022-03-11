@@ -46,7 +46,7 @@ class TimescalesControllerISpec extends IntegrationSpec {
 
       response.status shouldBe Status.OK
 
-      response.body.contains("Last update received from UserName at 10:30 AM on 11 Mar 2022") shouldBe true
+      response.body.contains("Last update received from UserName on 11 Mar 2022 at 10:30 AM UTC") shouldBe true
     }
 
     "return a InternalServerError response when the external guidance service returns not found" in {
