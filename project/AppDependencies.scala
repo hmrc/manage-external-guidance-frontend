@@ -14,7 +14,7 @@ object AppDependencies {
     "com.typesafe.play"            %% "play-test"                % current   % "test, it",
     "org.pegdown"                  %  "pegdown"                  % "1.6.0"   % "test, it",
     "com.github.tomakehurst"       %  "wiremock-jre8"            % "2.32.0"  % "test, it",
-    "com.fasterxml.jackson.module" %% "jackson-module-scala"     % "2.13.0"  % "test, it",
+    "com.fasterxml.jackson.module" %% "jackson-module-scala"     % "2.13.2"  % "test, it",
     "uk.gov.hmrc"                  %% "bootstrap-test-play-28"   % "5.20.0"  % "test, it"
   )
 
