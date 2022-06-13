@@ -16,6 +16,8 @@ $govuk-global-styles: true;
   font-size: 1rem;
 }
 
+.govuk-skip-link:link {text-decoration: underline; }
+
 @import "_task-list-mod";
 @import "_hmrc-internal-header";
 @import "_responsive-table";
