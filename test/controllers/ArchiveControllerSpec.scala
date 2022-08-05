@@ -90,12 +90,12 @@ class ArchiveControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPe
       MockArchiveConnector.archive("id")
         .returns(Future.successful(Right(true)))
 
-      val result: Future[Result] = controller.archive("id", "process")(fakeRequest.withFormUrlEncodedBody(("value", "Yes")))
+      val result: Future[Result] = controller.archive("id", "process")(fakeRequest.withMethod("POST").withFormUrlEncodedBody(("value", "Yes")))
       status(result) shouldBe Status.OK
     }
 
     "return 303 when leaving process published" in new Test {
-      val result: Future[Result] = controller.archive("id", "process")(fakeRequest.withFormUrlEncodedBody(("value", "No")))
+      val result: Future[Result] = controller.archive("id", "process")(fakeRequest.withMethod("POST")withFormUrlEncodedBody(("value", "No")))
       status(result) shouldBe Status.SEE_OTHER
     }
 
@@ -103,7 +103,7 @@ class ArchiveControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPe
       MockArchiveConnector.archive("id")
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[Result] = controller.archive("id", "process")(fakeRequest.withFormUrlEncodedBody(("value", "Yes")))
+      val result: Future[Result] = controller.archive("id", "process")(fakeRequest.withMethod("POST").withFormUrlEncodedBody(("value", "Yes")))
       status(result) shouldBe Status.BAD_REQUEST
     }
 
