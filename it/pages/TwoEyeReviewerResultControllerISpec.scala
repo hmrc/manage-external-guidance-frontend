@@ -71,7 +71,7 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
           ExternalGuidanceStub.approval2iReviewComplete(Status.OK, Json.toJsObject(auditInfo))
 
           val request: WSRequest = buildRequest("/2i-result/oct90005")
-          val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.Complete.toString)))
+          val response: WSResponse = await(request.withMethod("POST").post(Json.obj("value" -> ApprovalStatus.Complete.toString)))
           response.status shouldBe Status.OK
         }
       }
@@ -83,7 +83,7 @@ class TwoEyeReviewerResultControllerISpec extends IntegrationSpec {
           ExternalGuidanceStub.approval2iReviewComplete(Status.OK, Json.toJsObject(auditInfo))
 
           val request: WSRequest = buildRequest("/2i-result/oct90005")
-          val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.Published.toString)))
+          val response: WSResponse = await(request.withMethod("POST").post(Json.obj("value" -> ApprovalStatus.Published.toString)))
           response.status shouldBe Status.OK
         }
       }
