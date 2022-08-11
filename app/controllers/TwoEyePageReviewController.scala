@@ -31,7 +31,7 @@ import play.api.mvc._
 import services.ReviewService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.twoeye_page_review
-
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -44,6 +44,7 @@ class TwoEyePageReviewController @Inject() (
     reviewService: ReviewService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
+    with WithDefaultFormBinding
     with I18nSupport {
 
   val logger: Logger = Logger(getClass)

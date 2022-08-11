@@ -22,9 +22,17 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
+import play.api.libs.ws.{WSRequest, DefaultWSCookie}
+import play.api.mvc.{Session, SessionCookieBaker}
+import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
+import uk.gov.hmrc.crypto.PlainText
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import play.api.{Application, Environment, Mode}
+import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
+import uk.gov.hmrc.http.HeaderNames
+
 
 trait IntegrationSpec
     extends AnyWordSpecLike
@@ -37,77 +45,24 @@ trait IntegrationSpec
     with BeforeAndAfterEach
     with BeforeAndAfterAll {
 
-  val validOnePageJson: JsValue = Json.parse(
-    """
-      |{
-      |  "meta": {
-      |    "title": "Customer wants to make a cup of tea",
-      |    "id": "oct90001",
-      |    "ocelot": 1,
-      |    "lastAuthor": "000000",
-      |    "lastUpdate": 1500298931016,
-      |    "version": 4,
-      |    "filename": "oct90001.js"
-      |  },
-      |  "howto": [],
-      |  "contacts": [],
-      |  "links": [],
-      |  "flow": {
-      |    "start": {
-      |      "type": "PageStanza",
-      |      "url": "/feeling-bad",
-      |      "next": ["3"],
-      |      "stack": true
-      |    },
-      |    "3": {
-      |      "type": "InstructionStanza",
-      |      "text": 1,
-      |      "next": [
-      |        "2"
-      |      ],
-      |      "stack": true
-      |    },
-      |    "2": {
-      |      "type": "InstructionStanza",
-      |      "text": 0,
-      |      "next": [
-      |        "end"
-      |      ],
-      |      "stack": true
-      |    },
-      |    "end": {
-      |      "type": "EndStanza"
-      |    }
-      |  },
-      |  "phrases": [
-      |    ["Ask the customer if they have a tea bag", "Welsh, Ask the customer if they have a tea bag"],
-      |    ["Do you have a tea bag?", "Welsh, Do you have a tea bag?"],
-      |    ["Yes - they do have a tea bag", "Welsh, Yes - they do have a tea bag"],
-      |    ["No - they do not have a tea bag", "Welsh, No - they do not have a tea bag"],
-      |    ["Ask the customer if they have a cup", "Welsh, Ask the customer if they have a cup"],
-      |    ["Do you have a cup?", "Welsh, Do you have a cup?"],
-      |    ["yes - they do have a cup ", "Welsh, yes - they do have a cup "],
-      |    ["no - they don’t have a cup", "Welsh, no - they don’t have a cup"]
-      |  ]
-      |}
-    """.stripMargin
-  )
-
   val mockHost: String = WireMockHelper.host
   val mockPort: String = WireMockHelper.wireMockPort.toString
-
+  val SessionId: String = s"mock-sessionid"
+  val BearerToken: String = "mock-bearer-token"
   private val rootContext = "/external-guidance"
+  private val servicesPath = "microservice.services"
 
   lazy val client: WSClient = app.injector.instanceOf[WSClient]
-
-  private val servicesPath = "microservice.services"
+  lazy val cookieCrypto: SessionCookieCrypto = app.injector.instanceOf[SessionCookieCrypto]
+  lazy val cookieBaker: SessionCookieBaker = app.injector.instanceOf[SessionCookieBaker]
 
   def overriddenConfig: Map[String, Any] = Map(
     s"$servicesPath.auth.host" -> mockHost,
     s"$servicesPath.auth.port" -> mockPort,
     s"$servicesPath.external-guidance.host" -> mockHost,
     s"$servicesPath.external-guidance.port" -> mockPort,
-    "auditing.consumer.baseUri.port" -> mockPort
+    "auditing.consumer.baseUri.port" -> mockPort,
+    "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck"
   )
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
@@ -125,10 +80,36 @@ trait IntegrationSpec
     super.afterAll()
   }
 
-  def buildRequest(path: String): WSRequest =
+  def buildRequest(path: String): WSRequest = {
+    val headers = List(
+      HeaderNames.xSessionId -> SessionId,
+      HeaderNames.authorisation -> BearerToken,
+      "Csrf-Token" -> "nocheck"
+    )
     client
       .url(s"http://localhost:$port$rootContext$path")
+      .withCookies(mockSessionCookie)
+      .withHttpHeaders(headers:_*)
       .withFollowRedirects(false)
+  }
 
   def document(response: WSResponse): JsValue = Json.parse(response.body)
+
+  def mockSessionCookie = {
+    val sessionCookie = cookieBaker.encodeAsCookie(Session(Map(
+      SessionKeys.lastRequestTimestamp -> System.currentTimeMillis().toString,
+      SessionKeys.authToken -> BearerToken,
+      SessionKeys.sessionId -> SessionId
+    )))
+
+    DefaultWSCookie(
+      sessionCookie.name,
+      cookieCrypto.crypto.encrypt(PlainText(sessionCookie.value)).value,
+      sessionCookie.domain,
+      Some(sessionCookie.path),
+      sessionCookie.maxAge.map(_.toLong),
+      sessionCookie.secure,
+      sessionCookie.httpOnly
+    )
+  }
 }

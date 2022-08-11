@@ -20,7 +20,7 @@ import models.errors.{Error, InternalServerError, InvalidProcessError}
 import play.api.http.Status
 import play.api.libs.json._
 import play.api.libs.ws.WSResponse
-import stubs.{AuditStub, ExternalGuidanceStub}
+import stubs.{AuditStub, AuthStub, ExternalGuidanceStub}
 import support.IntegrationSpec
 
 class ApprovalControllerISpec extends IntegrationSpec {
@@ -32,24 +32,26 @@ class ApprovalControllerISpec extends IntegrationSpec {
     "return an CREATED response" in {
 
       AuditStub.audit()
+      AuthStub.authorise()
 
       val responsePayload = Json.obj("id" -> "oct90001")
       ExternalGuidanceStub.save2iReview(Status.CREATED, responsePayload)
 
       val request = buildRequest(endPoint2iReview)
-      val response: WSResponse = await(request.post(validOnePageJson))
+      val response: WSResponse = await(request.withMethod("POST").post(validOnePageJson))
       response.status shouldBe Status.CREATED
     }
 
     "return a BAD_REQUEST response when the external guidance microservice returns a BadRequest" in {
 
       AuditStub.audit()
+      AuthStub.authorise()
 
       val responsePayload: JsValue = Json.toJson[Error](InvalidProcessError)
       ExternalGuidanceStub.save2iReview(Status.BAD_REQUEST, responsePayload)
 
       val request = buildRequest(endPoint2iReview)
-      val response: WSResponse = await(request.post(validOnePageJson))
+      val response: WSResponse = await(request.withMethod("POST").post(validOnePageJson))
       response.status shouldBe Status.BAD_REQUEST
     }
 
@@ -61,7 +63,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
       ExternalGuidanceStub.save2iReview(Status.INTERNAL_SERVER_ERROR, responsePayload)
 
       val request = buildRequest(endPoint2iReview)
-      val response: WSResponse = await(request.post(validOnePageJson))
+      val response: WSResponse = await(request.withMethod("POST").post(validOnePageJson))
       response.status shouldBe Status.INTERNAL_SERVER_ERROR
     }
   }
@@ -75,7 +77,7 @@ class ApprovalControllerISpec extends IntegrationSpec {
       ExternalGuidanceStub.saveFactCheck(Status.CREATED, responsePayload)
 
       val request = buildRequest(endPointFactCheck)
-      val response: WSResponse = await(request.post(validOnePageJson))
+      val response: WSResponse = await(request.withMethod("POST").post(validOnePageJson))
       response.status shouldBe Status.CREATED
     }
 
