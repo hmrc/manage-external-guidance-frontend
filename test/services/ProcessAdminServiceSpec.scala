@@ -106,60 +106,6 @@ class ProcessAdminServiceSpec extends BaseSpec {
           }
         case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
       }
-
     }
-
-  //   "Return an error after an unsuccessful call to the fact check connector" in new Test {
-
-  //     MockApprovalConnector
-  //       .submitForFactCheck(dummyProcess)
-  //       .returns(Future.successful(Left(InternalServerError)))
-
-  //     val result: Future[RequestOutcome[ApprovalResponse]] = service.submitForFactCheck(dummyProcess)
-
-  //     result.onComplete {
-  //       case Success(response) =>
-  //         response match {
-  //           case Right(_) => fail("Approval response returned when an error was expected")
-  //           case Left(error) => error shouldBe InternalServerError
-  //         }
-  //       case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
-  //     }
-  //   }
-
-  //   "Return a list of Processes after an successful call to the summaries connector" in new Test {
-
-  //     MockApprovalConnector.approvalSummaries
-  //       .returns(Future.successful(Right(List())))
-
-  //     val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries
-
-  //     result.onComplete {
-  //       case Success(response) =>
-  //         response match {
-  //           case Right(_) => succeed
-  //           case Left(err) => fail(s"Unexpected error returned by approvalSummaries connector : ${err.toString}")
-  //         }
-  //       case Failure(exception) => fail(s"Call failed and returned unexpected error : ${exception.getMessage}")
-  //     }
-  //   }
-
-  //   "Return an error after an unsuccessful call to the connector by approvalSummaries" in new Test {
-
-  //     MockApprovalConnector.approvalSummaries
-  //       .returns(Future.successful(Left(InternalServerError)))
-
-  //     val result: Future[RequestOutcome[List[ApprovalProcessSummary]]] = service.approvalSummaries
-
-  //     result.onComplete {
-  //       case Success(response) =>
-  //         response match {
-  //           case Right(_) => fail("Response returned when an error was expected")
-  //           case Left(error) => error shouldBe InternalServerError
-  //         }
-  //       case Failure(exception) => fail(s"Call failed and returned unexpected error : ${exception.getMessage}")
-  //     }
-  //   }
-
   }
 }

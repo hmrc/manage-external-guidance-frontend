@@ -59,7 +59,7 @@ class ProcessAdminController @Inject() (
     adminService.getPublishedByProcessCode(processCode).map {
       case Right(process) => Ok(process)
       case Left(err) =>
-        logger.error(s"Unable to retrieve list of published process summaries, err = $err")
+        logger.error(s"Unable to retrieve published process by process code, err = $err")
         BadRequest(errorHandler.notFoundTemplate)
     }
   }
@@ -77,7 +77,7 @@ class ProcessAdminController @Inject() (
     adminService.getArchivedById(id).map {
       case Right(process) => Ok(process)
       case Left(err) =>
-        logger.error(s"Unable to retrieve archived process, err = $err")
+        logger.error(s"Unable to retrieve archived process by id, err = $err")
         BadRequest(errorHandler.notFoundTemplate)
     }
   }

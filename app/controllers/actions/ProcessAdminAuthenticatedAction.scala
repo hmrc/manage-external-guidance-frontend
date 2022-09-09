@@ -39,7 +39,7 @@ class ProcessAdminAuthenticatedAction @Inject() (
     implicit val executionContext: ExecutionContext
 ) extends PrivilegedAction with ProcessAdminAction {
 
-  override val continueUrl: String = appConfig.adminContinueUrl
+  override val continueUrl: String = appConfig.processAdminContinueUrl
 
   val predicate: Predicate = AuthProviders(PrivilegedApplication) and
                              (Enrolment(appConfig.designerRole) or
