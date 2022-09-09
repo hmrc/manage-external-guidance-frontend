@@ -230,3 +230,25 @@ unpublish.confirm=Confirm action
 unpublished.heading=This process was successfully unpublished
 unpublished.confirmation=Process "<strong>{0}</strong>" has been deleted and is no longer in Production
 unpublished.continue=Continue
+
+published.title=Published Processes
+published.id=Process ID
+published.code=Process Code
+published.version=Version
+published.author=Author
+published.passphrase=Passphrase
+published.publisher=Publisher
+published.actionDate=PublishedDate
+published.actionTime=Time
+published.switch=Switch to Archived
+
+archived.title=Archived Processes
+archived.id=Id
+archived.code=Process Code
+archived.version=Version
+archived.author=Author
+archived.passphrase=Passphrase
+archived.archiver=Archiver
+archived.actionDate=ArchiveDate
+archived.actionTime=Time
+archived.switch=Switch to Published

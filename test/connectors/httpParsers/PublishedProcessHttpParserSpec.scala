@@ -18,6 +18,8 @@ package connectors.httpParsers
 
 import base.BaseSpec
 import connectors.httpParsers.PublishedProcessHttpParser.publishedProcessHttpReads
+import connectors.httpParsers.PublishedProcessHttpParser.processHttpReads
+import connectors.httpParsers.PublishedProcessHttpParser.processSummaryHttpReads
 import models.errors.{Error, InternalServerError, InvalidProcessError, ProcessError}
 import models.{PublishedProcess, RequestOutcome}
 import play.api.http.{HttpVerbs, Status}
@@ -26,6 +28,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 import java.time.ZonedDateTime
 import java.util.UUID.randomUUID
+import models.ProcessSummary
 
 class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
@@ -48,6 +51,8 @@ class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status
 
     val invalidResponse: JsValue = Json.obj() // no "id" property
 
+    val validJsonResponse: JsValue = Json.obj()
+
     val published = PublishedProcess(
       "id",
       1,
@@ -56,6 +61,9 @@ class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status
       "user",
       "code"
     )
+
+    val now = ZonedDateTime.now
+    val processSummary = ProcessSummary("id", "code", 1, "author", None, now, "actionedby", "Status")
   }
 
   "Parsing a successful response" should {
@@ -66,6 +74,24 @@ class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status
       private val result = publishedProcessHttpReads.read(POST, url, httpResponse)
       result shouldBe Right(published)
     }
+
+    "return a valid published process JsValue response" in new Test {
+
+      private val httpResponse = HttpResponse(OK, validJsonResponse, Map.empty[String, Seq[String]])
+      private val result = processHttpReads.read(POST, url, httpResponse)
+      result shouldBe Right(validJsonResponse)
+    }
+
+    "return a valid ProcessSummary list response" in new Test {
+
+      val data = Json.toJson(List(processSummary))
+
+      private val httpResponse = HttpResponse(OK, data, Map.empty[String, Seq[String]])
+      private val result = processSummaryHttpReads.read(POST, url, httpResponse)
+      result shouldBe Right(List(processSummary))
+    }
+
+
   }
 
   "Parsing an error response" should {

@@ -28,5 +28,6 @@ class Module extends AbstractModule {
     bind(classOf[TwoEyeReviewerAction]).to(classOf[TwoEyeReviewerAuthenticatedAction])
     bind(classOf[FactCheckerAction]).to(classOf[FactCheckerAuthenticatedAction])
     bind(classOf[TimescalesAction]).to(classOf[TimescalesAuthenticatedAction])
+    bind(classOf[ProcessAdminAction]).to(classOf[ProcessAdminAuthenticatedAction])
   }
 }

@@ -16,18 +16,17 @@
 
 package connectors
 
+import java.time.ZonedDateTime
 import base.BaseSpec
 import mocks.{MockAppConfig, MockHttpClient}
-import models.errors.{BadRequestError, InvalidProcessError}
-import models.{PublishedProcess, RequestOutcome}
+import models.errors.BadRequestError
+import models.{ProcessSummary, RequestOutcome}
 import play.api.http.Status
-import play.api.libs.json.Json
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, UpstreamErrorResponse}
-
-import java.time.ZonedDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import play.api.libs.json._
 
 class ArchiveConnectorSpec extends BaseSpec {
 
@@ -38,7 +37,10 @@ class ArchiveConnectorSpec extends BaseSpec {
     val connector: ArchiveConnector = new ArchiveConnector(mockHttpClient, MockAppConfig)
 
     val id: String = "Oct90005"
-
+    val now = ZonedDateTime.now
+    val processCode: String = "code"
+    val process = Json.obj()
+    val processSummary = ProcessSummary(id, processCode, 1, "author", None, now, "actionedby", "Status")
   }
 
 
@@ -74,40 +76,32 @@ class ArchiveConnectorSpec extends BaseSpec {
     }
   }
 
-  "Calling method getPublished with a dummy process" should {
-
-    trait getPublishedTest extends Test {
-
-      val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/published-process/$id"
-
-    }
-    "Return an instance of the class ApprovalResponse for a successful call" in new getPublishedTest {
-
-      val expected: PublishedProcess = PublishedProcess(
-        id, 1, ZonedDateTime.now(), Json.obj("a"->"b"), "", ""
-      )
+  "Archive Connector" should {
+    "Return a list of process summaries" in new Test {
 
       MockedHttpClient
-        .get(endpoint)
-        .returns(Future.successful(Right(expected)))
+        .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/archived")
+        .returns(Future.successful(Right(List(processSummary))))
 
-      val response: RequestOutcome[PublishedProcess] =
-        await(connector.getPublished(id))
+      val response: RequestOutcome[List[ProcessSummary]] =
+        await(connector.summaries)
 
-      response shouldBe Right(expected)
+      response shouldBe Right(List(processSummary))
     }
 
-    "Return an instance of an error class when an error occurs" in new getPublishedTest {
+    "Return a published process json by id" in new Test {
 
       MockedHttpClient
-        .get(endpoint)
-        .returns(Future.successful(Left(InvalidProcessError)))
+        .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/archived/$id")
+        .returns(Future.successful(Right(process)))
 
-      val response: RequestOutcome[PublishedProcess] =
-        await(connector.getPublished(id))
+      val response: RequestOutcome[JsValue] =
+        await(connector.getArchivedById(id))
 
-      response shouldBe Left(InvalidProcessError)
+      response shouldBe Right(process)
     }
   }
 
+
 }
+
