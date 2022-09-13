@@ -17,15 +17,22 @@
 @import config.AppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.components.FooterLinks
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@this(layout: GovukLayout,
-        govukBackLink: GovukBackLink,
-        footerLinks: FooterLinks,
-        siteHeader: components.siteHeader,
-        appConfig: AppConfig)
+@this(
+  govukLayout: GovukLayout,
+  govukBackLink: GovukBackLink,
+  footerLinks: FooterLinks,
+  siteHeader: components.siteHeader,
+  appConfig: AppConfig,
+  defaultLayout: TwoThirdsMainContent)
 
-
-@(pageTitle: String, backLinkDetails: Option[(String, String)] = None, headerUrl: Option[String] = None)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(
+  pageTitle: String,
+  backLinkDetails: Option[(String, String)] = None,
+  headerUrl: Option[String] = None,
+  layoutFormat: Option[Html => Html] = Some(defaultLayout(_))
+)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
 @renderBackLink(backLinkDetails: Option[(String, String)]) = @{
     backLinkDetails match {
@@ -70,13 +77,15 @@
     <!-- End Google Tag Manager (noscript) -->
 }
 
-@layout(
+@govukLayout(
     pageTitle = Some(s"$pageTitle - ${messages("service.name")} - ${messages("service.govuk")}"),
     headBlock = Some(head),
     headerBlock = Some(siteHeader(headerUrl)),
     beforeContentBlock = Some(beforeContentBlock),
     footerItems = footerLinks.items,
-    bodyEndBlock = Some(scripts))(content)
+    bodyEndBlock = Some(scripts),
+    mainContentLayout = layoutFormat
+  )(content),
 
 @{
     //$COVERAGE-OFF$

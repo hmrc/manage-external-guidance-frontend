@@ -34,4 +34,10 @@ OPTIONS    /process/approval/fact-check               controllers.apis.ApprovalC
 GET        /unpublish/:id/                            controllers.ArchiveController.unpublish(id)
 POST       /unpublish/:id/:code                       controllers.ArchiveController.archive(id, code)
 
+GET        /admin                                     controllers.ProcessAdminController.admin
+GET        /admin/published                           controllers.ProcessAdminController.listPublished
+GET        /admin/published/:processCode              controllers.ProcessAdminController.getPublished(processCode: String)
+GET        /admin/archived                            controllers.ProcessAdminController.listArchived
+GET        /admin/archived/:id                        controllers.ProcessAdminController.getArchived(id)
+
 ->         /hmrc-frontend           hmrcfrontend.Routes

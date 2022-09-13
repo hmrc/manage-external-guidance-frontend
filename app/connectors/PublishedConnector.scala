@@ -17,41 +17,32 @@
 package connectors
 
 import config.AppConfig
-import models.errors.BadRequestError
-import models.{ProcessSummary, RequestOutcome}
-import play.api.Logger
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import play.api.libs.json.JsValue
 import javax.inject.{Inject, Singleton}
+import models.{ProcessSummary, PublishedProcess,RequestOutcome}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HttpClient
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.json.JsValue
 
 @Singleton
-class ArchiveConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
-  val logger: Logger = Logger(getClass)
+class PublishedConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
 
   def summaries(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ProcessSummary]]] = {
-    val summaryEndPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/archived"
-
     import connectors.httpParsers.PublishedProcessHttpParser.processSummaryHttpReads
+
+    val summaryEndPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/published"
     httpClient.GET[RequestOutcome[List[ProcessSummary]]](summaryEndPoint, Seq.empty, Seq.empty)
   }
 
-  def archive(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Boolean]] = {
-    val archiveEndPoint: String = appConfig.externalGuidanceBaseUrl + s"/external-guidance/archive/$id"
+  def getPublished(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[PublishedProcess]] = {
+    val publishedEndPoint: String = appConfig.externalGuidanceBaseUrl + s"/external-guidance/published-process/$id"
 
-    import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-
-    httpClient.GET[HttpResponse](archiveEndPoint)
-      .map { _ => Right(true) }
-      .recover {
-        case ex =>
-          logger.error(s"Error archiving provess $id with exception: ${ex.getMessage}")
-          Left(BadRequestError)
-      }
+    import connectors.httpParsers.PublishedProcessHttpParser.publishedProcessHttpReads
+    httpClient.GET[RequestOutcome[PublishedProcess]](publishedEndPoint)
   }
 
-  def getArchivedById(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = {
-    val publishedEndPoint: String = appConfig.externalGuidanceBaseUrl + s"/external-guidance/archived/$id"
+  def getPublishedByProcessCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = {
+    val publishedEndPoint: String = appConfig.externalGuidanceBaseUrl + s"/external-guidance/published/$code"
 
     import connectors.httpParsers.PublishedProcessHttpParser.processHttpReads
     httpClient.GET[RequestOutcome[JsValue]](publishedEndPoint)

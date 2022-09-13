@@ -16,35 +16,36 @@
 
 package mocks
 
-import connectors.ArchiveConnector
-import models.{ProcessSummary, RequestOutcome}
+import connectors.PublishedConnector
+import models.{PublishedProcess, RequestOutcome, ProcessSummary}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import play.api.libs.json.JsValue
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockArchiveConnector extends MockFactory {
+trait MockPublishedConnector extends MockFactory {
 
-  val mockArchiveConnector: ArchiveConnector = mock[ArchiveConnector]
+  val mockPublishedConnector: PublishedConnector = mock[PublishedConnector]
 
-  object MockArchiveConnector {
-
-    def archive(id: String): CallHandler[Future[RequestOutcome[Boolean]]] =
-      (mockArchiveConnector
-        .archive(_: String)(_: ExecutionContext, _: HeaderCarrier))
-        .expects(id, *, *)
+  object MockPublishedConnector {
 
     def summaries: CallHandler[Future[RequestOutcome[List[ProcessSummary]]]] =
-      (mockArchiveConnector
+      (mockPublishedConnector
         .summaries(_: ExecutionContext, _: HeaderCarrier))
         .expects(*, *)
 
-
-    def getArchivedById(id: String): CallHandler[Future[RequestOutcome[JsValue]]] =
-      (mockArchiveConnector
-        .getArchivedById(_: String)(_: ExecutionContext, _: HeaderCarrier))
+    def getPublished(id: String): CallHandler[Future[RequestOutcome[PublishedProcess]]] = {
+      (mockPublishedConnector
+        .getPublished(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, *, *)
+    }
+
+    def getPublishedByProcessCode(code: String): CallHandler[Future[RequestOutcome[JsValue]]] = {
+      (mockPublishedConnector
+        .getPublishedByProcessCode(_: String)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(code, *, *)
+    }
 
   }
 

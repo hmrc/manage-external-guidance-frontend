@@ -17,7 +17,7 @@
 package controllers
 
 import config.ErrorHandler
-import connectors.ArchiveConnector
+import services.AdminService
 import controllers.actions.AllRolesAction
 import forms.UnpublishConfirmationFormProvider
 import models.YesNoAnswer.{No, Yes}
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class ArchiveController @Inject()(
     errorHandler: ErrorHandler,
     allRolesAction: AllRolesAction,
-    archiveConnector: ArchiveConnector,
+    adminService: AdminService,
     unpublish_confirmation: unpublish_confirmation,
     unpublished: unpublished,
     formProvider: UnpublishConfirmationFormProvider,
@@ -50,7 +50,7 @@ class ArchiveController @Inject()(
   def unpublish(processId: String): Action[AnyContent] = allRolesAction.async { implicit request =>
     val form: Form[UnpublishConfirmation] = formProvider().bind(Map("value" -> No.toString))
 
-    archiveConnector.getPublished(processId) map {
+    adminService.getPublished(processId) map {
       case Right(summary) => Ok(unpublish_confirmation(summary.id, summary.processCode, form))
       case Left(_) => BadRequest(errorHandler.badRequestTemplate)
     }
@@ -64,7 +64,7 @@ class ArchiveController @Inject()(
           Future(BadRequest(unpublish_confirmation(processId, processName, formWithErrors)))
         },
         success => success.answer match {
-          case Yes => archiveConnector.archive(processId).map {
+          case Yes => adminService.archive(processId).map {
             case Right(_) => Ok(unpublished(processName))
             case Left(_) => BadRequest(errorHandler.badRequestTemplate)
           }

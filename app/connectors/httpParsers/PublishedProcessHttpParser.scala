@@ -17,10 +17,11 @@
 package connectors.httpParsers
 
 import models.errors.{InternalServerError, InvalidProcessError}
-import models.{PublishedProcess, RequestOutcome}
+import models.{PublishedProcess, RequestOutcome, ProcessSummary}
 import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads
+import play.api.libs.json.JsValue
 
 object PublishedProcessHttpParser extends HttpParser {
 
@@ -29,6 +30,30 @@ object PublishedProcessHttpParser extends HttpParser {
   implicit val publishedProcessHttpReads: HttpReads[RequestOutcome[PublishedProcess]] = {
     case (_, _, response) if response.status == OK =>
       response.validateJson[PublishedProcess] match {
+        case Some(result) => Right(result)
+        case None =>
+          logger.error("Unable to parse successful response when reading published process.")
+          Left(InternalServerError)
+      }
+    case (_, _, response) if response.status == BAD_REQUEST => Left(InvalidProcessError)
+    case (_, _, response) => Left(response.checkErrorResponse)
+  }
+
+  implicit val processHttpReads: HttpReads[RequestOutcome[JsValue]] = {
+    case (_, _, response) if response.status == OK =>
+      response.validateJson[JsValue] match {
+        case Some(result) => Right(result)
+        case None =>
+          logger.error("Unable to parse successful response when reading published process.")
+          Left(InternalServerError)
+      }
+    case (_, _, response) if response.status == BAD_REQUEST => Left(InvalidProcessError)
+    case (_, _, response) => Left(response.checkErrorResponse)
+  }
+
+  implicit val processSummaryHttpReads: HttpReads[RequestOutcome[List[ProcessSummary]]] = {
+    case (_, _, response) if response.status == OK =>
+      response.validateJson[List[ProcessSummary]] match {
         case Some(result) => Right(result)
         case None =>
           logger.error("Unable to parse successful response when reading published process.")

@@ -19,7 +19,7 @@ package controllers
 import config.ErrorHandler
 import controllers.actions.FakeAllRolesAction
 import forms.UnpublishConfirmationFormProvider
-import mocks.MockArchiveConnector
+import mocks.{MockPublishedConnector, MockArchiveConnector}
 import models.PublishedProcess
 import models.errors.InternalServerError
 import org.scalatest.matchers.should.Matchers
@@ -32,23 +32,32 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.{unpublish_confirmation, unpublished}
-
+import services.AdminService
 import java.time.ZonedDateTime
 import scala.concurrent.Future
+import mocks.MockApprovalConnector
 
-class ArchiveControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockArchiveConnector {
+class ArchiveControllerSpec
+  extends AnyWordSpec
+   with Matchers
+   with GuiceOneAppPerSuite
+   with MockApprovalConnector
+   with MockArchiveConnector
+   with MockPublishedConnector {
 
   private trait Test {
     private val view = app.injector.instanceOf[unpublish_confirmation]
     private val confirmation = app.injector.instanceOf[unpublished]
     lazy val errorHandler: ErrorHandler = app.injector.instanceOf[config.ErrorHandler]
     implicit val hc: HeaderCarrier = HeaderCarrier()
+
+    val adminService = new AdminService(mockApprovalConnector, mockPublishedConnector, mockArchiveConnector)
     val formProvider = new UnpublishConfirmationFormProvider()
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
     val controller = new ArchiveController(
       errorHandler,
       FakeAllRolesAction,
-      mockArchiveConnector,
+      adminService,
       view,
       confirmation,
       formProvider,
@@ -68,7 +77,7 @@ class ArchiveControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPe
     )
 
     "return 200" in new Test {
-      MockArchiveConnector.getPublished("id")
+      MockPublishedConnector.getPublished("id")
         .returns(Future.successful(Right(published)))
 
       val result: Future[Result] = controller.unpublish("id")(fakeRequest)
@@ -76,7 +85,7 @@ class ArchiveControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPe
     }
 
     "return 400" in new Test {
-      MockArchiveConnector.getPublished("id")
+      MockPublishedConnector.getPublished("id")
         .returns(Future.successful(Left(InternalServerError)))
 
       val result: Future[Result] = controller.unpublish("id")(fakeRequest)
