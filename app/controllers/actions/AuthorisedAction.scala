@@ -27,12 +27,12 @@ case class UserRequest[A](request: Request[A], name: String) extends WrappedRequ
 trait AuthorisedAction extends ActionBuilder[UserRequest, AnyContent]
 
 class AuthAction @Inject()(bodyParsers: PlayBodyParsers)(implicit val ec: ExecutionContext) extends AuthorisedAction {
-  override def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] =
+  def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] =
     request.session.get(ProcessAdminController.userSessionKey) match {
       case Some(name) => block(UserRequest(request, name))
       case None => Future.successful(Redirect(routes.ProcessAdminController.signIn))
     }
 
-  override def parser: BodyParser[AnyContent] = bodyParsers.default
-  override protected def executionContext: ExecutionContext = ec
+  def parser: BodyParser[AnyContent] = bodyParsers.default
+  protected def executionContext: ExecutionContext = ec
 }
