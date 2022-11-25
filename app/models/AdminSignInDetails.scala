@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import com.google.inject.AbstractModule
+import config.AppConfig
 
-import controllers.actions._
-
-class Module extends AbstractModule {
-
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[AppConfigImpl])
-    bind(classOf[AllRolesAction]).to(classOf[AllRolesAuthenticatedAction])
-    bind(classOf[TwoEyeReviewerAction]).to(classOf[TwoEyeReviewerAuthenticatedAction])
-    bind(classOf[FactCheckerAction]).to(classOf[FactCheckerAuthenticatedAction])
-    bind(classOf[TimescalesAction]).to(classOf[TimescalesAuthenticatedAction])
-    bind(classOf[AuthorisedAction]).to(classOf[AuthAction])
-  }
+case class AdminSignInDetails(name: String, password: String) {
+  def validate(appConfig: AppConfig): Option[String] =
+    if ( name.equals(appConfig.processAdminUser) && password.equals(appConfig.processAdminPassword)) Some(name) else None
 }

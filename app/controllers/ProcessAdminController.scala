@@ -24,17 +24,26 @@ import play.api.mvc._
 import services.ProcessAdminService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.Logger
-import controllers.actions.ProcessAdminAction
-import views.html.{archived_summaries, published_summaries}
+import controllers.actions.AuthorisedAction
+import views.html.{archived_summaries, published_summaries, admin_signin}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import models.AdminSignInDetails
+import forms.AdminSignInForm
+import config.AppConfig
+
+object ProcessAdminController {
+  val userSessionKey = "userName"
+}
 
 @Singleton
 class ProcessAdminController @Inject() (
-    identify: ProcessAdminAction,
+    appConfig: AppConfig,
+    authAction: AuthorisedAction,
     errorHandler: ErrorHandler,
     published: published_summaries,
     archived: archived_summaries,
+    signin: admin_signin,
     adminService: ProcessAdminService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
@@ -42,11 +51,36 @@ class ProcessAdminController @Inject() (
   implicit val localDateOrdering: Ordering[ZonedDateTime] = Ordering.by(_.toInstant)
   val logger = Logger(getClass)
 
-  def admin: Action[AnyContent] = identify.async { _ =>
+  def admin: Action[AnyContent] = authAction.async { _ =>
     Future.successful(Redirect(routes.ProcessAdminController.listPublished))
   }
 
-  def listPublished: Action[AnyContent] = identify.async { implicit request =>
+  def signIn: Action[AnyContent] = Action { implicit request =>
+    Ok(signin(AdminSignInForm.form))
+  }
+
+  def submitSignIn: Action[AnyContent] = Action.async { implicit request =>
+    AdminSignInForm.form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(signin(formWithErrors))),
+        form =>
+          AdminSignInDetails(form.name, form.password)
+            .validate(appConfig)
+            .fold({
+              val formWithError = AdminSignInForm.form.withGlobalError(request.messages("admin.signin-error"))
+              Future.successful(Unauthorized(signin(formWithError)(request, request.messages)))
+            }){ user =>
+              Future.successful(Redirect(routes.ProcessAdminController.admin.url).addingToSession(ProcessAdminController.userSessionKey -> user))
+            }
+      )
+  }
+
+  def signOut: Action[AnyContent] = authAction.async { implicit request =>
+    Future.successful(Ok(signin(AdminSignInForm.form)).removingFromSession(ProcessAdminController.userSessionKey))
+  }
+
+  def listPublished: Action[AnyContent] = authAction.async { implicit request =>
     adminService.publishedSummaries.map {
       case Right(processList) => Ok(published(processList.sortBy(_.actioned).reverse))
       case Left(err) =>
@@ -55,7 +89,7 @@ class ProcessAdminController @Inject() (
     }
   }
 
-  def getPublished(processCode: String): Action[AnyContent] = identify.async { implicit request =>
+  def getPublished(processCode: String): Action[AnyContent] = authAction.async { implicit request =>
     adminService.getPublishedByProcessCode(processCode).map {
       case Right(process) => Ok(process)
       case Left(err) =>
@@ -64,7 +98,7 @@ class ProcessAdminController @Inject() (
     }
   }
 
-  def listArchived: Action[AnyContent] = identify.async { implicit request =>
+  def listArchived: Action[AnyContent] = authAction.async { implicit request =>
     adminService.archivedSummaries.map {
       case Right(processList) => Ok(archived(processList.sortBy(_.actioned).reverse))
       case Left(err) =>
@@ -73,7 +107,7 @@ class ProcessAdminController @Inject() (
     }
   }
 
-  def getArchived(id: String): Action[AnyContent] = identify.async { implicit request =>
+  def getArchived(id: String): Action[AnyContent] = authAction.async { implicit request =>
     adminService.getArchivedById(id).map {
       case Right(process) => Ok(process)
       case Left(err) =>

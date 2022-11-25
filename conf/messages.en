@@ -231,6 +231,13 @@ unpublished.heading=This process was successfully unpublished
 unpublished.confirmation=Process "<strong>{0}</strong>" has been deleted and is no longer in Production
 unpublished.continue=Continue
 
+admin.signin-title = Sign in
+admin.signin-heading = Sign in
+admin.signin-username = Username
+admin.signin-password = Password
+admin.signin-error = The sign in details you provided are incorrect. Please try again
+admin.signin = Sign In
+
 published.title=Published Processes
 published.id=Process ID
 published.code=Process Code

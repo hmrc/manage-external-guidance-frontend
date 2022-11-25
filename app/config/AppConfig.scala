@@ -39,6 +39,8 @@ trait AppConfig {
   val gtmContainer: String
   val viewApprovalUrl: String
   val commentsAndFeedbackUrl: String
+  val processAdminUser: String
+  val processAdminPassword: String
 
   def contactFrontendFeedbackUrl(implicit requestHeader: RequestHeader): String
 }
@@ -68,6 +70,8 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val factCheckerRole: String = servicesConfig.getString("strideAuth.roles.factChecker")
   lazy val gtmContainer: String = config.get[String]("gtm.container")
   lazy val viewApprovalUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.approvalUrl")}"
+  lazy val processAdminUser: String = config.get[String]("admin-username")
+  lazy val processAdminPassword: String = config.get[String]("admin-password")
 
   def contactFrontendFeedbackUrl(implicit requestHeader: RequestHeader): String = {
     s"$contactBaseUrl$betaFeedback?service=$serviceIdentifier&backUrl=${SafeRedirectUrl(host + requestHeader.uri).encodedUrl}"

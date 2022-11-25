@@ -17,17 +17,16 @@
 package controllers.actions
 
 import base.ControllerBaseSpec
-import models.requests.IdentifierRequest
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeProcessAdminAction extends ControllerBaseSpec with ProcessAdminAction {
+object FakeAuthorisedAction extends ControllerBaseSpec with AuthorisedAction {
 
   override implicit protected def executionContext: ExecutionContext = ExecutionContext.global
 
   override def parser: BodyParser[AnyContent] = messagesControllerComponents.parsers.defaultBodyParser
 
-  override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
-    block(IdentifierRequest(request, credential, name, email))
+  override def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] =
+    block(UserRequest(request, name))
 }
