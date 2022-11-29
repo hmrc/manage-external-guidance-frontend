@@ -68,7 +68,9 @@ class ProcessAdminController @Inject() (
           AdminSignInDetails(form.name, form.password)
             .validate(appConfig)
             .fold({
-              val formWithError = AdminSignInForm.form.withGlobalError(request.messages("admin.signin-error"))
+              val formWithError = AdminSignInForm.form
+                                    .fill(AdminSignInDetails("",""))
+                                    .withGlobalError(request.messages("admin.signin-error"))
               Future.successful(Unauthorized(signin(formWithError)(request, request.messages)))
             }){ user =>
               Future.successful(Redirect(routes.ProcessAdminController.admin.url).addingToSession(ProcessAdminController.userSessionKey -> user))
@@ -77,7 +79,7 @@ class ProcessAdminController @Inject() (
   }
 
   def signOut: Action[AnyContent] = authAction.async { implicit request =>
-    Future.successful(Ok(signin(AdminSignInForm.form)).removingFromSession(ProcessAdminController.userSessionKey))
+    Future.successful(Redirect(routes.ProcessAdminController.admin.url).removingFromSession(ProcessAdminController.userSessionKey))
   }
 
   def listPublished: Action[AnyContent] = authAction.async { implicit request =>

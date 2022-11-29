@@ -235,8 +235,10 @@ admin.signin-title = Sign in
 admin.signin-heading = Sign in
 admin.signin-username = Username
 admin.signin-password = Password
+admin.signin-global-error = There is a problem
 admin.signin-error = The sign in details you provided are incorrect. Please try again
 admin.signin = Sign In
+admin.signout = Sign Out
 
 published.title=Published Processes
 published.id=Process ID

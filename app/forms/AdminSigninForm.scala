@@ -21,7 +21,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, nonEmptyText}
 
 object AdminSignInForm {
-  val form:Form[AdminSignInDetails] = Form (
+  val form: Form[AdminSignInDetails] = Form (
     mapping (
       "name" -> nonEmptyText,
       "password" -> nonEmptyText

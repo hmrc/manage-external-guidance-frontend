@@ -30,39 +30,49 @@
 
 @layout(messages("admin.signin-title")) {
 
-    @form.globalError.map { error =>
-        @govukErrorSummary(ErrorSummary(Seq(ErrorLink(content = Text(error.message)))))
-    }
+  @if(form.hasErrors) {
+    @govukErrorSummary(ErrorSummary(
+      title = Text(messages("admin.signin-global-error")),
+      disableAutoFocus = true,
+      errorList = form.errors.map{e =>
+        ErrorLink(
+          href = Some(s"#${if(e.key.isEmpty) "name" else e.key}"),
+          content = Text(messages(e.message, e.args: _*))
+        )
+      }
+      )
+    )
+  }
 
-    <h1 id="heading" class="govuk-heading-xl">@messages("admin.signin-title")</h1>
+  <h1 id="heading" class="govuk-heading-xl">@messages("admin.signin-title")</h1>
 
-    @formWithCSRF(action = routes.ProcessAdminController.submitSignIn) {
+  @formWithCSRF(action = routes.ProcessAdminController.submitSignIn) {
 
-        @govukInput(Input(
-            id = "name",
-            name = "name",
-            label = Label(
-              content = Text(messages("admin.signin-username"))
-            ),
-            classes = "govuk-input--width-20",
-            value = form.data.get("name"),
-            errorMessage = form.errors.filter(e => e.key.equals("name")).headOption.map(e => ErrorMessage(content = Text(messages(e.message, e.args: _*)))),
-          ))
+    @govukInput(Input(
+      id = "name",
+      name = "name",
+      label = Label(
+        content = Text(messages("admin.signin-username"))
+      ),
+      classes = "govuk-input--width-20",
+      value = form.data.get("name"),
+      errorMessage = form.errors.filter(e => e.key.equals("name")).headOption.map(e => ErrorMessage(content = Text(messages(e.message, e.args: _*)))),
+    ))
 
-        @govukInput(Input(
-            id = "password",
-            name = "password",
-            inputType = "password",
-            label = Label(
-              content = Text(messages("admin.signin-password"))
-            ),
-            classes = "govuk-input--width-20",
-            value = form.data.get("password"),
-            errorMessage = form.errors.filter(e => e.key.equals("password")).headOption.map(e => ErrorMessage(content = Text(messages(e.message, e.args: _*)))),
-          ))
+    @govukInput(Input(
+      id = "password",
+      name = "password",
+      inputType = "password",
+      label = Label(
+        content = Text(messages("admin.signin-password"))
+      ),
+      classes = "govuk-input--width-20",
+      value = form.data.get("password"),
+      errorMessage = form.errors.filter(e => e.key.equals("password")).headOption.map(e => ErrorMessage(content = Text(messages(e.message, e.args: _*)))),
+    ))
 
-        @govukButton(Button(content = Text(messages("admin.signin"))))
-    }
+    @govukButton(Button(content = Text(messages("admin.signin"))))
+  }
 
 }
 @{
