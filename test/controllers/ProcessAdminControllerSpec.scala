@@ -82,6 +82,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
       val result = controller.submitSignIn(fakePOSTRequest.withFormUrlEncodedBody(("name", "admin"), ("password", "password")))
 
       status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some("/external-guidance/admin")
     }
 
     "Submit unsuccessful sign" in new Test {
@@ -98,13 +99,12 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
     "return 200" in new Test {
 
       val result = controller.signOut(fakeRequest)
-      status(result) shouldBe Status.OK
+      status(result) shouldBe Status.SEE_OTHER
     }
 
     "return HTML" in new Test {
       val result = controller.signOut(fakeRequest)
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      redirectLocation(result) shouldBe Some("/external-guidance/admin")
     }
 
   }
