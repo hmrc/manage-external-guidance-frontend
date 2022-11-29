@@ -16,24 +16,26 @@
 
 @this()
 
-@(headerUrl: Option[String] = None)(implicit messages: Messages)
+@(headerUrl: Option[String] = None)(implicit messages: Messages, request: Request[_])
 
 <div class="govuk-body">
-    <header role="banner" class="hmrc-internal-header">
-        <div class="govuk-width-container">
-        <div class="hmrc-internal-header__logo">
-            <span class="hmrc-internal-header__logo-link">
-                @messages("header.hmrcLogoTitle")
-            </span>
-        </div>
+  <header role="banner" class="hmrc-internal-header">
+    <div class="govuk-width-container">
+    <div class="hmrc-internal-header__logo">
+      <span class="hmrc-internal-header__logo-link">
+        @messages("header.hmrcLogoTitle")
+      </span>
+    </div>
 
-
-        <div class="hmrc-internal-header__service-name">
-            <a href="@headerUrl.getOrElse(controllers.routes.AdminController.approvalSummaries.url)" class="hmrc-internal-header__link">
-                @messages("service.name")
-            </a>
-        </div>
-        </div>
-    </header>
+    <div class="hmrc-internal-header__service-name">
+      <a href="@headerUrl.getOrElse(controllers.routes.AdminController.approvalSummaries.url)" class="hmrc-internal-header__link">
+        @messages("service.name")
+      </a>
+    </div>
+    </div>
+    @if(request.session.get(controllers.ProcessAdminController.userSessionKey)) {
+      <a href="@controllers.routes.ProcessAdminController.signOut.url" class="govuk-header__sign-out__link">@messages("admin.signout")</a>
+    }
+  </header>
 </div>
 

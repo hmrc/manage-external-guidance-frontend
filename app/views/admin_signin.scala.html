@@ -1,0 +1,80 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models.AdminSignInDetails
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+
+@this(
+  layout: main_layout,
+  appConfig: AppConfig,
+  formWithCSRF: FormWithCSRF,
+  govukInput : GovukInput,
+  govukErrorSummary: GovukErrorSummary,
+  govukButton: GovukButton)
+
+@(form: Form[AdminSignInDetails])(implicit request: Request[_], messages: Messages)
+
+@layout(messages("admin.signin-title")) {
+
+  @if(form.hasErrors) {
+    @govukErrorSummary(ErrorSummary(
+      title = Text(messages("admin.signin-global-error")),
+      disableAutoFocus = true,
+      errorList = form.errors.map{e =>
+        ErrorLink(
+          href = Some(s"#${if(e.key.isEmpty) "name" else e.key}"),
+          content = Text(messages(e.message, e.args: _*))
+        )
+      }
+      )
+    )
+  }
+
+  <h1 id="heading" class="govuk-heading-xl">@messages("admin.signin-title")</h1>
+
+  @formWithCSRF(action = routes.ProcessAdminController.submitSignIn) {
+
+    @govukInput(Input(
+      id = "name",
+      name = "name",
+      label = Label(
+        content = Text(messages("admin.signin-username"))
+      ),
+      classes = "govuk-input--width-20",
+      value = form.data.get("name"),
+      errorMessage = form.errors.filter(e => e.key.equals("name")).headOption.map(e => ErrorMessage(content = Text(messages(e.message, e.args: _*)))),
+    ))
+
+    @govukInput(Input(
+      id = "password",
+      name = "password",
+      inputType = "password",
+      label = Label(
+        content = Text(messages("admin.signin-password"))
+      ),
+      classes = "govuk-input--width-20",
+      value = form.data.get("password"),
+      errorMessage = form.errors.filter(e => e.key.equals("password")).headOption.map(e => ErrorMessage(content = Text(messages(e.message, e.args: _*)))),
+    ))
+
+    @govukButton(Button(content = Text(messages("admin.signin"))))
+  }
+
+}
+@{
+ //$COVERAGE-OFF$
+}

@@ -40,4 +40,8 @@ GET        /admin/published/:processCode              controllers.ProcessAdminCo
 GET        /admin/archived                            controllers.ProcessAdminController.listArchived
 GET        /admin/archived/:id                        controllers.ProcessAdminController.getArchived(id)
 
+GET         /admin/sign-in                            controllers.ProcessAdminController.signIn
+POST        /admin/sign-in                            controllers.ProcessAdminController.submitSignIn
+GET         /admin/sign-out                           controllers.ProcessAdminController.signOut
+
 ->         /hmrc-frontend           hmrcfrontend.Routes

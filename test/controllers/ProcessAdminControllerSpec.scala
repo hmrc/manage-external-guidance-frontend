@@ -16,8 +16,8 @@
 
 package controllers
 
-import controllers.actions.FakeProcessAdminAction
-import mocks.MockProcessAdminService
+import controllers.actions.FakeAuthorisedAction
+import mocks.{MockAppConfig, MockProcessAdminService}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -27,6 +27,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.published_summaries
 import views.html.archived_summaries
+import views.html.admin_signin
 import play.api.libs.json._
 import scala.concurrent.Future
 import models.errors.{NotFoundError, InternalServerError}
@@ -37,10 +38,19 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
 
     private val pview = app.injector.instanceOf[published_summaries]
     private val aview = app.injector.instanceOf[archived_summaries]
+    private val siview = app.injector.instanceOf[admin_signin]
     lazy val errorHandler = app.injector.instanceOf[config.ErrorHandler]
     implicit val hc: HeaderCarrier = HeaderCarrier()
     val fakeRequest = FakeRequest("GET", "/")
-    val controller = new ProcessAdminController(FakeProcessAdminAction, errorHandler, pview, aview, mockProcessAdminService, stubMessagesControllerComponents())
+    val controller = new ProcessAdminController(
+                            MockAppConfig,
+                            FakeAuthorisedAction,
+                            errorHandler,
+                            pview,
+                            aview,
+                            siview,
+                            mockProcessAdminService,
+                            stubMessagesControllerComponents())
 
   }
 
@@ -49,6 +59,54 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
       val result = controller.admin(fakeRequest)
       status(result) shouldBe Status.SEE_OTHER
     }
+  }
+
+  "GET /admin/sign-in" should {
+
+    "return 200" in new Test {
+
+      val result = controller.signIn(fakeRequest)
+      status(result) shouldBe Status.OK
+    }
+
+    "return HTML" in new Test {
+      val result = controller.signIn(fakeRequest)
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+  }
+
+  "POST /admin/sign-in" should {
+    "Submit successful sign" in new Test {
+      val fakePOSTRequest = FakeRequest("POST", "/external-guidance/admin/sign-in")
+      val result = controller.submitSignIn(fakePOSTRequest.withFormUrlEncodedBody(("name", "admin"), ("password", "password")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some("/external-guidance/admin")
+    }
+
+    "Submit unsuccessful sign" in new Test {
+      val fakePOSTRequest = FakeRequest("POST", "/external-guidance/admin/sign-in")
+      val result = controller.submitSignIn(fakePOSTRequest.withFormUrlEncodedBody(("name", "BLAH"), ("password", "Blah")))
+
+      status(result) shouldBe Status.UNAUTHORIZED
+    }
+  }
+
+
+  "GET /admin/sign-out" should {
+
+    "return 200" in new Test {
+
+      val result = controller.signOut(fakeRequest)
+      status(result) shouldBe Status.SEE_OTHER
+    }
+
+    "return HTML" in new Test {
+      val result = controller.signOut(fakeRequest)
+      redirectLocation(result) shouldBe Some("/external-guidance/admin")
+    }
+
   }
 
   "GET /admin/published" should {
