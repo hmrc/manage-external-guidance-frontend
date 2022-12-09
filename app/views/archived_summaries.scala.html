@@ -36,7 +36,7 @@
 
   @govukTable(Table(
       rows = summaries.map(s => Seq(
-        TableRow(content=HtmlContent(viewLink(s.id, routes.ProcessAdminController.getArchived(s.id).url))),
+        TableRow(content=HtmlContent(viewLink(s.id, routes.ProcessAdminController.getArchived(s.id).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
         TableRow(content=Text(DateTimeUtils.formatShortDate(s.actioned.toInstant))),
         TableRow(content=Text(DateTimeUtils.formatShortTime(s.actioned.toInstant))),
         TableRow(content=Text(s.processCode.toString)),

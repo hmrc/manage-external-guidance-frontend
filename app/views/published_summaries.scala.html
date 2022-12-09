@@ -36,10 +36,10 @@
 
   @govukTable(Table(
       rows = summaries.map(s => Seq(
-        TableRow(content=HtmlContent(viewLink(s.id, routes.ProcessAdminController.getPublished(s.processCode).url)), attributes = Map("title"->"json")),
+        TableRow(content=HtmlContent(viewLink(s.id, routes.ProcessAdminController.getPublished(s.processCode).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
         TableRow(content=Text(DateTimeUtils.formatShortDate(s.actioned.toInstant))),
         TableRow(content=Text(DateTimeUtils.formatShortTime(s.actioned.toInstant))),
-        TableRow(content=HtmlContent(viewLink(s.processCode, s"${appConfig.pageMapPublishedlUrl}/${s.processCode.toString}")), attributes = Map("title"->"Guidance page map")),
+        TableRow(content=HtmlContent(viewLink(s.processCode, s"${appConfig.pageMapPublishedlUrl}/${s.processCode.toString}")), attributes = Map("title"->messages("admin.pagemap-tooltip"))),
         TableRow(content=Text(s.actionedBy.toString)),
         TableRow(content=Text(s.version.toString)),
         TableRow(content=Text(s.lastAuthor.toString)),
