@@ -38,6 +38,8 @@ trait AppConfig {
   val factCheckerRole: String
   val gtmContainer: String
   val viewApprovalUrl: String
+  val pageMapApprovalUrl: String
+  val pageMapPublishedlUrl: String
   val commentsAndFeedbackUrl: String
   val processAdminUser: String
   val processAdminPassword: String
@@ -70,6 +72,8 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val factCheckerRole: String = servicesConfig.getString("strideAuth.roles.factChecker")
   lazy val gtmContainer: String = config.get[String]("gtm.container")
   lazy val viewApprovalUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.approvalUrl")}"
+  lazy val pageMapApprovalUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.pageMapApprovalUrl")}"
+  lazy val pageMapPublishedlUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.pageMapPublishedUrl")}"
   lazy val processAdminUser: String = config.get[String]("admin-username")
   lazy val processAdminPassword: String = config.get[String]("admin-password")
 

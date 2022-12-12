@@ -239,6 +239,8 @@ admin.signin-global-error = There is a problem
 admin.signin-error = The sign in details you provided are incorrect. Please try again
 admin.signin = Sign In
 admin.signout = Sign Out
+admin.json-tooltip = Json
+admin.pagemap-tooltip = Guidance page structure
 
 published.title=Published Processes
 published.id=Process ID
