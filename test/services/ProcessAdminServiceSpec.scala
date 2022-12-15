@@ -26,14 +26,15 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 import models.ProcessSummary
 import java.time.ZonedDateTime
+import mocks.MockApprovalConnector
 
 class ProcessAdminServiceSpec extends BaseSpec {
 
-  private trait Test extends MockPublishedConnector with MockArchiveConnector {
+  private trait Test extends MockPublishedConnector with MockArchiveConnector with MockApprovalConnector{
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-    lazy val service: ProcessAdminService = new ProcessAdminService(mockPublishedConnector, mockArchiveConnector)
+    lazy val service: ProcessAdminService = new ProcessAdminService(mockPublishedConnector, mockApprovalConnector, mockArchiveConnector)
     val now = ZonedDateTime.now
     val processId: String = now.toInstant().toEpochMilli().toString
     val processCode: String = "code"
@@ -55,6 +56,22 @@ class ProcessAdminServiceSpec extends BaseSpec {
           response match {
             case Right(response) => response shouldBe List(processSummary)
             case Left(error) => fail(s"Unexpected error returned by published connector : ${error.toString}")
+          }
+        case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+      }
+    }
+
+    "Return an a list of approval process summaries" in new Test {
+
+      MockApprovalConnector
+        .summaries
+        .returns(Future.successful(Right(List(processSummary))))
+
+      service.approvalSummaries.onComplete {
+        case Success(response) =>
+          response match {
+            case Right(response) => response shouldBe List(processSummary)
+            case Left(error) => fail(s"Unexpected error returned by approval connector : ${error.toString}")
           }
         case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
       }
@@ -87,6 +104,22 @@ class ProcessAdminServiceSpec extends BaseSpec {
           response match {
             case Right(response) => response shouldBe process
             case Left(error) => fail(s"Unexpected error returned by published connector : ${error.toString}")
+          }
+        case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+      }
+    }
+
+    "Retrieve a approval process by process code" in new Test {
+
+      MockApprovalConnector
+        .getApprovalByProcessCode(processCode)
+        .returns(Future.successful(Right(process)))
+
+      service.getApprovalByProcessCode(processCode).onComplete {
+        case Success(response) =>
+          response match {
+            case Right(response) => response shouldBe process
+            case Left(error) => fail(s"Unexpected error returned by approval connector : ${error.toString}")
           }
         case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
       }

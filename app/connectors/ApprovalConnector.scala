@@ -18,7 +18,7 @@ package connectors
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome}
+import models.{ApprovalProcessSummary, ApprovalResponse, RequestOutcome, ProcessSummary}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpClient
@@ -53,4 +53,19 @@ class ApprovalConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig)
 
     httpClient.POST[JsValue, RequestOutcome[ApprovalResponse]](endpoint, process, Seq.empty)
   }
+
+  def summaries(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ProcessSummary]]] = {
+    import connectors.httpParsers.PublishedProcessHttpParser.processSummaryHttpReads
+
+    val endPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/approval/list"
+    httpClient.GET[RequestOutcome[List[ProcessSummary]]](endPoint, Seq.empty, Seq.empty)
+  }
+
+  def getApprovalByProcessCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = {
+    val endPoint: String = appConfig.externalGuidanceBaseUrl + s"/external-guidance/approval/code/$code"
+
+    import connectors.httpParsers.PublishedProcessHttpParser.processHttpReads
+    httpClient.GET[RequestOutcome[JsValue]](endPoint)
+  }
+
 }

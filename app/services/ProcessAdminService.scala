@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.{PublishedConnector, ArchiveConnector}
+import connectors.{PublishedConnector, ApprovalConnector, ArchiveConnector}
 import javax.inject.{Inject, Singleton}
 import models.{RequestOutcome, ProcessSummary}
 import play.api.libs.json.JsValue
@@ -28,6 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ProcessAdminService @Inject()(
   published: PublishedConnector,
+  approvals: ApprovalConnector,
   archived: ArchiveConnector) {
 
   val logger = Logger(getClass)
@@ -35,11 +36,17 @@ class ProcessAdminService @Inject()(
   def publishedSummaries(implicit context: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ProcessSummary]]] =
     published.summaries
 
+  def approvalSummaries(implicit context: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ProcessSummary]]] =
+    approvals.summaries
+
   def archivedSummaries(implicit context: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ProcessSummary]]] =
     archived.summaries
 
   def getPublishedByProcessCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] =
     published.getPublishedByProcessCode(code)
+
+  def getApprovalByProcessCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] =
+    approvals.getApprovalByProcessCode(code)
 
   def getArchivedById(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] =
     archived.getArchivedById(id)

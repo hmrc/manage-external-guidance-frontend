@@ -37,6 +37,8 @@ POST       /unpublish/:id/:code                       controllers.ArchiveControl
 GET        /admin                                     controllers.ProcessAdminController.admin
 GET        /admin/published                           controllers.ProcessAdminController.listPublished
 GET        /admin/published/:processCode              controllers.ProcessAdminController.getPublished(processCode: String)
+GET        /admin/approvals                           controllers.ProcessAdminController.listApprovals
+GET        /admin/approvals/:processCode              controllers.ProcessAdminController.getApproval(processCode: String)
 GET        /admin/archived                            controllers.ProcessAdminController.listArchived
 GET        /admin/archived/:id                        controllers.ProcessAdminController.getArchived(id)
 

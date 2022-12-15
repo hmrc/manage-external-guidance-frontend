@@ -36,15 +36,25 @@ trait MockProcessAdminService extends MockFactory {
         .publishedSummaries(_: ExecutionContext, _: HeaderCarrier))
         .expects(*, *)
 
+    def approvalSummaries: CallHandler[Future[RequestOutcome[List[ProcessSummary]]]] =
+      (mockProcessAdminService
+        .approvalSummaries(_: ExecutionContext, _: HeaderCarrier))
+        .expects(*, *)
+
     def archivedSummaries: CallHandler[Future[RequestOutcome[List[ProcessSummary]]]] =
       (mockProcessAdminService
         .archivedSummaries(_: ExecutionContext, _: HeaderCarrier))
         .expects(*, *)
 
     def getPublishedByProcessCode(code: String): CallHandler[Future[RequestOutcome[JsValue]]] = {
-
       (mockProcessAdminService
         .getPublishedByProcessCode(_: String)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(code, *, *)
+    }
+
+    def getApprovalByProcessCode(code: String): CallHandler[Future[RequestOutcome[JsValue]]] = {
+      (mockProcessAdminService
+        .getApprovalByProcessCode(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(code, *, *)
     }
 

@@ -25,7 +25,7 @@ import services.ProcessAdminService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.Logger
 import controllers.actions.AuthorisedAction
-import views.html.{archived_summaries, published_summaries, admin_signin}
+import views.html.process_admin.{archived_summaries, published_summaries, approval_summaries, admin_signin}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.AdminSignInDetails
@@ -43,6 +43,7 @@ class ProcessAdminController @Inject() (
     errorHandler: ErrorHandler,
     published: published_summaries,
     archived: archived_summaries,
+    approvals: approval_summaries,
     signin: admin_signin,
     adminService: ProcessAdminService,
     mcc: MessagesControllerComponents
@@ -93,6 +94,24 @@ class ProcessAdminController @Inject() (
 
   def getPublished(processCode: String): Action[AnyContent] = authAction.async { implicit request =>
     adminService.getPublishedByProcessCode(processCode).map {
+      case Right(process) => Ok(process)
+      case Left(err) =>
+        logger.error(s"Unable to retrieve published process by process code, err = $err")
+        BadRequest(errorHandler.notFoundTemplate)
+    }
+  }
+
+  def listApprovals: Action[AnyContent] = authAction.async { implicit request =>
+    adminService.approvalSummaries.map {
+      case Right(processList) => Ok(approvals(processList.sortBy(_.actioned).reverse))
+      case Left(err) =>
+        logger.error(s"Unable to retrieve list of approval process summaries, err = $err")
+        InternalServerError(errorHandler.internalServerErrorTemplate)
+    }
+  }
+
+  def getApproval(processCode: String): Action[AnyContent] = authAction.async { implicit request =>
+    adminService.getApprovalByProcessCode(processCode).map {
       case Right(process) => Ok(process)
       case Left(err) =>
         logger.error(s"Unable to retrieve published process by process code, err = $err")

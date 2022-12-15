@@ -22,7 +22,7 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
-import models.ApprovalProcessSummary
+import models.{ProcessSummary, ApprovalProcessSummary}
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockApprovalConnector extends MockFactory {
@@ -44,11 +44,21 @@ trait MockApprovalConnector extends MockFactory {
     }
 
     def submitForFactCheck(process: JsValue): CallHandler[Future[RequestOutcome[ApprovalResponse]]] = {
-
       (mockApprovalConnector
         .submitForFactCheck(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
         .expects(process, *, *)
     }
-  }
 
+    def summaries: CallHandler[Future[RequestOutcome[List[ProcessSummary]]]] =
+      (mockApprovalConnector
+        .summaries(_: ExecutionContext, _: HeaderCarrier))
+        .expects(*, *)
+
+    def getApprovalByProcessCode(code: String): CallHandler[Future[RequestOutcome[JsValue]]] = {
+      (mockApprovalConnector
+        .getApprovalByProcessCode(_: String)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(code, *, *)
+    }
+
+  }
 }

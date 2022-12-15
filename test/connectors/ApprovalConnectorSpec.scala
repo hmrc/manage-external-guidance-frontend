@@ -19,11 +19,11 @@ package connectors
 import base.BaseSpec
 import mocks.{MockAppConfig, MockHttpClient}
 import models.errors.InternalServerError
-import models.{RequestOutcome, ApprovalResponse}
+import models.{RequestOutcome, ApprovalResponse, ProcessSummary}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
-
+import java.time.ZonedDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -37,9 +37,39 @@ class ApprovalConnectorSpec extends BaseSpec {
 
     val id: String = "Oct90005"
     val dummyProcess: JsValue = Json.obj("processId" -> id)
+    val now = ZonedDateTime.now
+    val processCode: String = "code"
+    val process = Json.obj()
+    val processSummary = ProcessSummary(id, processCode, 1, "author", None, now, "actionedby", "Status")
 
   }
 
+  "ApprovalConnector" should {
+
+    "Return a list of process summaries" in new Test {
+
+      MockedHttpClient
+        .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/approval/list")
+        .returns(Future.successful(Right(List(processSummary))))
+
+      val response: RequestOutcome[List[ProcessSummary]] =
+        await(connector.summaries)
+
+      response shouldBe Right(List(processSummary))
+    }
+
+    "Return a published process json by process code" in new Test {
+
+      MockedHttpClient
+        .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/approval/code/$processCode")
+        .returns(Future.successful(Right(process)))
+
+      val response: RequestOutcome[JsValue] =
+        await(connector.getApprovalByProcessCode(processCode))
+
+      response shouldBe Right(process)
+    }
+  }
 
   "Calling method submitFor2iReview with a dummy process" should {
 
