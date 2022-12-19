@@ -251,7 +251,17 @@ published.passphrase=Passphrase
 published.publisher=Publisher
 published.actionDate=PublishedDate
 published.actionTime=Time
-published.switch=Switch to Archived
+published.switch=Published
+
+approvals.title=Approval Processes
+approvals.id=Process ID
+approvals.code=Process Code
+approvals.version=Version
+approvals.author=Author
+approvals.passphrase=Passphrase
+approvals.actionDate=LastModified
+approvals.actionTime=Time
+approvals.switch=Approvals
 
 archived.title=Archived Processes
 archived.id=Id
@@ -262,4 +272,4 @@ archived.passphrase=Passphrase
 archived.archiver=Archiver
 archived.actionDate=ArchiveDate
 archived.actionTime=Time
-archived.switch=Switch to Published
+archived.switch=Archived

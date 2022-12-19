@@ -1,0 +1,68 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import java.time.format.DateTimeFormatter
+@import utils.DateTimeUtils
+@import config.AppConfig
+@import models.ProcessSummary
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+
+@this(
+  layout: main_layout,
+  appConfig: AppConfig,
+  govukTable : GovukTable,
+  wideLayout: components.FullWidthContentLayout)
+
+@(summaries: List[ProcessSummary])(implicit request: Request[_], messages: Messages)
+
+@viewLink(code: String, url: String) = { <a id="@{code}" target="_blank" rel="noreferrer noopener" href="@url">@{code}</a> }
+
+@layout(messages("published.title"), None, Some(controllers.routes.ProcessAdminController.listPublished.url), Some(wideLayout(_))) {
+
+ <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listApprovals.url">@messages("approvals.switch")</a> <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listArchived.url">@messages("archived.switch")</a>
+
+  @govukTable(Table(
+      rows = summaries.map(s => Seq(
+        TableRow(content=HtmlContent(viewLink(s.id, routes.ProcessAdminController.getPublished(s.processCode).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
+        TableRow(content=Text(DateTimeUtils.formatShortDate(s.actioned.toInstant))),
+        TableRow(content=Text(DateTimeUtils.formatShortTime(s.actioned.toInstant))),
+        TableRow(content=HtmlContent(viewLink(s.processCode, s"${appConfig.pageMapPublishedlUrl}/${s.processCode.toString}")), attributes = Map("title"->messages("admin.pagemap-tooltip"))),
+        TableRow(content=Text(s.actionedBy.toString)),
+        TableRow(content=Text(s.version.toString)),
+        TableRow(content=Text(s.lastAuthor.toString)),
+        TableRow(content=Text(s.passPhrase.getOrElse("")))
+        )
+      ),
+      head = Some(Seq(
+        HeadCell(content = Text(messages("published.id"))),
+        HeadCell(content = Text(messages("published.actionDate"))),
+        HeadCell(content = Text(messages("published.actionTime"))),
+        HeadCell(content = Text(messages("published.code"))),
+        HeadCell(content = Text(messages("published.publisher"))),
+        HeadCell(content = Text(messages("published.version")), format = Some("numeric")),
+        HeadCell(content = Text(messages("published.author")), format = Some("numeric")),
+        HeadCell(content = Text(messages("published.passphrase")))
+        )
+      ),
+      caption = Some(messages("published.title")),
+      captionClasses = "govuk-table__caption--l",
+      firstCellIsHeader = true
+    ))
+
+}
+@{
+ //$COVERAGE-OFF$
+}

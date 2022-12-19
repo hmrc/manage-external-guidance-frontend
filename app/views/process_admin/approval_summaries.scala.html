@@ -30,35 +30,32 @@
 
 @viewLink(code: String, url: String) = { <a id="@{code}" target="_blank" rel="noreferrer noopener" href="@url">@{code}</a> }
 
-@layout(messages("archived.title"), None, Some(controllers.routes.ProcessAdminController.listArchived.url), Some(wideLayout(_))) {
+@layout(messages("approvals.title"), None, Some(controllers.routes.ProcessAdminController.listApprovals.url), Some(wideLayout(_))) {
 
-  <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listPublished.url">@messages("archived.switch")</a>
+   <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listPublished.url">@messages("published.switch")</a> <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listArchived.url">@messages("archived.switch")</a>
 
   @govukTable(Table(
       rows = summaries.map(s => Seq(
-        TableRow(content=HtmlContent(viewLink(s.id, routes.ProcessAdminController.getArchived(s.id).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
+        TableRow(content=HtmlContent(viewLink(s.id, routes.ProcessAdminController.getApproval(s.processCode).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
         TableRow(content=Text(DateTimeUtils.formatShortDate(s.actioned.toInstant))),
         TableRow(content=Text(DateTimeUtils.formatShortTime(s.actioned.toInstant))),
-        TableRow(content=Text(s.processCode.toString)),
-        TableRow(content=Text(s.actionedBy.toString)),
+        TableRow(content=HtmlContent(viewLink(s.processCode, s"${appConfig.pageMapApprovalUrl}/${s.processCode.toString}")), attributes = Map("title"->messages("admin.pagemap-tooltip"))),
         TableRow(content=Text(s.version.toString)),
         TableRow(content=Text(s.lastAuthor.toString)),
         TableRow(content=Text(s.passPhrase.getOrElse("")))
         )
       ),
       head = Some(Seq(
-        HeadCell(content = Text(messages("archived.id"))),
-        HeadCell(content = Text(messages("archived.actionDate")),
-                 classes = "govuk-!-width-one-half"),
-        HeadCell(content = Text(messages("archived.actionTime"))),
-        HeadCell(content = Text(messages("archived.code"))),
-        HeadCell(content = Text(messages("archived.archiver"))),
-        HeadCell(content = Text(messages("archived.version")), format = Some("numeric")),
-        HeadCell(content = Text(messages("archived.author")), format = Some("numeric")),
-        HeadCell(content = Text(messages("archived.passphrase")))
+        HeadCell(content = Text(messages("approvals.id"))),
+        HeadCell(content = Text(messages("approvals.actionDate"))),
+        HeadCell(content = Text(messages("approvals.actionTime"))),
+        HeadCell(content = Text(messages("approvals.code"))),
+        HeadCell(content = Text(messages("approvals.version")), format = Some("numeric")),
+        HeadCell(content = Text(messages("approvals.author")), format = Some("numeric")),
+        HeadCell(content = Text(messages("approvals.passphrase")))
         )
       ),
-      caption = Some(messages("archived.title")),
+      caption = Some(messages("approvals.title")),
       captionClasses = "govuk-table__caption--l",
       firstCellIsHeader = true
     ))

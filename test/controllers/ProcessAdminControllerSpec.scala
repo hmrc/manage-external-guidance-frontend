@@ -25,9 +25,7 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.published_summaries
-import views.html.archived_summaries
-import views.html.admin_signin
+import views.html.process_admin.{approval_summaries, published_summaries, archived_summaries, admin_signin}
 import play.api.libs.json._
 import scala.concurrent.Future
 import models.errors.{NotFoundError, InternalServerError}
@@ -37,6 +35,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
   private trait Test {
 
     private val pview = app.injector.instanceOf[published_summaries]
+    private val apview = app.injector.instanceOf[approval_summaries]
     private val aview = app.injector.instanceOf[archived_summaries]
     private val siview = app.injector.instanceOf[admin_signin]
     lazy val errorHandler = app.injector.instanceOf[config.ErrorHandler]
@@ -48,6 +47,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
                             errorHandler,
                             pview,
                             aview,
+                            apview,
                             siview,
                             mockProcessAdminService,
                             stubMessagesControllerComponents())
@@ -158,6 +158,60 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
       MockProcessAdminService.getPublishedByProcessCode("unknown").returns(Future.successful(Left(NotFoundError)))
 
       val result = controller.getPublished("unknown")(fakeRequest)
+      status(result) shouldBe Status.BAD_REQUEST
+    }
+
+  }
+
+  "GET /admin/approvals" should {
+
+    "return 200" in new Test {
+
+      MockProcessAdminService.approvalSummaries.returns(Future.successful(Right(List())))
+
+      val result = controller.listApprovals(fakeRequest)
+      status(result) shouldBe Status.OK
+    }
+
+    "return HTML" in new Test {
+
+      MockProcessAdminService.approvalSummaries.returns(Future.successful(Right(List())))
+
+      val result = controller.listApprovals(fakeRequest)
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+    "Return Internal server error when retrieval fails" in new Test {
+      MockProcessAdminService.approvalSummaries.returns(Future.successful(Left(InternalServerError)))
+
+      val result = controller.listApprovals(fakeRequest)
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+    }
+  }
+
+  "GET /admin/approvals/code" should {
+
+    "return 200" in new Test {
+
+      MockProcessAdminService.getApprovalByProcessCode("code").returns(Future.successful(Right(Json.obj())))
+
+      val result = controller.getApproval("code")(fakeRequest)
+      status(result) shouldBe Status.OK
+    }
+
+    "return Json" in new Test {
+
+      MockProcessAdminService.getApprovalByProcessCode("code").returns(Future.successful(Right(Json.obj())))
+
+      val result = controller.getApproval("code")(fakeRequest)
+      contentType(result) shouldBe Some("application/json")
+    }
+
+    "Return Bad request when retrieval fails" in new Test {
+      MockProcessAdminService.getApprovalByProcessCode("unknown").returns(Future.successful(Left(NotFoundError)))
+
+      val result = controller.getApproval("unknown")(fakeRequest)
       status(result) shouldBe Status.BAD_REQUEST
     }
 
