@@ -139,7 +139,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       errorSummary.size shouldBe 1
 
-      val errorSummaryTitle = doc.getElementById("error-summary-title")
+      val errorSummaryTitle = doc.getElementsByClass("govuk-error-summary__title")
 
       assertTextEqualsMessage(errorSummaryTitle.text, "error.summary.title")
 
@@ -194,7 +194,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       errorSummary.size shouldBe 1
 
-      val errorSummaryTitle = doc.getElementById("error-summary-title")
+      val errorSummaryTitle = doc.getElementsByClass("govuk-error-summary__title")
 
       assertTextEqualsMessage(errorSummaryTitle.text, "error.summary.title")
 

@@ -33,7 +33,7 @@
   @if(form.hasErrors) {
     @govukErrorSummary(ErrorSummary(
       title = Text(messages("admin.signin-global-error")),
-      disableAutoFocus = true,
+      disableAutoFocus = Some(true),
       errorList = form.errors.map{e =>
         ErrorLink(
           href = Some(s"#${if(e.key.isEmpty) "name" else e.key}"),
