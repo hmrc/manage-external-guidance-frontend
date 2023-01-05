@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,7 +139,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       errorSummary.size shouldBe 1
 
-      val errorSummaryTitle = doc.getElementById("error-summary-title")
+      val errorSummaryTitle = doc.getElementsByClass("govuk-error-summary__title")
 
       assertTextEqualsMessage(errorSummaryTitle.text, "error.summary.title")
 
@@ -194,7 +194,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       errorSummary.size shouldBe 1
 
-      val errorSummaryTitle = doc.getElementById("error-summary-title")
+      val errorSummaryTitle = doc.getElementsByClass("govuk-error-summary__title")
 
       assertTextEqualsMessage(errorSummaryTitle.text, "error.summary.title")
 
