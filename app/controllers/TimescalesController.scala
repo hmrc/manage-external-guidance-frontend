@@ -45,6 +45,15 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
 
   def timescales: Action[AnyContent] = timescalesSecuredAction.async{implicit request => uploadPage()}
 
+  def getData(): Action[AnyContent] = Action.async { implicit request =>
+    timescalesService.get().map {
+      case Right(json) => Ok(json)
+      case Left(error) =>
+        logger.error(s"Timescales service failure, err = $error")
+        InternalServerError(Json.toJson(error))
+    }
+  }
+
   def upload: Action[play.api.mvc.MultipartFormData[play.api.libs.Files.TemporaryFile]] =
     timescalesSecuredAction.async(parse.multipartFormData) { implicit request =>
       request.body.file("timescales") match {
@@ -87,4 +96,5 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
       f.close()
       result
     }
+
 }

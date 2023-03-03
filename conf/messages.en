@@ -41,6 +41,7 @@ timescales.complete.retained0 = Read carefully the following sections
 timescales.complete.retained1 = This update retires the following defintion(s):
 timescales.complete.retained2 = As these timescales are currently used within published guidance or guidance under approval, they have been retained. Please make the guidance team aware of these retirements.
 timescales.complete.close = Return to timescales update dashboard
+timescales.download.button = Timescales
 
 approvals.tableTitle = Interactive guidance dashboard
 approvals.commentsAndFeedback = View all comments and feedback (opens in new tab)

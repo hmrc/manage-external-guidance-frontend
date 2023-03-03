@@ -32,7 +32,9 @@
 
 @layout(messages("published.title"), None, Some(controllers.routes.ProcessAdminController.listPublished.url), Some(wideLayout(_))) {
 
- <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listApprovals.url">@messages("approvals.switch")</a> <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listArchived.url">@messages("archived.switch")</a>
+ <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listApprovals.url">@messages("approvals.switch")</a>
+ <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listArchived.url">@messages("archived.switch")</a>
+ <a class="govuk-button" role="button" data-module="govuk-button" target="_blank" rel="noreferrer noopener" href="@controllers.routes.TimescalesController.getData.url">@messages("timescales.download.button")</a>
 
   @govukTable(Table(
       rows = summaries.map(s => Seq(

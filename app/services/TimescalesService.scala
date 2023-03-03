@@ -30,7 +30,8 @@ class TimescalesService @Inject() (timescalesConnector: TimescalesConnector) {
   def submitTimescales(timescales: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[TimescalesResponse]] =
     timescalesConnector.submitTimescales(timescales)
 
-  def details()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[TimescalesResponse]] =
-    timescalesConnector.details()
+  def details()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[TimescalesResponse]] = timescalesConnector.details()
+
+  def get()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = timescalesConnector.get()
 
 }
