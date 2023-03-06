@@ -19,6 +19,7 @@ GET        /fact-check-result/:id                     controllers.FactCheckConfi
 
 GET        /accessibility                             controllers.AccessibilityStatementController.getPage
 
+GET        /timescales/data                           controllers.TimescalesController.getData
 GET        /timescales                                controllers.TimescalesController.timescales
 POST       /timescales                                controllers.TimescalesController.upload
 
@@ -42,8 +43,8 @@ GET        /admin/approvals/:processCode              controllers.ProcessAdminCo
 GET        /admin/archived                            controllers.ProcessAdminController.listArchived
 GET        /admin/archived/:id                        controllers.ProcessAdminController.getArchived(id)
 
-GET         /admin/sign-in                            controllers.ProcessAdminController.signIn
-POST        /admin/sign-in                            controllers.ProcessAdminController.submitSignIn
-GET         /admin/sign-out                           controllers.ProcessAdminController.signOut
+GET        /admin/sign-in                             controllers.ProcessAdminController.signIn
+POST       /admin/sign-in                             controllers.ProcessAdminController.submitSignIn
+GET        /admin/sign-out                            controllers.ProcessAdminController.signOut
 
 ->         /hmrc-frontend           hmrcfrontend.Routes

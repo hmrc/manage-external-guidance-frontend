@@ -39,4 +39,10 @@ class TimescalesConnector @Inject() (httpClient: HttpClient, appConfig: AppConfi
     httpClient.POST[JsValue, RequestOutcome[TimescalesResponse]](endpoint, timescales, Seq.empty)
   }
 
+  def get()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = {
+    val endPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/timescales/data"
+    import connectors.httpParsers.PublishedProcessHttpParser.processHttpReads
+    httpClient.GET[RequestOutcome[JsValue]](endPoint, Seq.empty, Seq.empty)
+  }
+
 }
