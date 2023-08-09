@@ -18,7 +18,6 @@ package controllers
 
 import config.ErrorHandler
 import controllers.actions.TwoEyeReviewerAction
-import javax.inject.{Inject, Singleton}
 import models.errors.{DuplicateKeyError, MalformedResponseError, NotFoundError, StaleDataError}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -27,7 +26,8 @@ import services.ReviewService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{duplicate_process_code_error, twoeye_content_review}
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class TwoEyeReviewController @Inject() (
@@ -41,6 +41,7 @@ class TwoEyeReviewController @Inject() (
     with I18nSupport {
 
   val logger: Logger = Logger(getClass)
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   def approval(id: String): Action[AnyContent] = twoEyeReviewerAction.async { implicit request =>
     reviewService.approval2iReview(id).map {

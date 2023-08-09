@@ -33,8 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.twoeye_page_review
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TwoEyePageReviewController @Inject() (
@@ -49,6 +48,7 @@ class TwoEyePageReviewController @Inject() (
     with I18nSupport {
 
   val logger: Logger = Logger(getClass)
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   def onPageLoad(processId: String, pageUrl: String, index: Int): Action[AnyContent] = twoEyeReviewerAction.async { implicit request =>
     reviewService.approval2iPageReview(processId, s"/$pageUrl") map {

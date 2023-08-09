@@ -18,7 +18,6 @@ package controllers
 
 import config.ErrorHandler
 import controllers.actions.FactCheckerAction
-import javax.inject.{Inject, Singleton}
 import models.ApprovalStatus.Complete
 import models.audit.FactCheckCompleteEvent
 import models.errors.{IncompleteDataError, NotFoundError, StaleDataError}
@@ -29,7 +28,8 @@ import services.{AuditService, ReviewService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{fact_check_complete, fact_check_confirm_error}
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class FactCheckConfirmController @Inject()(
@@ -44,6 +44,7 @@ class FactCheckConfirmController @Inject()(
     with I18nSupport {
 
   val logger: Logger = Logger(getClass)
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   def onConfirm(processId: String): Action[AnyContent] = factCheckerAction.async { implicit request =>
     reviewService.approvalFactCheckComplete(processId, request.credId, request.name, Complete).map {

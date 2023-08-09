@@ -16,21 +16,20 @@
 
 package controllers
 
-import java.time.ZonedDateTime
-import config.ErrorHandler
-import javax.inject.{Inject, Singleton}
+import config.{AppConfig, ErrorHandler}
+import controllers.actions.AuthorisedAction
+import forms.AdminSignInForm
+import models.AdminSignInDetails
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ProcessAdminService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import play.api.Logger
-import controllers.actions.AuthorisedAction
-import views.html.process_admin.{archived_summaries, published_summaries, approval_summaries, admin_signin}
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
-import models.AdminSignInDetails
-import forms.AdminSignInForm
-import config.AppConfig
+import views.html.process_admin.{admin_signin, approval_summaries, archived_summaries, published_summaries}
+
+import java.time.ZonedDateTime
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 object ProcessAdminController {
   val userSessionKey = "userName"
@@ -50,7 +49,8 @@ class ProcessAdminController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
   implicit val localDateOrdering: Ordering[ZonedDateTime] = Ordering.by(_.toInstant)
-  val logger = Logger(getClass)
+  val logger: Logger = Logger(getClass)
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   def admin: Action[AnyContent] = authAction.async { _ =>
     Future.successful(Redirect(routes.ProcessAdminController.listPublished))

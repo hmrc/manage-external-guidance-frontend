@@ -17,21 +17,22 @@
 package controllers.apis
 
 import config.AppConfig
-import javax.inject.{Inject, Singleton}
-import models.{ApprovalResponse, RequestOutcome}
 import models.errors.{Error, InvalidProcessError}
+import models.{ApprovalResponse, RequestOutcome}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import services.ApprovalService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApprovalController @Inject() (appConfig: AppConfig, approvalService: ApprovalService, mcc: MessagesControllerComponents) extends FrontendController(mcc) with WithUnsafeDefaultFormBinding {
 
   implicit val config: AppConfig = appConfig
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   val corsHeaders: Seq[(String, String)] = Seq(
     "Access-Control-Allow-Origin" -> "*",

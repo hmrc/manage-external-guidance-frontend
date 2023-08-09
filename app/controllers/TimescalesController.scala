@@ -25,14 +25,14 @@ import play.api.mvc._
 import controllers.actions.TimescalesAction
 import services.TimescalesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.Logger
 import views.html.upload_timescales
 import views.html.timescales_upload_complete
 import models.UpdateDisplayDetails
-import scala.concurrent.Future
+
+import scala.concurrent.{ExecutionContext, Future}
 import java.nio.file._
-import scala.util.{Success, Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class TimescalesController @Inject() (timescalesService: TimescalesService,
@@ -42,10 +42,11 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
                                       uploadCompleteView: timescales_upload_complete,
                                       mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
   val logger: Logger = Logger(getClass)
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   def timescales: Action[AnyContent] = timescalesSecuredAction.async{implicit request => uploadPage()}
 
-  def getData(): Action[AnyContent] = Action.async { implicit request =>
+  def getData: Action[AnyContent] = Action.async { implicit request =>
     timescalesService.get().map {
       case Right(json) => Ok(json)
       case Left(error) =>
