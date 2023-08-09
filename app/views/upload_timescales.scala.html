@@ -48,7 +48,7 @@
   messages("timescales.status", update.time, update.date, update.user, update.credId, update.email, count)
 )
 </p>
-@formHelper(action = controllers.routes.TimescalesController.upload, 'enctype -> "multipart/form-data") {
+@formHelper(action = controllers.routes.TimescalesController.upload, Symbol("enctype") -> "multipart/form-data") {
   @govukFileUpload(FileUpload(
       name = "timescales",
       id = "timescales",

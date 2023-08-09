@@ -18,11 +18,13 @@ package views
 
 import forms.TwoEyeReviewResultFormProvider
 import models.ApprovalStatus
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import play.api.data.{Form, FormError}
 import play.twirl.api.HtmlFormat
 import views.html.twoeye_review_result
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
@@ -34,7 +36,7 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
     val form: Form[ApprovalStatus] = formProvider()
 
-    val view = injector.instanceOf[twoeye_review_result]
+    val view: twoeye_review_result = injector.instanceOf[twoeye_review_result]
 
     def createView: (String, Form[ApprovalStatus]) => HtmlFormat.Appendable =
       (processId, form) => view(processId, form)
@@ -42,19 +44,19 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
     val fieldName = "value"
 
     val requiredKeyError = "2iReviewResultType.error.required"
-    val requiredKeyFormError = FormError(fieldName, requiredKeyError)
+    val requiredKeyFormError: FormError = FormError(fieldName, requiredKeyError)
 
-    val emptyFormData = Map[String, String]()
+    val emptyFormData: Map[String, String] = Map[String, String]()
 
     val invalidValueError = "error.invalid"
-    val invalidValueFormError = FormError(fieldName, invalidValueError)
+    val invalidValueFormError: FormError = FormError(fieldName, invalidValueError)
   }
 
   "Following a GET request 2i review" should {
 
     "include a back link" in new Test {
 
-      val doc = asDocument(createView(processId, form))
+      val doc: Document = asDocument(createView(processId, form))
 
       checkTextOnElementById(doc, "back-link", "backlink.label")
       checkAttributeOnElementById(doc, "back-link", "class", "govuk-back-link")
@@ -63,11 +65,11 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
     "display the appropriate radio buttons" in new Test {
 
-      val doc = asDocument(createView(processId, form))
+      val doc: Document = asDocument(createView(processId, form))
 
-      val inputs = doc.getElementsByTag("input").asScala.toList
+      val inputs: List[Element] = doc.getElementsByTag("input").asScala.toList
 
-      val radios = inputs.filter(input =>
+      val radios: List[Element] = inputs.filter(input =>
         elementAttrs(input).get("type").fold(false) { inputType =>
           inputType == "radio"
         }
@@ -91,9 +93,9 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
         value shouldBe ApprovalStatus.Published.toString
       }
 
-      val labels = doc.getElementsByTag("label").asScala.toList
+      val labels: List[Element] = doc.getElementsByTag("label").asScala.toList
 
-      val radioLabels = labels.filter(label =>
+      val radioLabels: List[Element] = labels.filter(label =>
         elementAttrs(label).get("class").fold(false) { clss =>
           clss.contains("govuk-radios__label")
         }
@@ -107,9 +109,9 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
     "display the complete 2i review button" in new Test {
 
-      val doc = asDocument(createView(processId, form))
+      val doc: Document = asDocument(createView(processId, form))
 
-      val buttons = doc.getElementsByTag("button")
+      val buttons: Elements = doc.getElementsByTag("button")
 
       buttons.size shouldBe 1
 
@@ -127,11 +129,11 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       val boundForm: Form[ApprovalStatus] = form.bind(emptyFormData)
 
-      val doc = asDocument(createView(processId, boundForm))
+      val doc: Document = asDocument(createView(processId, boundForm))
 
-      val divs = doc.getElementsByTag("div").asScala.toList
+      val divs: List[Element] = doc.getElementsByTag("div").asScala.toList
 
-      val errorSummary = divs.filter(div =>
+      val errorSummary: List[Element] = divs.filter(div =>
         elementAttrs(div).get("class").fold(false) { clss =>
           clss == "govuk-error-summary"
         }
@@ -139,11 +141,11 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       errorSummary.size shouldBe 1
 
-      val errorSummaryTitle = doc.getElementsByClass("govuk-error-summary__title")
+      val errorSummaryTitle: Elements = doc.getElementsByClass("govuk-error-summary__title")
 
       assertTextEqualsMessage(errorSummaryTitle.text, "error.summary.title")
 
-      val errorSummaryList = doc.getElementsByClass("govuk-list govuk-error-summary__list")
+      val errorSummaryList: Elements = doc.getElementsByClass("govuk-list govuk-error-summary__list")
 
       errorSummaryList.isEmpty shouldBe false
 
@@ -154,11 +156,11 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       val boundForm: Form[ApprovalStatus] = form.bind(emptyFormData)
 
-      val doc = asDocument(createView(processId, boundForm))
+      val doc: Document = asDocument(createView(processId, boundForm))
 
-      val errorMessageSpan = doc.getElementById("value-error")
+      val errorMessageSpan: Element = doc.getElementById("value-error")
 
-      val errorMsg = messages("2iReviewResult.error.required")
+      val errorMsg: String = messages("2iReviewResult.error.required")
 
       errorMessageSpan.text.replaceAll("\u00a0", " ") shouldBe s"Error: $errorMsg".replaceAll("&nbsp;", " ")
     }
@@ -167,9 +169,9 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       val boundForm: Form[ApprovalStatus] = form.bind(emptyFormData)
 
-      val doc = asDocument(createView(processId, boundForm))
+      val doc: Document = asDocument(createView(processId, boundForm))
 
-      val fieldSet = doc.getElementsByTag("fieldset").first()
+      val fieldSet: Element = doc.getElementsByTag("fieldset").first()
 
       elementAttrs(fieldSet)("aria-describedby").contains("value-error") shouldBe true
     }
@@ -182,11 +184,11 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       val boundForm: Form[ApprovalStatus] = form.bind(Map(fieldName -> ApprovalStatus.Submitted.toString))
 
-      val doc = asDocument(createView(processId, boundForm))
+      val doc: Document = asDocument(createView(processId, boundForm))
 
-      val divs = doc.getElementsByTag("div").asScala.toList
+      val divs: List[Element] = doc.getElementsByTag("div").asScala.toList
 
-      val errorSummary = divs.filter(div =>
+      val errorSummary: List[Element] = divs.filter(div =>
         elementAttrs(div).get("class").fold(false) { clss =>
           clss == "govuk-error-summary"
         }
@@ -194,11 +196,11 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       errorSummary.size shouldBe 1
 
-      val errorSummaryTitle = doc.getElementsByClass("govuk-error-summary__title")
+      val errorSummaryTitle: Elements = doc.getElementsByClass("govuk-error-summary__title")
 
       assertTextEqualsMessage(errorSummaryTitle.text, "error.summary.title")
 
-      val errorSummaryList = doc.getElementsByClass("govuk-list govuk-error-summary__list")
+      val errorSummaryList: Elements = doc.getElementsByClass("govuk-list govuk-error-summary__list")
 
       errorSummaryList.isEmpty shouldBe false
 
@@ -209,11 +211,11 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       val boundForm: Form[ApprovalStatus] = form.bind(Map(fieldName -> ApprovalStatus.Submitted.toString))
 
-      val doc = asDocument(createView(processId, boundForm))
+      val doc: Document = asDocument(createView(processId, boundForm))
 
-      val errorMessageSpan = doc.getElementById("value-error")
+      val errorMessageSpan: Element = doc.getElementById("value-error")
 
-      val errorMsg = messages("2iReviewResult.error.required")
+      val errorMsg: String = messages("2iReviewResult.error.required")
 
       errorMessageSpan.text.replaceAll("\u00a0", " ") shouldBe s"Error: $errorMsg".replaceAll("&nbsp;", " ")
     }
@@ -222,9 +224,9 @@ class TwoEyeReviewResultViewSpec extends ViewSpecBase {
 
       val boundForm: Form[ApprovalStatus] = form.bind(emptyFormData)
 
-      val doc = asDocument(createView(processId, boundForm))
+      val doc: Document = asDocument(createView(processId, boundForm))
 
-      val fieldSet = doc.getElementsByTag("fieldset").first()
+      val fieldSet: Element = doc.getElementsByTag("fieldset").first()
 
       elementAttrs(fieldSet)("aria-describedby").contains("value-error") shouldBe true
     }

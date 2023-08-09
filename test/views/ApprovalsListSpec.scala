@@ -18,15 +18,17 @@ package views
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
 import controllers.routes
 import models.ApprovalStatus._
 import models.ReviewType.{ReviewType2i, ReviewTypeFactCheck}
 import models._
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import views.html._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class ApprovalsListSpec extends ViewSpecBase {
 
@@ -40,16 +42,16 @@ class ApprovalsListSpec extends ViewSpecBase {
       ApprovalProcessSummary("oct9008", "Find a lost user ID and password", LocalDate.of(2020, 4, 2), Submitted, ReviewTypeFactCheck)
     )
 
-    implicit val fakeRequest = FakeRequest("GET", "/")
+    implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
 
-    val doc = asDocument(approvalsListView(summaries)(fakeRequest, messages))
+    val doc: Document = asDocument(approvalsListView(summaries)(fakeRequest, messages))
   }
 
   "Approval Summary List page" should {
 
     "Render header with service name link" in new Test {
 
-      val headers = doc.getElementsByTag("header")
+      val headers: Elements = doc.getElementsByTag("header")
 
       headers.size() shouldBe 1
 
@@ -119,7 +121,7 @@ class ApprovalsListSpec extends ViewSpecBase {
 
                 Option(cellData.head.getElementsByTag("a").first).fold(fail("Missing link from page url cell")) { a =>
                   elementAttrs(a).get("href").fold(fail("Missing href attribute within anchor")) { href =>
-                    s.reviewType match {
+                    (s.reviewType: @unchecked) match {
                       case ReviewType2i if List(InProgress, Submitted).contains(s.status) => href shouldBe routes.TwoEyeReviewController.approval(s.id).url
                       case ReviewTypeFactCheck if List(InProgress, Submitted).contains(s.status) => href shouldBe routes.FactCheckController.approval(s.id).url
                     }
@@ -153,7 +155,7 @@ class ApprovalsListSpec extends ViewSpecBase {
 
     "render list of processes for approval as a responsive table" in new Test {
 
-      val tables = doc.getElementsByTag("table").asScala.toList
+      val tables: List[Element] = doc.getElementsByTag("table").asScala.toList
 
       tables.size shouldBe >(0)
 
@@ -167,7 +169,7 @@ class ApprovalsListSpec extends ViewSpecBase {
         role shouldBe "table"
       }
 
-      val theads = tables.head.getElementsByTag("thead").asScala.toList
+      val theads: List[Element] = tables.head.getElementsByTag("thead").asScala.toList
 
       theads.size shouldBe 1
 
@@ -181,7 +183,7 @@ class ApprovalsListSpec extends ViewSpecBase {
         role shouldBe "rowgroup"
       }
 
-      val headerRows = theads.head.getElementsByTag("tr").asScala.toList
+      val headerRows: List[Element] = theads.head.getElementsByTag("tr").asScala.toList
 
       headerRows.size shouldBe 1
 
@@ -193,7 +195,7 @@ class ApprovalsListSpec extends ViewSpecBase {
         role shouldBe "row"
       }
 
-      val headerCells = headerRows.head.getElementsByTag("th").asScala.toList
+      val headerCells: List[Element] = headerRows.head.getElementsByTag("th").asScala.toList
 
       headerCells.size shouldBe 3
 
@@ -212,7 +214,7 @@ class ApprovalsListSpec extends ViewSpecBase {
         }
       }
 
-      val tbodies = tables.head.getElementsByTag("tbody").asScala.toList
+      val tbodies: List[Element] = tables.head.getElementsByTag("tbody").asScala.toList
 
       tbodies.size shouldBe 1
 
@@ -220,7 +222,7 @@ class ApprovalsListSpec extends ViewSpecBase {
         cls shouldBe "govuk-table__body"
       }
 
-      val bodyRows = tbodies.head.getElementsByTag("tr").asScala.toList
+      val bodyRows: List[Element] = tbodies.head.getElementsByTag("tr").asScala.toList
 
       bodyRows.size shouldBe 4
 

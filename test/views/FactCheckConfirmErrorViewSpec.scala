@@ -17,7 +17,6 @@
 package views
 
 import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 import play.twirl.api.HtmlFormat
 import views.html.fact_check_confirm_error
 

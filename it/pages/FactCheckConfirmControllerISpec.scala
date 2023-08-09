@@ -37,7 +37,7 @@ class FactCheckConfirmControllerISpec extends IntegrationSpec {
           val auditInfo: AuditInfo = AuditInfo("pid", "oct90005", "title", 1, "author", 2, 2)
           ExternalGuidanceStub.factCheckComplete(OK, Json.toJson(auditInfo))
 
-          val response: WSResponse = await(request.get)
+          val response: WSResponse = await(request.get())
           response.status shouldBe OK
         }
       }
@@ -47,7 +47,7 @@ class FactCheckConfirmControllerISpec extends IntegrationSpec {
         AuditStub.audit()
         AuthStub.unauthorised()
 
-        val response: WSResponse = await(request.get)
+        val response: WSResponse = await(request.get())
         response.status shouldBe UNAUTHORIZED
 
       }

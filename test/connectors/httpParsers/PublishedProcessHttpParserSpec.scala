@@ -53,7 +53,7 @@ class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status
 
     val validJsonResponse: JsValue = Json.obj()
 
-    val published = PublishedProcess(
+    val published: PublishedProcess = PublishedProcess(
       "id",
       1,
       date,
@@ -62,8 +62,8 @@ class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status
       "code"
     )
 
-    val now = ZonedDateTime.now
-    val processSummary = ProcessSummary("id", "code", 1, "author", None, now, "actionedby", "Status")
+    val now: ZonedDateTime = ZonedDateTime.now
+    val processSummary: ProcessSummary = ProcessSummary("id", "code", 1, "author", None, now, "actionedby", "Status")
   }
 
   "Parsing a successful response" should {
@@ -84,7 +84,7 @@ class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status
 
     "return a valid ProcessSummary list response" in new Test {
 
-      val data = Json.toJson(List(processSummary))
+      val data: JsValue = Json.toJson(List(processSummary))
 
       private val httpResponse = HttpResponse(OK, data, Map.empty[String, Seq[String]])
       private val result = processSummaryHttpReads.read(POST, url, httpResponse)
@@ -107,8 +107,8 @@ class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status
     }
 
     "return an UNPROCESSABLE_ENTITY error for similar" in new Test {
-      val processError = Error(List(ProcessError("Duplicate page url /example-page-3 found on stanza id = 22", "22")))
-      val jsObject = Json.parse("""{"code":"UNPROCESSABLE_ENTITY","messages":[{"message":"Duplicate page url /example-page-3 found on stanza id = 22","stanza":"22"}]}""").as[JsObject]
+      val processError: Error = Error(List(ProcessError("Duplicate page url /example-page-3 found on stanza id = 22", "22")))
+      val jsObject: JsObject = Json.parse("""{"code":"UNPROCESSABLE_ENTITY","messages":[{"message":"Duplicate page url /example-page-3 found on stanza id = 22","stanza":"22"}]}""").as[JsObject]
       val httpResponse: HttpResponse = HttpResponse(UNPROCESSABLE_ENTITY, jsObject, Map.empty[String, Seq[String]])
 
       val result: RequestOutcome[PublishedProcess] =
@@ -116,7 +116,7 @@ class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status
 
       result match {
         case Left(err) if err == processError => succeed
-        case err => fail
+        case err => fail()
       }
     }
 

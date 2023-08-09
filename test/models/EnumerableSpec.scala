@@ -48,7 +48,7 @@ class EnumerableSpec extends AnyWordSpec with Matchers with EitherValues with Op
 
     Foo.values.foreach { value =>
       s"bind correctly for: $value" in {
-        Json.fromJson[Foo](JsString(value.toString)).asEither.right.value shouldEqual value
+        Json.fromJson[Foo](JsString(value.toString)).asEither.toOption.value shouldEqual value
       }
     }
 

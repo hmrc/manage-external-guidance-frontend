@@ -22,17 +22,13 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
-import play.api.libs.ws.{WSRequest, DefaultWSCookie}
+import play.api.libs.ws.{DefaultWSCookie, WSClient, WSRequest, WSResponse}
 import play.api.mvc.{Session, SessionCookieBaker}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
-import uk.gov.hmrc.crypto.PlainText
-import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
-import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import play.api.{Application, Environment, Mode}
-import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.crypto.PlainText
+import uk.gov.hmrc.http.{HeaderNames, SessionKeys}
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
-import uk.gov.hmrc.http.HeaderNames
-
 
 trait IntegrationSpec
     extends AnyWordSpecLike
@@ -95,7 +91,7 @@ trait IntegrationSpec
 
   def document(response: WSResponse): JsValue = Json.parse(response.body)
 
-  def mockSessionCookie = {
+  def mockSessionCookie: DefaultWSCookie = {
     val sessionCookie = cookieBaker.encodeAsCookie(Session(Map(
       SessionKeys.lastRequestTimestamp -> System.currentTimeMillis().toString,
       SessionKeys.authToken -> BearerToken,

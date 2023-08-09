@@ -39,8 +39,8 @@ class TimescalesServiceSpec extends BaseSpec {
     val credId: String = "234324234"
     val user: String = "User Blah"
     val email: String = "user@blah.com"
-    val updateDetail = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
-    val timescalesDetail = TimescalesResponse(timescales.size, Some(updateDetail))
+    val updateDetail: UpdateDetails = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
+    val timescalesDetail: TimescalesResponse = TimescalesResponse(timescales.size, Some(updateDetail))
   }
 
   "The Timescales service" should {
@@ -55,7 +55,7 @@ class TimescalesServiceSpec extends BaseSpec {
 
       result.onComplete {
         case Success(response) =>
-          response match {
+          (response: @unchecked) match {
             case Right(details) if details == timescalesDetail =>  succeed
             case Left(error) => fail(s"Unexpected error returned by timescales connector : ${error.toString}")
           }
@@ -75,7 +75,7 @@ class TimescalesServiceSpec extends BaseSpec {
 
       result.onComplete {
         case Success(response) =>
-          response match {
+          (response: @unchecked) match {
             case Right(details) if details == timescalesDetail =>  succeed
             case Left(error) => fail(s"Unexpected error returned by timescales connector : ${error.toString}")
           }
