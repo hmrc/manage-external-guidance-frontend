@@ -31,7 +31,7 @@ import play.api.mvc._
 import services.ReviewService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.fact_check_page_review
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -44,7 +44,7 @@ class FactCheckPageReviewController @Inject() (
     reviewService: ReviewService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
-    with WithDefaultFormBinding
+    with WithUnsafeDefaultFormBinding
     with I18nSupport {
 
   val logger: Logger = Logger(getClass)

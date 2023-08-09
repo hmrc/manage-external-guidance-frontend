@@ -15,7 +15,6 @@
  */
 
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "manage-external-guidance-frontend"
 
@@ -27,7 +26,6 @@ lazy val microservice = Project(appName, file("."))
     majorVersion := 0,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test
   )
-  .settings(publishingSettings: _*)
   .configs(IntegrationTest)
   .settings(CodeCoverageSettings.settings: _*)
   .settings(integrationTestSettings(): _*)

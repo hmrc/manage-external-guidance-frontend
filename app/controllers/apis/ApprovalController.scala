@@ -24,12 +24,12 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import services.ApprovalService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ApprovalController @Inject() (appConfig: AppConfig, approvalService: ApprovalService, mcc: MessagesControllerComponents) extends FrontendController(mcc) with WithDefaultFormBinding {
+class ApprovalController @Inject() (appConfig: AppConfig, approvalService: ApprovalService, mcc: MessagesControllerComponents) extends FrontendController(mcc) with WithUnsafeDefaultFormBinding {
 
   implicit val config: AppConfig = appConfig
 

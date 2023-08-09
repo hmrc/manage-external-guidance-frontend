@@ -31,7 +31,7 @@ import play.api.mvc._
 import services.{AuditService, ReviewService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{duplicate_process_code_error, twoeye_complete, twoeye_confirm_error, twoeye_review_result, upgrade_required_error}
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -49,7 +49,7 @@ class TwoEyeReviewResultController @Inject() (
     auditService: AuditService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
-    with WithDefaultFormBinding
+    with WithUnsafeDefaultFormBinding
     with I18nSupport {
 
   val logger: Logger = Logger(getClass)
