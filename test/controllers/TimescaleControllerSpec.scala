@@ -47,8 +47,8 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
     val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
     def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
     implicit val messages: Messages = messagesApi.preferred(FakeRequest("GET", "/"))
-    val view = injector.instanceOf[upload_timescales]
-    val completeView = injector.instanceOf[timescales_upload_complete]
+    val view: upload_timescales = injector.instanceOf[upload_timescales]
+    val completeView: timescales_upload_complete = injector.instanceOf[timescales_upload_complete]
     val timscalesJsonString = """{"First": 1, "Second": 2, "Third": 3}"""
     val timescalesJson: JsValue = Json.parse(timscalesJsonString)
     val controller = new TimescalesController(mockTimescalesService, FakeTimescalesAction, errorHandler, view, completeView, messagesControllerComponents)
@@ -60,8 +60,8 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
     val credId: String = "234324234"
     val user: String = "User Blah"
     val email: String = "user@blah.com"
-    val updateDetail = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
-    val timescaleDetails = TimescalesResponse(timescales.size, Some(updateDetail))
+    val updateDetail: UpdateDetails = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
+    val timescaleDetails: TimescalesResponse = TimescalesResponse(timescales.size, Some(updateDetail))
 
     def createTempJsonFile(content: String): (TemporaryFile, Int) = {
       val tempFile = Files.SingletonTemporaryFileCreator.create("file", "tmp")
@@ -89,43 +89,43 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
 
     "return OK and last update response" in new Test {
 
-      MockTimescalesService.details.returns(Future.successful(Right(timescaleDetails)))
+      MockTimescalesService.details().returns(Future.successful(Right(timescaleDetails)))
 
-      val result = controller.timescales()(fakeRequest)
+      val result: Future[Result] = controller.timescales()(fakeRequest)
       status(result) shouldBe Status.OK
     }
 
     "return BadRequest if receipt from server generates a validation error" in new Test {
 
-      MockTimescalesService.details.returns(Future.successful(Left(ValidationError)))
+      MockTimescalesService.details().returns(Future.successful(Left(ValidationError)))
 
-      val result = controller.timescales()(fakeRequest)
+      val result: Future[Result] = controller.timescales()(fakeRequest)
       status(result) shouldBe Status.BAD_REQUEST
     }
 
     "return Unauthorized if receipt from server generates a forbidden error" in new Test {
 
-      MockTimescalesService.details.returns(Future.successful(Left(ForbiddenError)))
+      MockTimescalesService.details().returns(Future.successful(Left(ForbiddenError)))
 
-      val result = controller.timescales()(fakeRequest)
+      val result: Future[Result] = controller.timescales()(fakeRequest)
       status(result) shouldBe Status.UNAUTHORIZED
     }
 
     "return Internal error if receipt from server generates a NotFound error" in new Test {
 
-      MockTimescalesService.details.returns(Future.successful(Left(NotFoundError)))
+      MockTimescalesService.details().returns(Future.successful(Left(NotFoundError)))
 
-      val result = controller.timescales()(fakeRequest)
+      val result: Future[Result] = controller.timescales()(fakeRequest)
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
   }
 
   "POST /external-guidance/timescales" should {
     "Upload valid timescale defns return OK and last update response" in new Test {
-      val fakeUploadRequest = FakeRequest("POST", "/external-guidance/timescales").withBody(createMultipartFormData(timscalesJsonString, "application/json"))
+      val fakeUploadRequest: FakeRequest[MultipartFormData[TemporaryFile]] = FakeRequest("POST", "/external-guidance/timescales").withBody(createMultipartFormData(timscalesJsonString, "application/json"))
 
       MockTimescalesService.submitTimescales(timescalesJson).returns(Future.successful(Right(timescaleDetails)))
-      val result = controller.upload()(fakeUploadRequest)
+      val result: Future[Result] = controller.upload()(fakeUploadRequest)
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -134,11 +134,11 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
 
 
     "Upload valid timescale defns but submission fails, return BAD_REQUEST and last update response" in new Test {
-      val fakeUploadRequest = FakeRequest("POST", "/external-guidance/timescales").withBody(createMultipartFormData(timscalesJsonString, "application/json"))
+      val fakeUploadRequest: FakeRequest[MultipartFormData[TemporaryFile]] = FakeRequest("POST", "/external-guidance/timescales").withBody(createMultipartFormData(timscalesJsonString, "application/json"))
 
       MockTimescalesService.submitTimescales(timescalesJson).returns(Future.successful(Left(BadRequestError)))
-      MockTimescalesService.details.returns(Future.successful(Right(timescaleDetails)))
-      val result = controller.upload()(fakeUploadRequest)
+      MockTimescalesService.details().returns(Future.successful(Right(timescaleDetails)))
+      val result: Future[Result] = controller.upload()(fakeUploadRequest)
 
       status(result) shouldBe Status.BAD_REQUEST
       contentType(result) shouldBe Some("text/html")
@@ -146,10 +146,10 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
     }
 
     "Upload invalid timescale defns return BadRequest and last update response" in new Test {
-      val fakeUploadRequest = FakeRequest("POST", "/external-guidance/timescales").withBody(createMultipartFormData("some text", "application/json"))
+      val fakeUploadRequest: FakeRequest[MultipartFormData[TemporaryFile]] = FakeRequest("POST", "/external-guidance/timescales").withBody(createMultipartFormData("some text", "application/json"))
 
-      MockTimescalesService.details.returns(Future.successful(Right(timescaleDetails)))
-      val result = controller.upload()(fakeUploadRequest)
+      MockTimescalesService.details().returns(Future.successful(Right(timescaleDetails)))
+      val result: Future[Result] = controller.upload()(fakeUploadRequest)
 
       status(result) shouldBe Status.BAD_REQUEST
       contentType(result) shouldBe Some("text/html")
@@ -157,10 +157,10 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
     }
 
     "Upload valid timescale defns with non json content-type should return BadRequest and last update response" in new Test {
-      val fakeUploadRequest = FakeRequest("POST", "/external-guidance/timescales").withBody(createMultipartFormData(timscalesJsonString, "application/txt"))
+      val fakeUploadRequest: FakeRequest[MultipartFormData[TemporaryFile]] = FakeRequest("POST", "/external-guidance/timescales").withBody(createMultipartFormData(timscalesJsonString, "application/txt"))
 
-      MockTimescalesService.details.returns(Future.successful(Right(timescaleDetails)))
-      val result = controller.upload()(fakeUploadRequest)
+      MockTimescalesService.details().returns(Future.successful(Right(timescaleDetails)))
+      val result: Future[Result] = controller.upload()(fakeUploadRequest)
 
       status(result) shouldBe Status.BAD_REQUEST
       contentType(result) shouldBe Some("text/html")

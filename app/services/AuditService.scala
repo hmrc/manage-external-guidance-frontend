@@ -17,7 +17,6 @@
 package services
 
 import config.AppConfig
-import javax.inject.{Inject, Singleton}
 import models.audit.AuditEvent
 import play.api.Logger
 import play.api.http.HeaderNames
@@ -28,14 +27,13 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Disabled, Failure, Success}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnector) {
   private val logger = Logger(getClass)
   private val referrer: HeaderCarrier => String = _.headers(Seq(HeaderNames.REFERER)).headOption.fold("-")(_._2)
-
-  implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
 
   private def toExtendedDataEvent(event: AuditEvent, path: Option[String])(implicit hc: HeaderCarrier): ExtendedDataEvent =
     ExtendedDataEvent(

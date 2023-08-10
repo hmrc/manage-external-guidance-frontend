@@ -28,7 +28,7 @@
 
     @if(!update.retained.isEmpty) {
       @govukWarningText(WarningText(
-      iconFallbackText = "Warning",
+      iconFallbackText = Some("Warning"),
       content = Text(messages("timescales.complete.retained0"))
       ))
 

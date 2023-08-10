@@ -62,8 +62,8 @@ class ScratchHttpParserSpec extends BaseSpec with HttpVerbs with Status {
     }
 
     "return an UNPROCESSABLE_ENTITY error for similar" in new Test {
-      val processError = Error(List(ProcessError("Duplicate page url /example-page-3 found on stanza id = 22", "22")))
-      val jsObject = Json.parse("""{"code":"UNPROCESSABLE_ENTITY","messages":[{"message":"Duplicate page url /example-page-3 found on stanza id = 22","stanza":"22"}]}""").as[JsObject]
+      val processError: Error = Error(List(ProcessError("Duplicate page url /example-page-3 found on stanza id = 22", "22")))
+      val jsObject: JsObject = Json.parse("""{"code":"UNPROCESSABLE_ENTITY","messages":[{"message":"Duplicate page url /example-page-3 found on stanza id = 22","stanza":"22"}]}""").as[JsObject]
       val httpResponse: HttpResponse = HttpResponse(UNPROCESSABLE_ENTITY, jsObject, Map.empty[String, Seq[String]])
 
       val result: RequestOutcome[ScratchResponse] =
@@ -71,7 +71,7 @@ class ScratchHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
       result match {
         case Left(err) if err == processError => succeed
-        case err => fail
+        case err => fail()
       }
     }
 

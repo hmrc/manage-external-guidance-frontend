@@ -19,21 +19,21 @@ package controllers
 import config.ErrorHandler
 import controllers.actions.TwoEyeReviewerAction
 import forms.TwoEyeReviewResultFormProvider
-import javax.inject.{Inject, Singleton}
 import models.ApprovalStatus
 import models.audit.{PublishedEvent, TwoEyeReviewCompleteEvent}
-import models.errors.{DuplicateKeyError, IncompleteDataError, NotFoundError, StaleDataError, UpgradeRequiredError}
+import models.errors._
 import models.requests.IdentifierRequest
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{AuditService, ReviewService}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.{duplicate_process_code_error, twoeye_complete, twoeye_confirm_error, twoeye_review_result, upgrade_required_error}
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import views.html._
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TwoEyeReviewResultController @Inject() (
@@ -49,10 +49,11 @@ class TwoEyeReviewResultController @Inject() (
     auditService: AuditService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
-    with WithDefaultFormBinding
+    with WithUnsafeDefaultFormBinding
     with I18nSupport {
 
   val logger: Logger = Logger(getClass)
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   def onPageLoad(processId: String): Action[AnyContent] = twoEyeReviewerAction.async { implicit request =>
 

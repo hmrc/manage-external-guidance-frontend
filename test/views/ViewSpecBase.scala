@@ -18,7 +18,7 @@ package views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import play.api.inject.Injector
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.AnyContentAsEmpty
@@ -86,7 +86,7 @@ trait ViewSpecBase extends BaseSpec with GuiceOneAppPerSuite {
     val optionElement: Option[Element] = Option(doc.getElementById(elementId))
     optionElement match {
       case Some(tag) => assertTextEqualsMessage(tag.text, expectedMessageKey, args)
-      case _ => fail
+      case _ => fail()
     }
   }
 
@@ -98,7 +98,7 @@ trait ViewSpecBase extends BaseSpec with GuiceOneAppPerSuite {
         attrs.get(attribute).fold(fail(s"Missing $attribute attribute")) { attr =>
           attr shouldBe expectedValue
         }
-      case _ => fail
+      case _ => fail()
     }
   }
 }

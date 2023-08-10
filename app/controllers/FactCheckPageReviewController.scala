@@ -19,7 +19,6 @@ package controllers
 import config.ErrorHandler
 import controllers.actions.FactCheckerAction
 import forms.FactCheckPageReviewFormProvider
-import javax.inject.{Inject, Singleton}
 import models.PageReviewDetail
 import models.PageReviewStatus._
 import models.errors.{NotFoundError, StaleDataError}
@@ -29,11 +28,12 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ReviewService
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.fact_check_page_review
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FactCheckPageReviewController @Inject() (
@@ -44,10 +44,11 @@ class FactCheckPageReviewController @Inject() (
     reviewService: ReviewService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
-    with WithDefaultFormBinding
+    with WithUnsafeDefaultFormBinding
     with I18nSupport {
 
   val logger: Logger = Logger(getClass)
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   def onPageLoad(processId: String, pageUrl: String, index: Int): Action[AnyContent] = factCheckerAction.async { implicit request =>
     reviewService.factCheckPageInfo(processId, s"/$pageUrl") map {

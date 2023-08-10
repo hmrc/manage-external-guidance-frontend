@@ -18,12 +18,12 @@ package views
 
 import java.time._
 import java.util.UUID
-
 import models.PageReviewStatus._
 import models.{ApprovalProcessReview, PageReview}
+import org.jsoup.nodes.Document
 import views.html.fact_check_content_review
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class FactCheckReviewSpec extends ViewSpecBase {
 
@@ -35,7 +35,7 @@ class FactCheckReviewSpec extends ViewSpecBase {
     val month = 5
     val day = 11
 
-    val approvalProcessReview = ApprovalProcessReview(
+    val approvalProcessReview: ApprovalProcessReview = ApprovalProcessReview(
       UUID.randomUUID().toString,
       "oct9005",
       "Telling HMRC about extra income",
@@ -51,7 +51,7 @@ class FactCheckReviewSpec extends ViewSpecBase {
       )
     )
 
-    val doc = asDocument(factCheckReview(approvalProcessReview))
+    val doc: Document = asDocument(factCheckReview(approvalProcessReview))
   }
 
   "Fact check review" should {

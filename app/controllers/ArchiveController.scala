@@ -17,7 +17,6 @@
 package controllers
 
 import config.ErrorHandler
-import services.AdminService
 import controllers.actions.AllRolesAction
 import forms.UnpublishConfirmationFormProvider
 import models.YesNoAnswer.{No, Yes}
@@ -26,12 +25,12 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.AdminService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{unpublish_confirmation, unpublished}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ArchiveController @Inject()(
@@ -46,6 +45,7 @@ class ArchiveController @Inject()(
     with I18nSupport {
 
   val logger: Logger = Logger(getClass)
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   def unpublish(processId: String): Action[AnyContent] = allRolesAction.async { implicit request =>
     val form: Form[UnpublishConfirmation] = formProvider().bind(Map("value" -> No.toString))

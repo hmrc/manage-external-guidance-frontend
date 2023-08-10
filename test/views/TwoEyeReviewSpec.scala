@@ -18,19 +18,19 @@ package views
 
 import java.time._
 import java.util.UUID
-
 import models.PageReviewStatus._
 import models._
+import org.jsoup.nodes.Document
 import views.html._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class TwoEyeReviewSpec extends ViewSpecBase {
 
   trait Test {
     def twoEyeReview: twoeye_content_review = injector.instanceOf[twoeye_content_review]
 
-    val approvalProcessReview = ApprovalProcessReview(
+    val approvalProcessReview: ApprovalProcessReview = ApprovalProcessReview(
       UUID.randomUUID().toString,
       "oct9005",
       "Telling HMRC about extra income",
@@ -45,7 +45,7 @@ class TwoEyeReviewSpec extends ViewSpecBase {
         PageReview("id7", "/rent-a-property/have-you-rented-out-a-room", "title7", NotStarted, None)
       )
     )
-    val doc = asDocument(twoEyeReview(approvalProcessReview))
+    val doc: Document = asDocument(twoEyeReview(approvalProcessReview))
   }
 
   "2i Review page" should {

@@ -17,16 +17,15 @@
 package views.components
 
 import org.jsoup.nodes.Element
-
-import play.api.i18n.{Lang, Messages, MessagesApi}
-import play.api.inject.Injector
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.FormError
-import views.html.components.yesno_radios
+import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.inject.Injector
 import play.twirl.api.Html
-import org.jsoup.nodes.{Document, Element}
-import scala.collection.JavaConverters._
 import views.ViewSpecBase
+import views.html.components.yesno_radios
+
+import scala.jdk.CollectionConverters._
 
 class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
 
@@ -52,7 +51,6 @@ class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
     def radios: yesno_radios = injector.instanceOf[yesno_radios]
     val html: Html = radios(None, Seq.empty, pageTitle, fieldName)
     val doc = asDocument(html)
-    val fieldset: Element = doc.getElementsByTag("fieldset").first
     val inputs: List[Element] = doc.getElementsByTag("input").asScala.toList
 
     "contains fieldset two radio inputs" in new Test {
@@ -72,12 +70,12 @@ class RadiosWithSubHeadingSpec extends ViewSpecBase with GuiceOneAppPerSuite {
 
     "contain fieldset with appropriate aria-describedby link to error msg span" in new Test {
       Option(fieldset).fold(fail("No fieldset found")) { fs =>
-        elementAttrs(fs)("aria-describedby").contains(s"${fieldName}-error") shouldBe true
+        elementAttrs(fs)("aria-describedby").contains(s"$fieldName-error") shouldBe true
       }
     }
 
     "contain a span containing the error message and prefix" in new Test {
-      Option(doc.getElementById(s"${fieldName}-error")).fold(fail("Missing error message")) { span =>
+      Option(doc.getElementById(s"$fieldName-error")).fold(fail("Missing error message")) { span =>
         span.text shouldBe "Error: Error message"
       }
     }

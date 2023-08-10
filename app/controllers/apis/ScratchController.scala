@@ -17,20 +17,20 @@
 package controllers.apis
 
 import config.AppConfig
-import javax.inject.{Inject, Singleton}
-import models.errors.InvalidProcessError
+import models.errors.{Error, InvalidProcessError}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import services.ScratchService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import models.errors.Error
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ScratchController @Inject() (appConfig: AppConfig, scratchService: ScratchService, mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   val corsHeaders: Seq[(String, String)] = Seq(
     "Access-Control-Allow-Origin" -> "*",

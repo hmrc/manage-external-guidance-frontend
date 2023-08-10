@@ -16,13 +16,12 @@
 
 package views.components
 
-import config.AppConfig
 import controllers.routes
 import javax.inject.Inject
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.footer.FooterItem
 
-class FooterLinks @Inject() (implicit appConfig: AppConfig) {
+class FooterLinks @Inject() () {
 
   def accessibilityLink()(implicit messages: Messages): FooterItem = FooterItem(
     Some(messages("footer.links.accessibility.text")),
@@ -30,6 +29,6 @@ class FooterLinks @Inject() (implicit appConfig: AppConfig) {
   )
 
   def items(implicit messages: Messages): Seq[FooterItem] = Seq(
-    accessibilityLink
+    accessibilityLink()
   )
 }

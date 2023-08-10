@@ -16,17 +16,18 @@
 
 package controllers
 
-import java.time.LocalDate
 import config.ErrorHandler
-import javax.inject.{Inject, Singleton}
+import controllers.actions.AllRolesAction
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ApprovalService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import play.api.Logger
-import controllers.actions.AllRolesAction
 import views.html.approval_summary_list
-import scala.concurrent.ExecutionContext.Implicits.global
+
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class AdminController @Inject() (
@@ -39,6 +40,7 @@ class AdminController @Inject() (
     with I18nSupport {
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
   val logger = Logger(getClass)
+  implicit val ec: ExecutionContext = mcc.executionContext
 
   def approvalSummaries: Action[AnyContent] = identify.async { implicit request =>
     approvalService.approvalSummaries.map {

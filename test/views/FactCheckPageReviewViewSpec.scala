@@ -17,10 +17,12 @@
 package views
 
 import forms.FactCheckPageReviewFormProvider
-
+import models.forms.FactCheckPageReview
+import org.jsoup.nodes.Document
+import play.api.data.Form
 import views.html.fact_check_page_review
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class FactCheckPageReviewViewSpec extends ViewSpecBase {
 
@@ -32,11 +34,11 @@ class FactCheckPageReviewViewSpec extends ViewSpecBase {
     val index = 0
 
     val formProvider: FactCheckPageReviewFormProvider = new FactCheckPageReviewFormProvider()
-    val form = formProvider()
+    val form: Form[FactCheckPageReview] = formProvider()
 
-    val fact_check_page_review = app.injector.instanceOf[fact_check_page_review]
+    val fact_check_page_review: fact_check_page_review = app.injector.instanceOf[fact_check_page_review]
 
-    val doc = asDocument(fact_check_page_review(processId, reviewUrl, reviewTitle, form, index))
+    val doc: Document = asDocument(fact_check_page_review(processId, reviewUrl, reviewTitle, form, index))
   }
 
   "The rendered fact check page review" should {

@@ -16,17 +16,13 @@
 
 package views.process_admin
 
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-
-import controllers.routes
-import models.ApprovalStatus._
-import models.ReviewType.{ReviewType2i, ReviewTypeFactCheck}
 import models._
+import org.jsoup.nodes.Document
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import views.html.process_admin._
 
-import scala.collection.JavaConverters._
+import java.time.ZonedDateTime
 
 class ProcessListSpec extends views.ViewSpecBase {
 
@@ -37,28 +33,28 @@ class ProcessListSpec extends views.ViewSpecBase {
 
     val summaries = List(ProcessSummary("id", "processCode", 1, "author", None, ZonedDateTime.now, "actionedby", "Status"))
 
-    implicit val fakeRequest = FakeRequest("GET", "/")
+    implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
   }
 
   "Admin pages" should {
 
     "Render list of approvals" in new Test {
 
-      val doc = asDocument(approvals(summaries)(fakeRequest, messages))
+      val doc: Document = asDocument(approvals(summaries)(fakeRequest, messages))
 
-      doc.toString().contains("Approval Processes") shouldBe true
+      doc.toString.contains("Approval Processes") shouldBe true
     }
 
     "Render list of published" in new Test {
 
-      val doc = asDocument(published(summaries)(fakeRequest, messages))
-      doc.toString().contains("Published Processes") shouldBe true
+      val doc: Document = asDocument(published(summaries)(fakeRequest, messages))
+      doc.toString.contains("Published Processes") shouldBe true
     }
 
     "Render list of archived" in new Test {
 
-      val doc = asDocument(archived(summaries)(fakeRequest, messages))
-      doc.toString().contains("Archived Processes") shouldBe true
+      val doc: Document = asDocument(archived(summaries)(fakeRequest, messages))
+      doc.toString.contains("Archived Processes") shouldBe true
     }
 
   }
