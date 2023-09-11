@@ -16,10 +16,12 @@
 
 package pages
 
-import models.errors.{Error, BadRequestError, InternalServerError, NotFoundError, StaleDataError}
+import models.errors.{Error, BadRequestError, InternalServerError, NotFoundError, StaleDataError, IncompleteDataError}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
+import models.ApprovalStatus
+import models.audit.AuditInfo
 import stubs.{AuditStub, AuthStub, ExternalGuidanceStub}
 import support.IntegrationSpec
 
@@ -78,7 +80,7 @@ class TwoEyeReviewerControllerISpec extends IntegrationSpec {
       |}""".stripMargin
   )
 
-  "Calling the approval 2i review endpoint with a valid process identifier" should {
+  "GET the approval 2i review endpoint with a valid process identifier" should {
 
     "return an Ok response" in {
 
@@ -172,6 +174,66 @@ class TwoEyeReviewerControllerISpec extends IntegrationSpec {
       response.status shouldBe Status.UNAUTHORIZED
     }
 
+  }
+
+  "POST /2i-review/id" when {
+
+    "user is authorised" when {
+      "user selects to send guidance to designer" should {
+        "receive a confirmation page" in {
+          AuditStub.audit()
+          AuthStub.authorise()
+          val auditInfo: AuditInfo = AuditInfo("pid", "oct90005", "title", 1, "author", 2, 2)
+          ExternalGuidanceStub.approval2iReviewCheck(Status.NO_CONTENT, Json.parse("{}"))          
+          ExternalGuidanceStub.approval2iReviewComplete(Status.OK, Json.toJsObject(auditInfo))
+
+          val request: WSRequest = buildRequest("/2i-review/oct90005")
+          val response: WSResponse = await(request.withMethod("POST").post(Json.obj("value" -> ApprovalStatus.Published.toString)))
+          response.status shouldBe Status.OK
+        }
+      }
+      "user selects to publish guidance" should {
+        "receive a confirmation page" in {
+          AuditStub.audit()
+          AuthStub.authorise()
+          val auditInfo: AuditInfo = AuditInfo("pid", "oct90005", "title", 1, "author", 2, 2)
+          ExternalGuidanceStub.approval2iReviewCheck(Status.NO_CONTENT, Json.parse("{}"))
+          ExternalGuidanceStub.approval2iReviewComplete(Status.OK, Json.toJsObject(auditInfo))
+
+          val request: WSRequest = buildRequest("/2i-review/oct90005")
+          val response: WSResponse = await(request.withMethod("POST").post(Json.obj("value" -> ApprovalStatus.Published.toString)))
+          response.status shouldBe Status.OK
+        }
+      }
+
+      "user enters an invalid selection" should {
+
+        "return a bad request" in {
+
+          AuditStub.audit()
+          AuthStub.authorise()
+          ExternalGuidanceStub.approval2iReviewCheck(Status.BAD_REQUEST, Json.toJson[Error](IncompleteDataError))
+          ExternalGuidanceStub.approval2iReviewComplete(Status.BAD_REQUEST, Json.parse("{}"))
+
+          val request: WSRequest = buildRequest("/2i-review/oct90005")
+          val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.Submitted.toString)))
+          response.status shouldBe Status.BAD_REQUEST
+        }
+      }
+    }
+    "user not authorised" should {
+
+      "return UNAUTHORIZED" in {
+
+        AuditStub.audit()
+        AuthStub.unauthorised()
+
+        val request: WSRequest = buildRequest("/2i-review/oct90005")
+        val response: WSResponse = await(request.post(Json.obj("value" -> ApprovalStatus.Complete.toString)))
+        response.status shouldBe Status.UNAUTHORIZED
+
+      }
+    }
   }
 
 }

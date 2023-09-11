@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Disabled, Failure, Suc
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Future, ExecutionContext}
 
 @Singleton
 class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnector) {
@@ -43,10 +43,10 @@ class AuditService @Inject() (appConfig: AppConfig, auditConnector: AuditConnect
       detail = Json.toJson(AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()).as[JsObject].deepMerge(event.detail.as[JsObject])
     )
 
-  def audit(event: AuditEvent, path: Option[String] = None)(implicit hc: HeaderCarrier, context: ExecutionContext): Unit =
+  def audit(event: AuditEvent, path: Option[String] = None)(implicit hc: HeaderCarrier, context: ExecutionContext): Future[Unit] =
     auditConnector.sendExtendedEvent(toExtendedDataEvent(event, path)).map {
       case Success => logger.info(s"Audit successful: $path - $event ")
       case Failure(err, _) => logger.warn(s"Audit failed with error $err")
       case Disabled => logger.info("Auditing Disabled")
-    }
+    }.map(_ => ())
 }

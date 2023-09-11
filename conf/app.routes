@@ -4,12 +4,10 @@ GET        /assets/*file                              controllers.Assets.version
 GET        /                                          controllers.AdminController.approvalSummaries
 
 GET        /2i-review/:id                             controllers.TwoEyeReviewController.approval(id)
+POST       /2i-review/:id                             controllers.TwoEyeReviewController.onSubmit(id)
 
 GET        /2i-page-review/:id/*url                   controllers.TwoEyePageReviewController.onPageLoad(id: String, url: String, index: Int)
 POST       /2i-page-review/:id/*url                   controllers.TwoEyePageReviewController.onSubmit(id: String, url: String, title: String, index: Int)
-
-GET        /2i-result/:id                             controllers.TwoEyeReviewResultController.onPageLoad(id)
-POST       /2i-result/:id                             controllers.TwoEyeReviewResultController.onSubmit(id)
 
 GET        /fact-check-page-review/:id/*url           controllers.FactCheckPageReviewController.onPageLoad(id: String, url: String, index: Int)
 POST       /fact-check-page-review/:id/*url           controllers.FactCheckPageReviewController.onSubmit(id: String, url: String, title: String, index: Int)

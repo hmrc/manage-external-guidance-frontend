@@ -18,7 +18,7 @@
 @import models.ApprovalProcessReview
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(layout: main_layout, govukTable : GovukTable, appConfig: AppConfig)
+@this(layout: main_layout, govukTable : GovukTable, formWithCSRF: FormWithCSRF, govukButton: GovukButton, appConfig: AppConfig)
 
 @(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
 
@@ -52,9 +52,10 @@
       </div>
     }
   </dl>
-  
-  <a id="confirm" href="@{routes.TwoEyeReviewResultController.onPageLoad(review.ocelotId).url}" role="button" class="govuk-button" data-module="govuk-button" aria-describedby="review-status">@messages("2iReview.sendConfirmation")</a>
 
+  @formWithCSRF(action = routes.TwoEyeReviewController.onSubmit(review.ocelotId)) {
+    @govukButton(Button(content = Text(messages("2iReview.confirmAndPublish"))))
+  }
 }
 @{
  //$COVERAGE-OFF$

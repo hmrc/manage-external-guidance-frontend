@@ -18,7 +18,7 @@ package views
 
 import java.time.LocalDate
 
-import forms.{FactCheckPageReviewFormProvider, TwoEyePageReviewFormProvider, TwoEyeReviewResultFormProvider}
+import forms.{FactCheckPageReviewFormProvider, TwoEyePageReviewFormProvider}
 import models.ApprovalProcessReview
 import org.jsoup.nodes.Document
 import play.api.data.FormError
@@ -109,11 +109,11 @@ class PageTitleSpec extends ViewSpecBase {
       checkTitleWithError(asDocument(view("","", "", form, 1)(FakeRequest("GET", "/blah"), messages)), Some(messages("2iReview.heading")))
     }
 
-    "Render correct twoeye_review_result title" in {
-      val view = injector.instanceOf[twoeye_review_result]
-      val formProvider = new TwoEyeReviewResultFormProvider()
-      checkTitle(asDocument(view("", formProvider())(FakeRequest("GET", "/blah"), messages)), Some(messages("2iReview.heading")))
-    }
+    // "Render correct twoeye_review_result title" in {
+    //   val view = injector.instanceOf[twoeye_review_result]
+    //   val formProvider = new TwoEyeReviewResultFormProvider()
+    //   checkTitle(asDocument(view("", formProvider())(FakeRequest("GET", "/blah"), messages)), Some(messages("2iReview.heading")))
+    // }
  
   }
 }

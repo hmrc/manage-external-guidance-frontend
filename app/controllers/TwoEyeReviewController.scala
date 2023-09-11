@@ -18,16 +18,18 @@ package controllers
 
 import config.ErrorHandler
 import controllers.actions.TwoEyeReviewerAction
-import models.errors.{DuplicateKeyError, MalformedResponseError, NotFoundError, StaleDataError}
+import models.errors.{DuplicateKeyError, MalformedResponseError, NotFoundError, StaleDataError, IncompleteDataError}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.ReviewService
+import services.{AuditService, ReviewService}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.{duplicate_process_code_error, twoeye_content_review}
-
+import views.html._
+import models.ApprovalStatus
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+import models.audit.{PublishedEvent, TwoEyeReviewCompleteEvent}
 
 @Singleton
 class TwoEyeReviewController @Inject() (
@@ -35,9 +37,13 @@ class TwoEyeReviewController @Inject() (
     twoEyeReviewerAction: TwoEyeReviewerAction,
     view: twoeye_content_review,
     duplicate_process_code_error: duplicate_process_code_error,
+    confirmation_view: twoeye_complete,
+    errorView: twoeye_confirm_error,
+    auditService: AuditService,
     reviewService: ReviewService,
     mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
+    with WithUnsafeDefaultFormBinding
     with I18nSupport {
 
   val logger: Logger = Logger(getClass)
@@ -66,5 +72,42 @@ class TwoEyeReviewController @Inject() (
     }
 
   }
+
+  def onSubmit(processId: String): Action[AnyContent] = twoEyeReviewerAction.async { implicit request =>
+    reviewService.approval2iReviewCheck(processId) flatMap {
+      case Right(()) =>
+          reviewService.approval2iReviewComplete(processId, request.credId, request.name, ApprovalStatus.Published).flatMap {
+            case Right(auditInfo) =>
+              Future.sequence(List(auditService.audit(TwoEyeReviewCompleteEvent(auditInfo)), 
+                                   auditService.audit(PublishedEvent(auditInfo)))).map(_ => 
+                Ok(confirmation_view(ApprovalStatus.Published)))
+            case Left(NotFoundError) =>
+              logger.error(s"Unable to retrieve approval 2i review for process $processId")
+              Future.successful(NotFound(errorHandler.notFoundTemplate))
+            case Left(StaleDataError) =>
+              logger.error(s"The requested approval 2i review for process $processId can no longer be found")
+              Future.successful(NotFound(errorHandler.notFoundTemplate))
+            case Left(DuplicateKeyError) =>
+              logger.error(s"Attempt to publish a duplicate process code for process $processId - publish failed")
+              Future.successful(BadRequest(duplicate_process_code_error()))
+            case Left(err) =>
+              // Handle stale data, internal server and any unexpected errors
+              logger.error(s"Request for approval 2i review process for process $processId returned error $err")
+              Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+          }
+      case Left(IncompleteDataError) => Future.successful(BadRequest(errorView(processId)))
+      case Left(NotFoundError) =>
+        logger.error(s"Unable to check 2i review approval for process $processId not found")
+        Future.successful(NotFound(errorHandler.notFoundTemplate))
+      case Left(StaleDataError) =>
+        logger.error(s"The requested 2i review approval check for process $processId failed - stale data")
+        Future.successful(NotFound(errorHandler.notFoundTemplate))
+      case Left(err) =>
+        // Handle internal server and any unexpected errors
+        logger.error(s"Request for approval 2i review process for process $processId returned error $err")
+        Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+    }
+  }
+
 
 }
