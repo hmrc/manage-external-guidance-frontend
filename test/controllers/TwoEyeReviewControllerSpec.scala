@@ -267,6 +267,39 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
       status(result) shouldBe Status.NOT_FOUND
     }
 
+    "Return the Http status not found when the specified process cannot be found" in new Test {
+
+      MockReviewService
+        .approval2iReviewCheck(id)
+        .returns(Future.successful(Left(NotFoundError)))
+
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
+
+      status(result) shouldBe Status.NOT_FOUND
+    }
+
+    "Return the Http status not found when stale data error returned from backend" in new Test {
+
+      MockReviewService
+        .approval2iReviewCheck(id)
+        .returns(Future.successful(Left(StaleDataError)))
+
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
+
+      status(result) shouldBe Status.NOT_FOUND
+    }
+
+    "Return the Http status internal server error when an unexpected error occurs within approval2iReviewCheck" in new Test {
+
+      MockReviewService
+        .approval2iReviewCheck(id)
+        .returns(Future.successful(Left(InternalServerError)))
+
+      val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
+
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+    }
+
     "Return an Html error page when the process review data requested is out of date in some way" in new Test {
 
       MockReviewService
