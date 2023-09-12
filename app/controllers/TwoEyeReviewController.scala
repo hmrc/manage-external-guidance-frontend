@@ -37,7 +37,7 @@ class TwoEyeReviewController @Inject() (
     twoEyeReviewerAction: TwoEyeReviewerAction,
     view: twoeye_content_review,
     duplicate_process_code_error: duplicate_process_code_error,
-    confirmation_view: twoeye_complete,
+    confirmation_view: twoeye_published,
     errorView: twoeye_confirm_error,
     auditService: AuditService,
     reviewService: ReviewService,
@@ -80,7 +80,7 @@ class TwoEyeReviewController @Inject() (
             case Right(auditInfo) =>
               Future.sequence(List(auditService.audit(TwoEyeReviewCompleteEvent(auditInfo)), 
                                    auditService.audit(PublishedEvent(auditInfo)))).map(_ => 
-                Ok(confirmation_view(ApprovalStatus.Published)))
+                Ok(confirmation_view()))
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval 2i review for process $processId")
               Future.successful(NotFound(errorHandler.notFoundTemplate))

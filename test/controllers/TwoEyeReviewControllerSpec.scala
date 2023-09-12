@@ -33,7 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.{duplicate_process_code_error, twoeye_content_review}
-import views.html.{twoeye_complete, twoeye_confirm_error}
+import views.html.{twoeye_published, twoeye_confirm_error}
 import models.audit.{AuditInfo, TwoEyeReviewCompleteEvent, PublishedEvent}
 import scala.concurrent.Future
 
@@ -46,7 +46,7 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
     val errorHandler: ErrorHandler = injector.instanceOf[ErrorHandler]
     val view = injector.instanceOf[twoeye_content_review]
     val duplicateView = injector.instanceOf[duplicate_process_code_error]
-    val confirmationView: twoeye_complete = injector.instanceOf[twoeye_complete]
+    val confirmationView: twoeye_published = injector.instanceOf[twoeye_published]
     val errorView: twoeye_confirm_error = injector.instanceOf[twoeye_confirm_error]
     val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published, ReviewType2i)
     val auditInfo: AuditInfo = AuditInfo(credential, id, "title", 1, "author", 2, 2)
@@ -194,7 +194,7 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
       val result: Future[Result] = reviewController.onSubmit(id)(fakePostRequest)
 
       contentType(result) shouldBe Some("text/html")
-      contentAsString(result) shouldBe confirmationView(Published)(fakeGetRequest, messages).toString
+      contentAsString(result) shouldBe confirmationView()(fakeGetRequest, messages).toString
     }
 
     "Return the Http status Not found when the process review does not exist" in new Test {

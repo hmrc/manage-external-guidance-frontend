@@ -96,10 +96,6 @@ processReview.status = {0} of {1} pages reviewed
 2iReviewComplete.title.Published = The guidance has been successfully published
 2iReviewComplete.heading.Published = The guidance has been successfully published
 
-2iReviewComplete.title.Complete = Your responses have been shared with the content team
-2iReviewComplete.heading.Complete = Your responses have been shared with the content team
-2iReviewComplete.reviewContent = The content team will review your responses and contact you if they have any questions.
-2iReviewComplete.info = If you need to amend or add to the 2i review, contact the designer you''ve been working with.
 2iReviewComplete.close = Return to dashboard
 
 duplicateProcessCodeError.title = Duplicate guidance process code found
