@@ -93,8 +93,8 @@ processReview.status = {0} of {1} pages reviewed
 2iReviewError.info = You must review all pages before you can continue.
 2iReviewError.back = Go Back
 
-2iReviewComplete.title.Published = The guidance has been successfully published
-2iReviewComplete.heading.Published = The guidance has been successfully published
+2iReviewComplete.title.published = The guidance has been successfully published
+2iReviewComplete.heading.published = The guidance has been successfully published
 
 2iReviewComplete.close = Return to dashboard
 
