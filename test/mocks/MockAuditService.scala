@@ -16,7 +16,7 @@
 
 package mocks
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Future, ExecutionContext}
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
@@ -31,7 +31,7 @@ trait MockAuditService extends MockFactory {
 
   object MockAuditService {
 
-    def audit(event: AuditEvent, path: Option[String] = None): CallHandler[Unit] = {
+    def audit(event: AuditEvent, path: Option[String] = None): CallHandler[Future[Unit]] = {
 
       (mockAuditService
         .audit(_: AuditEvent, _: Option[String])(_: HeaderCarrier, _: ExecutionContext))
