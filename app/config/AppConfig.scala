@@ -18,8 +18,6 @@ package config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import play.api.mvc.RequestHeader
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
@@ -43,8 +41,6 @@ trait AppConfig {
   val commentsAndFeedbackUrl: String
   val processAdminUser: String
   val processAdminPassword: String
-
-  def contactFrontendFeedbackUrl(implicit requestHeader: RequestHeader): String
 }
 
 @Singleton
@@ -53,7 +49,6 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   private lazy val host = servicesConfig.getString("host")
   private lazy val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
   private lazy val serviceIdentifier = servicesConfig.getString("contact-frontend-urls.serviceIdentifier")
-  private lazy val betaFeedback = servicesConfig.getString("contact-frontend-urls.betaFeedback")
   private lazy val externalGuidanceViewerHost: String = config.get[String]("external-guidance-viewer.host")
 
   val analyticsToken: String = config.get[String](s"google-analytics.token")
@@ -76,9 +71,5 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val pageMapPublishedlUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.pageMapPublishedUrl")}"
   lazy val processAdminUser: String = config.get[String]("admin-username")
   lazy val processAdminPassword: String = config.get[String]("admin-password")
-
-  def contactFrontendFeedbackUrl(implicit requestHeader: RequestHeader): String = {
-    s"$contactBaseUrl$betaFeedback?service=$serviceIdentifier&backUrl=${SafeRedirectUrl(host + requestHeader.uri).encodedUrl}"
-  }
 
 }

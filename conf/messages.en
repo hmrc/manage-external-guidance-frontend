@@ -73,7 +73,7 @@ processReview.status = {0} of {1} pages reviewed
 2iReview.reviewPagesHeading = Review all pages
 2iReview.visuallyHiddenPage = 2i review page with the URL
 2iReview.pagesReviewedConfirmationHeading = Confirm you''ve 2i-reviewed all pages.
-2iReview.confirmAndPublish = Confirm review and publish guidance
+2iReview.confirmAndPublish = Complete approval and publish guidance
 
 2iPageReview.answer.error.required = You must confirm if the page meets GOV.UK standards
 # Under normal circumstances this error should not be raised (requires "comment" field key to be missing from the form data)

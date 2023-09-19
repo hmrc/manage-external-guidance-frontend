@@ -17,7 +17,6 @@
 package mocks
 
 import config.AppConfig
-import play.api.mvc.RequestHeader
 
 object MockAppConfig extends AppConfig {
   override val analyticsToken: String = "token"
@@ -40,6 +39,4 @@ object MockAppConfig extends AppConfig {
   lazy val timescalesContinueUrl: String = "http://localhost:9740/external-guidance/timescales"
   lazy val processAdminUser: String = "admin"
   lazy val processAdminPassword: String = "password"
-
-  override def contactFrontendFeedbackUrl(implicit request: RequestHeader): String = "somefeedbackUrl"
 }
