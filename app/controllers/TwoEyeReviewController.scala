@@ -78,8 +78,8 @@ class TwoEyeReviewController @Inject() (
       case Right(()) =>
           reviewService.approval2iReviewComplete(processId, request.credId, request.name, ApprovalStatus.Published).flatMap {
             case Right(auditInfo) =>
-              Future.sequence(List(auditService.audit(TwoEyeReviewCompleteEvent(auditInfo)), 
-                                   auditService.audit(PublishedEvent(auditInfo)))).map(_ => 
+              Future.sequence(List(auditService.audit(TwoEyeReviewCompleteEvent(auditInfo)),
+                                   auditService.audit(PublishedEvent(auditInfo)))).map(_ =>
                 Ok(confirmation_view()))
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval 2i review for process $processId")
