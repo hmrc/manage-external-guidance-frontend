@@ -35,6 +35,7 @@ object MockAppConfig extends AppConfig {
   lazy val viewApprovalUrl: String = "http://localhost:9741/guidance-review/approval"
   lazy val pageMapApprovalUrl: String = "http://localhost:9741/guidance-review/map-approval"
   lazy val pageMapPublishedlUrl: String = "http://localhost:9741/guidance-review/map-published"
+  lazy val activeProcessesUrl: String = "http://localhost:9741/guidance-review/active"
   lazy val commentsAndFeedbackUrl: String = "http://www.gov.uk"
   lazy val timescalesContinueUrl: String = "http://localhost:9740/external-guidance/timescales"
   lazy val processAdminUser: String = "admin"

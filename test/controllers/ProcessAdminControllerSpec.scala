@@ -25,7 +25,7 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.process_admin.{approval_summaries, published_summaries, archived_summaries, admin_signin}
+import views.html.process_admin.{approval_summaries, published_summaries, archived_summaries, admin_signin, active_summaries}
 import play.api.libs.json._
 import scala.concurrent.Future
 import models.errors.{NotFoundError, InternalServerError}
@@ -37,7 +37,9 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
     private val pview = app.injector.instanceOf[published_summaries]
     private val apview = app.injector.instanceOf[approval_summaries]
     private val aview = app.injector.instanceOf[archived_summaries]
+    private val activeView = app.injector.instanceOf[active_summaries]
     private val siview = app.injector.instanceOf[admin_signin]
+    
     lazy val errorHandler = app.injector.instanceOf[config.ErrorHandler]
     implicit val hc: HeaderCarrier = HeaderCarrier()
     val fakeRequest = FakeRequest("GET", "/")
@@ -48,6 +50,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
                             pview,
                             aview,
                             apview,
+                            activeView, 
                             siview,
                             mockProcessAdminService,
                             stubMessagesControllerComponents())

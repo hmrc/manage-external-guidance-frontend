@@ -34,6 +34,7 @@
 
    <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listPublished.url">@messages("published.switch")</a>
    <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listArchived.url">@messages("archived.switch")</a>
+   <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listActive.url">@messages("active.switch")</a>
    <a class="govuk-button" role="button" data-module="govuk-button" target="_blank" rel="noreferrer noopener" href="@controllers.routes.TimescalesController.getData.url">@messages("timescales.download.button")</a>
 
   @govukTable(Table(

@@ -255,3 +255,11 @@ archived.archiver=Archiver
 archived.actionDate=ArchiveDate
 archived.actionTime=Time
 archived.switch=Archived
+
+active.title=Active Processes
+active.id=Process ID
+active.processTitle=Process title
+active.version=Version
+active.expiryDate=ExpiryDate
+active.expiryTime=Time
+active.switch=Active

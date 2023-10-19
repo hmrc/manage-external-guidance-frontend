@@ -61,7 +61,7 @@ trait HttpParser {
           case _ => InternalServerError
         }
         case None =>
-          logger.error(s"Unable to parse error response from external-guidance.")
+          logger.error(s"Unable to parse error response.")
           InternalServerError
       }
     }
