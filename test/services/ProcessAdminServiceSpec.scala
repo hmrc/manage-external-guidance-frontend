@@ -17,7 +17,7 @@
 package services
 
 import base.BaseSpec
-import mocks.{MockPublishedConnector, MockArchiveConnector}
+import mocks.{MockPublishedConnector, MockArchiveConnector, MockViewerConnector}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -25,22 +25,25 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 import models.ProcessSummary
-import java.time.ZonedDateTime
+import models.admin.CachedProcessSummary
+import java.time.{Instant, ZonedDateTime}
 import mocks.MockApprovalConnector
 
 class ProcessAdminServiceSpec extends BaseSpec {
 
-  private trait Test extends MockPublishedConnector with MockArchiveConnector with MockApprovalConnector{
+  private trait Test extends MockPublishedConnector with MockArchiveConnector with MockApprovalConnector with MockViewerConnector {
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-    lazy val service: ProcessAdminService = new ProcessAdminService(mockPublishedConnector, mockApprovalConnector, mockArchiveConnector)
+    lazy val service: ProcessAdminService = new ProcessAdminService(mockPublishedConnector, mockApprovalConnector, mockArchiveConnector, mockViewerConnector)
     val now = ZonedDateTime.now
     val processId: String = now.toInstant().toEpochMilli().toString
+    val processVersion: Long = 123456789L
     val processCode: String = "code"
     val dummyProcess: JsValue = Json.obj("meta" -> Json.obj("id" -> processId))
     val process = Json.obj()
     val processSummary = ProcessSummary(processId, processCode, 1, "author", None, now, "actionedby", "Status")
+    val cachedProcessSummary = CachedProcessSummary(processId, processVersion, "Title", Instant.now)
   }
 
   "The ProcessAdmin service" should {
@@ -87,7 +90,23 @@ class ProcessAdminServiceSpec extends BaseSpec {
         case Success(response) =>
           response match {
             case Right(response) => response shouldBe List(processSummary)
-            case Left(error) => fail(s"Unexpected error returned by published connector : ${error.toString}")
+            case Left(error) => fail(s"Unexpected error returned by archived connector : ${error.toString}")
+          }
+        case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+      }
+    }
+
+    "Return an a list of active process summaries" in new Test {
+
+      MockViewerConnector
+        .listActive
+        .returns(Future.successful(Right(List(cachedProcessSummary))))
+
+      service.activeSummaries.onComplete {
+        case Success(response) =>
+          response match {
+            case Right(response) => response shouldBe List(cachedProcessSummary)
+            case Left(error) => fail(s"Unexpected error returned by viewer connector : ${error.toString}")
           }
         case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
       }
@@ -136,6 +155,22 @@ class ProcessAdminServiceSpec extends BaseSpec {
           response match {
             case Right(response) =>
             case Left(error) => fail(s"Unexpected error returned by approvalProcess connector : ${error.toString}")
+          }
+        case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
+      }
+    }
+
+    "Retrieve an active process by id" in new Test {
+
+      MockViewerConnector
+        .get(processId, processVersion)
+        .returns(Future.successful(Right(process)))
+
+      service.getActive(processId, processVersion).onComplete {
+        case Success(response) =>
+          response match {
+            case Right(response) =>
+            case Left(error) => fail(s"Unexpected error returned by viewer connector : ${error.toString}")
           }
         case Failure(exception) => fail(s"Future onComplete returned unexpected error : ${exception.getMessage}")
       }

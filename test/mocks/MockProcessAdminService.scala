@@ -23,6 +23,7 @@ import play.api.libs.json.JsValue
 import services.ProcessAdminService
 import uk.gov.hmrc.http.HeaderCarrier
 import models.ProcessSummary
+import models.admin.CachedProcessSummary
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockProcessAdminService extends MockFactory {
@@ -46,24 +47,30 @@ trait MockProcessAdminService extends MockFactory {
         .archivedSummaries(_: ExecutionContext, _: HeaderCarrier))
         .expects(*, *)
 
-    def getPublishedByProcessCode(code: String): CallHandler[Future[RequestOutcome[JsValue]]] = {
+    def activeSummaries: CallHandler[Future[RequestOutcome[List[CachedProcessSummary]]]] =
+      (mockProcessAdminService
+        .activeSummaries(_: ExecutionContext, _: HeaderCarrier))
+        .expects(*, *)
+
+    def getPublishedByProcessCode(code: String): CallHandler[Future[RequestOutcome[JsValue]]] =
       (mockProcessAdminService
         .getPublishedByProcessCode(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(code, *, *)
-    }
 
-    def getApprovalByProcessCode(code: String): CallHandler[Future[RequestOutcome[JsValue]]] = {
+    def getApprovalByProcessCode(code: String): CallHandler[Future[RequestOutcome[JsValue]]] =
       (mockProcessAdminService
         .getApprovalByProcessCode(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(code, *, *)
-    }
 
-    def getArchivedById(id: String): CallHandler[Future[RequestOutcome[JsValue]]] = {
-
+    def getArchivedById(id: String): CallHandler[Future[RequestOutcome[JsValue]]] =
       (mockProcessAdminService
         .getArchivedById(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, *, *)
-    }
+    
+    def getActive(id: String, version: Long): CallHandler[Future[RequestOutcome[JsValue]]] =
+      (mockProcessAdminService
+        .getActive(_: String, _: Long)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, version, *, *)
 
   }
 

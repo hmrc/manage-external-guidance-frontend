@@ -22,14 +22,16 @@ import models.{RequestOutcome, ProcessSummary}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import play.api.Logger
-
+import models.admin.CachedProcessSummary
 import scala.concurrent.{ExecutionContext, Future}
+import connectors.ViewerConnector
 
 @Singleton
 class ProcessAdminService @Inject()(
   published: PublishedConnector,
   approvals: ApprovalConnector,
-  archived: ArchiveConnector) {
+  archived: ArchiveConnector,
+  viewer: ViewerConnector) {
 
   val logger = Logger(getClass)
 
@@ -50,5 +52,10 @@ class ProcessAdminService @Inject()(
 
   def getArchivedById(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] =
     archived.getArchivedById(id)
+
+  def activeSummaries(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[CachedProcessSummary]]] = viewer.listActive()
+
+  def getActive(id: String, version: Long)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = 
+    viewer.get(id, version)
 
 }

@@ -38,6 +38,7 @@ trait AppConfig {
   val viewApprovalUrl: String
   val pageMapApprovalUrl: String
   val pageMapPublishedlUrl: String
+  val activeProcessesUrl: String
   val commentsAndFeedbackUrl: String
   val processAdminUser: String
   val processAdminPassword: String
@@ -69,7 +70,7 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val viewApprovalUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.approvalUrl")}"
   lazy val pageMapApprovalUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.pageMapApprovalUrl")}"
   lazy val pageMapPublishedlUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.pageMapPublishedUrl")}"
+  lazy val activeProcessesUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.activeProcessesUrl")}"
   lazy val processAdminUser: String = config.get[String]("admin-username")
   lazy val processAdminPassword: String = config.get[String]("admin-password")
-
 }

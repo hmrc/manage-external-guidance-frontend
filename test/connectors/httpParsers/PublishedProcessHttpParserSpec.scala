@@ -20,10 +20,11 @@ import base.BaseSpec
 import connectors.httpParsers.PublishedProcessHttpParser.publishedProcessHttpReads
 import connectors.httpParsers.PublishedProcessHttpParser.processHttpReads
 import connectors.httpParsers.PublishedProcessHttpParser.processSummaryHttpReads
-import models.errors.{Error, InternalServerError, InvalidProcessError, ProcessError}
+import models.errors.{Error, InternalServerError, NotFoundError, InvalidProcessError, ProcessError}
+
 import models.{PublishedProcess, RequestOutcome}
 import play.api.http.{HttpVerbs, Status}
-import play.api.libs.json.{JsNull, JsObject, JsValue, Json}
+import play.api.libs.json.{JsNull, JsObject, JsValue, Json, Format}
 import uk.gov.hmrc.http.HttpResponse
 
 import java.time.ZonedDateTime
@@ -62,6 +63,9 @@ class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status
       "code"
     )
 
+    implicit val formats: Format[Error] = Json.format[Error]
+    val notFoundErrorJson = Json.toJson(Error("NOT_FOUND_ERROR", Some("The resource requested could not be found."), None))
+
     val now: ZonedDateTime = ZonedDateTime.now
     val processSummary: ProcessSummary = ProcessSummary("id", "code", 1, "author", None, now, "actionedby", "Status")
   }
@@ -82,6 +86,27 @@ class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status
       result shouldBe Right(validJsonResponse)
     }
 
+    "return a invalid published process JsValue response" in new Test {
+
+      private val httpResponse = HttpResponse(OK, "", Map.empty[String, Seq[String]])
+      private val result = processHttpReads.read(POST, url, httpResponse)
+      result shouldBe Left(InternalServerError)
+    }
+
+    "return a Bad request response" in new Test {
+
+      private val httpResponse = HttpResponse(BAD_REQUEST, "", Map.empty[String, Seq[String]])
+      private val result = processHttpReads.read(POST, url, httpResponse)
+      result shouldBe Left(InvalidProcessError)
+    }
+
+    "return a not found response" in new Test {
+
+      private val httpResponse = HttpResponse(NOT_FOUND, notFoundErrorJson, Map.empty[String, Seq[String]])
+      private val result = processHttpReads.read(POST, url, httpResponse)
+      result shouldBe Left(NotFoundError)
+    }
+
     "return a valid ProcessSummary list response" in new Test {
 
       val data: JsValue = Json.toJson(List(processSummary))
@@ -91,6 +116,23 @@ class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status
       result shouldBe Right(List(processSummary))
     }
 
+    "return a invalid ProcessSummary list response" in new Test {
+      private val httpResponse = HttpResponse(OK, "", Map.empty[String, Seq[String]])
+      private val result = processSummaryHttpReads.read(POST, url, httpResponse)
+      result shouldBe Left(InternalServerError)
+    }
+
+    "return a BadRequest list response" in new Test {
+      private val httpResponse = HttpResponse(BAD_REQUEST, "", Map.empty[String, Seq[String]])
+      private val result = processSummaryHttpReads.read(POST, url, httpResponse)
+      result shouldBe Left(InvalidProcessError)
+    }
+
+    "return a Not found  list response" in new Test {
+      private val httpResponse = HttpResponse(NOT_FOUND, notFoundErrorJson, Map.empty[String, Seq[String]])
+      private val result = processSummaryHttpReads.read(POST, url, httpResponse)
+      result shouldBe Left(NotFoundError)
+    }
 
   }
 
@@ -123,6 +165,16 @@ class PublishedProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status
     "return an internal server error for an invalid response" in new Test {
 
       val httpResponse: HttpResponse = HttpResponse(CREATED, invalidResponse, Map.empty[String, Seq[String]])
+
+      val result: RequestOutcome[PublishedProcess] =
+        publishedProcessHttpReads.read(POST, url, httpResponse)
+
+      result shouldBe Left(InternalServerError)
+    }
+
+    "return an internal server error when invalid process occurs" in new Test {
+
+      private val httpResponse = HttpResponse(OK, "", Map.empty[String, Seq[String]])
 
       val result: RequestOutcome[PublishedProcess] =
         publishedProcessHttpReads.read(POST, url, httpResponse)
