@@ -31,10 +31,7 @@ class ActiveProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status {
   private trait Test {
     val url: String = "/test"
     val validResponse: JsValue = Json.obj("id" -> "ext90111")
-
-    val invalidResponse: JsValue = Json.obj() // no "id" property
   }
-
 
   "Parsing response a GET process" should {
 
@@ -73,8 +70,6 @@ class ActiveProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status {
     val emptyList: List[CachedProcessSummary] = Nil
     val validResponseNil: JsValue = Json.toJson(emptyList)
     val validResponse: JsValue = Json.toJson(oneItemList)
-
-    val invalidResponse: JsValue = Json.obj() // no "id" property
   }
 
   "Parsing response a GET List[CachedProcessSummary]" should {
