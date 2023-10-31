@@ -57,7 +57,7 @@ class FactCheckPageReviewViewSpec extends ViewSpecBase {
 
         linksList.size shouldBe >(1)
 
-        elementAttrs(linksList(0))("href") should endWith(s"/guidance-review/approval/$processId$reviewUrl")
+        elementAttrs(linksList(0))("href") should endWith(s"/review-guidance/approval/$processId$reviewUrl")
 
         linksList(0).text shouldBe messages("factCheckPageReview.viewGuidancePage")
       }
