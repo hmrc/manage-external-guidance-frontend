@@ -60,7 +60,7 @@ class TwoEyePageReviewViewSpec extends ViewSpecBase {
 
         linksList.size shouldBe >(1)
 
-        elementAttrs(linksList.head)("href") should endWith(s"/guidance-review/approval/$processId$reviewUrl")
+        elementAttrs(linksList.head)("href") should endWith(s"/review-guidance/approval/$processId$reviewUrl")
 
         linksList.head.text shouldBe messages("2iPageReview.viewGuidancePage")
       }

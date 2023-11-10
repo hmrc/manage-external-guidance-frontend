@@ -32,7 +32,7 @@ object MockAppConfig extends AppConfig {
   lazy val twoEyeReviewerRole: String = "2iReviewer"
   lazy val factCheckerRole: String = "FactChecker"
   override lazy val gtmContainer: String = "someContainer"
-  lazy val viewApprovalUrl: String = "http://localhost:9741/guidance-review/approval"
+  lazy val viewApprovalUrl: String = "http://localhost:9741/review-guidance/approval"
   lazy val pageMapApprovalUrl: String = "http://localhost:9741/review-guidance/map-approval"
   lazy val pageMapPublishedlUrl: String = "http://localhost:9741/review-guidance/map-published"
   lazy val activeProcessesUrl: String = "http://localhost:9741/review-guidance/active"
