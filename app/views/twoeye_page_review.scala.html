@@ -33,7 +33,7 @@
 }
 
 @viewLink(reviewTitle: String, id: String, url: String) = {
-  <a id="viewGuidance-link" class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url">@messages("2iPageReview.viewGuidancePage")</a>
+  <a id="viewGuidance-link" class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url"><span aria-hidden="true">@messages("2iPageReview.viewGuidancePage")</span><span class="govuk-visually-hidden">@messages("2iPageReview.viewGuidanceHiddenPart1") @reviewTitle @messages("2iPageReview.viewGuidanceHiddenPart2")</span></a>
 }
 
 @layout(pageTitle(form.errors),
@@ -43,8 +43,8 @@
   @errorSummary(form.errors)
 
   <header class="hmrc-page-heading govuk-!-margin-0 govuk-!-margin-bottom-5">
-      <h1 class="govuk-heading-xl govuk-!-margin-0">@messages("2iPageReview.heading")</h1>
-      <p class="govuk-caption-xl hmrc-caption-xl">@messages("pageReview.guidancePageTitle.prefix") @reviewTitle</p>
+      <h1 class="govuk-heading-xl govuk-!-margin-0" aria-describedby="page-title">@messages("2iPageReview.heading")</h1>
+      <p class="govuk-caption-xl hmrc-caption-xl" id="page-title">@messages("pageReview.guidancePageTitle.prefix") @reviewTitle</p>
   </header>
 
   <p class="govuk-body">
@@ -57,7 +57,7 @@
     
     @yesnoRadios(form("answer").value,
                 form.errors,
-                messages("2iPageReview.heading"),
+                s"${messages("2iPageReview.HiddenLegendPart1")} $reviewTitle ${messages("2iPageReview.HiddenLegendPart2")}",
                 "answer")
 
     @govukButton( Button( content = Text( messages( "2iPageReview.saveReview" ) ) ) )
