@@ -82,14 +82,12 @@ processReview.status = {0} of {1} pages reviewed
 
 2iPageReview.title = Does the page meet GOV.UK standards?
 2iPageReview.heading = Does the page meet GOV.UK standards?
-2iPageReview.HiddenLegendPart1 = Does the
-2iPageReview.HiddenLegendPart2 = page meet GOV.UK standards?
+2iPageReview.hiddenLegend = Does the page {0} meet GOV.UK standards?
 2iPageReview.textarea.label = Comments
 2iPageReview.textarea.hint = Add a hint here
 2iPageReview.saveReview = Continue
 2iPageReview.viewGuidancePage = Check this page meets GOV.UK standards (opens in new tab).
-2iPageReview.viewGuidanceHiddenPart1 = Check the
-2iPageReview.viewGuidanceHiddenPart2 = page meets GOV.UK standards (opens in new tab).
+2iPageReview.viewGuidanceHidden = Check the page {0} meets GOV.UK standards (opens in new tab).
 2iPageReview.comments = If you have any comments about the page, the content designer you''re working with will have told you how to share these.
 
 2iReviewError.title = Some pages have not been reviewed
@@ -125,10 +123,12 @@ factCheckPageReview.comment.error.length = The maximum length for a page review 
 
 factCheckPageReview.title = Is the page factually accurate?
 factCheckPageReview.heading = Is the page factually accurate?
+factCheckPageReview.hiddenHeading = Is the page {0} factually accurate?
 factCheckPageReview.textarea.label = Comments
 factCheckPageReview.textarea.hint = Add a hint here
 factCheckPageReview.saveReview = Continue
 factCheckPageReview.viewGuidancePage = Check this page is factually accurate (opens in new tab).
+factCheckPageReview.viewGuidancePageVisuallyHidden = Check the page {0} is factually accurate (opens in new tab).
 factCheckPageReview.factualAccuracy = Factually accurate means the information on the page is correct and true. It does not include the style of the content or how it is presented.
 factCheckPageReview.comments = If you have any comments about the page, the content designer you''re working with will have told you how to share these.
 

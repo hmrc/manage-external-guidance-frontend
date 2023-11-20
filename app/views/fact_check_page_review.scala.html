@@ -35,7 +35,7 @@
 }
 
 @viewLink(reviewTitle: String, id: String, url: String) = {
-<a id="viewGuidance-link" class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url">@messages("factCheckPageReview.viewGuidancePage")</a>
+<a id="viewGuidance-link" class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url"><span aria-hidden="true">@messages("factCheckPageReview.viewGuidancePage", reviewTitle)</span><span class="govuk-visually-hidden">@messages("factCheckPageReview.viewGuidancePageVisuallyHidden", reviewTitle)</span></a>
 }
 
 @layout(pageTitle(form.errors),
@@ -45,8 +45,8 @@
   @errorSummary(form.errors)
 
   <header class="hmrc-page-heading govuk-!-margin-0 govuk-!-margin-bottom-5">
-      <h1 class="govuk-heading-xl govuk-!-margin-0">@messages("factCheckPageReview.heading")</h1>
-      <p class="govuk-caption-xl hmrc-caption-xl">@messages("pageReview.guidancePageTitle.prefix") @reviewTitle</p>
+      <h1 class="govuk-heading-xl govuk-!-margin-0" aria-describedby="page-title">@messages("factCheckPageReview.heading")</h1>
+      <p class="govuk-caption-xl hmrc-caption-xl" id="page-title">@messages("pageReview.guidancePageTitle.prefix") @reviewTitle</p>
   </header>
   
   <p class="govuk-body">
@@ -60,7 +60,7 @@
 
     @yesnoRadios(form("answer").value,
                 form.errors,
-                messages("factCheckPageReview.heading"),
+                messages("factCheckPageReview.hiddenHeading", reviewTitle),
                 "answer")
 
     @govukButton( Button( content = Text( messages( "factCheckPageReview.saveReview" ) ) ) )

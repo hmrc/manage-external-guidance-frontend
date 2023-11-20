@@ -33,7 +33,7 @@
 }
 
 @viewLink(reviewTitle: String, id: String, url: String) = {
-  <a id="viewGuidance-link" class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url"><span aria-hidden="true">@messages("2iPageReview.viewGuidancePage")</span><span class="govuk-visually-hidden">@messages("2iPageReview.viewGuidanceHiddenPart1") @reviewTitle @messages("2iPageReview.viewGuidanceHiddenPart2")</span></a>
+  <a id="viewGuidance-link" class="govuk-link" target="_blank" rel="noopener noreferrer" href="@appConfig.viewApprovalUrl/@id@url"><span aria-hidden="true">@messages("2iPageReview.viewGuidancePage")</span><span class="govuk-visually-hidden">@messages("2iPageReview.viewGuidanceHidden", reviewTitle)</span></a>
 }
 
 @layout(pageTitle(form.errors),
@@ -57,7 +57,7 @@
     
     @yesnoRadios(form("answer").value,
                 form.errors,
-                s"${messages("2iPageReview.HiddenLegendPart1")} $reviewTitle ${messages("2iPageReview.HiddenLegendPart2")}",
+                messages("2iPageReview.hiddenLegend", reviewTitle),
                 "answer")
 
     @govukButton( Button( content = Text( messages( "2iPageReview.saveReview" ) ) ) )

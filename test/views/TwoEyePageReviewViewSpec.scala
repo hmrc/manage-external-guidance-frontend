@@ -62,7 +62,7 @@ class TwoEyePageReviewViewSpec extends ViewSpecBase {
 
         elementAttrs(linksList.head)("href") should endWith(s"/review-guidance/approval/$processId$reviewUrl")
 
-        linksList.head.text shouldBe messages("2iPageReview.viewGuidancePage")
+        linksList.head.text shouldBe messages("2iPageReview.viewGuidancePage") + messages("2iPageReview.viewGuidanceHidden", reviewTitle)
       }
     }
 
@@ -71,7 +71,7 @@ class TwoEyePageReviewViewSpec extends ViewSpecBase {
       Option(doc.getElementsByTag("legend").first).fold(fail("Unable to locate legend element")) { legend =>
         elementAttrs(legend)("class") shouldBe "govuk-visually-hidden"
 
-        legend.text shouldBe messages("2iPageReview.heading")
+        legend.text shouldBe messages("2iPageReview.hiddenLegend", reviewTitle)
       }
     }
 
