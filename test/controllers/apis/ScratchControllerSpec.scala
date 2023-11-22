@@ -47,7 +47,7 @@ class ScratchControllerSpec extends BaseSpec with GuiceOneAppPerSuite with MockS
 
   private val uuid: String = randomUUID().toString
 
-  private val locationUrlPrefix: String = "/guidance-review/scratch"
+  private val locationUrlPrefix: String = "/review-guidance/scratch"
 
   "POST /scratch" should {
 
