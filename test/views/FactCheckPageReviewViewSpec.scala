@@ -59,7 +59,7 @@ class FactCheckPageReviewViewSpec extends ViewSpecBase {
 
         elementAttrs(linksList(0))("href") should endWith(s"/review-guidance/approval/$processId$reviewUrl")
 
-        linksList(0).text shouldBe messages("factCheckPageReview.viewGuidancePage")
+        linksList(0).text shouldBe messages("factCheckPageReview.viewGuidancePage") + messages("factCheckPageReview.viewGuidancePageVisuallyHidden", reviewTitle)
       }
     }
 
@@ -68,7 +68,7 @@ class FactCheckPageReviewViewSpec extends ViewSpecBase {
       Option(doc.getElementsByTag("legend").first).fold(fail("Unable to locate legend element")) { legend =>
         elementAttrs(legend)("class") shouldBe "govuk-visually-hidden"
 
-        legend.text shouldBe messages("factCheckPageReview.heading")
+        legend.text shouldBe messages("factCheckPageReview.hiddenHeading", reviewTitle)
       }
     }
   }
