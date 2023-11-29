@@ -40,8 +40,6 @@ GET        /admin/approvals                           controllers.ProcessAdminCo
 GET        /admin/approvals/:processCode              controllers.ProcessAdminController.getApproval(processCode: String)
 GET        /admin/archived                            controllers.ProcessAdminController.listArchived
 GET        /admin/archived/:id                        controllers.ProcessAdminController.getArchived(id)
-GET        /admin/active                              controllers.ProcessAdminController.listActive
-GET        /admin/active/:id/:version                 controllers.ProcessAdminController.getActive(id: String, version: Long)
 
 GET        /admin/sign-in                             controllers.ProcessAdminController.signIn
 POST       /admin/sign-in                             controllers.ProcessAdminController.submitSignIn

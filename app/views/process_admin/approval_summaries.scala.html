@@ -30,11 +30,12 @@
 
 @viewLink(code: String, url: String) = { <a id="@{code}" target="_blank" rel="noreferrer noopener" href="@url">@{code}</a> }
 
+@status(status: String) = {@if(status.equals("fact-check")) {@messages("approvals.FactCheck")} else {@messages("approvals.2iReview")}}s
+
 @layout(messages("approvals.title"), None, Some(controllers.routes.ProcessAdminController.listApprovals.url), Some(wideLayout(_))) {
 
    <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listPublished.url">@messages("published.switch")</a>
    <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listArchived.url">@messages("archived.switch")</a>
-   <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listActive.url">@messages("active.switch")</a>
    <a class="govuk-button" role="button" data-module="govuk-button" target="_blank" rel="noreferrer noopener" href="@controllers.routes.TimescalesController.getData.url">@messages("timescales.download.button")</a>
 
   @govukTable(Table(
@@ -43,6 +44,7 @@
         TableRow(content=Text(DateTimeUtils.formatShortDate(s.actioned.toInstant))),
         TableRow(content=Text(DateTimeUtils.formatShortTime(s.actioned.toInstant))),
         TableRow(content=HtmlContent(viewLink(s.processCode, s"${appConfig.pageMapApprovalUrl}/${s.processCode.toString}")), attributes = Map("title"->messages("admin.pagemap-tooltip"))),
+        TableRow(content=HtmlContent(status(s.status))),
         TableRow(content=Text(s.version.toString)),
         TableRow(content=Text(s.lastAuthor.toString)),
         TableRow(content=Text(s.passPhrase.getOrElse("")))
@@ -53,6 +55,7 @@
         HeadCell(content = Text(messages("approvals.actionDate"))),
         HeadCell(content = Text(messages("approvals.actionTime"))),
         HeadCell(content = Text(messages("approvals.code"))),
+        HeadCell(content = Text(messages("approvals.status"))),
         HeadCell(content = Text(messages("approvals.version")), format = Some("numeric")),
         HeadCell(content = Text(messages("approvals.author")), format = Some("numeric")),
         HeadCell(content = Text(messages("approvals.passphrase")))
