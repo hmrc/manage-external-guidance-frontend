@@ -31,7 +31,6 @@ class ProcessListSpec extends views.ViewSpecBase {
     def approvals: approval_summaries = injector.instanceOf[approval_summaries]
     def published: published_summaries = injector.instanceOf[published_summaries]
     def archived: archived_summaries = injector.instanceOf[archived_summaries]
-    def active: active_summaries = injector.instanceOf[active_summaries]
 
     val summaries = List(ProcessSummary("id", "processCode", 1, "author", None, ZonedDateTime.now, "actionedby", "Status"))
     val activeSummaries = List(CachedProcessSummary("id", 123456789L, "process title", Instant.now))
@@ -58,12 +57,6 @@ class ProcessListSpec extends views.ViewSpecBase {
 
       val doc: Document = asDocument(archived(summaries)(fakeRequest, messages))
       doc.toString.contains("Archived Processes") shouldBe true
-    }
-
-    "Render list of active cached processes" in new Test {
-
-      val doc: Document = asDocument(active(activeSummaries)(fakeRequest, messages))
-      doc.toString.contains("Active Processes") shouldBe true
     }
 
   }
