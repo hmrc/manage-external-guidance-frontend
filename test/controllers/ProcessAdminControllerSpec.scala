@@ -16,8 +16,8 @@
 
 package controllers
 
-import mocks.{MockAppConfig, MockProcessAdminService}
 import controllers.actions.FakeAuthorisedAction
+import mocks.{MockAppConfig, MockProcessAdminService}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -25,7 +25,7 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.process_admin.{approval_summaries, published_summaries, archived_summaries, admin_signin}
+import views.html.process_admin.{approval_summaries, published_summaries, archived_summaries, admin_signin, active_summaries}
 import play.api.libs.json._
 import scala.concurrent.Future
 import models.errors.{NotFoundError, InternalServerError}
@@ -37,6 +37,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
     private val pview = app.injector.instanceOf[published_summaries]
     private val apview = app.injector.instanceOf[approval_summaries]
     private val aview = app.injector.instanceOf[archived_summaries]
+    private val activeView = app.injector.instanceOf[active_summaries]
     private val siview = app.injector.instanceOf[admin_signin]
     
     lazy val errorHandler = app.injector.instanceOf[config.ErrorHandler]
@@ -49,6 +50,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
                             pview,
                             aview,
                             apview,
+                            activeView, 
                             siview,
                             mockProcessAdminService,
                             stubMessagesControllerComponents())
@@ -272,5 +274,60 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
     }
 
   }
+
+  "GET /admin/active" should {
+
+    "return 200" in new Test {
+
+      MockProcessAdminService.activeSummaries.returns(Future.successful(Right(List())))
+
+      val result = controller.listActive(fakeRequest)
+      status(result) shouldBe Status.OK
+    }
+
+    "return HTML" in new Test {
+
+      MockProcessAdminService.activeSummaries.returns(Future.successful(Right(List())))
+
+      val result = controller.listActive(fakeRequest)
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+    "Return Internal server error when retrieval fails" in new Test {
+      MockProcessAdminService.activeSummaries.returns(Future.successful(Left(InternalServerError)))
+
+      val result = controller.listActive(fakeRequest)
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+    }
+
+  }
+
+  "GET /admin/active/id" should {
+
+    "return 200" in new Test {
+
+      MockProcessAdminService.getActive("id", 1L).returns(Future.successful(Right(Json.obj())))
+
+      val result = controller.getActive("id", 1L)(fakeRequest)
+      status(result) shouldBe Status.OK
+    }
+
+    "return Json" in new Test {
+
+      MockProcessAdminService.getActive("id", 1L).returns(Future.successful(Right(Json.obj())))
+
+      val result = controller.getActive("id", 1L)(fakeRequest)
+      contentType(result) shouldBe Some("application/json")
+    }
+
+    "Return Bad request when retrieval fails" in new Test {
+      MockProcessAdminService.getActive("unknown", 1L).returns(Future.successful(Left(NotFoundError)))
+
+      val result = controller.getActive("unknown", 1L)(fakeRequest)
+      status(result) shouldBe Status.BAD_REQUEST
+    }
+
+  }  
 
 }

@@ -25,7 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ProcessAdminService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.process_admin.{admin_signin, approval_summaries, archived_summaries, published_summaries}
+import views.html.process_admin.{admin_signin, approval_summaries, archived_summaries, published_summaries, active_summaries}
 import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,6 +42,7 @@ class ProcessAdminController @Inject() (
     published: published_summaries,
     archived: archived_summaries,
     approvals: approval_summaries,
+    active: active_summaries,
     signin: admin_signin,
     adminService: ProcessAdminService,
     mcc: MessagesControllerComponents
@@ -129,6 +130,24 @@ class ProcessAdminController @Inject() (
 
   def getArchived(id: String): Action[AnyContent] = authAction.async { implicit request =>
     adminService.getArchivedById(id).map {
+      case Right(process) => Ok(process)
+      case Left(err) =>
+        logger.error(s"Unable to retrieve archived process by id, err = $err")
+        BadRequest(errorHandler.notFoundTemplate)
+    }
+  }
+
+  def listActive: Action[AnyContent] = authAction.async { implicit request =>
+    adminService.activeSummaries.map {
+      case Right(summaryList) => Ok(active(summaryList.sortBy(_.expiryTime).reverse))
+      case Left(err) =>
+        logger.error(s"Unable to retrieve list of archived process summaries, err = $err")
+        InternalServerError(errorHandler.internalServerErrorTemplate)
+    }
+  }
+
+  def getActive(id: String, version: Long): Action[AnyContent] = authAction.async { implicit request =>
+    adminService.getActive(id, version).map {
       case Right(process) => Ok(process)
       case Left(err) =>
         logger.error(s"Unable to retrieve archived process by id, err = $err")

@@ -51,6 +51,7 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   private lazy val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
   private lazy val serviceIdentifier = servicesConfig.getString("contact-frontend-urls.serviceIdentifier")
   private lazy val externalGuidanceViewerHost: String = config.get[String]("external-guidance-viewer.host")
+  private lazy val externalGuidanceViewerApiHost: String = config.get[String]("external-guidance-viewer.api-host")
 
   val analyticsToken: String = config.get[String](s"google-analytics.token")
   val analyticsHost: String = config.get[String](s"google-analytics.host")
@@ -70,7 +71,7 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val viewApprovalUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.approvalUrl")}"
   lazy val pageMapApprovalUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.pageMapApprovalUrl")}"
   lazy val pageMapPublishedlUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.pageMapPublishedUrl")}"
-  lazy val activeProcessesUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.activeProcessesUrl")}"
+  lazy val activeProcessesUrl: String = s"$externalGuidanceViewerApiHost${config.get[String]("external-guidance-viewer.activeProcessesUrl")}"
   lazy val processAdminUser: String = config.get[String]("admin-username")
   lazy val processAdminPassword: String = config.get[String]("admin-password")
 }
