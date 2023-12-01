@@ -48,6 +48,9 @@ approvals.commentsAndFeedback = View all comments and feedback (opens in new tab
 approvals.processTitle = Title
 approvals.dateProcessUpdatedTitle = Last updated
 approvals.processStatusTitle = Status
+approvals.FactCheck = FC
+approvals.2iReview = 2i
+approvals.status = Status
 
 approvalsStatus.Published = Published
 

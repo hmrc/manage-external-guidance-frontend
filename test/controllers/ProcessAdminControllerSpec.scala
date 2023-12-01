@@ -275,4 +275,59 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
 
   }
 
+  "GET /admin/active" should {
+
+    "return 200" in new Test {
+
+      MockProcessAdminService.activeSummaries.returns(Future.successful(Right(List())))
+
+      val result = controller.listActive(fakeRequest)
+      status(result) shouldBe Status.OK
+    }
+
+    "return HTML" in new Test {
+
+      MockProcessAdminService.activeSummaries.returns(Future.successful(Right(List())))
+
+      val result = controller.listActive(fakeRequest)
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+    "Return Internal server error when retrieval fails" in new Test {
+      MockProcessAdminService.activeSummaries.returns(Future.successful(Left(InternalServerError)))
+
+      val result = controller.listActive(fakeRequest)
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+    }
+
+  }
+
+  "GET /admin/active/id" should {
+
+    "return 200" in new Test {
+
+      MockProcessAdminService.getActive("id", 1L).returns(Future.successful(Right(Json.obj())))
+
+      val result = controller.getActive("id", 1L)(fakeRequest)
+      status(result) shouldBe Status.OK
+    }
+
+    "return Json" in new Test {
+
+      MockProcessAdminService.getActive("id", 1L).returns(Future.successful(Right(Json.obj())))
+
+      val result = controller.getActive("id", 1L)(fakeRequest)
+      contentType(result) shouldBe Some("application/json")
+    }
+
+    "Return Bad request when retrieval fails" in new Test {
+      MockProcessAdminService.getActive("unknown", 1L).returns(Future.successful(Left(NotFoundError)))
+
+      val result = controller.getActive("unknown", 1L)(fakeRequest)
+      status(result) shouldBe Status.BAD_REQUEST
+    }
+
+  }  
+
 }
