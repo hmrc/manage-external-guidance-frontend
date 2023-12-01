@@ -231,7 +231,7 @@ admin.signout = Sign Out
 admin.json-tooltip = Json
 admin.pagemap-tooltip = Guidance page structure
 
-published.title=Published Processes ({0}/{1})
+published.title=Published Processes (public: {0}, protected: {1})
 published.id=Process ID
 published.code=Process Code
 published.version=Version
