@@ -66,7 +66,7 @@ class ActiveProcessHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
   private trait ListTest {
     val url: String = "/test"
-    val oneItemList: List[CachedProcessSummary] = List(CachedProcessSummary("id", 123456789L, "A title", Instant.now))
+    val oneItemList: List[CachedProcessSummary] = List(CachedProcessSummary("id", 123456789L, None, None, "A title", Instant.now))
     val emptyList: List[CachedProcessSummary] = Nil
     val validResponseNil: JsValue = Json.toJson(emptyList)
     val validResponse: JsValue = Json.toJson(oneItemList)

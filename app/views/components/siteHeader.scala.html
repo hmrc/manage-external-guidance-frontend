@@ -14,9 +14,11 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.Header
+
 @this()
 
-@(headerUrl: Option[String] = None)(implicit messages: Messages, request: Request[_])
+@(params: Header)(implicit messages: Messages, request: Request[_])
 
 <div class="govuk-body">
   <header role="banner" class="hmrc-internal-header">
@@ -28,13 +30,13 @@
     </div>
 
     <div class="hmrc-internal-header__service-name">
-      <a href="@headerUrl.getOrElse(controllers.routes.AdminController.approvalSummaries.url)" class="hmrc-internal-header__link">
+      <a href="@params.serviceUrl" class="hmrc-internal-header__link">
         @messages("service.name")
       </a>
     </div>
     </div>
     @if(request.session.get(controllers.ProcessAdminController.userSessionKey)) {
-      <a href="@controllers.routes.ProcessAdminController.signOut.url" class="govuk-header__sign-out__link">@messages("admin.signout")</a>
+      <a href="@params.signOutHref.getOrElse(controllers.routes.ProcessAdminController.signOut.url)" class="govuk-header__sign-out__link">@messages("admin.signout")</a>
     }
   </header>
 </div>

@@ -35,7 +35,7 @@ class ViewerConnectorSpec extends BaseSpec {
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val connector: ViewerConnector = new ViewerConnector(mockHttpClient, MockAppConfig)
-    val cp = CachedProcessSummary("id", 123456789L, "A title", Instant.now)
+    val cp = CachedProcessSummary("id", 123456789L, None, None, "A title", Instant.now)
     val someJson: JsValue = Json.toJson(cp)
     val oneItemList: List[CachedProcessSummary] = List(cp)
   }
