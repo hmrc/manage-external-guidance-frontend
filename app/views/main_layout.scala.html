@@ -89,7 +89,8 @@
     ),
     serviceURLs = ServiceURLs(
       serviceUrl = Some(routes.AdminController.approvalSummaries.url),
-      signOutUrl = Some(routes.ProcessAdminController.signOut.url)
+      signOutUrl = Some(routes.ProcessAdminController.signOut.url),
+      accessibilityStatementUrl = Some(routes.AccessibilityStatementController.getPage.url)
     ),  
     pageTitle = Some(s"$pageTitle - ${messages("service.name")} - ${messages("service.govuk")}"),
     banners = Banners(
