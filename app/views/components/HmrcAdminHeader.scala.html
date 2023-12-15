@@ -27,7 +27,7 @@
   displayHmrcBanner: Boolean = false,
   additionalBannersBlock: Option[Html] = None,
   containerClasses: String = Header.defaultObject.containerClasses
-)(implicit messages: Messages, requestHeader: RequestHeader, request: Request[_])
+)(implicit messages: Messages, request: Request[_])
 @defining("service.name") { serviceNameKey =>
   @defining(if(messages.isDefinedAt(serviceNameKey)) Some(messages(serviceNameKey)) else None) { serviceNameFromMessages =>
     @siteHeader(Header(

@@ -38,7 +38,7 @@
         fixedWidthPageLayout: FixedWidthPageLayout
 )
 
-@(params: HmrcStandardPageParams)(contentBlock: Html)(implicit requestHeader: RequestHeader, request: Request[_], messages: Messages)
+@(params: HmrcStandardPageParams)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 @import params._
 
 @headerBlock = {
