@@ -23,9 +23,8 @@
 @import controllers.routes
 
 @this(
-  hmrcInternalAdminPage: components.HmrcInternalAdminPage,
+  hmrcAdminPage: components.HmrcAdminPage,
   govukBackLink: GovukBackLink,
-  siteHeader: components.siteHeader,
   appConfig: AppConfig,
   defaultLayout: TwoThirdsMainContent)
 
@@ -79,7 +78,7 @@
     <!-- End Google Tag Manager (noscript) -->
 }
 
-@hmrcInternalAdminPage(
+@hmrcAdminPage(
   HmrcStandardPageParams(
     templateOverrides = TemplateOverrides(
       additionalHeadBlock = Some(head),

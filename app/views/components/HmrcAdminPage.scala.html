@@ -14,6 +14,11 @@
  * limitations under the License.
  *@
 
+@*
+  This is a slight variation of the play-frontend-hmrc uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage template
+  to allow the unsupported modification of the standard GovUk page header to the internal HMRC standard header
+*@
+
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink
 @import uk.gov.hmrc.govukfrontend.views.html.components.TwoThirdsMainContent
@@ -24,18 +29,19 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.HmrcStandardPageParams
 @import uk.gov.hmrc.govukfrontend.views.html.components.FixedWidthPageLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukExitThisPage
+@import components.HmrcAdminHeader
 
 @this(
-        govukLayout: GovukLayout,
-        hmrcAdminHeader: HmrcAdminHeader,
-        hmrcStandardFooter: HmrcStandardFooter,
-        hmrcHead: HmrcHead,
-        hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
-        hmrcScripts: HmrcScripts,
-        govukBackLink: GovukBackLink,
-        govukExitThisPage: GovukExitThisPage,
-        defaultMainContent: TwoThirdsMainContent,
-        fixedWidthPageLayout: FixedWidthPageLayout
+  govukLayout: GovukLayout,
+  hmrcStandardFooter: HmrcStandardFooter,
+  hmrcHead: HmrcHead,
+  hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
+  hmrcScripts: HmrcScripts,
+  govukBackLink: GovukBackLink,
+  govukExitThisPage: GovukExitThisPage,
+  defaultMainContent: TwoThirdsMainContent,
+  fixedWidthPageLayout: FixedWidthPageLayout,
+  hmrcAdminHeader: components.HmrcAdminHeader,
 )
 
 @(params: HmrcStandardPageParams)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
