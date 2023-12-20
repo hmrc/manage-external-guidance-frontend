@@ -15,16 +15,16 @@
  *@
 
 @import config.AppConfig
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.components.FooterLinks
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.helper.CSPNonce
+@import controllers.routes
 
 @this(
-  govukLayout: GovukLayout,
+  hmrcAdminPage: components.HmrcAdminPage,
   govukBackLink: GovukBackLink,
-  footerLinks: FooterLinks,
-  siteHeader: components.siteHeader,
   appConfig: AppConfig,
   defaultLayout: TwoThirdsMainContent)
 
@@ -78,15 +78,27 @@
     <!-- End Google Tag Manager (noscript) -->
 }
 
-@govukLayout(
+@hmrcAdminPage(
+  HmrcStandardPageParams(
+    templateOverrides = TemplateOverrides(
+      additionalHeadBlock = Some(head),
+      additionalScriptsBlock = Some(scripts),
+      beforeContentBlock = Some(beforeContentBlock),
+      mainContentLayout = layoutFormat
+    ),
+    serviceURLs = ServiceURLs(
+      serviceUrl = Some(routes.AdminController.approvalSummaries.url),
+      signOutUrl = Some(routes.ProcessAdminController.signOut.url),
+      accessibilityStatementUrl = Some(routes.AccessibilityStatementController.getPage.url)
+    ),  
     pageTitle = Some(s"$pageTitle - ${messages("service.name")} - ${messages("service.govuk")}"),
-    headBlock = Some(head),
-    headerBlock = Some(siteHeader(headerUrl)),
-    beforeContentBlock = Some(beforeContentBlock),
-    footerItems = footerLinks.items,
-    bodyEndBlock = Some(scripts),
-    mainContentLayout = layoutFormat
-  )(content),
+    banners = Banners(
+      displayHmrcBanner = false
+    )
+    
+  )
+)(content),
+
 
 @{
     //$COVERAGE-OFF$

@@ -43,7 +43,7 @@ class ProcessAdminServiceSpec extends BaseSpec {
     val dummyProcess: JsValue = Json.obj("meta" -> Json.obj("id" -> processId))
     val process = Json.obj()
     val processSummary = ProcessSummary(processId, processCode, 1, "author", None, now, "actionedby", "Status")
-    val cachedProcessSummary = CachedProcessSummary(processId, processVersion, "Title", Instant.now)
+    val cachedProcessSummary = CachedProcessSummary(processId, processVersion, None, None, "Title", Instant.now)
   }
 
   "The ProcessAdmin service" should {

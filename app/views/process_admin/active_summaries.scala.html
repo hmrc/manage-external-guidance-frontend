@@ -40,7 +40,7 @@
   @govukTable(Table(
       rows = summaries.map(s => Seq(
         TableRow(content=HtmlContent(viewLink(s.id, routes.ProcessAdminController.getActive(s.id, s.processVersion).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
-        TableRow(content=Text(s.processVersion.toString)),
+        TableRow(content=Text(s"${s.processVersion.toString}/${s.timescalesVersion.getOrElse("_")}/${s.ratesVersion.getOrElse("_")}")),
         TableRow(content=Text(DateTimeUtils.formatShortDate(s.expiryTime))),
         TableRow(content=Text(DateTimeUtils.formatShortTime(s.expiryTime))),
         TableRow(content=Text(s.title.toString))
