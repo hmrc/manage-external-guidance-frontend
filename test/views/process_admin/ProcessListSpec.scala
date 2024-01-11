@@ -50,26 +50,26 @@ class ProcessListSpec extends views.ViewSpecBase {
 
     "Render list of approvals" in new Test {
 
-      val doc: Document = asDocument(approvals(summaries, PageUrls)(fakeRequest, messages))
+      val doc: Document = asDocument(approvals(summaries, PageUrls, controllers.routes.ProcessAdminController.getApproval _)(fakeRequest, messages))
 
       doc.toString.contains("Approval Processes") shouldBe true
     }
 
     "Render list of published" in new Test {
 
-      val doc: Document = asDocument(published(summaries, PageUrls)(fakeRequest, messages))
+      val doc: Document = asDocument(published(summaries, PageUrls, controllers.routes.ProcessAdminController.getPublished _)(fakeRequest, messages))
       doc.toString.contains("Published Processes") shouldBe true
     }
 
     "Render list of archived" in new Test {
 
-      val doc: Document = asDocument(archived(summaries, PageUrls)(fakeRequest, messages))
+      val doc: Document = asDocument(archived(summaries, PageUrls, controllers.routes.ProcessAdminController.getArchived _)(fakeRequest, messages))
       doc.toString.contains("Archived Processes") shouldBe true
     }
 
     "Render list of active cached processes" in new Test {
 
-      val doc: Document = asDocument(active(activeSummaries, PageUrls)(fakeRequest, messages))
+      val doc: Document = asDocument(active(activeSummaries, PageUrls, controllers.routes.ProcessAdminController.getActive _)(fakeRequest, messages))
       doc.toString.contains("Active Processes") shouldBe true
     }
 

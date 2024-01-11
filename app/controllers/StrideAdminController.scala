@@ -25,7 +25,7 @@ import javax.inject.{Inject, Singleton}
 import models.admin.{Page, PublishedList, ApprovalsList, ArchivedList, ActiveList}
 
 @Singleton
-class DesignerAdminController @Inject() (
+class StrideAdminController @Inject() (
     appConfig: AppConfig,
     designerAuthenticatedAction: DesignerAction,
     errorHandler: ErrorHandler,
@@ -39,25 +39,25 @@ class DesignerAdminController @Inject() (
 ) extends AbstractProcessAdminController(appConfig, errorHandler, publishedView, archivedView, approvalsView, activeView, adminService, mcc) {
 
   val PageUrls: Map[Page, String] = Map(
-    PublishedList -> s"/external-guidance${controllers.routes.DesignerAdminController.listPublished.url}",
-    ApprovalsList -> s"/external-guidance${controllers.routes.DesignerAdminController.listApprovals.url}",
-    ArchivedList -> s"/external-guidance${controllers.routes.DesignerAdminController.listArchived.url}",
-    ActiveList -> s"/external-guidance${controllers.routes.DesignerAdminController.listActive.url}",
+    PublishedList -> s"/external-guidance${controllers.routes.StrideAdminController.listPublished.url}",
+    ApprovalsList -> s"/external-guidance${controllers.routes.StrideAdminController.listApprovals.url}",
+    ArchivedList -> s"/external-guidance${controllers.routes.StrideAdminController.listArchived.url}",
+    ActiveList -> s"/external-guidance${controllers.routes.StrideAdminController.listActive.url}",
   )
 
-  def listPublished: Action[AnyContent] = designerAuthenticatedAction.async { implicit request => published(PageUrls, routes.DesignerAdminController.getPublished _) }
+  def listPublished: Action[AnyContent] = designerAuthenticatedAction.async { implicit request => published(PageUrls, routes.StrideAdminController.getPublished _) }
 
   def getPublished(processCode: String): Action[AnyContent] = designerAuthenticatedAction.async { implicit request => getPublishedGuidance(processCode) }
 
-  def listApprovals: Action[AnyContent] = designerAuthenticatedAction.async { implicit request => approvals(PageUrls, routes.DesignerAdminController.getApproval _) }
+  def listApprovals: Action[AnyContent] = designerAuthenticatedAction.async { implicit request => approvals(PageUrls, routes.StrideAdminController.getApproval _) }
 
   def getApproval(processCode: String): Action[AnyContent] = designerAuthenticatedAction.async { implicit request => getApprovalGuidance(processCode) }
 
-  def listArchived: Action[AnyContent] = designerAuthenticatedAction.async { implicit request => archived(PageUrls, routes.DesignerAdminController.getArchived _) }
+  def listArchived: Action[AnyContent] = designerAuthenticatedAction.async { implicit request => archived(PageUrls, routes.StrideAdminController.getArchived _) }
 
   def getArchived(id: String): Action[AnyContent] = designerAuthenticatedAction.async { implicit request => getArchivedGuidance(id) }
 
-  def listActive: Action[AnyContent] = designerAuthenticatedAction.async { implicit request => active(PageUrls, routes.DesignerAdminController.getActive _) }
+  def listActive: Action[AnyContent] = designerAuthenticatedAction.async { implicit request => active(PageUrls, routes.StrideAdminController.getActive _) }
 
   def getActive(id: String, version: Long, ts: Option[Long], rates: Option[Long]): Action[AnyContent] = designerAuthenticatedAction.async { implicit request => 
     getActiveGuidance(id, version, ts, rates) 

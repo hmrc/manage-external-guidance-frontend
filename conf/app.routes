@@ -33,15 +33,15 @@ OPTIONS    /process/approval/fact-check               controllers.apis.ApprovalC
 GET        /unpublish/:id/                            controllers.ArchiveController.unpublish(id)
 POST       /unpublish/:id/:code                       controllers.ArchiveController.archive(id, code)
 
-GET        /designer                                  controllers.DesignerAdminController.listPublished
-GET        /designer/published                        controllers.DesignerAdminController.listPublished
-GET        /designer/published/:processCode           controllers.DesignerAdminController.getPublished(processCode: String)
-GET        /designer/approvals                        controllers.DesignerAdminController.listApprovals
-GET        /designer/approvals/:processCode           controllers.DesignerAdminController.getApproval(processCode: String)
-GET        /designer/archived                         controllers.DesignerAdminController.listArchived
-GET        /designer/archived/:id                     controllers.DesignerAdminController.getArchived(id)
-GET        /designer/active                           controllers.DesignerAdminController.listActive
-GET        /designer/active/:id/:version              controllers.DesignerAdminController.getActive(id: String, version: Long, ts: Option[Long] ?= None, rates: Option[Long] ?= None)
+GET        /designer-admin                            controllers.StrideAdminController.listPublished
+GET        /designer-admin/published                  controllers.StrideAdminController.listPublished
+GET        /designer-admin/published/:processCode     controllers.StrideAdminController.getPublished(processCode: String)
+GET        /designer-admin/approvals                  controllers.StrideAdminController.listApprovals
+GET        /designer-admin/approvals/:processCode     controllers.StrideAdminController.getApproval(processCode: String)
+GET        /designer-admin/archived                   controllers.StrideAdminController.listArchived
+GET        /designer-admin/archived/:id               controllers.StrideAdminController.getArchived(id)
+GET        /designer-admin/active                     controllers.StrideAdminController.listActive
+GET        /designer-admin/active/:id/:version        controllers.StrideAdminController.getActive(id: String, version: Long, ts: Option[Long] ?= None, rates: Option[Long] ?= None)
 
 
 GET        /admin                                     controllers.ProcessAdminController.listPublished

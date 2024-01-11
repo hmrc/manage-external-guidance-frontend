@@ -40,7 +40,7 @@
 
   @govukTable(Table(
       rows = summaries.map(s => Seq(
-        TableRow(content=HtmlContent(viewLink(s.id, guidanceUrl(s.id, s.processVersion, None, None).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
+        TableRow(content=HtmlContent(viewLink(s.id, guidanceUrl(s.id, s.processVersion, s.timescalesVersion, s.ratesVersion).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
         TableRow(content=Text(s"${s.processVersion.toString}/${s.timescalesVersion.getOrElse("_")}/${s.ratesVersion.getOrElse("_")}")),
         TableRow(content=Text(DateTimeUtils.formatShortDate(s.expiryTime))),
         TableRow(content=Text(DateTimeUtils.formatShortTime(s.expiryTime))),
