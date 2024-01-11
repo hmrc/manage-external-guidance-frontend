@@ -27,7 +27,7 @@
   govukTable : GovukTable,
   wideLayout: components.FullWidthContentLayout)
 
-@(summaries: List[ProcessSummary], pageUrls: Map[Page, String])(implicit request: Request[_], messages: Messages)
+@(summaries: List[ProcessSummary], pageUrls: Map[Page, String], guidanceUrl: String => Call)(implicit request: Request[_], messages: Messages)
 
 @viewLink(code: String, url: String) = { <a id="@{code}" target="_blank" rel="noreferrer noopener" href="@url">@{code}</a> }
 
@@ -42,7 +42,7 @@
 
   @govukTable(Table(
       rows = summaries.map(s => Seq(
-        TableRow(content=HtmlContent(viewLink(s.id, routes.ProcessAdminController.getApproval(s.processCode).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
+        TableRow(content=HtmlContent(viewLink(s.id, guidanceUrl(s.processCode).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
         TableRow(content=Text(DateTimeUtils.formatShortDate(s.actioned.toInstant))),
         TableRow(content=Text(DateTimeUtils.formatShortTime(s.actioned.toInstant))),
         TableRow(content=HtmlContent(viewLink(s.processCode, s"${appConfig.pageMapApprovalUrl}/${s.processCode.toString}")), attributes = Map("title"->messages("admin.pagemap-tooltip"))),

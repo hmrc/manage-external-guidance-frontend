@@ -41,7 +41,7 @@ GET        /designer/approvals/:processCode           controllers.DesignerAdminC
 GET        /designer/archived                         controllers.DesignerAdminController.listArchived
 GET        /designer/archived/:id                     controllers.DesignerAdminController.getArchived(id)
 GET        /designer/active                           controllers.DesignerAdminController.listActive
-GET        /designer/active/:id/:version              controllers.DesignerAdminController.getActive(id: String, version: Long)
+GET        /designer/active/:id/:version              controllers.DesignerAdminController.getActive(id: String, version: Long, ts: Option[Long] ?= None, rates: Option[Long] ?= None)
 
 
 GET        /admin                                     controllers.ProcessAdminController.listPublished
@@ -52,7 +52,7 @@ GET        /admin/approvals/:processCode              controllers.ProcessAdminCo
 GET        /admin/archived                            controllers.ProcessAdminController.listArchived
 GET        /admin/archived/:id                        controllers.ProcessAdminController.getArchived(id)
 GET        /admin/active                              controllers.ProcessAdminController.listActive
-GET        /admin/active/:id/:version/:ts/:rates      controllers.ProcessAdminController.getActive(id: String, version: Long, ts: Option[Long], rates: Option[Long])
+GET        /admin/active/:id/:version                 controllers.ProcessAdminController.getActive(id: String, version: Long, ts: Option[Long] ?= None, rates: Option[Long] ?= None)
 
 GET        /admin/sign-in                             controllers.ProcessAdminController.signIn
 POST       /admin/sign-in                             controllers.ProcessAdminController.submitSignIn

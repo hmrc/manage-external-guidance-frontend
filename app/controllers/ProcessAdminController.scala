@@ -36,14 +36,14 @@ class ProcessAdminController @Inject() (
     appConfig: AppConfig,
     authAction: AuthorisedAction,
     errorHandler: ErrorHandler,
-    published: published_summaries,
-    archived: archived_summaries,
-    approvals: approval_summaries,
-    active: active_summaries,
+    publishedView: published_summaries,
+    archivedView: archived_summaries,
+    approvalsView: approval_summaries,
+    activeView: active_summaries,
     signin: admin_signin,
     adminService: ProcessAdminService,
     mcc: MessagesControllerComponents
-) extends AbstractProcessAdminController(appConfig, errorHandler, published, archived, approvals, active, adminService, mcc) {
+) extends AbstractProcessAdminController(appConfig, errorHandler, publishedView, archivedView, approvalsView, activeView, adminService, mcc) {
 
   val PageUrls: Map[Page, String] = Map(
     PublishedList -> s"/external-guidance${controllers.routes.ProcessAdminController.listPublished.url}",
@@ -79,23 +79,21 @@ class ProcessAdminController @Inject() (
     Future.successful(Redirect(routes.ProcessAdminController.listPublished.url).removingFromSession(ProcessAdminController.userSessionKey))
   }
 
-  def listPublished: Action[AnyContent] = authAction.async { implicit request => published(PageUrls) }
+  def listPublished: Action[AnyContent] = authAction.async { implicit request => published(PageUrls, routes.ProcessAdminController.getPublished _) }
 
   def getPublished(processCode: String): Action[AnyContent] = authAction.async { implicit request => getPublishedGuidance(processCode) }
 
-  def listApprovals: Action[AnyContent] = authAction.async { implicit request => approvals(PageUrls) }
+  def listApprovals: Action[AnyContent] = authAction.async { implicit request => approvals(PageUrls, routes.ProcessAdminController.getApproval _) }
 
   def getApproval(processCode: String): Action[AnyContent] = authAction.async { implicit request => getApprovalGuidance(processCode) }
 
-  def listArchived: Action[AnyContent] = authAction.async { implicit request => archived(PageUrls) }
+  def listArchived: Action[AnyContent] = authAction.async { implicit request => archived(PageUrls, routes.ProcessAdminController.getArchived _) }
 
   def getArchived(id: String): Action[AnyContent] = authAction.async { implicit request => getArchivedGuidance(id) }
 
-  def listActive: Action[AnyContent] = authAction.async { implicit request => 
-    active(PageUrls, routes.ProcessAdminController.getActive _) 
-  }
+  def listActive: Action[AnyContent] = authAction.async { implicit request => active(PageUrls, routes.ProcessAdminController.getActive _) }
 
-  def getActive(id: String, version: Long, tsVersion: Option[Long], ratesVersion: Option[Long]): Action[AnyContent] = authAction.async { implicit request => 
-    getActiveGuidance(id, version, tsVersion, ratesVersion) 
+  def getActive(id: String, version: Long, ts: Option[Long], rates: Option[Long]): Action[AnyContent] = authAction.async { implicit request => 
+    getActiveGuidance(id, version, ts, rates) 
   }
 }
