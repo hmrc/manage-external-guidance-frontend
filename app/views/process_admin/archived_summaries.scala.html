@@ -19,6 +19,7 @@
 @import config.AppConfig
 @import models.ProcessSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.admin.{Page, PublishedList, ApprovalsList, ArchivedList, ActiveList}
 
 @this(
   layout: main_layout,
@@ -26,15 +27,15 @@
   govukTable : GovukTable,
   wideLayout: components.FullWidthContentLayout)
 
-@(summaries: List[ProcessSummary])(implicit request: Request[_], messages: Messages)
+@(summaries: List[ProcessSummary], pageUrls: Map[Page, String])(implicit request: Request[_], messages: Messages)
 
 @viewLink(code: String, url: String) = { <a id="@{code}" target="_blank" rel="noreferrer noopener" href="@url">@{code}</a> }
 
-@layout(messages("archived.title"), None, Some(controllers.routes.ProcessAdminController.listArchived.url), Some(wideLayout(_))) {
+@layout(messages("archived.title"), None, Some(pageUrls(PublishedList)), Some(wideLayout(_))) {
 
-   <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listPublished.url">@messages("published.switch")</a>
-   <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listApprovals.url">@messages("approvals.switch")</a>
-   <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listActive.url">@messages("active.switch")</a>
+   <a class="govuk-button" role="button" data-module="govuk-button" href="@pageUrls(PublishedList)">@messages("published.switch")</a>
+   <a class="govuk-button" role="button" data-module="govuk-button" href="@pageUrls(ApprovalsList)">@messages("approvals.switch")</a>
+   <a class="govuk-button" role="button" data-module="govuk-button" href="@pageUrls(ActiveList)">@messages("active.switch")</a>
    <a class="govuk-button" role="button" data-module="govuk-button" target="_blank" rel="noreferrer noopener" href="@controllers.routes.TimescalesController.getData.url">@messages("timescales.download.button")</a>
 
 

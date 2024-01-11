@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.actions.FakeAuthorisedAction
+import controllers.actions.FakeDesignerAction
 import mocks.{MockAppConfig, MockProcessAdminService}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -30,7 +30,7 @@ import play.api.libs.json._
 import scala.concurrent.Future
 import models.errors.{NotFoundError, InternalServerError}
 
-class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockProcessAdminService {
+class DesignerAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockProcessAdminService {
 
   private trait Test {
 
@@ -43,9 +43,9 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
     lazy val errorHandler = app.injector.instanceOf[config.ErrorHandler]
     implicit val hc: HeaderCarrier = HeaderCarrier()
     val fakeRequest = FakeRequest("GET", "/")
-    val controller = new ProcessAdminController(
+    val controller = new DesignerAdminController(
                             MockAppConfig,
-                            FakeAuthorisedAction,
+                            FakeDesignerAction,
                             errorHandler,
                             pview,
                             aview,
@@ -54,62 +54,6 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
                             siview,
                             mockProcessAdminService,
                             stubMessagesControllerComponents())
-
-  }
-
-  "GET /admin" should {
-    "Redirect to list of published guidance" in new Test {
-      MockProcessAdminService.publishedSummaries.returns(Future.successful(Right(List())))
-      val result = controller.listPublished(fakeRequest)
-      status(result) shouldBe Status.OK
-    }
-  }
-
-  "GET /admin/sign-in" should {
-
-    "return 200" in new Test {
-
-      val result = controller.signIn(fakeRequest)
-      status(result) shouldBe Status.OK
-    }
-
-    "return HTML" in new Test {
-      val result = controller.signIn(fakeRequest)
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-    }
-  }
-
-  "POST /admin/sign-in" should {
-    "Submit successful sign" in new Test {
-      val fakePOSTRequest = FakeRequest("POST", "/external-guidance/admin/sign-in")
-      val result = controller.submitSignIn(fakePOSTRequest.withFormUrlEncodedBody(("name", "admin"), ("password", "password")))
-
-      status(result) shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some("/external-guidance/admin")
-    }
-
-    "Submit unsuccessful sign" in new Test {
-      val fakePOSTRequest = FakeRequest("POST", "/external-guidance/admin/sign-in")
-      val result = controller.submitSignIn(fakePOSTRequest.withFormUrlEncodedBody(("name", "BLAH"), ("password", "Blah")))
-
-      status(result) shouldBe Status.UNAUTHORIZED
-    }
-  }
-
-
-  "GET /admin/sign-out" should {
-
-    "return 200" in new Test {
-
-      val result = controller.signOut(fakeRequest)
-      status(result) shouldBe Status.SEE_OTHER
-    }
-
-    "return HTML" in new Test {
-      val result = controller.signOut(fakeRequest)
-      redirectLocation(result) shouldBe Some("/external-guidance/admin")
-    }
 
   }
 
@@ -140,7 +84,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
     }
   }
 
-  "GET /admin/published/code" should {
+  "GET /designer/published/code" should {
 
     "return 200" in new Test {
 
@@ -167,7 +111,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
 
   }
 
-  "GET /admin/approvals" should {
+  "GET /designer/approvals" should {
 
     "return 200" in new Test {
 
@@ -194,7 +138,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
     }
   }
 
-  "GET /admin/approvals/code" should {
+  "GET /designer/approvals/code" should {
 
     "return 200" in new Test {
 
@@ -221,7 +165,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
 
   }
 
-  "GET /admin/archived" should {
+  "GET /designer/archived" should {
 
     "return 200" in new Test {
 
@@ -249,7 +193,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
 
   }
 
-  "GET /admin/archived/id" should {
+  "GET /designer/archived/id" should {
 
     "return 200" in new Test {
 
@@ -276,7 +220,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
 
   }
 
-  "GET /admin/active" should {
+  "GET /designer/active" should {
 
     "return 200" in new Test {
 
@@ -304,7 +248,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
 
   }
 
-  "GET /admin/active/id" should {
+  "GET /designer/active/id" should {
 
     "return 200" in new Test {
 

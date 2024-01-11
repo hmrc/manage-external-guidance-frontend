@@ -19,6 +19,7 @@
 @import config.AppConfig
 @import models.ProcessSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.admin.{Page, PublishedList, ApprovalsList, ArchivedList, ActiveList}
 
 @this(
   layout: main_layout,
@@ -26,18 +27,18 @@
   govukTable : GovukTable,
   wideLayout: components.FullWidthContentLayout)
 
-@(summaries: List[ProcessSummary])(implicit request: Request[_], messages: Messages)
+@(summaries: List[ProcessSummary], pageUrls: Map[Page, String])(implicit request: Request[_], messages: Messages)
 
 @viewLink(code: String, url: String) = { <a id="@{code}" target="_blank" rel="noreferrer noopener" href="@url">@{code}</a> }
 
 @total = @{summaries.filter(_.passPhrase.isEmpty).size}
 @totalWithPassphrase = @{summaries.filter(_.passPhrase.isDefined).size}
 
-@layout(messages("published.title",total, totalWithPassphrase), None, Some(controllers.routes.ProcessAdminController.listPublished.url), Some(wideLayout(_))) {
+@layout(messages("published.title",total, totalWithPassphrase), None, Some(pageUrls(PublishedList)), Some(wideLayout(_))) {
 
- <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listApprovals.url">@messages("approvals.switch")</a>
- <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listArchived.url">@messages("archived.switch")</a>
- <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listActive.url">@messages("active.switch")</a>
+ <a class="govuk-button" role="button" data-module="govuk-button" href="@pageUrls(ApprovalsList)">@messages("approvals.switch")</a>
+ <a class="govuk-button" role="button" data-module="govuk-button" href="@pageUrls(ArchivedList)">@messages("archived.switch")</a>
+ <a class="govuk-button" role="button" data-module="govuk-button" href="@pageUrls(ActiveList)">@messages("active.switch")</a>
  <a class="govuk-button" role="button" data-module="govuk-button" target="_blank" rel="noreferrer noopener" href="@controllers.routes.TimescalesController.getData.url">@messages("timescales.download.button")</a>
 
   @govukTable(Table(
