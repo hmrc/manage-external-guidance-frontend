@@ -35,7 +35,7 @@ class ViewerConnectorSpec extends BaseSpec {
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val connector: ViewerConnector = new ViewerConnector(mockHttpClient, MockAppConfig)
-    val cp = CachedProcessSummary("id", 123456789L, None, None, "A title", Instant.now)
+    val cp = CachedProcessSummary("id", 123456789L, Some(123456789L), Some(123456789L), "A title", Instant.now)
     val someJson: JsValue = Json.toJson(cp)
     val oneItemList: List[CachedProcessSummary] = List(cp)
   }
@@ -55,12 +55,13 @@ class ViewerConnectorSpec extends BaseSpec {
     }
 
     "Return a Published Process by id" in new Test {
+      val queryParams: Seq[(String, String)] = Seq(("timescalesVersion", "123456789"), ("ratesVersion", "123456789"))
       MockedHttpClient
-        .get(MockAppConfig.activeProcessesUrl + s"/${cp.id}/${cp.processVersion}")
+        .get(MockAppConfig.activeProcessesUrl + s"/${cp.id}/${cp.processVersion}", queryParams)
         .returns(Future.successful(Right(someJson)))
 
       val response: RequestOutcome[JsValue] =
-        await(connector.get(cp.id, cp.processVersion, None, None))
+        await(connector.get(cp.id, cp.processVersion, Some(123456789L), Some(123456789L)))
 
       response shouldBe Right(someJson)
     }
