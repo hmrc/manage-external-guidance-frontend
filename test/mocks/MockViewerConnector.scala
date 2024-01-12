@@ -36,10 +36,10 @@ trait MockViewerConnector extends MockFactory {
         .listActive()(_: ExecutionContext, _: HeaderCarrier))
         .expects(*, *)
 
-    def get(id: String, version: Long): CallHandler[Future[RequestOutcome[JsValue]]] = {
+    def get(id: String, version: Long, timescalesVersion: Option[Long], ratesVersion: Option[Long]): CallHandler[Future[RequestOutcome[JsValue]]] = {
       (mockViewerConnector
-        .get(_: String, _: Long)(_: ExecutionContext, _: HeaderCarrier))
-        .expects(id, version, *, *)
+        .get(_: String, _: Long, _: Option[Long], _: Option[Long])(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, version, timescalesVersion, ratesVersion, *, *)
     }
 
   }

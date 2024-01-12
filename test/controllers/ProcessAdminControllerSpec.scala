@@ -308,7 +308,7 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
 
     "return 200" in new Test {
 
-      MockProcessAdminService.getActive("id", 1L).returns(Future.successful(Right(Json.obj())))
+      MockProcessAdminService.getActive("id", 1L, None, None).returns(Future.successful(Right(Json.obj())))
 
       val result = controller.getActive("id", 1L, None, None)(fakeRequest)
       status(result) shouldBe Status.OK
@@ -316,14 +316,14 @@ class ProcessAdminControllerSpec extends AnyWordSpec with Matchers with GuiceOne
 
     "return Json" in new Test {
 
-      MockProcessAdminService.getActive("id", 1L).returns(Future.successful(Right(Json.obj())))
+      MockProcessAdminService.getActive("id", 1L, None, None).returns(Future.successful(Right(Json.obj())))
 
       val result = controller.getActive("id", 1L, None, None)(fakeRequest)
       contentType(result) shouldBe Some("application/json")
     }
 
     "Return Bad request when retrieval fails" in new Test {
-      MockProcessAdminService.getActive("unknown", 1L).returns(Future.successful(Left(NotFoundError)))
+      MockProcessAdminService.getActive("unknown", 1L, None, None).returns(Future.successful(Left(NotFoundError)))
 
       val result = controller.getActive("unknown", 1L, None, None)(fakeRequest)
       status(result) shouldBe Status.BAD_REQUEST

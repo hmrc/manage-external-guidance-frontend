@@ -67,10 +67,10 @@ trait MockProcessAdminService extends MockFactory {
         .getArchivedById(_: String)(_: ExecutionContext, _: HeaderCarrier))
         .expects(id, *, *)
     
-    def getActive(id: String, version: Long): CallHandler[Future[RequestOutcome[JsValue]]] =
+    def getActive(id: String, version: Long, timescalesVersion: Option[Long], ratesVersion: Option[Long]): CallHandler[Future[RequestOutcome[JsValue]]] =
       (mockProcessAdminService
-        .getActive(_: String, _: Long)(_: ExecutionContext, _: HeaderCarrier))
-        .expects(id, version, *, *)
+        .getActive(_: String, _: Long, _: Option[Long], _: Option[Long])(_: ExecutionContext, _: HeaderCarrier))
+        .expects(id, version, timescalesVersion, ratesVersion, *, *)
 
   }
 

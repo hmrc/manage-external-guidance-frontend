@@ -163,10 +163,10 @@ class ProcessAdminServiceSpec extends BaseSpec {
     "Retrieve an active process by id" in new Test {
 
       MockViewerConnector
-        .get(processId, processVersion)
+        .get(processId, processVersion, None, None)
         .returns(Future.successful(Right(process)))
 
-      service.getActive(processId, processVersion).onComplete {
+      service.getActive(processId, processVersion, None, None).onComplete {
         case Success(response) =>
           response match {
             case Right(response) =>

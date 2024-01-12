@@ -60,7 +60,7 @@ class ViewerConnectorSpec extends BaseSpec {
         .returns(Future.successful(Right(someJson)))
 
       val response: RequestOutcome[JsValue] =
-        await(connector.get(cp.id, cp.processVersion))
+        await(connector.get(cp.id, cp.processVersion, None, None))
 
       response shouldBe Right(someJson)
     }
