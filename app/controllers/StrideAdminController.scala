@@ -42,7 +42,7 @@ class StrideAdminController @Inject() (
     PublishedList -> s"/external-guidance${controllers.routes.StrideAdminController.listPublished.url}",
     ApprovalsList -> s"/external-guidance${controllers.routes.StrideAdminController.listApprovals.url}",
     ArchivedList -> s"/external-guidance${controllers.routes.StrideAdminController.listArchived.url}",
-    ActiveList -> s"/external-guidance${controllers.routes.StrideAdminController.listActive.url}",
+    ActiveList -> s"/external-guidance${controllers.routes.StrideAdminController.listActive.url}"
   )
 
   def listPublished: Action[AnyContent] = designerAuthenticatedAction.async { implicit request => published(PageUrls, routes.StrideAdminController.getPublished _) }

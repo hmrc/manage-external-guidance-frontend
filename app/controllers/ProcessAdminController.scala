@@ -49,7 +49,7 @@ class ProcessAdminController @Inject() (
     PublishedList -> s"/external-guidance${controllers.routes.ProcessAdminController.listPublished.url}",
     ApprovalsList -> s"/external-guidance${controllers.routes.ProcessAdminController.listApprovals.url}",
     ArchivedList -> s"/external-guidance${controllers.routes.ProcessAdminController.listArchived.url}",
-    ActiveList -> s"/external-guidance${controllers.routes.ProcessAdminController.listActive.url}",
+    ActiveList -> s"/external-guidance${controllers.routes.ProcessAdminController.listActive.url}"
   )
 
   def signIn: Action[AnyContent] = Action { implicit request =>
