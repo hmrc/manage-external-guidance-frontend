@@ -55,7 +55,7 @@ class ProcessAdminService @Inject()(
 
   def activeSummaries(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[CachedProcessSummary]]] = viewer.listActive()
 
-  def getActive(id: String, version: Long)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = 
-    viewer.get(id, version)
+  def getActive(id: String, version: Long, timescalesVersion: Option[Long], ratesVersion: Option[Long])(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = 
+    viewer.get(id, version, timescalesVersion, ratesVersion)
 
 }

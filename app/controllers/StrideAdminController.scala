@@ -59,8 +59,8 @@ class StrideAdminController @Inject() (
 
   def listActive: Action[AnyContent] = designerAuthenticatedAction.async { implicit request => active(PageUrls, routes.StrideAdminController.getActive _) }
 
-  def getActive(id: String, version: Long, ts: Option[Long], rates: Option[Long]): Action[AnyContent] = designerAuthenticatedAction.async { implicit request => 
-    getActiveGuidance(id, version, ts, rates) 
+  def getActive(id: String, version: Long, timescalesVersion: Option[Long], ratesVersion: Option[Long]): Action[AnyContent] = designerAuthenticatedAction.async { implicit request => 
+    getActiveGuidance(id, version, timescalesVersion, ratesVersion) 
   }
 
 }

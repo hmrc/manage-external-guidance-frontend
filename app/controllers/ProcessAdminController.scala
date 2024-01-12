@@ -93,7 +93,7 @@ class ProcessAdminController @Inject() (
 
   def listActive: Action[AnyContent] = authAction.async { implicit request => active(PageUrls, routes.ProcessAdminController.getActive _) }
 
-  def getActive(id: String, version: Long, ts: Option[Long], rates: Option[Long]): Action[AnyContent] = authAction.async { implicit request => 
-    getActiveGuidance(id, version, ts, rates) 
+  def getActive(id: String, version: Long, timescalesVersion: Option[Long], ratesVersion: Option[Long]): Action[AnyContent] = authAction.async { implicit request => 
+    getActiveGuidance(id, version, timescalesVersion, ratesVersion) 
   }
 }

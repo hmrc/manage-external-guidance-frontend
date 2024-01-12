@@ -98,8 +98,8 @@ abstract class AbstractProcessAdminController (
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
 
-  def getActiveGuidance(id: String, version: Long, tsVersion: Option[Long] = None, ratesVersion: Option[Long] = None)(implicit request: Request[_]): Future[Result] = 
-    adminService.getActive(id, version).map {
+  def getActiveGuidance(id: String, version: Long, timescalesVersion: Option[Long] = None, ratesVersion: Option[Long] = None)(implicit request: Request[_]): Future[Result] = 
+    adminService.getActive(id, version, timescalesVersion, ratesVersion).map {
       case Right(process) => Ok(process)
       case Left(err) =>
         logger.error(s"Unable to retrieve archived process by id, err = $err")
