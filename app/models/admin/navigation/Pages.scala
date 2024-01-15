@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package models.admin
+package models.admin.navigation
 
-sealed trait Page
+sealed trait PageName
 
-case object PublishedList extends Page
-case object ApprovalsList extends Page
-case object ArchivedList extends Page
-case object ActiveList extends Page
+case object PublishedList extends PageName
+case object ApprovalList extends PageName
+case object ArchivedList extends PageName
+case object ActiveList extends PageName
+case object Timescales extends PageName
+
+case class AdminPage(name: PageName, url: String, title: String, window: Boolean = false)

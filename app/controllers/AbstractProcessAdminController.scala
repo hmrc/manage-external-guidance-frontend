@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.process_admin.{approval_summaries, archived_summaries, published_summaries, active_summaries}
 import java.time.ZonedDateTime
 import scala.concurrent.{ExecutionContext, Future}
-import models.admin.Page
+import models.admin.navigation.AdminPage
 
 abstract class AbstractProcessAdminController (
     appConfig: AppConfig,
@@ -41,10 +41,11 @@ abstract class AbstractProcessAdminController (
   implicit val localDateOrdering: Ordering[ZonedDateTime] = Ordering.by(_.toInstant)
   val logger: Logger = Logger(getClass)
   implicit val ec: ExecutionContext = mcc.executionContext
+  val pages: List[AdminPage]
 
-  def published(pageUrls: Map[Page, String], guidanceCall: String => Call)(implicit request: Request[_]): Future[Result] = 
+  def published(guidanceCall: String => Call)(implicit request: Request[_]): Future[Result] = 
     adminService.publishedSummaries.map {
-      case Right(processList) => Ok(publishedView(processList.sortBy(_.actioned).reverse, pageUrls, guidanceCall))
+      case Right(processList) => Ok(publishedView(processList.sortBy(_.actioned).reverse, pages, guidanceCall))
       case Left(err) =>
         logger.error(s"Unable to retrieve list of published process summaries, err = $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
@@ -58,9 +59,9 @@ abstract class AbstractProcessAdminController (
         BadRequest(errorHandler.notFoundTemplate)
     }
 
-  def approvals(pageUrls: Map[Page, String], guidanceCall: String => Call)(implicit request: Request[_]): Future[Result] = 
+  def approvals(guidanceCall: String => Call)(implicit request: Request[_]): Future[Result] = 
     adminService.approvalSummaries.map {
-      case Right(processList) => Ok(approvalsView(processList.sortBy(_.actioned).reverse, pageUrls, guidanceCall))
+      case Right(processList) => Ok(approvalsView(processList.sortBy(_.actioned).reverse, pages, guidanceCall))
       case Left(err) =>
         logger.error(s"Unable to retrieve list of approval process summaries, err = $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
@@ -74,9 +75,9 @@ abstract class AbstractProcessAdminController (
         BadRequest(errorHandler.notFoundTemplate)
     }
 
-  def archived(pageUrls: Map[Page, String], guidanceCall: String => Call)(implicit request: Request[_]): Future[Result] = 
+  def archived(guidanceCall: String => Call)(implicit request: Request[_]): Future[Result] = 
     adminService.archivedSummaries.map {
-      case Right(processList) => Ok(archivedView(processList.sortBy(_.actioned).reverse, pageUrls, guidanceCall))
+      case Right(processList) => Ok(archivedView(processList.sortBy(_.actioned).reverse, pages, guidanceCall))
       case Left(err) =>
         logger.error(s"Unable to retrieve list of archived process summaries, err = $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
@@ -90,9 +91,9 @@ abstract class AbstractProcessAdminController (
         BadRequest(errorHandler.notFoundTemplate)
     }
   
-  def active(pageUrls: Map[Page, String], guidanceCall: (String, Long, Option[Long], Option[Long]) => Call)(implicit request: Request[_]): Future[Result] = 
+  def active(guidanceCall: (String, Long, Option[Long], Option[Long]) => Call)(implicit request: Request[_]): Future[Result] = 
     adminService.activeSummaries.map {
-      case Right(summaryList) => Ok(activeView(summaryList.sortBy(_.expiryTime).reverse, pageUrls, guidanceCall))
+      case Right(summaryList) => Ok(activeView(summaryList.sortBy(_.expiryTime).reverse, pages, guidanceCall))
       case Left(err) =>
         logger.error(s"Unable to retrieve list of archived process summaries, err = $err")
         InternalServerError(errorHandler.internalServerErrorTemplate)
