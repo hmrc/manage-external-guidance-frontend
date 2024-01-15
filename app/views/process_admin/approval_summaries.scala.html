@@ -19,6 +19,7 @@
 @import config.AppConfig
 @import models.ProcessSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.admin.{Page, PublishedList, ApprovalsList, ArchivedList, ActiveList}
 
 @this(
   layout: main_layout,
@@ -26,22 +27,22 @@
   govukTable : GovukTable,
   wideLayout: components.FullWidthContentLayout)
 
-@(summaries: List[ProcessSummary])(implicit request: Request[_], messages: Messages)
+@(summaries: List[ProcessSummary], pageUrls: Map[Page, String], guidanceUrl: String => Call)(implicit request: Request[_], messages: Messages)
 
 @viewLink(code: String, url: String) = { <a id="@{code}" target="_blank" rel="noreferrer noopener" href="@url">@{code}</a> }
 
 @status(status: String) = {@if(status.equals("fact-check")) {@messages("approvals.FactCheck")} else {@messages("approvals.2iReview")}}
 
-@layout(messages("approvals.title"), None, Some(controllers.routes.ProcessAdminController.listApprovals.url), Some(wideLayout(_))) {
+@layout(messages("approvals.title"), None, Some(pageUrls(PublishedList)), Some(wideLayout(_))) {
 
-   <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listPublished.url">@messages("published.switch")</a>
-   <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listArchived.url">@messages("archived.switch")</a>
-   <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.ProcessAdminController.listActive.url">@messages("active.switch")</a>
+   <a class="govuk-button" role="button" data-module="govuk-button" href="@pageUrls(PublishedList)">@messages("published.switch")</a>
+   <a class="govuk-button" role="button" data-module="govuk-button" href="@pageUrls(ArchivedList)">@messages("archived.switch")</a>
+   <a class="govuk-button" role="button" data-module="govuk-button" href="@pageUrls(ActiveList)">@messages("active.switch")</a>
    <a class="govuk-button" role="button" data-module="govuk-button" target="_blank" rel="noreferrer noopener" href="@controllers.routes.TimescalesController.getData.url">@messages("timescales.download.button")</a>
 
   @govukTable(Table(
       rows = summaries.map(s => Seq(
-        TableRow(content=HtmlContent(viewLink(s.id, routes.ProcessAdminController.getApproval(s.processCode).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
+        TableRow(content=HtmlContent(viewLink(s.id, guidanceUrl(s.processCode).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
         TableRow(content=Text(DateTimeUtils.formatShortDate(s.actioned.toInstant))),
         TableRow(content=Text(DateTimeUtils.formatShortTime(s.actioned.toInstant))),
         TableRow(content=HtmlContent(viewLink(s.processCode, s"${appConfig.pageMapApprovalUrl}/${s.processCode.toString}")), attributes = Map("title"->messages("admin.pagemap-tooltip"))),

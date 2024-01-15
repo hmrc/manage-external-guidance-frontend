@@ -34,10 +34,13 @@ class ViewerConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
     httpClient.GET[RequestOutcome[List[CachedProcessSummary]]](endPoint, Seq.empty, Seq.empty)
   }
 
-  def get(id: String, version: Long)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = {
+  def get(id: String, version: Long, timescalesVersion: Option[Long], ratesVersion: Option[Long])
+         (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = {
+    val args: Seq[(String, String)] = Seq(timescalesVersion.map(ts => ("timescalesVersion", ts.toString)), 
+                                          ratesVersion.map(rts => ("ratesVersion", rts.toString))).flatten
     val endPoint: String = appConfig.activeProcessesUrl + s"/$id/${version.toString}"
     import connectors.httpParsers.ActiveProcessHttpParser.processHttpReads
-    httpClient.GET[RequestOutcome[JsValue]](endPoint, Seq.empty, Seq.empty)
+    httpClient.GET[RequestOutcome[JsValue]](endPoint, args, Seq.empty)
   }
 
 }

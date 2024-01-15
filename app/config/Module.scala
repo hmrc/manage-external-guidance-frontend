@@ -29,5 +29,6 @@ class Module extends AbstractModule {
     bind(classOf[FactCheckerAction]).to(classOf[FactCheckerAuthenticatedAction])
     bind(classOf[TimescalesAction]).to(classOf[TimescalesAuthenticatedAction])
     bind(classOf[AuthorisedAction]).to(classOf[AuthAction])
+    bind(classOf[DesignerAction]).to(classOf[DesignerAuthenticatedAction])
   }
 }

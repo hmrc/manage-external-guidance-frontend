@@ -33,7 +33,18 @@ OPTIONS    /process/approval/fact-check               controllers.apis.ApprovalC
 GET        /unpublish/:id/                            controllers.ArchiveController.unpublish(id)
 POST       /unpublish/:id/:code                       controllers.ArchiveController.archive(id, code)
 
-GET        /admin                                     controllers.ProcessAdminController.admin
+GET        /designer-admin                            controllers.StrideAdminController.listPublished
+GET        /designer-admin/published                  controllers.StrideAdminController.listPublished
+GET        /designer-admin/published/:processCode     controllers.StrideAdminController.getPublished(processCode: String)
+GET        /designer-admin/approvals                  controllers.StrideAdminController.listApprovals
+GET        /designer-admin/approvals/:processCode     controllers.StrideAdminController.getApproval(processCode: String)
+GET        /designer-admin/archived                   controllers.StrideAdminController.listArchived
+GET        /designer-admin/archived/:id               controllers.StrideAdminController.getArchived(id)
+GET        /designer-admin/active                     controllers.StrideAdminController.listActive
+GET        /designer-admin/active/:id/:version        controllers.StrideAdminController.getActive(id: String, version: Long, timescalesVersion: Option[Long] ?= None, ratesVersion: Option[Long] ?= None)
+
+
+GET        /admin                                     controllers.ProcessAdminController.listPublished
 GET        /admin/published                           controllers.ProcessAdminController.listPublished
 GET        /admin/published/:processCode              controllers.ProcessAdminController.getPublished(processCode: String)
 GET        /admin/approvals                           controllers.ProcessAdminController.listApprovals
@@ -41,7 +52,7 @@ GET        /admin/approvals/:processCode              controllers.ProcessAdminCo
 GET        /admin/archived                            controllers.ProcessAdminController.listArchived
 GET        /admin/archived/:id                        controllers.ProcessAdminController.getArchived(id)
 GET        /admin/active                              controllers.ProcessAdminController.listActive
-GET        /admin/active/:id/:version                 controllers.ProcessAdminController.getActive(id: String, version: Long)
+GET        /admin/active/:id/:version                 controllers.ProcessAdminController.getActive(id: String, version: Long, timescalesVersion: Option[Long] ?= None, ratesVersion: Option[Long] ?= None)
 
 GET        /admin/sign-in                             controllers.ProcessAdminController.signIn
 POST       /admin/sign-in                             controllers.ProcessAdminController.submitSignIn

@@ -20,15 +20,12 @@ import config.{AppConfig, ErrorHandler}
 import controllers.actions.AuthorisedAction
 import forms.AdminSignInForm
 import models.AdminSignInDetails
-import play.api.Logger
-import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.ProcessAdminService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.process_admin.{admin_signin, approval_summaries, archived_summaries, published_summaries, active_summaries}
-import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
+import models.admin.{Page, PublishedList, ApprovalsList, ArchivedList, ActiveList}
 
 object ProcessAdminController {
   val userSessionKey = "userName"
@@ -39,22 +36,21 @@ class ProcessAdminController @Inject() (
     appConfig: AppConfig,
     authAction: AuthorisedAction,
     errorHandler: ErrorHandler,
-    published: published_summaries,
-    archived: archived_summaries,
-    approvals: approval_summaries,
-    active: active_summaries,
+    publishedView: published_summaries,
+    archivedView: archived_summaries,
+    approvalsView: approval_summaries,
+    activeView: active_summaries,
     signin: admin_signin,
     adminService: ProcessAdminService,
     mcc: MessagesControllerComponents
-) extends FrontendController(mcc)
-    with I18nSupport {
-  implicit val localDateOrdering: Ordering[ZonedDateTime] = Ordering.by(_.toInstant)
-  val logger: Logger = Logger(getClass)
-  implicit val ec: ExecutionContext = mcc.executionContext
+) extends AbstractProcessAdminController(appConfig, errorHandler, publishedView, archivedView, approvalsView, activeView, adminService, mcc) {
 
-  def admin: Action[AnyContent] = authAction.async { _ =>
-    Future.successful(Redirect(routes.ProcessAdminController.listPublished))
-  }
+  val PageUrls: Map[Page, String] = Map(
+    PublishedList -> s"/external-guidance${controllers.routes.ProcessAdminController.listPublished.url}",
+    ApprovalsList -> s"/external-guidance${controllers.routes.ProcessAdminController.listApprovals.url}",
+    ArchivedList -> s"/external-guidance${controllers.routes.ProcessAdminController.listArchived.url}",
+    ActiveList -> s"/external-guidance${controllers.routes.ProcessAdminController.listActive.url}"
+  )
 
   def signIn: Action[AnyContent] = Action { implicit request =>
     Ok(signin(AdminSignInForm.form))
@@ -74,85 +70,30 @@ class ProcessAdminController @Inject() (
                                     .withGlobalError(request.messages("admin.signin-error"))
               Future.successful(Unauthorized(signin(formWithError)(request, request.messages)))
             }){ user =>
-              Future.successful(Redirect(routes.ProcessAdminController.admin.url).addingToSession(ProcessAdminController.userSessionKey -> user))
+              Future.successful(Redirect(routes.ProcessAdminController.listPublished.url).addingToSession(ProcessAdminController.userSessionKey -> user))
             }
       )
   }
 
-  def signOut: Action[AnyContent] = authAction.async { implicit request =>
-    Future.successful(Redirect(routes.ProcessAdminController.admin.url).removingFromSession(ProcessAdminController.userSessionKey))
+  def signOut: Action[AnyContent] = authAction.async { implicit request => 
+    Future.successful(Redirect(routes.ProcessAdminController.listPublished.url).removingFromSession(ProcessAdminController.userSessionKey))
   }
 
-  def listPublished: Action[AnyContent] = authAction.async { implicit request =>
-    adminService.publishedSummaries.map {
-      case Right(processList) => Ok(published(processList.sortBy(_.actioned).reverse))
-      case Left(err) =>
-        logger.error(s"Unable to retrieve list of published process summaries, err = $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
-    }
-  }
+  def listPublished: Action[AnyContent] = authAction.async { implicit request => published(PageUrls, routes.ProcessAdminController.getPublished _) }
 
-  def getPublished(processCode: String): Action[AnyContent] = authAction.async { implicit request =>
-    adminService.getPublishedByProcessCode(processCode).map {
-      case Right(process) => Ok(process)
-      case Left(err) =>
-        logger.error(s"Unable to retrieve published process by process code, err = $err")
-        BadRequest(errorHandler.notFoundTemplate)
-    }
-  }
+  def getPublished(processCode: String): Action[AnyContent] = authAction.async { implicit request => getPublishedGuidance(processCode) }
 
-  def listApprovals: Action[AnyContent] = authAction.async { implicit request =>
-    adminService.approvalSummaries.map {
-      case Right(processList) => Ok(approvals(processList.sortBy(_.actioned).reverse))
-      case Left(err) =>
-        logger.error(s"Unable to retrieve list of approval process summaries, err = $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
-    }
-  }
+  def listApprovals: Action[AnyContent] = authAction.async { implicit request => approvals(PageUrls, routes.ProcessAdminController.getApproval _) }
 
-  def getApproval(processCode: String): Action[AnyContent] = authAction.async { implicit request =>
-    adminService.getApprovalByProcessCode(processCode).map {
-      case Right(process) => Ok(process)
-      case Left(err) =>
-        logger.error(s"Unable to retrieve published process by process code, err = $err")
-        BadRequest(errorHandler.notFoundTemplate)
-    }
-  }
+  def getApproval(processCode: String): Action[AnyContent] = authAction.async { implicit request => getApprovalGuidance(processCode) }
 
-  def listArchived: Action[AnyContent] = authAction.async { implicit request =>
-    adminService.archivedSummaries.map {
-      case Right(processList) => Ok(archived(processList.sortBy(_.actioned).reverse))
-      case Left(err) =>
-        logger.error(s"Unable to retrieve list of archived process summaries, err = $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
-    }
-  }
+  def listArchived: Action[AnyContent] = authAction.async { implicit request => archived(PageUrls, routes.ProcessAdminController.getArchived _) }
 
-  def getArchived(id: String): Action[AnyContent] = authAction.async { implicit request =>
-    adminService.getArchivedById(id).map {
-      case Right(process) => Ok(process)
-      case Left(err) =>
-        logger.error(s"Unable to retrieve archived process by id, err = $err")
-        BadRequest(errorHandler.notFoundTemplate)
-    }
-  }
+  def getArchived(id: String): Action[AnyContent] = authAction.async { implicit request => getArchivedGuidance(id) }
 
-  def listActive: Action[AnyContent] = authAction.async { implicit request =>
-    adminService.activeSummaries.map {
-      case Right(summaryList) => Ok(active(summaryList.sortBy(_.expiryTime).reverse))
-      case Left(err) =>
-        logger.error(s"Unable to retrieve list of archived process summaries, err = $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
-    }
-  }
+  def listActive: Action[AnyContent] = authAction.async { implicit request => active(PageUrls, routes.ProcessAdminController.getActive _) }
 
-  def getActive(id: String, version: Long): Action[AnyContent] = authAction.async { implicit request =>
-    adminService.getActive(id, version).map {
-      case Right(process) => Ok(process)
-      case Left(err) =>
-        logger.error(s"Unable to retrieve archived process by id, err = $err")
-        BadRequest(errorHandler.notFoundTemplate)
-    }
+  def getActive(id: String, version: Long, timescalesVersion: Option[Long], ratesVersion: Option[Long]): Action[AnyContent] = authAction.async { implicit request => 
+    getActiveGuidance(id, version, timescalesVersion, ratesVersion) 
   }
-
 }

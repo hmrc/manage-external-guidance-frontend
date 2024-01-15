@@ -87,7 +87,7 @@
       mainContentLayout = layoutFormat
     ),
     serviceURLs = ServiceURLs(
-      serviceUrl = Some(routes.AdminController.approvalSummaries.url),
+      serviceUrl = headerUrl,
       signOutUrl = Some(routes.ProcessAdminController.signOut.url),
       accessibilityStatementUrl = Some(routes.AccessibilityStatementController.getPage.url)
     ),  

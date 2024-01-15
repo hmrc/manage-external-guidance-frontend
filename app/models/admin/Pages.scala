@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package models.admin
 
-@(contentBlock: Html)
+sealed trait Page
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-
-        @contentBlock
-    </div>
-</div>
-@{
-//$COVERAGE-OFF$
-}
+case object PublishedList extends Page
+case object ApprovalsList extends Page
+case object ArchivedList extends Page
+case object ActiveList extends Page

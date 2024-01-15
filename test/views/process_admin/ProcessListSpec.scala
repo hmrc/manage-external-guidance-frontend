@@ -23,7 +23,7 @@ import play.api.test.FakeRequest
 import views.html.process_admin._
 
 import java.time.{Instant, ZonedDateTime}
-import models.admin.CachedProcessSummary
+import models.admin._
 
 class ProcessListSpec extends views.ViewSpecBase {
 
@@ -32,6 +32,13 @@ class ProcessListSpec extends views.ViewSpecBase {
     def published: published_summaries = injector.instanceOf[published_summaries]
     def archived: archived_summaries = injector.instanceOf[archived_summaries]
     def active: active_summaries = injector.instanceOf[active_summaries]
+
+    val PageUrls: Map[Page, String] = Map(
+      PublishedList -> s"/external-guidance${controllers.routes.ProcessAdminController.listPublished.url}",
+      ApprovalsList -> s"/external-guidance${controllers.routes.ProcessAdminController.listApprovals.url}",
+      ArchivedList -> s"/external-guidance${controllers.routes.ProcessAdminController.listArchived.url}",
+      ActiveList -> s"/external-guidance${controllers.routes.ProcessAdminController.listActive.url}",
+    )
 
     val summaries = List(ProcessSummary("id", "processCode", 1, "author", None, ZonedDateTime.now, "actionedby", "Status"))
     val activeSummaries = List(CachedProcessSummary("id", 123456789L, None, None, "process title", Instant.now))
@@ -43,26 +50,26 @@ class ProcessListSpec extends views.ViewSpecBase {
 
     "Render list of approvals" in new Test {
 
-      val doc: Document = asDocument(approvals(summaries)(fakeRequest, messages))
+      val doc: Document = asDocument(approvals(summaries, PageUrls, controllers.routes.ProcessAdminController.getApproval _)(fakeRequest, messages))
 
       doc.toString.contains("Approval Processes") shouldBe true
     }
 
     "Render list of published" in new Test {
 
-      val doc: Document = asDocument(published(summaries)(fakeRequest, messages))
+      val doc: Document = asDocument(published(summaries, PageUrls, controllers.routes.ProcessAdminController.getPublished _)(fakeRequest, messages))
       doc.toString.contains("Published Processes") shouldBe true
     }
 
     "Render list of archived" in new Test {
 
-      val doc: Document = asDocument(archived(summaries)(fakeRequest, messages))
+      val doc: Document = asDocument(archived(summaries, PageUrls, controllers.routes.ProcessAdminController.getArchived _)(fakeRequest, messages))
       doc.toString.contains("Archived Processes") shouldBe true
     }
 
     "Render list of active cached processes" in new Test {
 
-      val doc: Document = asDocument(active(activeSummaries)(fakeRequest, messages))
+      val doc: Document = asDocument(active(activeSummaries, PageUrls, controllers.routes.ProcessAdminController.getActive _)(fakeRequest, messages))
       doc.toString.contains("Active Processes") shouldBe true
     }
 
