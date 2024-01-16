@@ -24,6 +24,7 @@ import views.html.process_admin._
 
 import java.time.{Instant, ZonedDateTime}
 import models.admin._
+import models.admin.navigation._
 
 class ProcessListSpec extends views.ViewSpecBase {
 
@@ -33,11 +34,12 @@ class ProcessListSpec extends views.ViewSpecBase {
     def archived: archived_summaries = injector.instanceOf[archived_summaries]
     def active: active_summaries = injector.instanceOf[active_summaries]
 
-    val PageUrls: Map[Page, String] = Map(
-      PublishedList -> s"/external-guidance${controllers.routes.ProcessAdminController.listPublished.url}",
-      ApprovalsList -> s"/external-guidance${controllers.routes.ProcessAdminController.listApprovals.url}",
-      ArchivedList -> s"/external-guidance${controllers.routes.ProcessAdminController.listArchived.url}",
-      ActiveList -> s"/external-guidance${controllers.routes.ProcessAdminController.listActive.url}",
+    val pages: List[AdminPage] = List(
+      AdminPage(PublishedList, s"/external-guidance${controllers.routes.ProcessAdminController.listPublished.url}", "published.switch"),
+      AdminPage(ApprovalList, s"/external-guidance${controllers.routes.ProcessAdminController.listApprovals.url}", "approvals.switch"),
+      AdminPage(ArchivedList, s"/external-guidance${controllers.routes.ProcessAdminController.listArchived.url}", "archived.switch"),
+      AdminPage(ActiveList, s"/external-guidance${controllers.routes.ProcessAdminController.listActive.url}", "active.switch"),
+      AdminPage(Timescales, s"/external-guidance${controllers.routes.TimescalesController.getData.url}", "timescales.download.button", true)
     )
 
     val summaries = List(ProcessSummary("id", "processCode", 1, "author", None, ZonedDateTime.now, "actionedby", "Status"))
@@ -50,26 +52,26 @@ class ProcessListSpec extends views.ViewSpecBase {
 
     "Render list of approvals" in new Test {
 
-      val doc: Document = asDocument(approvals(summaries, PageUrls, controllers.routes.ProcessAdminController.getApproval _)(fakeRequest, messages))
+      val doc: Document = asDocument(approvals(summaries, pages, controllers.routes.ProcessAdminController.getApproval _)(fakeRequest, messages))
 
       doc.toString.contains("Approval Processes") shouldBe true
     }
 
     "Render list of published" in new Test {
 
-      val doc: Document = asDocument(published(summaries, PageUrls, controllers.routes.ProcessAdminController.getPublished _)(fakeRequest, messages))
+      val doc: Document = asDocument(published(summaries, pages, controllers.routes.ProcessAdminController.getPublished _)(fakeRequest, messages))
       doc.toString.contains("Published Processes") shouldBe true
     }
 
     "Render list of archived" in new Test {
 
-      val doc: Document = asDocument(archived(summaries, PageUrls, controllers.routes.ProcessAdminController.getArchived _)(fakeRequest, messages))
+      val doc: Document = asDocument(archived(summaries, pages, controllers.routes.ProcessAdminController.getArchived _)(fakeRequest, messages))
       doc.toString.contains("Archived Processes") shouldBe true
     }
 
     "Render list of active cached processes" in new Test {
 
-      val doc: Document = asDocument(active(activeSummaries, PageUrls, controllers.routes.ProcessAdminController.getActive _)(fakeRequest, messages))
+      val doc: Document = asDocument(active(activeSummaries, pages, controllers.routes.ProcessAdminController.getActive _)(fakeRequest, messages))
       doc.toString.contains("Active Processes") shouldBe true
     }
 

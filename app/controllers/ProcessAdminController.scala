@@ -25,7 +25,7 @@ import services.ProcessAdminService
 import views.html.process_admin.{admin_signin, approval_summaries, archived_summaries, published_summaries, active_summaries}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
-import models.admin.{Page, PublishedList, ApprovalsList, ArchivedList, ActiveList}
+import models.admin.navigation.{AdminPage, PublishedList, ApprovalList, ArchivedList, ActiveList, Timescales}
 
 object ProcessAdminController {
   val userSessionKey = "userName"
@@ -45,11 +45,12 @@ class ProcessAdminController @Inject() (
     mcc: MessagesControllerComponents
 ) extends AbstractProcessAdminController(appConfig, errorHandler, publishedView, archivedView, approvalsView, activeView, adminService, mcc) {
 
-  val PageUrls: Map[Page, String] = Map(
-    PublishedList -> s"/external-guidance${controllers.routes.ProcessAdminController.listPublished.url}",
-    ApprovalsList -> s"/external-guidance${controllers.routes.ProcessAdminController.listApprovals.url}",
-    ArchivedList -> s"/external-guidance${controllers.routes.ProcessAdminController.listArchived.url}",
-    ActiveList -> s"/external-guidance${controllers.routes.ProcessAdminController.listActive.url}"
+  val pages: List[AdminPage] = List(
+    AdminPage(PublishedList, s"/external-guidance${controllers.routes.ProcessAdminController.listPublished.url}", "published.switch"),
+    AdminPage(ApprovalList, s"/external-guidance${controllers.routes.ProcessAdminController.listApprovals.url}", "approvals.switch"),
+    AdminPage(ArchivedList, s"/external-guidance${controllers.routes.ProcessAdminController.listArchived.url}", "archived.switch"),
+    AdminPage(ActiveList, s"/external-guidance${controllers.routes.ProcessAdminController.listActive.url}", "active.switch"),
+    AdminPage(Timescales, s"/external-guidance${controllers.routes.TimescalesController.getData.url}", "timescales.download.button", true)
   )
 
   def signIn: Action[AnyContent] = Action { implicit request =>
@@ -79,19 +80,19 @@ class ProcessAdminController @Inject() (
     Future.successful(Redirect(routes.ProcessAdminController.listPublished.url).removingFromSession(ProcessAdminController.userSessionKey))
   }
 
-  def listPublished: Action[AnyContent] = authAction.async { implicit request => published(PageUrls, routes.ProcessAdminController.getPublished _) }
+  def listPublished: Action[AnyContent] = authAction.async { implicit request => published(routes.ProcessAdminController.getPublished _) }
 
   def getPublished(processCode: String): Action[AnyContent] = authAction.async { implicit request => getPublishedGuidance(processCode) }
 
-  def listApprovals: Action[AnyContent] = authAction.async { implicit request => approvals(PageUrls, routes.ProcessAdminController.getApproval _) }
+  def listApprovals: Action[AnyContent] = authAction.async { implicit request => approvals(routes.ProcessAdminController.getApproval _) }
 
   def getApproval(processCode: String): Action[AnyContent] = authAction.async { implicit request => getApprovalGuidance(processCode) }
 
-  def listArchived: Action[AnyContent] = authAction.async { implicit request => archived(PageUrls, routes.ProcessAdminController.getArchived _) }
+  def listArchived: Action[AnyContent] = authAction.async { implicit request => archived(routes.ProcessAdminController.getArchived _) }
 
   def getArchived(id: String): Action[AnyContent] = authAction.async { implicit request => getArchivedGuidance(id) }
 
-  def listActive: Action[AnyContent] = authAction.async { implicit request => active(PageUrls, routes.ProcessAdminController.getActive _) }
+  def listActive: Action[AnyContent] = authAction.async { implicit request => active(routes.ProcessAdminController.getActive _) }
 
   def getActive(id: String, version: Long, timescalesVersion: Option[Long], ratesVersion: Option[Long]): Action[AnyContent] = authAction.async { implicit request => 
     getActiveGuidance(id, version, timescalesVersion, ratesVersion) 

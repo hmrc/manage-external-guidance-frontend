@@ -38,10 +38,10 @@ GET        /designer-admin/published                  controllers.StrideAdminCon
 GET        /designer-admin/published/:processCode     controllers.StrideAdminController.getPublished(processCode: String)
 GET        /designer-admin/approvals                  controllers.StrideAdminController.listApprovals
 GET        /designer-admin/approvals/:processCode     controllers.StrideAdminController.getApproval(processCode: String)
-GET        /designer-admin/archived                   controllers.StrideAdminController.listArchived
-GET        /designer-admin/archived/:id               controllers.StrideAdminController.getArchived(id)
-GET        /designer-admin/active                     controllers.StrideAdminController.listActive
-GET        /designer-admin/active/:id/:version        controllers.StrideAdminController.getActive(id: String, version: Long, timescalesVersion: Option[Long] ?= None, ratesVersion: Option[Long] ?= None)
+# GET        /designer-admin/archived                   controllers.StrideAdminController.listArchived
+# GET        /designer-admin/archived/:id               controllers.StrideAdminController.getArchived(id)
+# GET        /designer-admin/active                     controllers.StrideAdminController.listActive
+# GET        /designer-admin/active/:id/:version        controllers.StrideAdminController.getActive(id: String, version: Long, timescalesVersion: Option[Long] ?= None, ratesVersion: Option[Long] ?= None)
 
 
 GET        /admin                                     controllers.ProcessAdminController.listPublished
