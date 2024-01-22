@@ -25,7 +25,6 @@ object MockAppConfig extends AppConfig {
   override val reportAProblemNonJSUrl: String = "someJsUrl"
   override val externalGuidanceBaseUrl: String = "http://external-guidance-base-url"
   override val appName: String = "manage-external-guidance-frontend"
-  lazy val processAdminContinueUrl: String = "http://localhost:9740/external-guidance/admin/published"
   lazy val loginUrl: String = "http://localhost:9041/stride/sign-in"
   lazy val continueUrl: String = "http://localhost:9740/external-guidance/hello-world"
   lazy val designerRole: String = "Designer"
@@ -38,6 +37,10 @@ object MockAppConfig extends AppConfig {
   lazy val activeProcessesUrl: String = "http://localhost:9741/review-guidance/active"
   lazy val commentsAndFeedbackUrl: String = "http://www.gov.uk"
   lazy val timescalesContinueUrl: String = "http://localhost:9740/external-guidance/timescales"
+  lazy val processAdminContinueUrl: String = "http://localhost:9740/external-guidance/admin"
+  lazy val designerContinueUrl: String = "http://localhost:9740/external-guidance/designer"
   lazy val processAdminUser: String = "admin"
   lazy val processAdminPassword: String = "password"
+  lazy val debugApprovalUrl: String = "http://localhost:9741/review-guidance/debug/approval"
+  lazy val debugPublishedUrl: String ="http://localhost:9741/review-guidance/debug/published"
 }
