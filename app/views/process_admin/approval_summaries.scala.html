@@ -40,6 +40,7 @@
   @govukTable(Table(
       rows = summaries.map(s => Seq(
         TableRow(content=HtmlContent(viewLink(s.id, guidanceUrl(s.processCode).url)), attributes = Map("title"->messages("admin.json-tooltip"))),
+        TableRow(content=HtmlContent(viewLink(messages("admin.debug-label"), s"${appConfig.debugApprovalUrl}/${s.id}")), attributes = Map("title"->messages("admin.debug-tooltip"))),
         TableRow(content=Text(DateTimeUtils.formatShortDate(s.actioned.toInstant))),
         TableRow(content=Text(DateTimeUtils.formatShortTime(s.actioned.toInstant))),
         TableRow(content=HtmlContent(viewLink(s.processCode, s"${appConfig.pageMapApprovalUrl}/${s.processCode.toString}")), attributes = Map("title"->messages("admin.pagemap-tooltip"))),
@@ -51,6 +52,7 @@
       ),
       head = Some(Seq(
         HeadCell(content = Text(messages("approvals.id"))),
+        HeadCell(content = Text(messages("approvals.debug"))),
         HeadCell(content = Text(messages("approvals.actionDate"))),
         HeadCell(content = Text(messages("approvals.actionTime"))),
         HeadCell(content = Text(messages("approvals.code"))),

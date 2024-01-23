@@ -230,9 +230,12 @@ admin.signin = Sign In
 admin.signout = Sign Out
 admin.json-tooltip = Json
 admin.pagemap-tooltip = Guidance page structure
+admin.debug-tooltip = Run guidance with debug information
+admin.debug-label = debug
 
 published.title=Published Processes (public: {0}, protected: {1})
 published.id=Process ID
+published.debug=Debug
 published.code=Process Code
 published.version=Version
 published.author=Author
@@ -244,6 +247,7 @@ published.switch=Published
 
 approvals.title=Approval Processes
 approvals.id=Process ID
+approvals.debug=Debug
 approvals.code=Process Code
 approvals.version=Version
 approvals.author=Author

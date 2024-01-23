@@ -38,5 +38,7 @@ class DesignerAuthenticatedAction @Inject() (
     implicit val executionContext: ExecutionContext
 ) extends PrivilegedAction with DesignerAction {
 
+  override val continueUrl: String = appConfig.designerAdminContinueUrl    
+
   val predicate: Predicate = Enrolment(appConfig.designerRole) and AuthProviders(PrivilegedApplication)
 }

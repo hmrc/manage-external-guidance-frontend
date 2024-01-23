@@ -31,6 +31,7 @@ trait AppConfig {
   val continueUrl: String
   val timescalesContinueUrl: String
   val processAdminContinueUrl: String
+  val designerAdminContinueUrl: String
   val designerRole: String
   val twoEyeReviewerRole: String
   val factCheckerRole: String
@@ -42,6 +43,8 @@ trait AppConfig {
   val commentsAndFeedbackUrl: String
   val processAdminUser: String
   val processAdminPassword: String
+  val debugApprovalUrl: String 
+  val debugPublishedUrl: String  
 }
 
 @Singleton
@@ -50,8 +53,9 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   private lazy val host = servicesConfig.getString("host")
   private lazy val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
   private lazy val serviceIdentifier = servicesConfig.getString("contact-frontend-urls.serviceIdentifier")
-  private lazy val externalGuidanceViewerHost: String = config.get[String]("external-guidance-viewer.host")
-  private lazy val externalGuidanceViewerApiHost: String = config.get[String]("external-guidance-viewer.api-host")
+  private lazy val egViewerHost: String = config.get[String]("external-guidance-viewer.host")
+  private lazy val egViewerApiHost: String = config.get[String]("external-guidance-viewer.api-host")
+  private lazy val egAdminBaseUrl: String = config.get[String]("external-guidance-viewer.adminBaseUrl")
 
   val analyticsToken: String = config.get[String](s"google-analytics.token")
   val analyticsHost: String = config.get[String](s"google-analytics.host")
@@ -64,14 +68,17 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val continueUrl: String = host + servicesConfig.getString("strideAuth.login.continueUrl")
   lazy val timescalesContinueUrl: String = host + servicesConfig.getString("strideAuth.login.timescalesContinueUrl")
   lazy val processAdminContinueUrl: String = host + servicesConfig.getString("strideAuth.login.processAdminContinueUrl")
+  lazy val designerAdminContinueUrl: String = host + servicesConfig.getString("strideAuth.login.designerAdminContinueUrl")
   lazy val designerRole: String = servicesConfig.getString("strideAuth.roles.designer")
   lazy val twoEyeReviewerRole: String = servicesConfig.getString("strideAuth.roles.twoEyeReviewer")
   lazy val factCheckerRole: String = servicesConfig.getString("strideAuth.roles.factChecker")
   lazy val gtmContainer: String = config.get[String]("gtm.container")
-  lazy val viewApprovalUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.approvalUrl")}"
-  lazy val pageMapApprovalUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.pageMapApprovalUrl")}"
-  lazy val pageMapPublishedlUrl: String = s"$externalGuidanceViewerHost${config.get[String]("external-guidance-viewer.pageMapPublishedUrl")}"
-  lazy val activeProcessesUrl: String = s"$externalGuidanceViewerApiHost${config.get[String]("external-guidance-viewer.activeProcessesUrl")}"
+  lazy val debugApprovalUrl: String = s"$egViewerHost$egAdminBaseUrl/debug${config.get[String]("external-guidance-viewer.approvalUrl")}" 
+  lazy val debugPublishedUrl: String = s"$egViewerHost$egAdminBaseUrl/debug${config.get[String]("external-guidance-viewer.publishedUrl")}" 
+  lazy val viewApprovalUrl: String = s"$egViewerHost$egAdminBaseUrl${config.get[String]("external-guidance-viewer.approvalUrl")}"
+  lazy val pageMapApprovalUrl: String = s"$egViewerHost$egAdminBaseUrl${config.get[String]("external-guidance-viewer.pageMapApprovalUrl")}"
+  lazy val pageMapPublishedlUrl: String = s"$egViewerHost$egAdminBaseUrl${config.get[String]("external-guidance-viewer.pageMapPublishedUrl")}"
+  lazy val activeProcessesUrl: String = s"$egViewerApiHost$egAdminBaseUrl${config.get[String]("external-guidance-viewer.activeProcessesUrl")}"
   lazy val processAdminUser: String = config.get[String]("admin-username")
   lazy val processAdminPassword: String = config.get[String]("admin-password")
 }
