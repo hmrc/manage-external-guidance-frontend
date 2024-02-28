@@ -1,4 +1,4 @@
-import sbt.*
+import sbt._
 
 object AppDependencies {
 
@@ -14,10 +14,8 @@ object AppDependencies {
     "uk.gov.hmrc"                  %% "bootstrap-test-play-30"   % bootstrapVersion  % "test"
   )
 
-  val itDependencies: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc" %% "bootstrap-test-play-28"     % bootstrapVersion  % Test,
-    "uk.gov.hmrc" %% "play-frontend-hmrc-play-30" % "8.5.0" % Test,
-    "com.github.tomakehurst"       %  "wiremock-standalone"            % "3.0.1"  % "test",
+  val itDependencies = Seq(
+    "uk.gov.hmrc"                   %% "bootstrap-test-play-30" % bootstrapVersion  % Test,
   )
 
 }

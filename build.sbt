@@ -35,7 +35,6 @@ lazy val microservice = Project(appName, file("."))
 
 lazy val it = project
   .enablePlugins(PlayScala)
-  .configs(IntegrationTest)
   .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
   .settings(libraryDependencies ++= AppDependencies.itDependencies)
 

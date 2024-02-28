@@ -16,20 +16,20 @@
 
 package controllers.actions
 
-import config.AppConfig
 import models.requests.IdentifierRequest
-import play.api.Logger
 import play.api.mvc.Results._
 import play.api.mvc._
+import play.api.Logger
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
+import config.AppConfig
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 
