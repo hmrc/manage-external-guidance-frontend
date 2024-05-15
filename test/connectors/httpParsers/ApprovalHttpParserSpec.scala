@@ -95,11 +95,12 @@ class ApprovalHttpParserSpec extends BaseSpec with HttpVerbs with Status {
         |  "title" : "This is the title",
         |  "status" : "Submitted",
         |  "lastUpdated" : "2017-07-17",
-        |  "reviewType" : "2i-review"
+        |  "reviewType" : "2i-review",
+        |  "version" : 1
         |}]
       """.stripMargin)
 
-    val expectedResponse = List(ApprovalProcessSummary("oct90001", "This is the title", LocalDate.of(2017, 7, 17), ApprovalStatus.Submitted, ReviewType2i))
+    val expectedResponse = List(ApprovalProcessSummary("oct90001", "This is the title", LocalDate.of(2017, 7, 17), ApprovalStatus.Submitted, ReviewType2i, 1))
 
     val invalidResponse: JsValue = Json.obj() // no "id" property
   }

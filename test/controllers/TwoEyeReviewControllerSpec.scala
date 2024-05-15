@@ -48,7 +48,7 @@ class TwoEyeReviewControllerSpec extends ControllerBaseSpec with GuiceOneAppPerS
     val duplicateView = injector.instanceOf[duplicate_process_code_error]
     val confirmationView: twoeye_published = injector.instanceOf[twoeye_published]
     val errorView: twoeye_confirm_error = injector.instanceOf[twoeye_confirm_error]
-    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published, ReviewType2i)
+    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published, ReviewType2i, 1)
     val auditInfo: AuditInfo = AuditInfo(credential, id, "title", 1, "author", 2, 2)
     val event: TwoEyeReviewCompleteEvent = TwoEyeReviewCompleteEvent(auditInfo)
     val publishedEvent: PublishedEvent = PublishedEvent(auditInfo)

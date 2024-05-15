@@ -36,10 +36,10 @@ class ApprovalsListSpec extends ViewSpecBase {
     def approvalsListView: approval_summary_list = injector.instanceOf[approval_summary_list]
 
     val summaries = Seq(
-      ApprovalProcessSummary("oct9005", "EU exit guidance", LocalDate.of(2020, 5, 4), Complete, ReviewType2i),
-      ApprovalProcessSummary("oct9006", "Customer wants to make a cup of tea", LocalDate.of(2020, 5, 4), Submitted, ReviewType2i),
-      ApprovalProcessSummary("oct9007", "Telling HMRC about extra income", LocalDate.of(2020, 4, 1), Complete, ReviewType2i),
-      ApprovalProcessSummary("oct9008", "Find a lost user ID and password", LocalDate.of(2020, 4, 2), Submitted, ReviewTypeFactCheck)
+      ApprovalProcessSummary("oct9005", "EU exit guidance", LocalDate.of(2020, 5, 4), Complete, ReviewType2i, 1),
+      ApprovalProcessSummary("oct9006", "Customer wants to make a cup of tea", LocalDate.of(2020, 5, 4), Submitted, ReviewType2i, 1),
+      ApprovalProcessSummary("oct9007", "Telling HMRC about extra income", LocalDate.of(2020, 4, 1), Complete, ReviewType2i, 1),
+      ApprovalProcessSummary("oct9008", "Find a lost user ID and password", LocalDate.of(2020, 4, 2), Submitted, ReviewTypeFactCheck, 1)
     )
 
     implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
@@ -75,14 +75,20 @@ class ApprovalsListSpec extends ViewSpecBase {
 
       Option(doc.getElementsByTag("table").first).fold(fail("Missing table elem")) { table =>
         val ths = table.getElementsByTag("th").asScala.toList
-        ths.size shouldBe 3
+        ths.size shouldBe 5
         ths(0).text shouldBe messages("approvals.processTitle")
         elementAttrs(ths(0)).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
 
         ths(1).text shouldBe messages("approvals.dateProcessUpdatedTitle")
         elementAttrs(ths(1)).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
 
-        ths(2).text shouldBe messages("approvals.processStatusTitle")
+        ths(2).text shouldBe messages("approvals.version")
+        elementAttrs(ths(1)).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
+
+        ths(3).text shouldBe messages("approvals.processId")
+        elementAttrs(ths(1)).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
+
+        ths(4).text shouldBe messages("approvals.processStatusTitle")
         elementAttrs(ths(2)).get("class").fold(fail("Missing class on table col header"))(_ should include("govuk-table__header"))
       }
     }
@@ -112,7 +118,7 @@ class ApprovalsListSpec extends ViewSpecBase {
           case (r, s) =>
             val cellData = r.getElementsByTag("td").asScala.toList
 
-            cellData.size shouldBe 3
+            cellData.size shouldBe 5
 
             s.status match {
 
@@ -136,8 +142,14 @@ class ApprovalsListSpec extends ViewSpecBase {
             val lastUpdatedCellText: String = s.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
             cellData(1).text shouldBe Seq(messages("approvals.dateProcessUpdatedTitle"), lastUpdatedCellText).mkString(" ")
 
+            val versionCellText: String = s.version.toString
+            cellData(2).text shouldBe Seq(messages("approvals.version"), versionCellText).mkString(" ")
+
+            val idCellText: String = s.id
+            cellData(3).text shouldBe Seq(messages("approvals.processId"), idCellText).mkString(" ")
+
             val statusCellText: String = messages(s"approvalsStatus.${s.reviewType.toString}.${s.status.toString}")
-            cellData(2).text shouldBe Seq(messages("approvals.processStatusTitle"), statusCellText).mkString(" ")
+            cellData(4).text shouldBe Seq(messages("approvals.processStatusTitle"), statusCellText).mkString(" ")
         }
       }
     }
@@ -197,7 +209,7 @@ class ApprovalsListSpec extends ViewSpecBase {
 
       val headerCells: List[Element] = headerRows.head.getElementsByTag("th").asScala.toList
 
-      headerCells.size shouldBe 3
+      headerCells.size shouldBe 5
 
       for (headerCell <- headerCells) {
 
@@ -238,7 +250,7 @@ class ApprovalsListSpec extends ViewSpecBase {
 
         val dataCells = bodyRow.getElementsByTag("td").asScala.toList
 
-        dataCells.size shouldBe 3
+        dataCells.size shouldBe 5
 
         for (dataCell <- dataCells) {
 
