@@ -51,6 +51,8 @@ approvals.processStatusTitle = Status
 approvals.FactCheck = FC
 approvals.2iReview = 2i
 approvals.status = Status
+approvals.version = Version
+approvals.processId = Id
 
 approvalsStatus.Published = Published
 

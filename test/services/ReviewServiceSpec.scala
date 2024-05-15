@@ -36,7 +36,7 @@ class ReviewServiceSpec extends BaseSpec {
   private trait Test extends MockReviewConnector with ReviewData {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published, ReviewType2i)
+    val approvalProcessSummary: ApprovalProcessSummary = ApprovalProcessSummary("id", "title", LocalDate.now, ApprovalStatus.Published, ReviewType2i, 1)
     val auditInfo: AuditInfo = AuditInfo("credential", id, "title", 1, "author", 2, 2)
 
     lazy val reviewService = new ReviewService(mockReviewConnector)

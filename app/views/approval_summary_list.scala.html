@@ -51,6 +51,8 @@
         <tr class="govuk-table__row" role="row">
             <th scope="col" class="govuk-table__header" role="columnheader">@messages("approvals.processTitle")</th>
             <th scope="col" class="govuk-table__header" role="columnheader">@messages("approvals.dateProcessUpdatedTitle")</th>
+            <th scope="col" class="govuk-table__header" role="columnheader">@messages("approvals.version")</th>
+            <th scope="col" class="govuk-table__header" role="columnheader">@messages("approvals.processId")</th>
             <th scope="col" class="govuk-table__header" role="columnheader">@messages("approvals.processStatusTitle")</th>
         </tr>
     </thead>
@@ -64,6 +66,14 @@
             <td class="govuk-table__cell" role="cell">
                 <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("approvals.dateProcessUpdatedTitle")</span>
                 @summary.lastUpdated.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+            </td>
+            <td class="govuk-table__cell" role="cell">
+                <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("approvals.version")</span>
+                @summary.version
+            </td>
+            <td class="govuk-table__cell" role="cell">
+                <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("approvals.processId")</span>
+                @summary.id
             </td>
             <td class="govuk-table__cell" role="cell">
                 <span class="hmrc-responsive-table__heading" aria-hidden="true">@messages("approvals.processStatusTitle")</span>

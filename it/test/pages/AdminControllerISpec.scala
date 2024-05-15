@@ -43,7 +43,8 @@ class AdminControllerISpec extends IntegrationSpec {
             |    "title": "This is the title",
             |    "lastUpdated": "2017-07-17",
             |    "status": "Submitted",
-            |    "reviewType" : "2i-review"
+            |    "reviewType" : "2i-review",
+            |    "version" : 1
             |  }
             |]
           """.stripMargin
