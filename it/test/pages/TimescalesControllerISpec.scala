@@ -16,7 +16,7 @@
 
 package pages
 
-import models.{UpdateDetails, TimescalesResponse}
+import models.{UpdateDetails, LabelledDataUpdateStatus}
 import models.errors.{Error, BadRequestError, InternalServerError, NotFoundError}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
@@ -28,7 +28,7 @@ import java.time.{ZoneOffset, ZonedDateTime}
 class TimescalesControllerISpec extends IntegrationSpec {
   val when: ZonedDateTime = ZonedDateTime.of(2022, 3, 11, 10, 30, 0, 0, ZoneOffset.UTC)
   val updateDetails: UpdateDetails = UpdateDetails(when, "34567822", "UserName", "user@email.co.uk", Nil)
-  val timescaleResponse: TimescalesResponse = TimescalesResponse(650, Some(updateDetails))
+  val timescaleResponse: LabelledDataUpdateStatus = LabelledDataUpdateStatus(650, Some(updateDetails))
   val timescaleResponseJson: JsValue = Json.toJson(timescaleResponse)
 
   "Calling the approval 2i review endpoint with a valid process identifier" should {

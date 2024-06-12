@@ -22,7 +22,7 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeTimescalesAction extends ControllerBaseSpec with TimescalesAction {
+object FakeLabelledDataAction extends ControllerBaseSpec with LabelledDataAction {
 
   override implicit protected def executionContext: ExecutionContext = ExecutionContext.global
 

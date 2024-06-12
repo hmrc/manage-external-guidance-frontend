@@ -24,9 +24,3 @@ case class UpdateDetails(when: ZonedDateTime, credId: String, user: String, emai
 object UpdateDetails {
   implicit val formats: OFormat[UpdateDetails] = Json.format[UpdateDetails]
 }
-
-case class TimescalesResponse(count: Int, lastUpdate: Option[UpdateDetails])
-
-object TimescalesResponse {
-  implicit val formats: OFormat[TimescalesResponse] = Json.format[TimescalesResponse]
-}

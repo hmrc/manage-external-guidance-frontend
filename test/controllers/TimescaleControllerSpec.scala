@@ -18,7 +18,7 @@ package controllers
 
 import base.ControllerBaseSpec
 import java.time.ZonedDateTime
-import controllers.actions.FakeTimescalesAction
+import controllers.actions.FakeLabelledDataAction
 import mocks.MockTimescalesService
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc._
@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.upload_timescales
 import views.html.timescales_upload_complete
-import models.{TimescalesResponse, UpdateDetails}
+import models.{LabelledDataUpdateStatus, UpdateDetails}
 import play.api.libs.json._
 import config.ErrorHandler
 import scala.concurrent.Future
@@ -51,7 +51,7 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
     val completeView: timescales_upload_complete = injector.instanceOf[timescales_upload_complete]
     val timscalesJsonString = """{"First": 1, "Second": 2, "Third": 3}"""
     val timescalesJson: JsValue = Json.parse(timscalesJsonString)
-    val controller = new TimescalesController(mockTimescalesService, FakeTimescalesAction, errorHandler, view, completeView, messagesControllerComponents)
+    val controller = new TimescalesController(mockTimescalesService, FakeLabelledDataAction, errorHandler, view, completeView, messagesControllerComponents)
 
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/external-guidance/timescales")
     val lastUpdateTime: ZonedDateTime = ZonedDateTime.of(2020, 1, 1, 12, 0, 1, 0, ZonedDateTime.now.getZone)
@@ -61,7 +61,7 @@ class TimescaleControllerSpec extends ControllerBaseSpec with GuiceOneAppPerSuit
     val user: String = "User Blah"
     val email: String = "user@blah.com"
     val updateDetail: UpdateDetails = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
-    val timescaleDetails: TimescalesResponse = TimescalesResponse(timescales.size, Some(updateDetail))
+    val timescaleDetails: LabelledDataUpdateStatus = LabelledDataUpdateStatus(timescales.size, Some(updateDetail))
 
     def createTempJsonFile(content: String): (TemporaryFile, Int) = {
       val tempFile = Files.SingletonTemporaryFileCreator.create("file", "tmp")
