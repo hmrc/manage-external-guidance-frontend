@@ -26,12 +26,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TimescalesService @Inject() (TimescalesConnector: TimescalesConnector) {
+class TimescalesService @Inject() (timescalesConnector: TimescalesConnector) {
   def submitTimescales(timescales: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[LabelledDataUpdateStatus]] =
-    TimescalesConnector.submitTimescales(timescales)
+    timescalesConnector.submitTimescales(timescales)
 
-  def details()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[LabelledDataUpdateStatus]] = TimescalesConnector.details()
+  def details()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[LabelledDataUpdateStatus]] = timescalesConnector.details()
 
-  def get()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = TimescalesConnector.get()
+  def get()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = timescalesConnector.get()
 
 }
