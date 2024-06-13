@@ -36,7 +36,7 @@ trait LabelledDataAuthenticatedAction extends PrivilegedAction {
                               Enrolment(appConfig.factCheckerRole))
 }
 
-trait TimescalesAction extends IdentifierAction with LabelledDataAction
+trait TimescalesAction extends LabelledDataAction
 
 class TimescalesAuthenticatedAction@Inject() (
     override val authConnector: AuthConnector,
@@ -49,7 +49,7 @@ class TimescalesAuthenticatedAction@Inject() (
   override val continueUrl: String = appConfig.timescalesContinueUrl
 }
 
-trait RatesAction extends IdentifierAction with LabelledDataAction
+trait RatesAction extends LabelledDataAction
 
 class RatesAuthenticatedAction@Inject() (
     override val authConnector: AuthConnector,

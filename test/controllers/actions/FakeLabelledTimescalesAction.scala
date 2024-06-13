@@ -22,7 +22,7 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeLabelledDataAction extends ControllerBaseSpec with LabelledDataAction {
+object FakeLabelledDataAction extends ControllerBaseSpec with TimescalesAction with RatesAction {
 
   override implicit protected def executionContext: ExecutionContext = ExecutionContext.global
 
@@ -31,3 +31,4 @@ object FakeLabelledDataAction extends ControllerBaseSpec with LabelledDataAction
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
     block(IdentifierRequest(request, credential, name, email))
 }
+
