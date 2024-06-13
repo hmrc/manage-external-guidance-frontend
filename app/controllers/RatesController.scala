@@ -21,29 +21,29 @@ import models.errors.{Error, ForbiddenError, ValidationError}
 import config.ErrorHandler
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import controllers.actions.TimescalesAction
-import services.TimescalesService
-import views.html.upload_timescales
+import controllers.actions.RatesAction
+import services.RatesService
+import views.html.upload_rates
 import views.html.labelleddata_upload_complete
 import models.{RequestOutcome, UpdateDisplayDetails, LabelledDataUpdateStatus}
 import scala.concurrent.Future
 
 @Singleton
-class TimescalesController @Inject() (timescalesService: TimescalesService,
-                                      labelledDataSecuredAction: TimescalesAction,
-                                      errorHandler: ErrorHandler,
-                                      view: upload_timescales,
-                                      uploadCompleteView: labelleddata_upload_complete,
-                                      mcc: MessagesControllerComponents) extends AbstractLabelledDataController(labelledDataSecuredAction, errorHandler, uploadCompleteView, mcc) {
+class RatesController @Inject()(ratesService: RatesService,
+                                labelledDataSecuredAction: RatesAction,
+                                errorHandler: ErrorHandler,
+                                view: upload_rates,
+                                uploadCompleteView: labelleddata_upload_complete,
+                                mcc: MessagesControllerComponents) extends AbstractLabelledDataController(labelledDataSecuredAction, errorHandler, uploadCompleteView, mcc) {
 
-  val dataName: String = "timescales"
-  def submitData(json: JsValue)(implicit request: Request[_]): Future[RequestOutcome[LabelledDataUpdateStatus]] = timescalesService.submitTimescales(json)
-  def getData: Action[AnyContent] = Action.async { implicit request => getLabelledData(timescalesService.get _)}
-  def mainPageUrl: String = controllers.routes.TimescalesController.home.url
+  val dataName: String = "rates"
+  def submitData(json: JsValue)(implicit request: Request[_]): Future[RequestOutcome[LabelledDataUpdateStatus]] = ratesService.submitRates(json)
+  def getData: Action[AnyContent] = Action.async { implicit request => getLabelledData(ratesService.get _)}
+  def mainPageUrl: String = controllers.routes.RatesController.home.url
   def home: Action[AnyContent] = labelledDataSecuredAction.async{implicit request => uploadPage()}
 
   def uploadPage(error: Option[String] = None)(implicit request: Request[_]): Future[Result] =
-    timescalesService.details().map {
+    ratesService.details().map {
       case Right(response) =>
         val updateDisplayDetails: Option[UpdateDisplayDetails] = response.lastUpdate.map(UpdateDisplayDetails(_))
         error.fold(Ok(view(response.count, updateDisplayDetails, None)))(_ => BadRequest(view(response.count, updateDisplayDetails, error)))
@@ -52,7 +52,7 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
       case Left(ForbiddenError) =>
         Unauthorized(Json.toJson[Error](ForbiddenError))
       case Left(error) =>
-        logger.error(s"Timescales service failure, err = $error")
+        logger.error(s"Rates service failure, err = $error")
         InternalServerError(Json.toJson(error))
     }
 

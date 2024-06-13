@@ -18,8 +18,12 @@ GET        /fact-check-result/:id                     controllers.FactCheckConfi
 GET        /accessibility                             controllers.AccessibilityStatementController.getPage
 
 GET        /timescales/data                           controllers.TimescalesController.getData
-GET        /timescales                                controllers.TimescalesController.timescales
+GET        /timescales                                controllers.TimescalesController.home
 POST       /timescales                                controllers.TimescalesController.upload
+
+GET        /rates/data                                controllers.RatesController.getData
+GET        /rates                                     controllers.RatesController.home
+POST       /rates                                     controllers.RatesController.upload
 
 POST       /process/scratch                           controllers.apis.ScratchController.submitScratchProcess
 OPTIONS    /process/scratch                           controllers.apis.ScratchController.scratchProcessOptions

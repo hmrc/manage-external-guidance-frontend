@@ -27,13 +27,13 @@
 
 @(count: Int, details: Option[UpdateDisplayDetails], error: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(messages("timescales.title"), None, Some(controllers.routes.TimescalesController.home.url)) {
+@layout(messages("rates.title"), None, Some(controllers.routes.RatesController.home.url)) {
 
 @error.map{msg =>
   @govukErrorSummary(ErrorSummary(
       errorList = Seq(
         ErrorLink(
-          href = Some("#timescales"),
+          href = Some("#rates"),
           content = Text(messages(msg))
         )
       ),
@@ -41,24 +41,24 @@
     ))
 }
 
-<h1 class="govuk-heading-xl govuk-!-margin-0 govuk-!-margin-bottom-5">@messages("timescales.title")</h1>
+<h1 class="govuk-heading-xl govuk-!-margin-0 govuk-!-margin-bottom-5">@messages("rates.title")</h1>
 
 <p>
-@details.fold(messages("timescales.seed-definitions", count))(update =>
-  messages("timescales.status", update.time, update.date, update.user, update.credId, update.email, count)
+@details.fold(messages("rates.seed-definitions", count))(update =>
+  messages("rates.status", update.time, update.date, update.user, update.credId, update.email, count)
 )
 </p>
-@formHelper(action = controllers.routes.TimescalesController.upload, Symbol("enctype") -> "multipart/form-data") {
+@formHelper(action = controllers.routes.RatesController.upload, Symbol("enctype") -> "multipart/form-data") {
   @govukFileUpload(FileUpload(
-      name = "timescales",
-      id = "timescales",
-      label = Label(content = Text(messages("timescales.prompt"))),
+      name = "rates",
+      id = "rates",
+      label = Label(content = Text(messages("rates.prompt"))),
       errorMessage = error.map(msg => ErrorMessage(content = Text(messages(msg))))
     ))
 
   @govukButton(Button(
-    name = Option("timescales-upload-btn"),
-    content = Text(messages("timescales.button"))
+    name = Option("rates-upload-btn"),
+    content = Text(messages("rates.button"))
   ))
   }
 }

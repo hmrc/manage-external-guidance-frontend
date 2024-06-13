@@ -30,6 +30,7 @@ trait AppConfig {
   val loginUrl: String
   val continueUrl: String
   val timescalesContinueUrl: String
+  val ratesContinueUrl: String
   val processAdminContinueUrl: String
   val designerAdminContinueUrl: String
   val designerRole: String
@@ -67,6 +68,7 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val loginUrl: String = servicesConfig.getString("strideAuth.login.url")
   lazy val continueUrl: String = host + servicesConfig.getString("strideAuth.login.continueUrl")
   lazy val timescalesContinueUrl: String = host + servicesConfig.getString("strideAuth.login.timescalesContinueUrl")
+  lazy val ratesContinueUrl: String = host + servicesConfig.getString("strideAuth.login.ratesContinueUrl")
   lazy val processAdminContinueUrl: String = host + servicesConfig.getString("strideAuth.login.processAdminContinueUrl")
   lazy val designerAdminContinueUrl: String = host + servicesConfig.getString("strideAuth.login.designerAdminContinueUrl")
   lazy val designerRole: String = servicesConfig.getString("strideAuth.roles.designer")

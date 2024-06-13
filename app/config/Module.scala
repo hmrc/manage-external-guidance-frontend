@@ -27,7 +27,8 @@ class Module extends AbstractModule {
     bind(classOf[AllRolesAction]).to(classOf[AllRolesAuthenticatedAction])
     bind(classOf[TwoEyeReviewerAction]).to(classOf[TwoEyeReviewerAuthenticatedAction])
     bind(classOf[FactCheckerAction]).to(classOf[FactCheckerAuthenticatedAction])
-    bind(classOf[LabelledDataAction]).to(classOf[LabelledDataAuthenticatedAction])
+    bind(classOf[TimescalesAction]).to(classOf[TimescalesAuthenticatedAction])
+    bind(classOf[RatesAction]).to(classOf[RatesAuthenticatedAction])
     bind(classOf[AuthorisedAction]).to(classOf[AuthAction])
     bind(classOf[DesignerAction]).to(classOf[DesignerAuthenticatedAction])
   }

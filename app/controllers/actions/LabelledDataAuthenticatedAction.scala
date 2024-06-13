@@ -28,21 +28,36 @@ import scala.concurrent.ExecutionContext
 
 trait LabelledDataAction extends IdentifierAction
 
-class LabelledDataAuthenticatedAction @Inject() (
+trait LabelledDataAuthenticatedAction extends PrivilegedAction {
+
+  val predicate: Predicate = AuthProviders(PrivilegedApplication) and
+                             (Enrolment(appConfig.designerRole) or
+                              Enrolment(appConfig.twoEyeReviewerRole) or
+                              Enrolment(appConfig.factCheckerRole))
+}
+
+trait TimescalesAction extends IdentifierAction with LabelledDataAction
+
+class TimescalesAuthenticatedAction@Inject() (
     override val authConnector: AuthConnector,
     val appConfig: AppConfig,
     val parser: BodyParsers.Default,
     val config: Configuration,
     val env: Environment,
     val errorHandler: ErrorHandler
-)(
-    implicit val executionContext: ExecutionContext
-) extends PrivilegedAction with LabelledDataAction {
-
+)(implicit val executionContext: ExecutionContext) extends LabelledDataAuthenticatedAction with TimescalesAction {
   override val continueUrl: String = appConfig.timescalesContinueUrl
+}
 
-  val predicate: Predicate = AuthProviders(PrivilegedApplication) and
-                             (Enrolment(appConfig.designerRole) or
-                              Enrolment(appConfig.twoEyeReviewerRole) or
-                              Enrolment(appConfig.factCheckerRole))
+trait RatesAction extends IdentifierAction with LabelledDataAction
+
+class RatesAuthenticatedAction@Inject() (
+    override val authConnector: AuthConnector,
+    val appConfig: AppConfig,
+    val parser: BodyParsers.Default,
+    val config: Configuration,
+    val env: Environment,
+    val errorHandler: ErrorHandler
+)(implicit val executionContext: ExecutionContext) extends LabelledDataAuthenticatedAction with RatesAction {
+  override val continueUrl: String = appConfig.ratesContinueUrl
 }
