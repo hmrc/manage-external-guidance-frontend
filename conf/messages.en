@@ -43,6 +43,24 @@ timescales.complete.retained2 = As these timescales are currently used within pu
 timescales.complete.close = Return to timescales update dashboard
 timescales.download.button = Timescales
 
+rates.title = Upload rate definitions
+rates.seed-definitions = No previous update received, seed defintions active
+rates.status = Last update received from {2} on {1} at {0} UTC
+rates.prompt = Upload a rates definition json file
+rates.button = Upload
+rates.error.noselection = Select a rates definition json file to upload
+rates.error.notjson = The selected file is not a json file
+rates.error.invalid = The selected file does not contain valid rate definitions
+
+rates.complete.title = Rate update completed successfully
+rates.complete.status1 = {0} definitions uploaded at {1} on {2}
+rates.complete.status2 = Upload carried out by {0} ({1}), email: {2}
+rates.complete.retained0 = Read carefully the following sections
+rates.complete.retained1 = This update retires the following defintion(s):
+rates.complete.retained2 = As these rates are currently used within published guidance or guidance under approval, they have been retained. Please make the guidance team aware of these retirements.
+rates.complete.close = Return to rates update dashboard
+rates.download.button = Rates
+
 approvals.tableTitle = Interactive guidance dashboard
 approvals.commentsAndFeedback = View all comments and feedback (opens in new tab)
 approvals.processTitle = Title

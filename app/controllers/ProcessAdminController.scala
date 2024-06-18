@@ -25,7 +25,7 @@ import services.ProcessAdminService
 import views.html.process_admin.{admin_signin, approval_summaries, archived_summaries, published_summaries, active_summaries}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
-import models.admin.navigation.{AdminPage, PublishedList, ApprovalList, ArchivedList, ActiveList, Timescales}
+import models.admin.navigation.{AdminPage, PublishedList, ApprovalList, ArchivedList, ActiveList, Timescales, Rates}
 
 object ProcessAdminController {
   val userSessionKey = "userName"
@@ -50,7 +50,8 @@ class ProcessAdminController @Inject() (
     AdminPage(ApprovalList, s"/external-guidance${controllers.routes.ProcessAdminController.listApprovals.url}", "approvals.switch"),
     AdminPage(ArchivedList, s"/external-guidance${controllers.routes.ProcessAdminController.listArchived.url}", "archived.switch"),
     AdminPage(ActiveList, s"/external-guidance${controllers.routes.ProcessAdminController.listActive.url}", "active.switch"),
-    AdminPage(Timescales, s"/external-guidance${controllers.routes.TimescalesController.getData.url}", "timescales.download.button", true)
+    AdminPage(Timescales, s"/external-guidance${controllers.routes.TimescalesController.getData.url}", "timescales.download.button", true),
+    AdminPage(Rates, s"/external-guidance${controllers.routes.RatesController.getData.url}", "rates.download.button", true)
   )
 
   def signIn: Action[AnyContent] = Action { implicit request =>

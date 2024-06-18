@@ -23,5 +23,6 @@ case object ApprovalList extends PageName
 case object ArchivedList extends PageName
 case object ActiveList extends PageName
 case object Timescales extends PageName
+case object Rates extends PageName
 
 case class AdminPage(name: PageName, url: String, title: String, window: Boolean = false)
