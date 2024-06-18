@@ -22,7 +22,7 @@ import config.ErrorHandler
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import controllers.actions.TimescalesAction
+import controllers.actions.LabelledDataAction
 import services.TimescalesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.Logger
@@ -36,7 +36,7 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class TimescalesController @Inject() (timescalesService: TimescalesService,
-                                      timescalesSecuredAction: TimescalesAction,
+                                      labelledDataSecuredAction: LabelledDataAction,
                                       errorHandler: ErrorHandler,
                                       view: upload_timescales,
                                       uploadCompleteView: timescales_upload_complete,
@@ -44,7 +44,7 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
   val logger: Logger = Logger(getClass)
   implicit val ec: ExecutionContext = mcc.executionContext
 
-  def timescales: Action[AnyContent] = timescalesSecuredAction.async{implicit request => uploadPage()}
+  def timescales: Action[AnyContent] = labelledDataSecuredAction.async{implicit request => uploadPage()}
 
   def getData: Action[AnyContent] = Action.async { implicit request =>
     timescalesService.get().map {
@@ -56,7 +56,7 @@ class TimescalesController @Inject() (timescalesService: TimescalesService,
   }
 
   def upload: Action[play.api.mvc.MultipartFormData[play.api.libs.Files.TemporaryFile]] =
-    timescalesSecuredAction.async(parse.multipartFormData) { implicit request =>
+    labelledDataSecuredAction.async(parse.multipartFormData) { implicit request =>
       request.body.file("timescales") match {
         case Some(timescales) if timescales.contentType.fold(false)(_.contains("json")) =>
           readJsonFile(timescales.ref.path) match {

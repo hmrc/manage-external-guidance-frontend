@@ -21,21 +21,22 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
-import models.{LabelledDataUpdateStatus, RequestOutcome}
-import services.TimescalesService
+import connectors.RatesConnector
+import models.RequestOutcome
+import models.LabelledDataUpdateStatus
 
-trait MockTimescalesService extends MockFactory {
+trait MockRatesConnector extends MockFactory {
 
-  val mockTimescalesService: TimescalesService = mock[TimescalesService]
+  val mockRatesConnector: RatesConnector = mock[RatesConnector]
 
-  object MockTimescalesService {
-    def submitTimescales(timescales: JsValue): CallHandler[Future[RequestOutcome[LabelledDataUpdateStatus]]] =
-      (mockTimescalesService
-        .submitTimescales(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
-        .expects(timescales, *, *)
+  object MockRatesConnector {
+    def submitRates(rates: JsValue): CallHandler[Future[RequestOutcome[LabelledDataUpdateStatus]]] =
+      (mockRatesConnector
+        .submitRates(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
+        .expects(rates, *, *)
 
     def details(): CallHandler[Future[RequestOutcome[LabelledDataUpdateStatus]]] =
-      (mockTimescalesService
+      (mockRatesConnector
         .details()(_: ExecutionContext, _: HeaderCarrier))
         .expects(*, *)
   }

@@ -23,19 +23,19 @@ import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.TimescalesConnector
 import models.RequestOutcome
-import models.TimescalesResponse
+import models.LabelledDataUpdateStatus
 
 trait MockTimescalesConnector extends MockFactory {
 
   val mockTimescalesConnector: TimescalesConnector = mock[TimescalesConnector]
 
   object MockTimescalesConnector {
-    def submitTimescales(timescales: JsValue): CallHandler[Future[RequestOutcome[TimescalesResponse]]] =
+    def submitTimescales(timescales: JsValue): CallHandler[Future[RequestOutcome[LabelledDataUpdateStatus]]] =
       (mockTimescalesConnector
         .submitTimescales(_: JsValue)(_: ExecutionContext, _: HeaderCarrier))
         .expects(timescales, *, *)
 
-    def details(): CallHandler[Future[RequestOutcome[TimescalesResponse]]] =
+    def details(): CallHandler[Future[RequestOutcome[LabelledDataUpdateStatus]]] =
       (mockTimescalesConnector
         .details()(_: ExecutionContext, _: HeaderCarrier))
         .expects(*, *)

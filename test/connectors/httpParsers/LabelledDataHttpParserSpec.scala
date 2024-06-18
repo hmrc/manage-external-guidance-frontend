@@ -19,8 +19,8 @@ package connectors.httpParsers
 import java.time.ZonedDateTime
 
 import base.BaseSpec
-import connectors.httpParsers.TimescalesHttpParser._
-import models.{TimescalesResponse, UpdateDetails}
+import connectors.httpParsers.LabelledDataHttpParser._
+import models.{LabelledDataUpdateStatus, UpdateDetails}
 import play.api.http.{HttpVerbs, Status}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpResponse
@@ -28,7 +28,7 @@ import models.errors.ValidationError
 import models.errors.ForbiddenError
 import models.errors.InternalServerError
 
-class TimescalesHttpParserSpec extends BaseSpec with HttpVerbs with Status {
+class LabelledDataHttpParserSpec extends BaseSpec with HttpVerbs with Status {
 
   private trait Test {
     val dummyTimescales: JsValue = Json.parse("""{"TimescaleID": 10}""")
@@ -39,7 +39,7 @@ class TimescalesHttpParserSpec extends BaseSpec with HttpVerbs with Status {
     val user: String = "User Blah"
     val email: String = "user@blah.com"
     val updateDetail = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
-    val timescalesDetail = TimescalesResponse(timescales.size, Some(updateDetail))
+    val timescalesDetail = LabelledDataUpdateStatus(timescales.size, Some(updateDetail))
 
     val url: String = "/test"
     val validResponse: JsValue = Json.toJson(timescalesDetail)
@@ -52,21 +52,21 @@ class TimescalesHttpParserSpec extends BaseSpec with HttpVerbs with Status {
     "return a valid POST response" in new Test {
 
       private val httpResponse = HttpResponse(ACCEPTED, validResponse,  Map.empty[String, Seq[String]])
-      private val result = timescalesHttpReads.read(POST, url, httpResponse)
+      private val result = labelledDataHttpReads.read(POST, url, httpResponse)
       result shouldBe Right(timescalesDetail)
     }
 
     "return a invalid POST response" in new Test {
 
       private val httpResponse = HttpResponse(ACCEPTED, invalidResponse,  Map.empty[String, Seq[String]])
-      private val result = timescalesHttpReads.read(POST, url, httpResponse)
+      private val result = labelledDataHttpReads.read(POST, url, httpResponse)
       result shouldBe Left(InternalServerError)
     }
 
     "return a valid GET response" in new Test {
 
       private val httpResponse = HttpResponse(OK, validResponse,  Map.empty[String, Seq[String]])
-      private val result = timescalesHttpReads.read(GET, url, httpResponse)
+      private val result = labelledDataHttpReads.read(GET, url, httpResponse)
       result shouldBe Right(timescalesDetail)
     }
 
@@ -74,7 +74,7 @@ class TimescalesHttpParserSpec extends BaseSpec with HttpVerbs with Status {
     "return a BAD_REQUEST POST response" in new Test {
 
       private val httpResponse = HttpResponse(BAD_REQUEST, invalidResponse,  Map.empty[String, Seq[String]])
-      private val result = timescalesHttpReads.read(GET, url, httpResponse)
+      private val result = labelledDataHttpReads.read(GET, url, httpResponse)
       result shouldBe Left(ValidationError)
     }
 
@@ -82,7 +82,7 @@ class TimescalesHttpParserSpec extends BaseSpec with HttpVerbs with Status {
     "return a UNAUTHORIZED POST response" in new Test {
 
       private val httpResponse = HttpResponse(UNAUTHORIZED, invalidResponse,  Map.empty[String, Seq[String]])
-      private val result = timescalesHttpReads.read(GET, url, httpResponse)
+      private val result = labelledDataHttpReads.read(GET, url, httpResponse)
       result shouldBe Left(ForbiddenError)
     }
 

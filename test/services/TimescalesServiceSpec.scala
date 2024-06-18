@@ -20,7 +20,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
-import models.{TimescalesResponse, UpdateDetails, RequestOutcome}
+import models.{LabelledDataUpdateStatus, UpdateDetails, RequestOutcome}
 import models.errors.InternalServerError
 import base.BaseSpec
 import mocks.MockTimescalesConnector
@@ -40,7 +40,7 @@ class TimescalesServiceSpec extends BaseSpec {
     val user: String = "User Blah"
     val email: String = "user@blah.com"
     val updateDetail: UpdateDetails = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
-    val timescalesDetail: TimescalesResponse = TimescalesResponse(timescales.size, Some(updateDetail))
+    val timescalesDetail: LabelledDataUpdateStatus = LabelledDataUpdateStatus(timescales.size, Some(updateDetail))
   }
 
   "The Timescales service" should {
@@ -51,7 +51,7 @@ class TimescalesServiceSpec extends BaseSpec {
         .submitTimescales(dummyTimescales)
         .returns(Future.successful(Right(timescalesDetail)))
 
-      val result: Future[RequestOutcome[TimescalesResponse]] = timescalesService.submitTimescales(dummyTimescales)
+      val result: Future[RequestOutcome[LabelledDataUpdateStatus]] = timescalesService.submitTimescales(dummyTimescales)
 
       result.onComplete {
         case Success(response) =>
@@ -71,7 +71,7 @@ class TimescalesServiceSpec extends BaseSpec {
         .details()
         .returns(Future.successful(Right(timescalesDetail)))
 
-      val result: Future[RequestOutcome[TimescalesResponse]] = timescalesService.details()
+      val result: Future[RequestOutcome[LabelledDataUpdateStatus]] = timescalesService.details()
 
       result.onComplete {
         case Success(response) =>
@@ -91,7 +91,7 @@ class TimescalesServiceSpec extends BaseSpec {
         .submitTimescales(dummyTimescales)
         .returns(Future.successful(Left(InternalServerError)))
 
-      val result: Future[RequestOutcome[TimescalesResponse]] = timescalesService.submitTimescales(dummyTimescales)
+      val result: Future[RequestOutcome[LabelledDataUpdateStatus]] = timescalesService.submitTimescales(dummyTimescales)
 
       result.onComplete {
         case Success(response) =>

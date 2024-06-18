@@ -26,9 +26,9 @@ import uk.gov.hmrc.auth.core.authorise.Predicate
 
 import scala.concurrent.ExecutionContext
 
-trait TimescalesAction extends IdentifierAction
+trait LabelledDataAction extends IdentifierAction
 
-class TimescalesAuthenticatedAction @Inject() (
+class LabelledDataAuthenticatedAction @Inject() (
     override val authConnector: AuthConnector,
     val appConfig: AppConfig,
     val parser: BodyParsers.Default,
@@ -37,7 +37,7 @@ class TimescalesAuthenticatedAction @Inject() (
     val errorHandler: ErrorHandler
 )(
     implicit val executionContext: ExecutionContext
-) extends PrivilegedAction with TimescalesAction {
+) extends PrivilegedAction with LabelledDataAction {
 
   override val continueUrl: String = appConfig.timescalesContinueUrl
 

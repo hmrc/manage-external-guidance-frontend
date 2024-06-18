@@ -23,7 +23,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
 import java.time.ZonedDateTime
-import models.{TimescalesResponse, UpdateDetails}
+import models.{LabelledDataUpdateStatus, UpdateDetails}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -38,7 +38,7 @@ class TimescalesConnectorSpec extends BaseSpec {
     val user: String = "User Blah"
     val email: String = "user@blah.com"
     val updateDetail = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
-    val timescalesDetail = TimescalesResponse(timescales.size, Some(updateDetail))
+    val timescalesDetail = LabelledDataUpdateStatus(timescales.size, Some(updateDetail))
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -55,7 +55,7 @@ class TimescalesConnectorSpec extends BaseSpec {
         .post(endpoint, timescalesJson)
         .returns(Future.successful(Right(timescalesDetail)))
 
-      val response: RequestOutcome[TimescalesResponse] =
+      val response: RequestOutcome[LabelledDataUpdateStatus] =
         await(connector.submitTimescales(timescalesJson))
 
       response shouldBe Right(timescalesDetail)
@@ -72,7 +72,7 @@ class TimescalesConnectorSpec extends BaseSpec {
         .get(endpoint)
         .returns(Future.successful(Right(timescalesDetail)))
 
-      val response: RequestOutcome[TimescalesResponse] = await(connector.details())
+      val response: RequestOutcome[LabelledDataUpdateStatus] = await(connector.details())
 
       response shouldBe Right(timescalesDetail)
     }

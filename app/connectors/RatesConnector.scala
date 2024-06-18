@@ -26,21 +26,21 @@ import config.AppConfig
 import models.RequestOutcome
 
 @Singleton
-class TimescalesConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
+class RatesConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
   import connectors.httpParsers.LabelledDataHttpParser.labelledDataHttpReads
 
   def details()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[LabelledDataUpdateStatus]] = {
-    val endPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/timescales"
+    val endPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/rates"
     httpClient.GET[RequestOutcome[LabelledDataUpdateStatus]](endPoint, Seq.empty, Seq.empty)
   }
 
-  def submitTimescales(timescales: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[LabelledDataUpdateStatus]] = {
-    val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/timescales"
-    httpClient.POST[JsValue, RequestOutcome[LabelledDataUpdateStatus]](endpoint, timescales, Seq.empty)
+  def submitRates(rates: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[LabelledDataUpdateStatus]] = {
+    val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/rates"
+    httpClient.POST[JsValue, RequestOutcome[LabelledDataUpdateStatus]](endpoint, rates, Seq.empty)
   }
 
   def get()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = {
-    val endPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/timescales/data"
+    val endPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/rates/data"
     import connectors.httpParsers.PublishedProcessHttpParser.processHttpReads
     httpClient.GET[RequestOutcome[JsValue]](endPoint, Seq.empty, Seq.empty)
   }

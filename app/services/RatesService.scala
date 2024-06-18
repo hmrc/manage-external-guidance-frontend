@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.TimescalesConnector
+import connectors.RatesConnector
 import models.LabelledDataUpdateStatus
 import javax.inject.{Inject, Singleton}
 import models.RequestOutcome
@@ -26,12 +26,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TimescalesService @Inject() (timescalesConnector: TimescalesConnector) {
-  def submitTimescales(timescales: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[LabelledDataUpdateStatus]] =
-    timescalesConnector.submitTimescales(timescales)
+class RatesService @Inject() (ratesConnector: RatesConnector) {
+  def submitRates(rates: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[LabelledDataUpdateStatus]] =
+    ratesConnector.submitRates(rates)
 
-  def details()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[LabelledDataUpdateStatus]] = timescalesConnector.details()
+  def details()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[LabelledDataUpdateStatus]] = ratesConnector.details()
 
-  def get()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = timescalesConnector.get()
+  def get()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = ratesConnector.get()
 
 }
