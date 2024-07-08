@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import views.html.helper.CSPNonce
 @import controllers.routes
 
@@ -31,7 +32,7 @@
 @(
   pageTitle: String,
   backLinkDetails: Option[(String, String)] = None,
-  headerUrl: Option[String] = None,
+  headerUrl: Option[String] = Some(controllers.routes.AdminController.approvalSummaries.url),
   layoutFormat: Option[Html => Html] = Some(defaultLayout(_))
 )(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
@@ -51,9 +52,7 @@
 @beforeContentBlock = { @renderBackLink(backLinkDetails) }
 
 @head = {
-    <script @CSPNonce.attr src='@controllers.routes.Assets.versioned("javascripts/gtm.js")'></script>
-    <!--[if lte IE 8]><link href='@controllers.routes.Assets.versioned("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
-    <!--[if gt IE 8]><!--><link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" /><!--<![endif]-->
+    <link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" />
 }
 
 @content = {
@@ -69,13 +68,8 @@
 }
 
 @scripts = {
-    <script @CSPNonce.attr src='@controllers.routes.Assets.versioned("lib/govuk-frontend/dist/govuk/all.js")'></script>
-    <script @CSPNonce.attr src='@controllers.routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
-    <script @CSPNonce.attr>window.GOVUKFrontend.initAll();</script>
-    <script @CSPNonce.attr>window.HMRCFrontend.initAll();</script>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=@{appConfig.gtmContainer}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    <script type="module" @CSPNonce.attr src='@controllers.routes.Assets.versioned("lib/govuk-frontend/dist/govuk/all.js")'></script>
+    <script type="module" @CSPNonce.attr src='@controllers.routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
 }
 
 @hmrcAdminPage(
