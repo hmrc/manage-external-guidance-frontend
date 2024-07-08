@@ -71,7 +71,7 @@
     serviceName = Some(messages("service.name")),
     serviceUrl = serviceURLs.serviceUrl.getOrElse(""),
     useTudorCrown = Some(true)
-  ))),
+  ), controllers.routes.ProcessAdminController.signOut.url)),
   scriptsBlock = Some(hmrcScripts(scriptsBlock = templateOverrides.additionalScriptsBlock)),
   footerBlock = Some(hmrcStandardFooter(accessibilityStatementUrl = serviceURLs.accessibilityStatementUrl)),
   beforeContentBlock = templateOverrides.beforeContentBlock orElse Some(beforeContent),

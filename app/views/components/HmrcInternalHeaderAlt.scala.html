@@ -27,7 +27,7 @@
 
 @this(tudorCrownConfig: TudorCrownConfig)
 
-@(params: InternalHeader)(implicit messages: Messages, request: Request[_])
+@(params: InternalHeader, signOutUrl: String)(implicit messages: Messages, request: Request[_])
 @import params._
 
 <header class="hmrc-internal-header">
@@ -81,6 +81,6 @@
     }
   </div>
     @if(request.session.get(controllers.ProcessAdminController.userSessionKey)) {
-      <a href="@controllers.routes.ProcessAdminController.signOut.url" class="govuk-header__sign-out__link">@messages("admin.signout")</a>
+      <a href="@signOutUrl" class="govuk-header__sign-out__link">@messages("admin.signout")</a>
     }
 </header>
