@@ -67,16 +67,11 @@
 </div>
 }
 
-@scripts = {
-    <script type="module" @CSPNonce.attr src='@controllers.routes.Assets.versioned("lib/govuk-frontend/dist/govuk/all.js")'></script>
-    <script type="module" @CSPNonce.attr src='@controllers.routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
-}
-
 @hmrcAdminPage(
   HmrcStandardPageParams(
     templateOverrides = TemplateOverrides(
       additionalHeadBlock = Some(head),
-      additionalScriptsBlock = Some(scripts),
+      additionalScriptsBlock = None,
       beforeContentBlock = Some(beforeContentBlock),
       mainContentLayout = layoutFormat
     ),
