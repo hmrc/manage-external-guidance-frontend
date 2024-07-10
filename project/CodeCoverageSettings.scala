@@ -27,7 +27,8 @@ object CodeCoverageSettings {
     "prod.*",
     ".*Routes.*",
     "testOnly.*",
-    "testOnlyDoNotUseInAppConf.*"
+    "testOnlyDoNotUseInAppConf.*",
+    "views.html.components.HmrcInternalHeaderAlt.*"
   )
 
   val settings: Seq[Setting[_]] = Seq(
