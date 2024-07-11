@@ -18,7 +18,7 @@ package connectors
 
 import java.time.ZonedDateTime
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClient}
+import mocks.{MockAppConfig, MockHttpClientV2}
 import models.errors.BadRequestError
 import models.{ProcessSummary, RequestOutcome}
 import play.api.http.Status
@@ -30,11 +30,11 @@ import play.api.libs.json._
 
 class ArchiveConnectorSpec extends BaseSpec {
 
-  private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
+  private trait Test extends MockHttpClientV2 with FutureAwaits with DefaultAwaitTimeout {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val connector: ArchiveConnector = new ArchiveConnector(mockHttpClient, MockAppConfig)
+    val connector: ArchiveConnector = new ArchiveConnector(mockHttpClientV2, MockAppConfig)
 
     val id: String = "Oct90005"
     val now = ZonedDateTime.now
@@ -53,7 +53,7 @@ class ArchiveConnectorSpec extends BaseSpec {
     }
     "Return true for a successful call" in new ArchiveTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.successful(HttpResponse(Status.OK, "200")))
 
@@ -65,7 +65,7 @@ class ArchiveConnectorSpec extends BaseSpec {
 
     "Return an instance of an error class when an error occurs" in new ArchiveTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.failed(UpstreamErrorResponse("400", Status.BAD_REQUEST)))
 
@@ -79,7 +79,7 @@ class ArchiveConnectorSpec extends BaseSpec {
   "Archive Connector" should {
     "Return a list of process summaries" in new Test {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/archived")
         .returns(Future.successful(Right(List(processSummary))))
 
@@ -91,7 +91,7 @@ class ArchiveConnectorSpec extends BaseSpec {
 
     "Return a published process json by id" in new Test {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/archived/$id")
         .returns(Future.successful(Right(process)))
 

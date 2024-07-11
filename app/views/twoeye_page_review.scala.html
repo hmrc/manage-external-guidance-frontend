@@ -25,7 +25,7 @@
   appConfig: AppConfig
 )
 
-@(processId: String, reviewUrl: String, reviewTitle: String, form: Form[_], index: Int)(implicit request: Request[_], messages: Messages)
+@(processId: String, reviewUrl: String, reviewTitle: String, form: Form[_], index: Int)(implicit request: RequestHeader, messages: Messages)
 
 @pageTitle(errs: Seq[FormError]) = @{
   val title = s"${messages("2iPageReview.title")} - ${messages("2iReview.heading")}"

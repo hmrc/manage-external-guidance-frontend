@@ -17,7 +17,7 @@
 package connectors
 
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClient}
+import mocks.{MockAppConfig, MockHttpClientV2}
 import models.RequestOutcome
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 class RatesConnectorSpec extends BaseSpec {
 
-  private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
+  private trait Test extends MockHttpClientV2 with FutureAwaits with DefaultAwaitTimeout {
     val ratesJsonString =
       """
      |{
@@ -123,7 +123,7 @@ class RatesConnectorSpec extends BaseSpec {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val connector: RatesConnector = new RatesConnector(mockHttpClient, MockAppConfig)
+    val connector: RatesConnector = new RatesConnector(mockHttpClientV2, MockAppConfig)
   }
 
 
@@ -132,7 +132,7 @@ class RatesConnectorSpec extends BaseSpec {
 
     "Return an instance of the class LabelledDataUpdateStatus for a successful call" in new Test {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, ratesJson)
         .returns(Future.successful(Right(ratesDetail)))
 
@@ -149,7 +149,7 @@ class RatesConnectorSpec extends BaseSpec {
 
     "Return an instance of the class LabelledDataUpdateStatus for a successful call" in new Test {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.successful(Right(ratesDetail)))
 

@@ -17,7 +17,7 @@
 package connectors
 
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClient}
+import mocks.{MockAppConfig, MockHttpClientV2}
 import models.errors.InternalServerError
 import models.{RequestOutcome, ApprovalResponse, ProcessSummary}
 import play.api.libs.json.{JsValue, Json}
@@ -29,11 +29,11 @@ import scala.concurrent.Future
 
 class ApprovalConnectorSpec extends BaseSpec {
 
-  private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
+  private trait Test extends MockHttpClientV2 with FutureAwaits with DefaultAwaitTimeout {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val connector: ApprovalConnector = new ApprovalConnector(mockHttpClient, MockAppConfig)
+    val connector: ApprovalConnector = new ApprovalConnector(mockHttpClientV2, MockAppConfig)
 
     val id: String = "Oct90005"
     val dummyProcess: JsValue = Json.obj("processId" -> id)
@@ -48,7 +48,7 @@ class ApprovalConnectorSpec extends BaseSpec {
 
     "Return a list of process summaries" in new Test {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/approval/list")
         .returns(Future.successful(Right(List(processSummary))))
 
@@ -60,7 +60,7 @@ class ApprovalConnectorSpec extends BaseSpec {
 
     "Return a published process json by process code" in new Test {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/approval/code/$processCode")
         .returns(Future.successful(Right(process)))
 
@@ -80,7 +80,7 @@ class ApprovalConnectorSpec extends BaseSpec {
     }
     "Return an instance of the class ApprovalResponse for a successful call" in new SubmitFor2iReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, dummyProcess)
         .returns(Future.successful(Right(ApprovalResponse(id))))
 
@@ -92,7 +92,7 @@ class ApprovalConnectorSpec extends BaseSpec {
 
     "Return an instance of an error class when an error occurs" in new SubmitFor2iReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 
@@ -112,7 +112,7 @@ class ApprovalConnectorSpec extends BaseSpec {
     }
     "Return an instance of the class ApprovalResponse for a successful call" in new SubmitForFactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, dummyProcess)
         .returns(Future.successful(Right(ApprovalResponse(id))))
 
@@ -124,7 +124,7 @@ class ApprovalConnectorSpec extends BaseSpec {
 
     "Return an instance of an error class when an error occurs" in new SubmitForFactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 

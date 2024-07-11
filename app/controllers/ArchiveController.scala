@@ -50,9 +50,9 @@ class ArchiveController @Inject()(
   def unpublish(processId: String): Action[AnyContent] = allRolesAction.async { implicit request =>
     val form: Form[UnpublishConfirmation] = formProvider().bind(Map("value" -> No.toString))
 
-    adminService.getPublished(processId) map {
-      case Right(summary) => Ok(unpublish_confirmation(summary.id, summary.processCode, form))
-      case Left(_) => BadRequest(errorHandler.badRequestTemplate)
+    adminService.getPublished(processId).flatMap {
+      case Right(summary) => Future.successful(Ok(unpublish_confirmation(summary.id, summary.processCode, form)))
+      case Left(_) => errorHandler.badRequestTemplate.map(BadRequest(_))
     }
   }
 
@@ -64,9 +64,9 @@ class ArchiveController @Inject()(
           Future(BadRequest(unpublish_confirmation(processId, processName, formWithErrors)))
         },
         success => success.answer match {
-          case Yes => adminService.archive(processId).map {
-            case Right(_) => Ok(unpublished(processName))
-            case Left(_) => BadRequest(errorHandler.badRequestTemplate)
+          case Yes => adminService.archive(processId).flatMap {
+            case Right(_) => Future.successful(Ok(unpublished(processName)))
+            case Left(_) => errorHandler.badRequestTemplate.map(BadRequest(_))
           }
           case No  => Future(Redirect(routes.AdminController.approvalSummaries))
         }

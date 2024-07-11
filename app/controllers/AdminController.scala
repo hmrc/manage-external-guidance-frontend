@@ -27,7 +27,7 @@ import views.html.approval_summary_list
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Future, ExecutionContext}
 
 @Singleton
 class AdminController @Inject() (
@@ -43,11 +43,11 @@ class AdminController @Inject() (
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def approvalSummaries: Action[AnyContent] = identify.async { implicit request =>
-    approvalService.approvalSummaries.map {
-      case Right(processList) => Ok(view(processList.sortBy(_.lastUpdated).reverse))
+    approvalService.approvalSummaries.flatMap {
+      case Right(processList) => Future.successful(Ok(view(processList.sortBy(_.lastUpdated).reverse)))
       case Left(err) =>
         logger.error(s"Unable to retrieve list of approval process summaries, err = $err")
-        BadRequest(errorHandler.notFoundTemplate)
+        errorHandler.notFoundTemplate.map(BadRequest(_))
     }
 
   }

@@ -26,7 +26,7 @@
   govukErrorSummary: GovukErrorSummary,
   govukButton: GovukButton)
 
-@(form: Form[AdminSignInDetails])(implicit request: Request[_], messages: Messages)
+@(form: Form[AdminSignInDetails])(implicit request: RequestHeader, messages: Messages)
 
 @layout(messages("admin.signin-title")) {
 

@@ -18,33 +18,26 @@ package mocks
 
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import play.api.libs.json.Writes
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
+import uk.gov.hmrc.http.client.{RequestBuilder, HttpClientV2}
+import uk.gov.hmrc.http.HeaderCarrier
+import java.net.URL
 
-import scala.concurrent.{ExecutionContext, Future}
+trait MockHttpClientV2 extends MockFactory {
 
-trait MockHttpClient extends MockFactory {
+  val mockHttpClientV2: HttpClientV2 = mock[HttpClientV2]
 
-  val mockHttpClient: HttpClient = mock[HttpClient]
+  object MockedHttpClientV2 {
 
-  object MockedHttpClient {
-
-    def post[I, O](url: String, body: I): CallHandler[Future[O]] = {
-      (mockHttpClient
-        .POST[I, O](_: String, _: I, _: Seq[(String, String)])(_: Writes[I], _: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
-        .expects(url, body, *, *, *, *, *)
+    def post(url: URL): CallHandler[RequestBuilder] = {
+      (mockHttpClientV2
+        .post(_: URL)(_: HeaderCarrier))
+        .expects(url, *)
     }
 
-    def get[O](url: String): CallHandler[Future[O]] = {
-      (mockHttpClient
-        .GET[O](_: String, _: Seq[(String, String)], _: Seq[(String, String)])(_: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
-        .expects(url, *, *, *, *, *)
-    }
-
-    def get[O](url: String, queryParams: Seq[(String, String)]): CallHandler[Future[O]] = {
-      (mockHttpClient
-        .GET[O](_: String, _: Seq[(String, String)], _: Seq[(String, String)])(_: HttpReads[O], _: HeaderCarrier, _: ExecutionContext))
-        .expects(url, queryParams, *, *, *, *)
+    def get(url: URL): CallHandler[RequestBuilder] = {
+      (mockHttpClientV2
+        .get(_: URL)(_: HeaderCarrier))
+        .expects(url, *)
     }
 
   }

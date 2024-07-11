@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{duplicate_process_code_error, fact_check_content_review}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Future, ExecutionContext}
 
 @Singleton
 class FactCheckController @Inject() (
@@ -44,24 +44,24 @@ class FactCheckController @Inject() (
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def approval(id: String): Action[AnyContent] = factCheckerAction.async { implicit request =>
-    reviewService.approvalFactCheck(id).map {
-      case Right(approvalProcessReview) => Ok(view(approvalProcessReview))
+    reviewService.approvalFactCheck(id).flatMap {
+      case Right(approvalProcessReview) => Future.successful(Ok(view(approvalProcessReview)))
       case Left(NotFoundError) =>
         logger.error(s"Unable to retrieve approval fact check for process $id")
-        NotFound(errorHandler.notFoundTemplate)
+        errorHandler.notFoundTemplate.map(NotFound(_))
       case Left(DuplicateKeyError) =>
         logger.error(s"Duplicate process code found when attempting to fact check process $id")
-        BadRequest(duplicate_process_code_error())
+        Future.successful(BadRequest(duplicate_process_code_error()))
       case Left(StaleDataError) =>
         logger.error(s"The requested approval fact check for process $id can no longer be found")
-        NotFound(errorHandler.notFoundTemplate)
+        errorHandler.notFoundTemplate.map(NotFound(_))
       case Left(MalformedResponseError) =>
         logger.error(s"A malformed response was returned for the approval fact check review for process $id")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval fact check for process $id returned error $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
     }
 
   }

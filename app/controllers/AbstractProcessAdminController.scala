@@ -44,67 +44,67 @@ abstract class AbstractProcessAdminController (
   val pages: List[AdminPage]
 
   def published(guidanceCall: String => Call)(implicit request: Request[_]): Future[Result] = 
-    adminService.publishedSummaries.map {
-      case Right(processList) => Ok(publishedView(processList.sortBy(_.actioned).reverse, pages, guidanceCall))
+    adminService.publishedSummaries.flatMap {
+      case Right(processList) => Future.successful(Ok(publishedView(processList.sortBy(_.actioned).reverse, pages, guidanceCall)))
       case Left(err) =>
         logger.error(s"Unable to retrieve list of published process summaries, err = $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
     }
 
   def getPublishedGuidance(processCode: String)(implicit request: Request[_]): Future[Result] = 
-    adminService.getPublishedByProcessCode(processCode).map {
-      case Right(process) => Ok(process)
+    adminService.getPublishedByProcessCode(processCode).flatMap {
+      case Right(process) => Future.successful(Ok(process))
       case Left(err) =>
         logger.error(s"Unable to retrieve published process by process code, err = $err")
-        BadRequest(errorHandler.notFoundTemplate)
+        errorHandler.notFoundTemplate.map(BadRequest(_))
     }
 
   def approvals(guidanceCall: String => Call)(implicit request: Request[_]): Future[Result] = 
-    adminService.approvalSummaries.map {
-      case Right(processList) => Ok(approvalsView(processList.sortBy(_.actioned).reverse, pages, guidanceCall))
+    adminService.approvalSummaries.flatMap {
+      case Right(processList) => Future.successful(Ok(approvalsView(processList.sortBy(_.actioned).reverse, pages, guidanceCall)))
       case Left(err) =>
         logger.error(s"Unable to retrieve list of approval process summaries, err = $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
     }
 
   def getApprovalGuidance(processCode: String)(implicit request: Request[_]): Future[Result] = 
-    adminService.getApprovalByProcessCode(processCode).map {
-      case Right(process) => Ok(process)
+    adminService.getApprovalByProcessCode(processCode).flatMap {
+      case Right(process) => Future.successful(Ok(process))
       case Left(err) =>
         logger.error(s"Unable to retrieve published process by process code, err = $err")
-        BadRequest(errorHandler.notFoundTemplate)
+        errorHandler.notFoundTemplate.map(BadRequest(_))
     }
 
   def archived(guidanceCall: String => Call)(implicit request: Request[_]): Future[Result] = 
-    adminService.archivedSummaries.map {
-      case Right(processList) => Ok(archivedView(processList.sortBy(_.actioned).reverse, pages, guidanceCall))
+    adminService.archivedSummaries.flatMap {
+      case Right(processList) => Future.successful(Ok(archivedView(processList.sortBy(_.actioned).reverse, pages, guidanceCall)))
       case Left(err) =>
         logger.error(s"Unable to retrieve list of archived process summaries, err = $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
     }
 
   def getArchivedGuidance(id: String)(implicit request: Request[_]): Future[Result] = 
-    adminService.getArchivedById(id).map {
-      case Right(process) => Ok(process)
+    adminService.getArchivedById(id).flatMap {
+      case Right(process) => Future.successful(Ok(process))
       case Left(err) =>
         logger.error(s"Unable to retrieve archived process by id, err = $err")
-        BadRequest(errorHandler.notFoundTemplate)
+        errorHandler.notFoundTemplate.map(BadRequest(_))
     }
   
   def active(guidanceCall: (String, Long, Option[Long], Option[Long]) => Call)(implicit request: Request[_]): Future[Result] = 
-    adminService.activeSummaries.map {
-      case Right(summaryList) => Ok(activeView(summaryList.sortBy(_.expiryTime).reverse, pages, guidanceCall))
+    adminService.activeSummaries.flatMap {
+      case Right(summaryList) => Future.successful(Ok(activeView(summaryList.sortBy(_.expiryTime).reverse, pages, guidanceCall)))
       case Left(err) =>
         logger.error(s"Unable to retrieve list of archived process summaries, err = $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
     }
 
   def getActiveGuidance(id: String, version: Long, timescalesVersion: Option[Long] = None, ratesVersion: Option[Long] = None)(implicit request: Request[_]): Future[Result] = 
-    adminService.getActive(id, version, timescalesVersion, ratesVersion).map {
-      case Right(process) => Ok(process)
+    adminService.getActive(id, version, timescalesVersion, ratesVersion).flatMap {
+      case Right(process) => Future.successful(Ok(process))
       case Left(err) =>
         logger.error(s"Unable to retrieve archived process by id, err = $err")
-        BadRequest(errorHandler.notFoundTemplate)
+        errorHandler.notFoundTemplate.map(BadRequest(_))
     }
 
 }

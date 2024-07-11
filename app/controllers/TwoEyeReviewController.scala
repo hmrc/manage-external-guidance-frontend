@@ -50,25 +50,25 @@ class TwoEyeReviewController @Inject() (
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def approval(id: String): Action[AnyContent] = twoEyeReviewerAction.async { implicit request =>
-    reviewService.approval2iReview(id).map {
+    reviewService.approval2iReview(id).flatMap {
       case Right(approvalProcessReview) =>
-        Ok(view(approvalProcessReview))
+        Future.successful(Ok(view(approvalProcessReview)))
       case Left(NotFoundError) =>
         logger.error(s"Unable to retrieve approval 2i review for process $id")
-        NotFound(errorHandler.notFoundTemplate)
+        errorHandler.notFoundTemplate.map(NotFound(_))
       case Left(StaleDataError) =>
         logger.error(s"The requested approval 2i review for process $id can no longer be found")
-        NotFound(errorHandler.notFoundTemplate)
+        errorHandler.notFoundTemplate.map(NotFound(_))
       case Left(DuplicateKeyError) =>
         logger.error(s"Attempt to review a duplicate process code for process $id")
-        BadRequest(duplicate_process_code_error())
+        Future.successful(BadRequest(duplicate_process_code_error()))
       case Left(MalformedResponseError) =>
         logger.error(s"A malformed response was returned for the approval 2i process review for process $id")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval 2i review process for process $id returned error $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
     }
 
   }
@@ -83,29 +83,29 @@ class TwoEyeReviewController @Inject() (
                 Ok(confirmation_view()))
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval 2i review for process $processId")
-              Future.successful(NotFound(errorHandler.notFoundTemplate))
+              errorHandler.notFoundTemplate.map(NotFound(_))
             case Left(StaleDataError) =>
               logger.error(s"The requested approval 2i review for process $processId can no longer be found")
-              Future.successful(NotFound(errorHandler.notFoundTemplate))
+              errorHandler.notFoundTemplate.map(NotFound(_))
             case Left(DuplicateKeyError) =>
               logger.error(s"Attempt to publish a duplicate process code for process $processId - publish failed")
               Future.successful(BadRequest(duplicate_process_code_error()))
             case Left(err) =>
               // Handle stale data, internal server and any unexpected errors
               logger.error(s"Request for approval 2i review process for process $processId returned error $err")
-              Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+              errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
           }
       case Left(IncompleteDataError) => Future.successful(BadRequest(errorView(processId)))
       case Left(NotFoundError) =>
         logger.error(s"Unable to check 2i review approval for process $processId not found")
-        Future.successful(NotFound(errorHandler.notFoundTemplate))
+        errorHandler.notFoundTemplate.map(NotFound(_))
       case Left(StaleDataError) =>
         logger.error(s"The requested 2i review approval check for process $processId failed - stale data")
-        Future.successful(NotFound(errorHandler.notFoundTemplate))
+        errorHandler.notFoundTemplate.map(NotFound(_))
       case Left(err) =>
         // Handle internal server and any unexpected errors
         logger.error(s"Request for approval 2i review process for process $processId returned error $err")
-        Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+        errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
     }
   }
 

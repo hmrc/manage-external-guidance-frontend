@@ -18,7 +18,7 @@ package connectors
 
 import java.time.Instant
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClient}
+import mocks.{MockAppConfig, MockHttpClientV2}
 import models.RequestOutcome
 import models.admin.CachedProcessSummary
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
@@ -30,11 +30,11 @@ import play.api.libs.json._
 
 class ViewerConnectorSpec extends BaseSpec {
 
-  trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
+  trait Test extends MockHttpClientV2 with FutureAwaits with DefaultAwaitTimeout {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val connector: ViewerConnector = new ViewerConnector(mockHttpClient, MockAppConfig)
+    val connector: ViewerConnector = new ViewerConnector(mockHttpClientV2, MockAppConfig)
     val cp = CachedProcessSummary("id", 123456789L, Some(123456789L), Some(123456789L), "A title", Instant.now)
     val someJson: JsValue = Json.toJson(cp)
     val oneItemList: List[CachedProcessSummary] = List(cp)
@@ -44,7 +44,7 @@ class ViewerConnectorSpec extends BaseSpec {
 
     "Return a list of process summaries" in new Test {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(MockAppConfig.activeProcessesUrl)
         .returns(Future.successful(Right(oneItemList)))
 
@@ -56,7 +56,7 @@ class ViewerConnectorSpec extends BaseSpec {
 
     "Return a Published Process by id" in new Test {
       val queryParams: Seq[(String, String)] = Seq(("timescalesVersion", "123456789"), ("ratesVersion", "123456789"))
-      MockedHttpClient
+      MockedHttpClientV2
         .get(MockAppConfig.activeProcessesUrl + s"/${cp.id}/${cp.processVersion}", queryParams)
         .returns(Future.successful(Right(someJson)))
 

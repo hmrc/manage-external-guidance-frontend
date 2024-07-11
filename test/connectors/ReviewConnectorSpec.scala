@@ -17,7 +17,7 @@
 package connectors
 
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClient}
+import mocks.{MockAppConfig, MockHttpClientV2}
 import models._
 import models.audit.AuditInfo
 import models.errors.{InternalServerError, MalformedResponseError, NotFoundError, StaleDataError}
@@ -29,11 +29,11 @@ import scala.concurrent.Future
 
 class ReviewConnectorSpec extends BaseSpec {
 
-  private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout with ReviewData {
+  private trait Test extends MockHttpClientV2 with FutureAwaits with DefaultAwaitTimeout with ReviewData {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val connector: ReviewConnector = new ReviewConnector(mockHttpClient, MockAppConfig)
+    val connector: ReviewConnector = new ReviewConnector(mockHttpClientV2, MockAppConfig)
 
     val reviewStatusChange: ApprovalProcessStatusChange = ApprovalProcessStatusChange("user", "email", ApprovalStatus.Published)
     val auditInfo: AuditInfo = AuditInfo("pid", "id", "title", 1, "author", 2, 2)
@@ -52,7 +52,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of ApprovalProcessReview for a successful call" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.successful(Right(reviewInfo)))
 
@@ -65,7 +65,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of MalformedResponseError when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.successful(Left(MalformedResponseError)))
 
@@ -77,7 +77,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of NotFoundError class when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.successful(Left(NotFoundError)))
 
@@ -89,7 +89,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of StaleDataError class when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.successful(Left(StaleDataError)))
 
@@ -101,7 +101,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of InternalServererror class when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.successful(Left(InternalServerError)))
 
@@ -117,7 +117,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return AuditInfo details for a successful call" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Right(auditInfo)))
 
@@ -130,7 +130,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of MalformedResponseError when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(MalformedResponseError)))
 
@@ -142,7 +142,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of NotFoundError class when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(NotFoundError)))
 
@@ -154,7 +154,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of StaleDataError class when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(StaleDataError)))
 
@@ -166,7 +166,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of InternalServererror class when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(InternalServerError)))
 
@@ -182,7 +182,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of ApprovalProcessReview for a successful call" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.successful(Right(reviewInfo)))
 
@@ -195,7 +195,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of MalformedResponseError when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.successful(Left(MalformedResponseError)))
 
@@ -207,7 +207,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of NotFoundError class when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.successful(Left(NotFoundError)))
 
@@ -219,7 +219,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of StaleDataError class when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.successful(Left(StaleDataError)))
 
@@ -231,7 +231,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of InternalServererror class when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(endpoint)
         .returns(Future.successful(Left(InternalServerError)))
 
@@ -247,7 +247,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return AuditInfo details for a successful call" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Right(auditInfo)))
 
@@ -260,7 +260,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of MalformedResponseError when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(MalformedResponseError)))
 
@@ -272,7 +272,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of NotFoundError class when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(NotFoundError)))
 
@@ -284,7 +284,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of StaleDataError class when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(StaleDataError)))
 
@@ -296,7 +296,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of InternalServererror class when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, reviewStatusChange)
         .returns(Future.successful(Left(InternalServerError)))
 
@@ -312,7 +312,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of PageReviewDetail for a successful call" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(s"$pageReviewEndpoint${reviewDetail.pageUrl}")
         .returns(Future.successful(Right(reviewDetail)))
 
@@ -325,7 +325,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of MalformedResponseError when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(s"$pageReviewEndpoint${reviewDetail.pageUrl}")
         .returns(Future.successful(Left(MalformedResponseError)))
 
@@ -337,7 +337,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of NotFoundError class when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(s"$pageReviewEndpoint${reviewDetail.pageUrl}")
         .returns(Future.successful(Left(NotFoundError)))
 
@@ -349,7 +349,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of StaleDataError class when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(s"$pageReviewEndpoint${reviewDetail.pageUrl}")
         .returns(Future.successful(Left(StaleDataError)))
 
@@ -361,7 +361,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of InternalServererror class when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(s"$pageReviewEndpoint${reviewDetail.pageUrl}")
         .returns(Future.successful(Left(InternalServerError)))
 
@@ -377,7 +377,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return true for a successful call" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(s"$pageReviewEndpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Right(true)))
 
@@ -390,7 +390,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of MalformedResponseError when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(s"$pageReviewEndpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Left(MalformedResponseError)))
 
@@ -402,7 +402,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of NotFoundError class when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(s"$pageReviewEndpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Left(NotFoundError)))
 
@@ -414,7 +414,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of StaleDataError class when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(s"$pageReviewEndpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Left(StaleDataError)))
 
@@ -426,7 +426,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of InternalServererror class when an error occurs" in new TwoEyeReviewTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(s"$pageReviewEndpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Left(InternalServerError)))
 
@@ -442,7 +442,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of PageReviewDetail for a successful call" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(s"$pageReviewEndpoint${reviewDetail.pageUrl}")
         .returns(Future.successful(Right(reviewDetail)))
 
@@ -455,7 +455,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of MalformedResponseError when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(s"$pageReviewEndpoint${reviewDetail.pageUrl}")
         .returns(Future.successful(Left(MalformedResponseError)))
 
@@ -467,7 +467,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of NotFoundError class when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(s"$pageReviewEndpoint${reviewDetail.pageUrl}")
         .returns(Future.successful(Left(NotFoundError)))
 
@@ -479,7 +479,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of StaleDataError class when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(s"$pageReviewEndpoint${reviewDetail.pageUrl}")
         .returns(Future.successful(Left(StaleDataError)))
 
@@ -491,7 +491,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of InternalServererror class when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(s"$pageReviewEndpoint${reviewDetail.pageUrl}")
         .returns(Future.successful(Left(InternalServerError)))
 
@@ -507,7 +507,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return true for a successful call" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(s"$pageReviewEndpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Right(true)))
 
@@ -520,7 +520,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of MalformedResponseError when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(s"$pageReviewEndpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Left(MalformedResponseError)))
 
@@ -532,7 +532,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of NotFoundError class when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(s"$pageReviewEndpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Left(NotFoundError)))
 
@@ -544,7 +544,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of StaleDataError class when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(s"$pageReviewEndpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Left(StaleDataError)))
 
@@ -556,7 +556,7 @@ class ReviewConnectorSpec extends BaseSpec {
 
     "Return an instance of InternalServererror class when an error occurs" in new FactCheckTest {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(s"$pageReviewEndpoint${updatedReviewDetail.pageUrl}", updatedReviewDetail)
         .returns(Future.successful(Left(InternalServerError)))
 

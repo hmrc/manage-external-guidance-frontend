@@ -27,7 +27,7 @@
 
 @this(tudorCrownConfig: TudorCrownConfig)
 
-@(params: InternalHeader, signOutUrl: String)(implicit messages: Messages, request: Request[_])
+@(params: InternalHeader, signOutUrl: String)(implicit messages: Messages, request: RequestHeader)
 @import params._
 
 <header class="hmrc-internal-header">

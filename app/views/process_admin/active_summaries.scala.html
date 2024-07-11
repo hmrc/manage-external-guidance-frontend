@@ -27,7 +27,7 @@
   govukTable : GovukTable,
   wideLayout: components.FullWidthContentLayout)
 
-@(summaries: List[CachedProcessSummary], pages: List[AdminPage], guidanceUrl: (String, Long, Option[Long], Option[Long]) => Call)(implicit request: Request[_], messages: Messages)
+@(summaries: List[CachedProcessSummary], pages: List[AdminPage], guidanceUrl: (String, Long, Option[Long], Option[Long]) => Call)(implicit request: RequestHeader, messages: Messages)
 
 @viewLink(code: String, url: String) = { <a id="@{code}" target="_blank" rel="noreferrer noopener" href="@url">@{code}</a> }
 

@@ -20,32 +20,36 @@ import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import models.{ProcessSummary, PublishedProcess,RequestOutcome}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.libs.json.JsValue
+import uk.gov.hmrc.http.StringContextOps
 
 @Singleton
-class PublishedConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
+class PublishedConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig) {
 
   def summaries(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ProcessSummary]]] = {
     import connectors.httpParsers.PublishedProcessHttpParser.processSummaryHttpReads
 
     val summaryEndPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/published"
-    httpClient.GET[RequestOutcome[List[ProcessSummary]]](summaryEndPoint, Seq.empty, Seq.empty)
+
+    httpClient.get(url"$summaryEndPoint").execute[RequestOutcome[List[ProcessSummary]]]
   }
 
   def getPublished(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[PublishedProcess]] = {
     val publishedEndPoint: String = appConfig.externalGuidanceBaseUrl + s"/external-guidance/published-process/$id"
 
     import connectors.httpParsers.PublishedProcessHttpParser.publishedProcessHttpReads
-    httpClient.GET[RequestOutcome[PublishedProcess]](publishedEndPoint)
+
+    httpClient.get(url"$publishedEndPoint").execute[RequestOutcome[PublishedProcess]]
   }
 
   def getPublishedByProcessCode(code: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = {
     val publishedEndPoint: String = appConfig.externalGuidanceBaseUrl + s"/external-guidance/published/$code"
 
     import connectors.httpParsers.PublishedProcessHttpParser.processHttpReads
-    httpClient.GET[RequestOutcome[JsValue]](publishedEndPoint)
+
+    httpClient.get(url"$publishedEndPoint").execute[RequestOutcome[JsValue]]
   }
 
 }

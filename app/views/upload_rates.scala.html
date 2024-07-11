@@ -25,7 +25,7 @@
       govukErrorSummary : GovukErrorSummary,
       formHelper: FormWithCSRF)
 
-@(count: Int, details: Option[UpdateDisplayDetails], error: Option[String])(implicit request: Request[_], messages: Messages)
+@(count: Int, details: Option[UpdateDisplayDetails], error: Option[String])(implicit request: RequestHeader, messages: Messages)
 
 @layout(messages("rates.title"), None, Some(controllers.routes.RatesController.home.url)) {
 

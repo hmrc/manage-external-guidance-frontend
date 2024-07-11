@@ -19,7 +19,7 @@ package connectors
 import java.util.UUID.randomUUID
 
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClient}
+import mocks.{MockAppConfig, MockHttpClientV2}
 import models.errors.InternalServerError
 import models.{RequestOutcome, ScratchResponse}
 import play.api.libs.json.{JsValue, Json}
@@ -31,11 +31,11 @@ import scala.concurrent.Future
 
 class ScratchConnectorSpec extends BaseSpec {
 
-  private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
+  private trait Test extends MockHttpClientV2 with FutureAwaits with DefaultAwaitTimeout {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val scratchConnector: ScratchConnector = new ScratchConnector(mockHttpClient, MockAppConfig)
+    val scratchConnector: ScratchConnector = new ScratchConnector(mockHttpClientV2, MockAppConfig)
     val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
 
     val dummyProcess: JsValue = Json.parse(
@@ -51,7 +51,7 @@ class ScratchConnectorSpec extends BaseSpec {
 
     "Return an instance of the class ScratchResponse for a successful call" in new Test {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, dummyProcess)
         .returns(Future.successful(Right(ScratchResponse(id))))
 
@@ -63,7 +63,7 @@ class ScratchConnectorSpec extends BaseSpec {
 
     "Return an instance of an error class when an error occurs" in new Test {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .post(endpoint, dummyProcess)
         .returns(Future.successful(Left(InternalServerError)))
 

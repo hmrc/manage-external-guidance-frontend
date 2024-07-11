@@ -16,7 +16,7 @@
 
 @this(layout: main_layout, govukWarningText : GovukWarningText)
 
-@(count: Int, details: Option[UpdateDisplayDetails], dataName: String, url: String)(implicit request: Request[_], messages: Messages)
+@(count: Int, details: Option[UpdateDisplayDetails], dataName: String, url: String)(implicit request: RequestHeader, messages: Messages)
 
 @layout(messages(s"${dataName}.complete.title"), None, Some(url)) {
 

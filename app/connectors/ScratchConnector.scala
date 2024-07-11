@@ -19,14 +19,15 @@ package connectors
 import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{Json, JsValue}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 import config.AppConfig
 import models.{RequestOutcome, ScratchResponse}
+import uk.gov.hmrc.http.StringContextOps
 
 @Singleton
-class ScratchConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
+class ScratchConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig) {
 
   def submitScratchProcess(process: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[ScratchResponse]] = {
 
@@ -34,7 +35,7 @@ class ScratchConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) 
 
     val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
 
-    httpClient.POST[JsValue, RequestOutcome[ScratchResponse]](endpoint, process, Seq.empty)
+    httpClient.post(url"$endpoint").withBody(Json.toJson(process)).execute[RequestOutcome[ScratchResponse]]
   }
 
 }

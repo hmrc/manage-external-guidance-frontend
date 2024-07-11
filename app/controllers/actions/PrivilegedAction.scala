@@ -45,13 +45,13 @@ trait PrivilegedAction extends AuthorisedFunctions{
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    val unauthorizedResult = Unauthorized(
+    val unauthorizedResult =
       errorHandler.standardErrorTemplate(
         "error.unauthorized401.pageTitle.page",
         "error.unauthorized401.heading.page",
         "error.unauthorized401.message"
-      )(request)
-    )
+      )(request).map(Unauthorized(_))
+
 
     authorised(predicate)
       .retrieve(Retrievals.credentials and Retrievals.name and Retrievals.email) {
@@ -59,10 +59,10 @@ trait PrivilegedAction extends AuthorisedFunctions{
           block(IdentifierRequest(request, providerId, name, email))
         case _ =>
           logger.error(s"${getClass.getSimpleName()} action could not retrieve required user details in method invokeBlock")
-          Future.successful(unauthorizedResult)
-      } recover {
+          unauthorizedResult
+      }.recoverWith {
       case _: NoActiveSession =>
-        Redirect(appConfig.loginUrl, Map("successURL" -> Seq(continueUrl)))
+        Future.successful(Redirect(appConfig.loginUrl, Map("successURL" -> Seq(continueUrl))))
       case authEx: AuthorisationException =>
         logger.error(s"Method invokeBlock of ${getClass.getSimpleName()} action received an authorization exception with the message ${authEx.getMessage}")
         unauthorizedResult

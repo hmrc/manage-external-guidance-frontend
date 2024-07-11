@@ -18,7 +18,7 @@ package connectors
 
 import java.time.ZonedDateTime
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClient}
+import mocks.{MockAppConfig, MockHttpClientV2}
 import models.{ProcessSummary, RequestOutcome}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,11 +29,11 @@ import models.PublishedProcess
 
 class PublishedConnectorSpec extends BaseSpec {
 
-  private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
+  private trait Test extends MockHttpClientV2 with FutureAwaits with DefaultAwaitTimeout {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val connector: PublishedConnector = new PublishedConnector(mockHttpClient, MockAppConfig)
+    val connector: PublishedConnector = new PublishedConnector(mockHttpClientV2, MockAppConfig)
 
     val id: String = "Oct90005"
     val now = ZonedDateTime.now
@@ -48,7 +48,7 @@ class PublishedConnectorSpec extends BaseSpec {
 
     "Return a list of process summaries" in new Test {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/published")
         .returns(Future.successful(Right(List(processSummary))))
 
@@ -60,7 +60,7 @@ class PublishedConnectorSpec extends BaseSpec {
 
     "Return a Published Process by id" in new Test {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/published-process/$id")
         .returns(Future.successful(Right(publishedProcess)))
 
@@ -72,7 +72,7 @@ class PublishedConnectorSpec extends BaseSpec {
 
     "Return a published process json by process code" in new Test {
 
-      MockedHttpClient
+      MockedHttpClientV2
         .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/published/$processCode")
         .returns(Future.successful(Right(process)))
 
