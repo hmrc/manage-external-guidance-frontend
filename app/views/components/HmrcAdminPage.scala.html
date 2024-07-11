@@ -49,7 +49,7 @@
   hmrcInternalHead: HmrcInternalHead
 )
 
-@(params: HmrcStandardPageParams)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(params: HmrcStandardPageParams, homepageUrl: Option[String])(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 @import params._
 
 @beforeContent = {
@@ -68,6 +68,7 @@
   pageTitle = pageTitle,
   headBlock = Some(hmrcInternalHead(headBlock = templateOverrides.additionalHeadBlock)),
   headerBlock = Some(hmrcInternalHeader(InternalHeader(
+    homepageUrl = homepageUrl.getOrElse("/"),
     serviceName = Some(messages("service.name")),
     serviceUrl = serviceURLs.serviceUrl.getOrElse(""),
     useTudorCrown = Some(true)
