@@ -55,7 +55,11 @@ class ApprovalsListSpec extends ViewSpecBase {
 
       headers.size() shouldBe 1
 
-      Option(headers.first.getElementsByTag("a").first).fold(fail("Service Url link not found")) { a =>
+      val anchors: Elements = headers.first.getElementsByTag("a")
+
+      anchors.size shouldBe 2
+
+      Option(anchors.last).fold(fail("Service Url link not found")) { a =>
         a.text shouldBe messages("service.name")
 
         elementAttrs(a).get("href").fold(fail("Missing href attribute in anchor")) { href =>

@@ -1,23 +1,11 @@
-$govuk-assets-path: "/external-guidance/assets/lib/govuk-frontend/govuk/assets/";
+$govuk-assets-path: "/external-guidance/assets/lib/govuk-frontend/dist/govuk/assets/";
 $hmrc-assets-path: "/external-guidance/assets/lib/hmrc-frontend/hmrc/";
 
 $govuk-global-styles: true;
 
-@import "lib/govuk-frontend/govuk/all";
+@import "lib/govuk-frontend/dist/govuk/all";
 @import "lib/hmrc-frontend/hmrc/all";
-
-.app-reference-number {
-  display: block;
-  font-weight: bold;
-}
-
-.app-get-help-link {
-  padding-top: 30px;
-  font-size: 1rem;
-}
 
 .govuk-skip-link:link {text-decoration: underline; }
 
-@import "_task-list-mod";
-@import "_hmrc-internal-header";
 @import "_responsive-table";
