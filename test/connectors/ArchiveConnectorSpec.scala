@@ -36,10 +36,9 @@ class ArchiveConnectorSpec extends BaseSpec {
     val connector: ArchiveConnector = new ArchiveConnector(mockHttpClient, MockAppConfig)
 
     val id: String = "Oct90005"
-    val now = ZonedDateTime.now
     val processCode: String = "code"
     val process = Json.obj()
-    val processSummary = ProcessSummary(id, processCode, 1, "author", None, now, "actionedby", "Status")
+    val processSummary = ProcessSummary(id, processCode, 1, "author", None, ZonedDateTime.now, "actionedby", "Status")
   }
 
   "Calling method archive with a dummy id" should {

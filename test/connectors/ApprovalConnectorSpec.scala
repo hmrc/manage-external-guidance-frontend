@@ -36,10 +36,9 @@ class ApprovalConnectorSpec extends BaseSpec {
 
     val id: String = "Oct90005"
     val dummyProcess: JsValue = Json.obj("processId" -> id)
-    val now = ZonedDateTime.now
     val processCode: String = "code"
-    val process = Json.obj()
-    val processSummary = ProcessSummary(id, processCode, 1, "author", None, now, "actionedby", "Status")
+    val process: JsValue = Json.obj()
+    val processSummary: ProcessSummary = ProcessSummary(id, processCode, 1, "author", None, ZonedDateTime.now, "actionedby", "Status")
   }
 
   "ApprovalConnector" should {
