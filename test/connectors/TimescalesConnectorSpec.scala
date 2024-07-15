@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,18 @@
 package connectors
 
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClientV2}
+import mocks.MockAppConfig
 import models.RequestOutcome
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
-import uk.gov.hmrc.http.HeaderCarrier
 import java.time.ZonedDateTime
 import models.{LabelledDataUpdateStatus, UpdateDetails}
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.mockito.Mockito.when
 import scala.concurrent.Future
 
 class TimescalesConnectorSpec extends BaseSpec {
 
-  private trait Test extends MockHttpClientV2 with FutureAwaits with DefaultAwaitTimeout {
+  private trait Test extends ConnectorTest {
     val dummyTimescales: JsValue = Json.parse("""{"TimescaleID": 10}""")
     val lastUpdateTime: ZonedDateTime = ZonedDateTime.of(2020, 1, 1, 12, 0, 1, 0, ZonedDateTime.now.getZone)
     val timescalesJson: JsValue = Json.parse("""{"First": 1, "Second": 2, "Third": 3}""")
@@ -40,23 +39,20 @@ class TimescalesConnectorSpec extends BaseSpec {
     val updateDetail = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
     val timescalesDetail = LabelledDataUpdateStatus(timescales.size, Some(updateDetail))
 
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-
-    val connector: TimescalesConnector = new TimescalesConnector(mockHttpClientV2, MockAppConfig)
+    val connector: TimescalesConnector = new TimescalesConnector(mockHttpClient, MockAppConfig)
   }
 
 
   "Calling method submitTimescales" should {
-    val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/timescales"
 
     "Return an instance of the class ApprovalResponse for a successful call" in new Test {
 
-      MockedHttpClientV2
-        .post(endpoint, timescalesJson)
-        .returns(Future.successful(Right(timescalesDetail)))
+      // MockedHttpClientV2
+      //   .post(url"$endpoint")
+      //   .returns(FakeRequestBuilder(Future.successful(Right(timescalesDetail))))
+      when(requestBuilderExecute[RequestOutcome[LabelledDataUpdateStatus]]).thenReturn(Future.successful(Right(timescalesDetail)))
 
-      val response: RequestOutcome[LabelledDataUpdateStatus] =
-        await(connector.submitTimescales(timescalesJson))
+      val response: RequestOutcome[LabelledDataUpdateStatus] = await(connector.submitTimescales(timescalesJson))
 
       response shouldBe Right(timescalesDetail)
     }
@@ -64,13 +60,13 @@ class TimescalesConnectorSpec extends BaseSpec {
   }
 
   "Calling method details" should {
-    val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/timescales"
 
     "Return an instance of the class ApprovalResponse for a successful call" in new Test {
 
-      MockedHttpClientV2
-        .get(endpoint)
-        .returns(Future.successful(Right(timescalesDetail)))
+      // MockedHttpClientV2
+      //   .get(url"$endpoint")
+      //   .returns(FakeRequestBuilder(Future.successful(Right(timescalesDetail))))
+      when(requestBuilderExecute[RequestOutcome[LabelledDataUpdateStatus]]).thenReturn(Future.successful(Right(timescalesDetail)))
 
       val response: RequestOutcome[LabelledDataUpdateStatus] = await(connector.details())
 

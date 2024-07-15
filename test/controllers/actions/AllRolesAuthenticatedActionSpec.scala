@@ -52,7 +52,7 @@ class AllRolesAuthenticatedActionSpec extends ControllerBaseSpec with MockAuthCo
     (mockErrorHandler
       .standardErrorTemplate(_: String, _: String, _: String)(_: Request[_]))
       .stubs(*, *, *, *)
-      .returns(Html(""))
+      .returns(Future.successful(Html("")))
 
     lazy val authAction = new AllRolesAuthenticatedAction(mockAuthConnector, MockAppConfig, bodyParser, config, env, mockErrorHandler)
 

@@ -47,7 +47,7 @@ class ViewerConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig)
     httpClient.get(url"$endPoint${makeQueryString(args)}").execute[RequestOutcome[JsValue]]
   }
 
-  private def makeQueryString(queryParams: Seq[(String, String)]): String = {
+  private[connectors] def makeQueryString(queryParams: Seq[(String, String)]): String = {
     val paramPairs = queryParams.map { case (k, v) => s"$k=${URLEncoder.encode(v, "utf-8")}" }
     if (paramPairs.isEmpty) "" else paramPairs.mkString("?", "&", "")
   }

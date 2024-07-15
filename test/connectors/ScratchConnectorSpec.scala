@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,24 +19,18 @@ package connectors
 import java.util.UUID.randomUUID
 
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClientV2}
+import mocks.MockAppConfig
 import models.errors.InternalServerError
 import models.{RequestOutcome, ScratchResponse}
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
-import uk.gov.hmrc.http.HeaderCarrier
-
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.mockito.Mockito.when
 import scala.concurrent.Future
 
 class ScratchConnectorSpec extends BaseSpec {
 
-  private trait Test extends MockHttpClientV2 with FutureAwaits with DefaultAwaitTimeout {
-
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-
-    val scratchConnector: ScratchConnector = new ScratchConnector(mockHttpClientV2, MockAppConfig)
-    val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/scratch"
+  private trait Test extends ConnectorTest {
+    val scratchConnector: ScratchConnector = new ScratchConnector(mockHttpClient, MockAppConfig)
 
     val dummyProcess: JsValue = Json.parse(
       """|{
@@ -51,21 +45,16 @@ class ScratchConnectorSpec extends BaseSpec {
 
     "Return an instance of the class ScratchResponse for a successful call" in new Test {
 
-      MockedHttpClientV2
-        .post(endpoint, dummyProcess)
-        .returns(Future.successful(Right(ScratchResponse(id))))
+      when(requestBuilderExecute[RequestOutcome[ScratchResponse]]).thenReturn(Future.successful(Right(ScratchResponse(id))))
 
-      val response: RequestOutcome[ScratchResponse] =
-        await(scratchConnector.submitScratchProcess(dummyProcess))
+      val response: RequestOutcome[ScratchResponse] = await(scratchConnector.submitScratchProcess(dummyProcess))
 
       response shouldBe Right(ScratchResponse(id))
     }
 
     "Return an instance of an error class when an error occurs" in new Test {
 
-      MockedHttpClientV2
-        .post(endpoint, dummyProcess)
-        .returns(Future.successful(Left(InternalServerError)))
+      when(requestBuilderExecute[RequestOutcome[ScratchResponse]]).thenReturn(Future.successful(Left(InternalServerError)))
 
       val response: RequestOutcome[ScratchResponse] =
         await(scratchConnector.submitScratchProcess(dummyProcess))

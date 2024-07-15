@@ -18,23 +18,20 @@ package connectors
 
 import java.time.Instant
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClientV2}
+import mocks.{MockAppConfig}
 import models.RequestOutcome
 import models.admin.CachedProcessSummary
-import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
-import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import play.api.libs.json._
-
+import uk.gov.hmrc.http.HttpReads
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 
 class ViewerConnectorSpec extends BaseSpec {
 
-  trait Test extends MockHttpClientV2 with FutureAwaits with DefaultAwaitTimeout {
-
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-
-    val connector: ViewerConnector = new ViewerConnector(mockHttpClientV2, MockAppConfig)
+  trait Test extends ConnectorTest {
+    val connector: ViewerConnector = new ViewerConnector(mockHttpClient, MockAppConfig)
     val cp = CachedProcessSummary("id", 123456789L, Some(123456789L), Some(123456789L), "A title", Instant.now)
     val someJson: JsValue = Json.toJson(cp)
     val oneItemList: List[CachedProcessSummary] = List(cp)
@@ -44,9 +41,8 @@ class ViewerConnectorSpec extends BaseSpec {
 
     "Return a list of process summaries" in new Test {
 
-      MockedHttpClientV2
-        .get(MockAppConfig.activeProcessesUrl)
-        .returns(Future.successful(Right(oneItemList)))
+      when(requestBuilder.execute[RequestOutcome[List[CachedProcessSummary]]](any[HttpReads[RequestOutcome[List[CachedProcessSummary]]]], any[ExecutionContext]))
+        .thenReturn(Future.successful(Right(oneItemList)))
 
       val response: RequestOutcome[List[CachedProcessSummary]] =
         await(connector.listActive())
@@ -55,10 +51,9 @@ class ViewerConnectorSpec extends BaseSpec {
     }
 
     "Return a Published Process by id" in new Test {
-      val queryParams: Seq[(String, String)] = Seq(("timescalesVersion", "123456789"), ("ratesVersion", "123456789"))
-      MockedHttpClientV2
-        .get(MockAppConfig.activeProcessesUrl + s"/${cp.id}/${cp.processVersion}", queryParams)
-        .returns(Future.successful(Right(someJson)))
+
+      when(requestBuilder.execute[RequestOutcome[JsValue]](any[HttpReads[RequestOutcome[JsValue]]], any[ExecutionContext]))
+        .thenReturn(Future.successful(Right(someJson)))
 
       val response: RequestOutcome[JsValue] =
         await(connector.get(cp.id, cp.processVersion, Some(123456789L), Some(123456789L)))

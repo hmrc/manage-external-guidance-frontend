@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,19 @@ package connectors
 
 import java.time.ZonedDateTime
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClientV2}
+import mocks.MockAppConfig
 import models.{ProcessSummary, RequestOutcome}
-import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
-import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import play.api.libs.json._
 import models.PublishedProcess
+import scala.concurrent.Future
+import org.mockito.Mockito.when
 
 class PublishedConnectorSpec extends BaseSpec {
 
-  private trait Test extends MockHttpClientV2 with FutureAwaits with DefaultAwaitTimeout {
+  private trait Test extends ConnectorTest {
 
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-
-    val connector: PublishedConnector = new PublishedConnector(mockHttpClientV2, MockAppConfig)
+    val connector: PublishedConnector = new PublishedConnector(mockHttpClient, MockAppConfig)
 
     val id: String = "Oct90005"
     val now = ZonedDateTime.now
@@ -48,33 +45,28 @@ class PublishedConnectorSpec extends BaseSpec {
 
     "Return a list of process summaries" in new Test {
 
-      MockedHttpClientV2
-        .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/published")
-        .returns(Future.successful(Right(List(processSummary))))
+      when(requestBuilderExecute[RequestOutcome[List[ProcessSummary]]])
+        .thenReturn(Future.successful(Right(List(processSummary))))
 
-      val response: RequestOutcome[List[ProcessSummary]] =
-        await(connector.summaries)
+      val response: RequestOutcome[List[ProcessSummary]] = await(connector.summaries)
 
       response shouldBe Right(List(processSummary))
     }
 
     "Return a Published Process by id" in new Test {
 
-      MockedHttpClientV2
-        .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/published-process/$id")
-        .returns(Future.successful(Right(publishedProcess)))
+      when(requestBuilderExecute[RequestOutcome[PublishedProcess]])
+        .thenReturn(Future.successful(Right(publishedProcess)))
 
-      val response: RequestOutcome[PublishedProcess] =
-        await(connector.getPublished(id))
+      val response: RequestOutcome[PublishedProcess] = await(connector.getPublished(id))
 
       response shouldBe Right(publishedProcess)
     }
 
     "Return a published process json by process code" in new Test {
 
-      MockedHttpClientV2
-        .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/published/$processCode")
-        .returns(Future.successful(Right(process)))
+      when(requestBuilderExecute[RequestOutcome[JsValue]])
+        .thenReturn(Future.successful(Right(process)))
 
       val response: RequestOutcome[JsValue] =
         await(connector.getPublishedByProcessCode(processCode))
