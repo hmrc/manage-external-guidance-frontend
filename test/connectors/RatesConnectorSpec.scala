@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,19 @@
 package connectors
 
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClient}
+import mocks.MockAppConfig
 import models.RequestOutcome
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
-import uk.gov.hmrc.http.HeaderCarrier
 import java.time.ZonedDateTime
 import models.{LabelledDataUpdateStatus, UpdateDetails}
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.mockito.Mockito.when
 import scala.concurrent.Future
+
 
 class RatesConnectorSpec extends BaseSpec {
 
-  private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
+  private trait Test extends ConnectorTest {
     val ratesJsonString =
       """
      |{
@@ -121,23 +121,18 @@ class RatesConnectorSpec extends BaseSpec {
     val updateDetail = UpdateDetails(lastUpdateTime, "234324234", "User Blah", "user@blah.com")
     val ratesDetail = LabelledDataUpdateStatus(rates.size, Some(updateDetail))
 
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-
     val connector: RatesConnector = new RatesConnector(mockHttpClient, MockAppConfig)
   }
 
 
   "Calling method submitRates" should {
-    val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/rates"
 
     "Return an instance of the class LabelledDataUpdateStatus for a successful call" in new Test {
 
-      MockedHttpClient
-        .post(endpoint, ratesJson)
-        .returns(Future.successful(Right(ratesDetail)))
+      when(requestBuilderExecute[RequestOutcome[LabelledDataUpdateStatus]])
+        .thenReturn(Future.successful(Right(ratesDetail)))
 
-      val response: RequestOutcome[LabelledDataUpdateStatus] =
-        await(connector.submitRates(ratesJson))
+      val response: RequestOutcome[LabelledDataUpdateStatus] = await(connector.submitRates(ratesJson))
 
       response shouldBe Right(ratesDetail)
     }
@@ -145,13 +140,11 @@ class RatesConnectorSpec extends BaseSpec {
   }
 
   "Calling method details" should {
-    val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/rates"
 
     "Return an instance of the class LabelledDataUpdateStatus for a successful call" in new Test {
 
-      MockedHttpClient
-        .get(endpoint)
-        .returns(Future.successful(Right(ratesDetail)))
+      when(requestBuilderExecute[RequestOutcome[LabelledDataUpdateStatus]])
+        .thenReturn(Future.successful(Right(ratesDetail)))
 
       val response: RequestOutcome[LabelledDataUpdateStatus] = await(connector.details())
 

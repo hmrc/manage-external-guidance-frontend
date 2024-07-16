@@ -23,7 +23,7 @@
 
 @this(layout: main_layout, appConfig: AppConfig)
 
-@(summaries: Seq[ApprovalProcessSummary])(implicit request: Request[_], messages: Messages)
+@(summaries: Seq[ApprovalProcessSummary])(implicit request: RequestHeader, messages: Messages)
 
 @processReviewTitle(summary: ApprovalProcessSummary) = @{
     summary.reviewType match {

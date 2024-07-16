@@ -19,30 +19,32 @@ package connectors
 import javax.inject.{Inject, Singleton}
 import models.LabelledDataUpdateStatus
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{Json, JsValue}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 import config.AppConfig
 import models.RequestOutcome
+import uk.gov.hmrc.http.StringContextOps
 
 @Singleton
-class TimescalesConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig) {
+class TimescalesConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig) {
   import connectors.httpParsers.LabelledDataHttpParser.labelledDataHttpReads
 
   def details()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[LabelledDataUpdateStatus]] = {
     val endPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/timescales"
-    httpClient.GET[RequestOutcome[LabelledDataUpdateStatus]](endPoint, Seq.empty, Seq.empty)
+    httpClient.get(url"$endPoint").execute[RequestOutcome[LabelledDataUpdateStatus]]
   }
 
   def submitTimescales(timescales: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[LabelledDataUpdateStatus]] = {
     val endpoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/timescales"
-    httpClient.POST[JsValue, RequestOutcome[LabelledDataUpdateStatus]](endpoint, timescales, Seq.empty)
+    httpClient.post(url"$endpoint").withBody(Json.toJson(timescales)).execute[RequestOutcome[LabelledDataUpdateStatus]]
   }
 
   def get()(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[JsValue]] = {
     val endPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/timescales/data"
     import connectors.httpParsers.PublishedProcessHttpParser.processHttpReads
-    httpClient.GET[RequestOutcome[JsValue]](endPoint, Seq.empty, Seq.empty)
+
+    httpClient.get(url"$endPoint").execute[RequestOutcome[JsValue]]
   }
 
 }

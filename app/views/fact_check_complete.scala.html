@@ -18,7 +18,7 @@
 
 @this(layout: main_layout)
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request: RequestHeader, messages: Messages)
 
 @layout(s"${messages("factCheckComplete.heading")} - ${messages("factCheck.heading")}") {
 

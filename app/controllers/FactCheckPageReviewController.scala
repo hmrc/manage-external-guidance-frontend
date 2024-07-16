@@ -51,16 +51,16 @@ class FactCheckPageReviewController @Inject() (
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def onPageLoad(processId: String, pageUrl: String, index: Int): Action[AnyContent] = factCheckerAction.async { implicit request =>
-    reviewService.factCheckPageInfo(processId, s"/$pageUrl") map {
+    reviewService.factCheckPageInfo(processId, s"/$pageUrl").flatMap {
       case Right(pageReviewDetail) =>
         val form: Form[FactCheckPageReview] = pageReviewDetail.result.fold(formProvider()) { answer =>
           formProvider().bind(Map("answer" -> answer.toString))
         }
-        Ok(view(processId, s"/$pageUrl", pageReviewDetail.pageTitle, form, index))
+        Future.successful(Ok(view(processId, s"/$pageUrl", pageReviewDetail.pageTitle, form, index)))
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval fact check page review for process $processId and pageUrl $pageUrl returned error $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
     }
   }
 
@@ -79,18 +79,18 @@ class FactCheckPageReviewController @Inject() (
                                               Some(result.answer),
                                               Complete,
                                               updateUser = Some(s"${request.credId}:${request.name}"))
-          reviewService.factCheckPageComplete(processId, s"/$pageUrl", reviewDetail).map {
-            case Right(_) => Redirect(routes.FactCheckController.approval(processId).withFragment(s"page-link-$index"))
+          reviewService.factCheckPageComplete(processId, s"/$pageUrl", reviewDetail).flatMap {
+            case Right(_) => Future.successful(Redirect(routes.FactCheckController.approval(processId).withFragment(s"page-link-$index")))
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval fact check page review for process $processId, url $pageUrl")
-              NotFound(errorHandler.notFoundTemplate)
+              errorHandler.notFoundTemplate.map(NotFound(_))
             case Left(StaleDataError) =>
               logger.error(s"The requested approval fact check review for process $processId, url $pageUrl can no longer be found")
-              NotFound(errorHandler.notFoundTemplate)
+              errorHandler.notFoundTemplate.map(NotFound(_))
             case Left(err) =>
               // Handle internal server and any unexpected errors
               logger.error(s"Request for approval fact check review process for process $processId, url $pageUrl returned error $err")
-              InternalServerError(errorHandler.internalServerErrorTemplate)
+              errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
           }
         }
       )

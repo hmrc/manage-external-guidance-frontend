@@ -52,7 +52,7 @@ class FactCheckerAuthenticatedActionSpec extends ControllerBaseSpec with MockAut
     (mockUnauthorizedReviewErrorHandler
       .standardErrorTemplate(_: String, _: String, _: String)(_: Request[_]))
       .stubs(*, *, *, *)
-      .returns(Html(""))
+      .returns(Future.successful(Html("")))
 
     lazy val factCheckerAuthAction = new FactCheckerAuthenticatedAction(
       mockAuthConnector,

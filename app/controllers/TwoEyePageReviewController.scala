@@ -51,17 +51,17 @@ class TwoEyePageReviewController @Inject() (
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def onPageLoad(processId: String, pageUrl: String, index: Int): Action[AnyContent] = twoEyeReviewerAction.async { implicit request =>
-    reviewService.approval2iPageReview(processId, s"/$pageUrl") map {
+    reviewService.approval2iPageReview(processId, s"/$pageUrl").flatMap {
       case Right(pageReviewDetail) =>
         val form: Form[TwoEyePageReview] = pageReviewDetail.result.fold(formProvider()) { answer =>
           formProvider().bind(Map("answer" -> answer.toString))
         }
-        Ok(view(processId, s"/$pageUrl", pageReviewDetail.pageTitle, form, index))
+        Future.successful(Ok(view(processId, s"/$pageUrl", pageReviewDetail.pageTitle, form, index)))
 
       case Left(err) =>
         // Handle stale data, internal server and any unexpected errors
         logger.error(s"Request for approval 2i page review for process $processId and pageUrl /$pageUrl returned error $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
     }
   }
 
@@ -80,18 +80,18 @@ class TwoEyePageReviewController @Inject() (
                                               Some(result.answer),
                                               Complete,
                                               updateUser = Some(s"${request.credId}:${request.name}"))
-          reviewService.approval2iPageReviewComplete(processId, s"/$pageUrl", reviewDetail).map {
-            case Right(_) => Redirect(routes.TwoEyeReviewController.approval(processId).withFragment(s"page-link-$index"))
+          reviewService.approval2iPageReviewComplete(processId, s"/$pageUrl", reviewDetail).flatMap {
+            case Right(_) => Future.successful(Redirect(routes.TwoEyeReviewController.approval(processId).withFragment(s"page-link-$index")))
             case Left(NotFoundError) =>
               logger.error(s"Unable to retrieve approval 2i page review for process $processId, url $pageUrl")
-              NotFound(errorHandler.notFoundTemplate)
+              errorHandler.notFoundTemplate.map(NotFound(_))
             case Left(StaleDataError) =>
               logger.error(s"The requested approval 2i review for process $processId, url $pageUrl can no longer be found")
-              NotFound(errorHandler.notFoundTemplate)
+              errorHandler.notFoundTemplate.map(NotFound(_))
             case Left(err) =>
               // Handle internal server and any unexpected errors
               logger.error(s"Request for approval 2i review process for process $processId, url $pageUrl returned error $err")
-              InternalServerError(errorHandler.internalServerErrorTemplate)
+              errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
           }
         }
       )

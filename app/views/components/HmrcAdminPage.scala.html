@@ -49,7 +49,7 @@
   hmrcInternalHead: HmrcInternalHead
 )
 
-@(params: HmrcStandardPageParams, homepageUrl: Option[String])(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(params: HmrcStandardPageParams, homepageUrl: Option[String])(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 @import params._
 
 @beforeContent = {

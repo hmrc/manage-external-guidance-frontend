@@ -20,7 +20,7 @@
 
 @this(layout: main_layout, govukTable : GovukTable, formWithCSRF: FormWithCSRF, govukButton: GovukButton, appConfig: AppConfig)
 
-@(review: ApprovalProcessReview)(implicit request: Request[_], messages: Messages)
+@(review: ApprovalProcessReview)(implicit request: RequestHeader, messages: Messages)
 
 @reviewStatus() = @{
   messages("processReview.status", review.pages.count(_.status == PageReviewStatus.Complete), review.pages.length)

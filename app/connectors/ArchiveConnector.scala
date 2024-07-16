@@ -20,20 +20,23 @@ import config.AppConfig
 import models.errors.BadRequestError
 import models.{ProcessSummary, RequestOutcome}
 import play.api.Logger
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import play.api.libs.json.JsValue
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.StringContextOps
 
 @Singleton
-class ArchiveConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
+class ArchiveConnector @Inject()(httpClient: HttpClientV2, appConfig: AppConfig) {
   val logger: Logger = Logger(getClass)
 
   def summaries(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[List[ProcessSummary]]] = {
     val summaryEndPoint: String = appConfig.externalGuidanceBaseUrl + "/external-guidance/archived"
 
     import connectors.httpParsers.PublishedProcessHttpParser.processSummaryHttpReads
-    httpClient.GET[RequestOutcome[List[ProcessSummary]]](summaryEndPoint, Seq.empty, Seq.empty)
+
+    httpClient.get(url"$summaryEndPoint").execute[RequestOutcome[List[ProcessSummary]]]
   }
 
   def archive(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[RequestOutcome[Boolean]] = {
@@ -41,8 +44,7 @@ class ArchiveConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
 
     import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 
-    httpClient.GET[HttpResponse](archiveEndPoint)
-      .map { _ => Right(true) }
+    httpClient.get(url"$archiveEndPoint").execute[HttpResponse].map{ _ => Right(true)}
       .recover {
         case ex =>
           logger.error(s"Error archiving provess $id with exception: ${ex.getMessage}")
@@ -54,7 +56,8 @@ class ArchiveConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
     val publishedEndPoint: String = appConfig.externalGuidanceBaseUrl + s"/external-guidance/archived/$id"
 
     import connectors.httpParsers.PublishedProcessHttpParser.processHttpReads
-    httpClient.GET[RequestOutcome[JsValue]](publishedEndPoint)
+
+    httpClient.get(url"$publishedEndPoint").execute[RequestOutcome[JsValue]]
   }
 
 }

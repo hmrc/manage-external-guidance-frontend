@@ -25,7 +25,7 @@
   govukButton: GovukButton
 )
 
-@(process: String, name: String, form: Form[_])(implicit request: Request[_], messages: Messages)
+@(process: String, name: String, form: Form[_])(implicit request: RequestHeader, messages: Messages)
 
 @layout(s"${messages("unpublish.title")} - ${messages("unpublish.heading")}",
         Some((routes.AdminController.approvalSummaries.url, "backlink.label" ))){

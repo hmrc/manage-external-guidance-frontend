@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{fact_check_complete, fact_check_confirm_error}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Future, ExecutionContext}
 
 @Singleton
 class FactCheckConfirmController @Inject()(
@@ -47,21 +47,21 @@ class FactCheckConfirmController @Inject()(
   implicit val ec: ExecutionContext = mcc.executionContext
 
   def onConfirm(processId: String): Action[AnyContent] = factCheckerAction.async { implicit request =>
-    reviewService.approvalFactCheckComplete(processId, request.credId, request.name, Complete).map {
+    reviewService.approvalFactCheckComplete(processId, request.credId, request.name, Complete).flatMap {
       case Right(auditInfo) =>
         auditService.audit(FactCheckCompleteEvent(auditInfo))
-        Ok(view())
-      case Left(IncompleteDataError) => Ok(errorView(processId))
+        Future.successful(Ok(view()))
+      case Left(IncompleteDataError) => Future.successful(Ok(errorView(processId)))
       case Left(NotFoundError) =>
         logger.error(s"FactCheck confirmation: Unable to retrieve approval fact check for process $processId")
-        NotFound(errorHandler.notFoundTemplate)
+        errorHandler.notFoundTemplate.map(NotFound(_))
       case Left(StaleDataError) =>
         logger.error(s"The requested fact check for process $processId can no longer be found")
-        NotFound(errorHandler.notFoundTemplate)
+        errorHandler.notFoundTemplate.map(NotFound(_))
       case Left(err) =>
         // Handle internal server and any unexpected errors
         logger.error(s"Request for fact check confirm for process $processId returned error $err")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
     }
   }
 

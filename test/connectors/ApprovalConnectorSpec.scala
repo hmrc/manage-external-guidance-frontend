@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,40 +17,36 @@
 package connectors
 
 import base.BaseSpec
-import mocks.{MockAppConfig, MockHttpClient}
+import mocks.MockAppConfig
 import models.errors.InternalServerError
 import models.{RequestOutcome, ApprovalResponse, ProcessSummary}
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
-import uk.gov.hmrc.http.HeaderCarrier
 import java.time.ZonedDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HttpReads
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import scala.concurrent.ExecutionContext
 
 class ApprovalConnectorSpec extends BaseSpec {
 
-  private trait Test extends MockHttpClient with FutureAwaits with DefaultAwaitTimeout {
-
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-
+  private trait Test extends ConnectorTest {
     val connector: ApprovalConnector = new ApprovalConnector(mockHttpClient, MockAppConfig)
 
     val id: String = "Oct90005"
     val dummyProcess: JsValue = Json.obj("processId" -> id)
-    val now = ZonedDateTime.now
     val processCode: String = "code"
-    val process = Json.obj()
-    val processSummary = ProcessSummary(id, processCode, 1, "author", None, now, "actionedby", "Status")
-
+    val process: JsValue = Json.obj()
+    val processSummary: ProcessSummary = ProcessSummary(id, processCode, 1, "author", None, ZonedDateTime.now, "actionedby", "Status")
   }
 
   "ApprovalConnector" should {
 
     "Return a list of process summaries" in new Test {
 
-      MockedHttpClient
-        .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/approval/list")
-        .returns(Future.successful(Right(List(processSummary))))
+      when(requestBuilder.execute[RequestOutcome[List[ProcessSummary]]](any[HttpReads[RequestOutcome[List[ProcessSummary]]]], any[ExecutionContext]))
+        .thenReturn(Future.successful(Right(List(processSummary))))
 
       val response: RequestOutcome[List[ProcessSummary]] =
         await(connector.summaries)
@@ -60,9 +56,8 @@ class ApprovalConnectorSpec extends BaseSpec {
 
     "Return a published process json by process code" in new Test {
 
-      MockedHttpClient
-        .get(MockAppConfig.externalGuidanceBaseUrl + s"/external-guidance/approval/code/$processCode")
-        .returns(Future.successful(Right(process)))
+      when(requestBuilder.execute[RequestOutcome[JsValue]](any[HttpReads[RequestOutcome[JsValue]]], any[ExecutionContext]))
+        .thenReturn(Future.successful(Right(process)))
 
       val response: RequestOutcome[JsValue] =
         await(connector.getApprovalByProcessCode(processCode))
@@ -73,16 +68,10 @@ class ApprovalConnectorSpec extends BaseSpec {
 
   "Calling method submitFor2iReview with a dummy process" should {
 
-    trait SubmitFor2iReviewTest extends Test {
+    "Return an instance of the class ApprovalResponse for a successful call" in new Test {
 
-      val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/approval/2i-review"
-
-    }
-    "Return an instance of the class ApprovalResponse for a successful call" in new SubmitFor2iReviewTest {
-
-      MockedHttpClient
-        .post(endpoint, dummyProcess)
-        .returns(Future.successful(Right(ApprovalResponse(id))))
+      when(requestBuilder.execute[RequestOutcome[ApprovalResponse]](any[HttpReads[RequestOutcome[ApprovalResponse]]], any[ExecutionContext]))
+        .thenReturn(Future.successful(Right(ApprovalResponse(id))))
 
       val response: RequestOutcome[ApprovalResponse] =
         await(connector.submitFor2iReview(dummyProcess))
@@ -90,11 +79,10 @@ class ApprovalConnectorSpec extends BaseSpec {
       response shouldBe Right(ApprovalResponse(id))
     }
 
-    "Return an instance of an error class when an error occurs" in new SubmitFor2iReviewTest {
+    "Return an instance of an error class when an error occurs" in new Test {
 
-      MockedHttpClient
-        .post(endpoint, dummyProcess)
-        .returns(Future.successful(Left(InternalServerError)))
+      when(requestBuilder.execute[RequestOutcome[ApprovalResponse]](any[HttpReads[RequestOutcome[ApprovalResponse]]], any[ExecutionContext]))
+        .thenReturn(Future.successful(Left(InternalServerError)))
 
       val response: RequestOutcome[ApprovalResponse] =
         await(connector.submitFor2iReview(dummyProcess))
@@ -105,16 +93,10 @@ class ApprovalConnectorSpec extends BaseSpec {
 
   "Calling method submitForFactCheck with a dummy process" should {
 
-    trait SubmitForFactCheckTest extends Test {
+    "Return an instance of the class ApprovalResponse for a successful call" in new Test {
 
-      val endpoint: String = MockAppConfig.externalGuidanceBaseUrl + "/external-guidance/approval/fact-check"
-
-    }
-    "Return an instance of the class ApprovalResponse for a successful call" in new SubmitForFactCheckTest {
-
-      MockedHttpClient
-        .post(endpoint, dummyProcess)
-        .returns(Future.successful(Right(ApprovalResponse(id))))
+      when(requestBuilder.execute[RequestOutcome[ApprovalResponse]](any[HttpReads[RequestOutcome[ApprovalResponse]]], any[ExecutionContext]))
+        .thenReturn(Future.successful(Right(ApprovalResponse(id))))
 
       val response: RequestOutcome[ApprovalResponse] =
         await(connector.submitForFactCheck(dummyProcess))
@@ -122,11 +104,10 @@ class ApprovalConnectorSpec extends BaseSpec {
       response shouldBe Right(ApprovalResponse(id))
     }
 
-    "Return an instance of an error class when an error occurs" in new SubmitForFactCheckTest {
+    "Return an instance of an error class when an error occurs" in new Test {
 
-      MockedHttpClient
-        .post(endpoint, dummyProcess)
-        .returns(Future.successful(Left(InternalServerError)))
+      when(requestBuilder.execute[RequestOutcome[ApprovalResponse]](any[HttpReads[RequestOutcome[ApprovalResponse]]], any[ExecutionContext]))
+        .thenReturn(Future.successful(Left(InternalServerError)))
 
       val response: RequestOutcome[ApprovalResponse] =
         await(connector.submitForFactCheck(dummyProcess))

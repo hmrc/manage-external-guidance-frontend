@@ -52,7 +52,7 @@ class TwoEyeReviewerAuthenticatedActionSpec extends ControllerBaseSpec with Mock
     (mockUnauthorizedReviewErrorHandler
       .standardErrorTemplate(_: String, _: String, _: String)(_: Request[_]))
       .stubs(*, *, *, *)
-      .returns(Html(""))
+      .returns(Future.successful(Html("")))
 
     lazy val twoEyeReviewerAuthAction = new TwoEyeReviewerAuthenticatedAction(
       mockAuthConnector,

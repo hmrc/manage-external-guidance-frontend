@@ -34,7 +34,7 @@
   backLinkDetails: Option[(String, String)] = None,
   headerUrl: Option[String] = Some(controllers.routes.AdminController.approvalSummaries.url),
   layoutFormat: Option[Html => Html] = Some(defaultLayout(_))
-)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
 @renderBackLink(backLinkDetails: Option[(String, String)]) = @{
     backLinkDetails match {
