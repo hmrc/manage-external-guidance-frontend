@@ -24,8 +24,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import connectors.RatesConnector
 import models.RequestOutcome
 import models.LabelledDataUpdateStatus
+import org.scalatest.TestSuite
 
-trait MockRatesConnector extends MockFactory {
+trait MockRatesConnector extends TestSuite with MockFactory {
 
   val mockRatesConnector: RatesConnector = mock[RatesConnector]
 

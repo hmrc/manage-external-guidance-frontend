@@ -17,18 +17,15 @@
 package mocks
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-
 import play.api.libs.json.JsValue
-
 import uk.gov.hmrc.http.HeaderCarrier
-
 import models.{RequestOutcome, ScratchResponse}
+import org.scalatest.TestSuite
 import services.ScratchService
 
-trait MockScratchService extends MockFactory {
+trait MockScratchService extends TestSuite with MockFactory {
 
   val mockScratchService: ScratchService = mock[ScratchService]
 

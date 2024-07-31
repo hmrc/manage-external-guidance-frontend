@@ -21,11 +21,13 @@ import models.RequestOutcome
 import models.admin.CachedProcessSummary
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 import play.api.libs.json.JsValue
+
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockViewerConnector extends MockFactory {
+trait MockViewerConnector extends TestSuite with MockFactory {
 
   val mockViewerConnector: ViewerConnector = mock[ViewerConnector]
 

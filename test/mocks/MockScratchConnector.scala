@@ -23,8 +23,9 @@ import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.ScratchConnector
 import models.{RequestOutcome, ScratchResponse}
+import org.scalatest.TestSuite
 
-trait MockScratchConnector extends MockFactory {
+trait MockScratchConnector extends TestSuite with MockFactory {
 
   val mockScratchConnector: ScratchConnector = mock[ScratchConnector]
 

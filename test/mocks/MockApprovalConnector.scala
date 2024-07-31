@@ -22,10 +22,12 @@ import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
-import models.{ProcessSummary, ApprovalProcessSummary}
+import models.{ApprovalProcessSummary, ProcessSummary}
+import org.scalatest.TestSuite
+
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockApprovalConnector extends MockFactory {
+trait MockApprovalConnector extends TestSuite with MockFactory {
 
   val mockApprovalConnector: ApprovalConnector = mock[ApprovalConnector]
 

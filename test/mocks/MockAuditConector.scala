@@ -16,16 +16,15 @@
 
 package mocks
 
-import scala.concurrent.{Future, ExecutionContext}
-
+import scala.concurrent.{ExecutionContext, Future}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
-trait MockAuditConnector extends MockFactory {
+trait MockAuditConnector extends TestSuite with MockFactory {
 
   val mockAuditConnector: AuditConnector = mock[AuditConnector]
 

@@ -22,9 +22,10 @@ import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import models.{LabelledDataUpdateStatus, RequestOutcome}
+import org.scalatest.TestSuite
 import services.TimescalesService
 
-trait MockTimescalesService extends MockFactory {
+trait MockTimescalesService extends TestSuite with MockFactory {
 
   val mockTimescalesService: TimescalesService = mock[TimescalesService]
 

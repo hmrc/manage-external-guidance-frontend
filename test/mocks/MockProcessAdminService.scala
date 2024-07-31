@@ -24,9 +24,11 @@ import services.ProcessAdminService
 import uk.gov.hmrc.http.HeaderCarrier
 import models.ProcessSummary
 import models.admin.CachedProcessSummary
+import org.scalatest.TestSuite
+
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockProcessAdminService extends MockFactory {
+trait MockProcessAdminService extends TestSuite with MockFactory {
 
   val mockProcessAdminService: ProcessAdminService = mock[ProcessAdminService]
 

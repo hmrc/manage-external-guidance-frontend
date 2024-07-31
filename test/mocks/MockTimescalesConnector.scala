@@ -24,8 +24,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import connectors.TimescalesConnector
 import models.RequestOutcome
 import models.LabelledDataUpdateStatus
+import org.scalatest.TestSuite
 
-trait MockTimescalesConnector extends MockFactory {
+trait MockTimescalesConnector extends TestSuite with MockFactory {
 
   val mockTimescalesConnector: TimescalesConnector = mock[TimescalesConnector]
 
