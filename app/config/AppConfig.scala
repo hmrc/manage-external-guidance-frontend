@@ -22,8 +22,6 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
   val appName: String
-  val analyticsToken: String
-  val analyticsHost: String
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
   val externalGuidanceBaseUrl: String
@@ -36,7 +34,6 @@ trait AppConfig {
   val designerRole: String
   val twoEyeReviewerRole: String
   val factCheckerRole: String
-  val gtmContainer: String
   val viewApprovalUrl: String
   val pageMapApprovalUrl: String
   val pageMapPublishedlUrl: String
@@ -58,8 +55,6 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   private lazy val egViewerApiHost: String = config.get[String]("external-guidance-viewer.api-host")
   private lazy val egAdminBaseUrl: String = config.get[String]("external-guidance-viewer.adminBaseUrl")
 
-  val analyticsToken: String = config.get[String](s"google-analytics.token")
-  val analyticsHost: String = config.get[String](s"google-analytics.host")
   val reportAProblemPartialUrl: String = s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifier"
   val reportAProblemNonJSUrl: String = s"""$contactBaseUrl${servicesConfig.getString("contact-frontend-urls.reportAProblemNonJSUrl")}"""
   lazy val externalGuidanceBaseUrl: String = servicesConfig.baseUrl("external-guidance")
@@ -74,7 +69,6 @@ class AppConfigImpl @Inject() (config: Configuration, servicesConfig: ServicesCo
   lazy val designerRole: String = servicesConfig.getString("strideAuth.roles.designer")
   lazy val twoEyeReviewerRole: String = servicesConfig.getString("strideAuth.roles.twoEyeReviewer")
   lazy val factCheckerRole: String = servicesConfig.getString("strideAuth.roles.factChecker")
-  lazy val gtmContainer: String = config.get[String]("gtm.container")
   lazy val debugApprovalUrl: String = s"$egViewerHost$egAdminBaseUrl/debug${config.get[String]("external-guidance-viewer.approvalUrl")}" 
   lazy val debugPublishedUrl: String = s"$egViewerHost$egAdminBaseUrl/debug${config.get[String]("external-guidance-viewer.publishedUrl")}" 
   lazy val viewApprovalUrl: String = s"$egViewerHost$egAdminBaseUrl${config.get[String]("external-guidance-viewer.approvalUrl")}"

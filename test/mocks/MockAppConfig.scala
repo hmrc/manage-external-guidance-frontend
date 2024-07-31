@@ -19,8 +19,6 @@ package mocks
 import config.AppConfig
 
 object MockAppConfig extends AppConfig {
-  override val analyticsToken: String = "token"
-  override val analyticsHost: String = "host"
   override val reportAProblemPartialUrl: String = "someUrl"
   override val reportAProblemNonJSUrl: String = "someJsUrl"
   override val externalGuidanceBaseUrl: String = "http://external-guidance-base-url"
@@ -30,7 +28,6 @@ object MockAppConfig extends AppConfig {
   lazy val designerRole: String = "Designer"
   lazy val twoEyeReviewerRole: String = "2iReviewer"
   lazy val factCheckerRole: String = "FactChecker"
-  override lazy val gtmContainer: String = "someContainer"
   lazy val viewApprovalUrl: String = "http://localhost:9741/review-guidance/approval"
   lazy val pageMapApprovalUrl: String = "http://localhost:9741/review-guidance/map-approval"
   lazy val pageMapPublishedlUrl: String = "http://localhost:9741/review-guidance/map-published"
