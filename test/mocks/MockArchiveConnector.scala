@@ -20,11 +20,13 @@ import connectors.ArchiveConnector
 import models.{ProcessSummary, RequestOutcome}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 import play.api.libs.json.JsValue
+
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockArchiveConnector extends MockFactory {
+trait MockArchiveConnector extends TestSuite with MockFactory {
 
   val mockArchiveConnector: ArchiveConnector = mock[ArchiveConnector]
 

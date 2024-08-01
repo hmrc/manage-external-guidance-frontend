@@ -17,14 +17,16 @@
 package mocks
 
 import connectors.PublishedConnector
-import models.{PublishedProcess, RequestOutcome, ProcessSummary}
+import models.{ProcessSummary, PublishedProcess, RequestOutcome}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 import play.api.libs.json.JsValue
+
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockPublishedConnector extends MockFactory {
+trait MockPublishedConnector extends TestSuite with MockFactory {
 
   val mockPublishedConnector: PublishedConnector = mock[PublishedConnector]
 

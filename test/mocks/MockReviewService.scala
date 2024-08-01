@@ -20,12 +20,13 @@ import models.audit.AuditInfo
 import models.{ApprovalProcessReview, ApprovalStatus, PageReviewDetail, RequestOutcome}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import services.ReviewService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockReviewService extends MockFactory {
+trait MockReviewService extends TestSuite with MockFactory {
 
   val mockReviewService: ReviewService = mock[ReviewService]
 

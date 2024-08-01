@@ -16,16 +16,18 @@
 
 package mocks
 
-import models.{RequestOutcome, ApprovalResponse}
+import models.{ApprovalResponse, RequestOutcome}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
 import services.ApprovalService
 import uk.gov.hmrc.http.HeaderCarrier
 import models.ApprovalProcessSummary
+import org.scalatest.TestSuite
+
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockApprovalService extends MockFactory {
+trait MockApprovalService extends TestSuite with MockFactory {
 
   val mockApprovalService: ApprovalService = mock[ApprovalService]
 
