@@ -30,7 +30,7 @@ lazy val microservice = Project(appName, file("."))
     ),
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test
   )
-  .settings(CodeCoverageSettings.settings: _*)
+  .settings(CodeCoverageSettings.settings *)
   .settings(resolvers += Resolver.jcenterRepo)
 
 lazy val it = project
