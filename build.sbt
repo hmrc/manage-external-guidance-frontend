@@ -17,7 +17,7 @@
 val appName = "manage-external-guidance-frontend"
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "2.13.17"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
@@ -42,5 +42,5 @@ TwirlKeys.templateImports ++= Seq(
   "uk.gov.hmrc.govukfrontend.views.html.components._",
 )
 
-addCommandAlias("runAllChecks", ";clean;compile;coverage;test;coverageReport")
+addCommandAlias("runAllChecks", ";clean;compile;coverage;it/test;test;coverageReport")
 
